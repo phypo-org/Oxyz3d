@@ -41,7 +41,7 @@ namespace M3d{
 
 		std::stringstream lStr;
 
-		lStr << "PP3d " << lNumWin++;
+		lStr << "Oxyz3d " << lNumWin++;
 
 		
 		std::unique_ptr<Win3d> luWin3d( new Win3d(  lStr.str().c_str(), pW, pH, *(cuDatabase.get()) ));
