@@ -41,7 +41,7 @@ namespace PP3d{
 		absvec = sqrt ((double)((coa *coa) + (cob *cob) + (coc *coc)));
 				
 		if( absvec == 0.0  )
-			pNorm.cX  = absvec = 1.0;
+		  pNorm.cX  = absvec = 1.0;
 				
 		absvec = 1.0 / absvec;
 				

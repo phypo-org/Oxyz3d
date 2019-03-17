@@ -207,6 +207,18 @@ namespace PP3d {
 
 			return (AB.cross( AP)).modulus()/AB.modulus();
 		}
+		//--------------------------------	
+		void normalize( float pVal)
+		{				
+		  TFLOAT d = (TFLOAT) std::sqrt(cX*cX+cY*cY+cZ*cZ);
+		  if (d == 0.0f) {
+		    d = 1.0f;
+		  }
+		  d = pVal / d;
+		  cX *= d;
+		  cY *= d;
+		  cZ *= d;		
+		}
 	};
 	
 	using Point3d = TPoint3d<PDouble>;

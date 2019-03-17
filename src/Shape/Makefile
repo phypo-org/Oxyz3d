@@ -2,7 +2,8 @@
 
 TARGET=Shape
 
-SRCS= Selection.cpp Object.cpp DataBase.cpp Kamera.cpp ViewProps.cpp PrimitivFactory.cpp PP3dType.cpp Calcul3d.cpp Light.cpp  MinMaxBox3d.cpp GLUtility.cpp Matrice.cpp  Entity.cpp EntityVisitor.cpp Maker.cpp SavRead.cpp ExportObj.cpp
+SRCS= Selection.cpp Object.cpp DataBase.cpp Kamera.cpp ViewProps.cpp PrimitivFactory.cpp PP3dType.cpp Calcul3d.cpp Light.cpp  MinMaxBox3d.cpp GLUtility.cpp Matrice.cpp  Entity.cpp EntityVisitor.cpp Maker.cpp SavRead.cpp ExportObj.cpp SubDiv.cpp
+
 
 
 OBJS =  $(SRCS:.cpp=.o)
