@@ -207,6 +207,26 @@ namespace PP3d {
 
 			return (AB.cross( AP)).modulus()/AB.modulus();
 		}
+		//--------------------------------
+		static TPoint3d Middle( TPoint3d A, TPoint3d B)
+		{
+			return TPoint3d( (A.cX+B.cX)*0.5,  (A.cY+B.cY)*0.5,  (A.cZ+B.cZ)*0.5 );
+		}
+		//--------------------------------
+		static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C )
+		{
+			return TPoint3d( (A.cX+B.cX+C.cX)/3.0,  (A.cY+B.cY+C.cY)/3.0,  (A.cZ+B.cZ+C.cZ)/3.0 );
+		}
+			//--------------------------------
+		static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C, TPoint3d D )
+		{
+			return TPoint3d( (A.cX+B.cX+C.cX+D.cX)*0.25,  (A.cY+B.cY+C.cY+D.cY)*0.25,  (A.cZ+B.cZ+C.cZ+D.cY)*0.25 );
+		}
+		//--------------------------------
+		static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C, TPoint3d D, TPoint3d E  )
+		{
+			return TPoint3d( (A.cX+B.cX+C.cX+D.cX+E.cX)*0.2,  (A.cY+B.cY+C.cY+D.cY+E.cY)*0.2,  (A.cZ+B.cZ+C.cZ+D.cY+E.cZ)*0.2 );
+		}
 		//--------------------------------	
 		void normalize( float pVal)
 		{				
@@ -221,7 +241,7 @@ namespace PP3d {
 		}
 	};
 	
-	using Point3d = TPoint3d<PDouble>;
+	using Point3d  = TPoint3d<PDouble>;
 	using Point3dF = TPoint3d<GLfloat>;
 	
 	

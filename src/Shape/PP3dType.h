@@ -271,12 +271,7 @@ namespace PP3d {
 		Double3 cPosition;
 		Double3 cAngle;
 		Double3 cScale;
-
-	public:
-		Transf3d();
-
-		virtual void execGL();
-		virtual void execBox( Rect3d & pBox );
+ 
 
 		Double3& position() { return cPosition; }
 		Double3& angle()    { return cAngle; }
