@@ -7,44 +7,49 @@
 
 #include <vector>
 	
+#include "PrimitivFactory.h"
 
 
 using Float3 = PP3d::Point3d;
 
+using MyFacet = PP3d::PrimFacet;
 
 namespace  PP3d {
 
   //**************************************
   class SubDiv{
 
- 
+    /*
     //======================================
     class MyFacet {
 
     public:
 
-      std::vector<Float3> cPoints;
-			MyFacet();
-      MyFacet( Float3 p0, Float3 p1, Float3 p2 ) {
+      std::vector<size_t> cPoints;
+      
+      //    MyFacet()
+      //	{
+      //	}
+      MyFacet( size_t p0, size_t p1, size_t p2 ) {
 				cPoints.push_back( p0);
 				cPoints.push_back( p1);
 				cPoints.push_back( p2);
 			}
 
-      MyFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3 ) {
+      MyFacet( size_t p0, size_t p1, size_t p2, int p3 ) {
 				cPoints.push_back( p0);
 				cPoints.push_back( p1);
 				cPoints.push_back( p2);
 				cPoints.push_back( p3);
 			}
-      MyFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4 ) {
+      MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4 ) {
 				cPoints.push_back( p0);
 				cPoints.push_back( p1);
 				cPoints.push_back( p2);
 				cPoints.push_back( p3);
 				cPoints.push_back( p4);
 			}
-      MyFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4, Float3 p5 ) {
+      MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4, size_t p5 ) {
 				cPoints.push_back( p0);
 				cPoints.push_back( p1);
 				cPoints.push_back( p2);
@@ -53,7 +58,7 @@ namespace  PP3d {
 				cPoints.push_back( p5);
 			}
     };
-
+    */
 	
     //======================================
 
@@ -82,6 +87,8 @@ namespace  PP3d {
       bool                 cCentralPoint;
 
       int                  cFlagStripFill;
+      
+      std::vector<Float3>   cPoints;
       std::vector<MyFacet*> cFacets;
 
       float                cDepthGrowFactor = 1;
@@ -97,8 +104,41 @@ namespace  PP3d {
 		
     public:
       void normEffectSub ( Float3 pVal, int  pDepth);
-			void normEffectInit( Float3* lArray, int iLength );
-		};
+      void normEffectInit( Float3* lArray, int iLength );
+
+      PIndex addPoint( Float3& p )
+      {
+	for( size_t i=0; i< cPoints.size(); i++)
+	  {
+	    Float3& lPt = cPoints[i];
+	    if( lPt == p )
+	      {
+		return i;
+	      }
+	  }
+	cPoints.push_back( p );
+	return cPoints.size()-1;
+      }
+	 
+   void addFacet(  Float3 p0, Float3 p1, Float3 p2 )
+   {     
+     cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2) ));
+   }
+   void addFacet(Float3 p0, Float3 p1, Float3 p2, Float3 p3)
+   {
+     cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3))); 
+   }
+    void addFacet(  Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4)
+    {
+      cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3),  addPoint(p4))); 
+   }
+   void addFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4, Float3 p5 )
+   {
+     cFacets.push_back( new MyFacet(  addPoint(p0),  addPoint(p1),  addPoint(p2),  addPoint(p3),  addPoint(p4),  addPoint(p5 ))); 
+   }
+   };
+
+   
     //				public Object3d getObject3d() {
     //						return null;
     //				}

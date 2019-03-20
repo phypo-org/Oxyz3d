@@ -178,7 +178,7 @@ namespace  PP3d {
 					else
 				*/
 				{
-					pParam.cFacets.push_back( new MyFacet( v1, v2, v3, v4, v5 ));
+					pParam.addFacet( v1, v2, v3, v4, v5 );
 				}
 				return;
       }
@@ -245,7 +245,7 @@ namespace  PP3d {
 					else
 				*/
 				{
-					pParam.cFacets.push_back( new MyFacet( v1, v2, v3, v4 ));
+					pParam.addFacet(  v1, v2, v3, v4 );
 				}
 				return;
       }
@@ -299,7 +299,7 @@ namespace  PP3d {
 					else
 				*/
 				{
-					pParam.cFacets.push_back( new MyFacet( v1, v2, v3 ) );
+					pParam.addFacet(  v1, v2, v3 );
 				}
 				return;
       }
@@ -380,7 +380,7 @@ namespace  PP3d {
     pParam.normEffectInit( lData, 5 );
 
 				
-    MyFacet lPyramid4[5];
+    // MyFacet lPyramid4[5];
 
     Subdivide( pParam, lTop, lFrontRight, lFrontLeft, pParam.cDepth );
     Subdivide( pParam, lTop, lFrontLeft, lBackLeft, pParam.cDepth );
