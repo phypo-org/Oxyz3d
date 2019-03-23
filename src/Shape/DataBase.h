@@ -18,6 +18,8 @@
 #include "ObjectPolylines.h"
 #include "ObjectLine.h"
 
+#include "SubDiv.h"
+
 namespace PP3d {
 
 	class Kamera;
@@ -43,6 +45,9 @@ namespace PP3d {
 		virtual ~DataBase();
 
 		void demo1();
+		void demo2();
+		void makeDemo2( float iPos,  int iDepth, float iSize, bool iCentralPoint, SubDiv::SubNormalizeType iNormalize);
+
 
 		//		void add( O3dObj* pObj );
 		void addObject( Object* pObj );

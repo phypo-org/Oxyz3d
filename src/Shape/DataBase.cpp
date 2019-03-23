@@ -13,6 +13,7 @@
 #include "Light.h"
 #include "Selection.h"
 #include "EntityVisitor.h"
+#include "SubDiv.h"
 
 
 namespace PP3d {
@@ -78,12 +79,49 @@ namespace PP3d {
 			lObj->move( Point3d( -5, -5, 5 ));
 			lObj->rename( "Ico test");
 		}
+
+		
 		
 
 		//	  lShape.turnY( 45 );
 		//	  lShape.scale( 2 );
 
 
+	}
+	//------------------------------------------
+	void 	DataBase::makeDemo2( float iPos, int iDepth, float iSize, bool iCentralPoint, SubDiv::SubNormalizeType  iNormalize)
+	{
+		{
+			SubDiv::SubParam lParam( iDepth, iSize, iCentralPoint, iNormalize);
+			SubDiv::Icosahedron( lParam );
+			
+			Poly* lShape =lParam.finish(1);
+			
+			Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
+			addObject( lObj );
+			lObj->move( Point3d( iPos, iPos, iPos ));
+			lObj->rename( "Icosahedron 2 0.35 ");
+		}
+
+		{
+			SubDiv::SubParam lParam( iDepth, iSize, iCentralPoint, iNormalize);
+			SubDiv::Octahedron( lParam );
+			
+			Poly* lShape =lParam.finish(iPos);
+			
+			Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
+			addObject( lObj );
+			lObj->move( Point3d( iPos, iPos, -iPos ));
+			lObj->rename( "Octahedron 2 0.35 ");
+		}
+
+		
+	}
+	//------------------------------------------
+	void 	DataBase::demo2()
+	{
+		makeDemo2( 2,   2, 1, 0,  SubDiv::SubNormalizeType::NORMALIZE);
+		makeDemo2( 4,   1, 1, 0,  SubDiv::SubNormalizeType::NORMALIZE_DEC_INIT);
 	}
 	//------------------------------------------
 	DataBase::~DataBase()

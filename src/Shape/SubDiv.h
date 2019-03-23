@@ -25,43 +25,43 @@ namespace  PP3d {
 
     public:
 
-      std::vector<size_t> cPoints;
+		std::vector<size_t> cPoints;
       
-      //    MyFacet()
-      //	{
-      //	}
-      MyFacet( size_t p0, size_t p1, size_t p2 ) {
-				cPoints.push_back( p0);
-				cPoints.push_back( p1);
-				cPoints.push_back( p2);
-			}
+		//    MyFacet()
+		//	{
+		//	}
+		MyFacet( size_t p0, size_t p1, size_t p2 ) {
+		cPoints.push_back( p0);
+		cPoints.push_back( p1);
+		cPoints.push_back( p2);
+		}
 
-      MyFacet( size_t p0, size_t p1, size_t p2, int p3 ) {
-				cPoints.push_back( p0);
-				cPoints.push_back( p1);
-				cPoints.push_back( p2);
-				cPoints.push_back( p3);
-			}
-      MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4 ) {
-				cPoints.push_back( p0);
-				cPoints.push_back( p1);
-				cPoints.push_back( p2);
-				cPoints.push_back( p3);
-				cPoints.push_back( p4);
-			}
-      MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4, size_t p5 ) {
-				cPoints.push_back( p0);
-				cPoints.push_back( p1);
-				cPoints.push_back( p2);
-				cPoints.push_back( p3);
-				cPoints.push_back( p4);
-				cPoints.push_back( p5);
-			}
+		MyFacet( size_t p0, size_t p1, size_t p2, int p3 ) {
+		cPoints.push_back( p0);
+		cPoints.push_back( p1);
+		cPoints.push_back( p2);
+		cPoints.push_back( p3);
+		}
+		MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4 ) {
+		cPoints.push_back( p0);
+		cPoints.push_back( p1);
+		cPoints.push_back( p2);
+		cPoints.push_back( p3);
+		cPoints.push_back( p4);
+		}
+		MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4, size_t p5 ) {
+		cPoints.push_back( p0);
+		cPoints.push_back( p1);
+		cPoints.push_back( p2);
+		cPoints.push_back( p3);
+		cPoints.push_back( p4);
+		cPoints.push_back( p5);
+		}
     };
     */
 	
     //======================================
-
+	public:
     enum  SubNormalizeType{
       NORMALIZE_NONE,  // DEVIENT TROP PETIT 
 			NORMALIZE,
@@ -77,7 +77,7 @@ namespace  PP3d {
 		};
     //======================================
  	public:
-   class SubParam {
+		class SubParam {
 			
     public:
       bool                 cUseTexture=false;
@@ -96,47 +96,53 @@ namespace  PP3d {
 
       int                  cHoleFacet = -1;
       int                  cHoleDepth = -1;
-    protected :
+    public:
 
       SubParam( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize );
 			virtual ~SubParam();
       void reset( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize);
-		
-    public:
-      void normEffectSub ( Float3 pVal, int  pDepth);
+			
+ 	
+			Poly* finish( float lScale=1 );
+
+			void normEffectSub ( Float3 pVal, int  pDepth);
       void normEffectInit( Float3* lArray, int iLength );
 
       PIndex addPoint( Float3& p )
       {
-	for( size_t i=0; i< cPoints.size(); i++)
-	  {
-	    Float3& lPt = cPoints[i];
-	    if( lPt == p )
-	      {
-		return i;
-	      }
-	  }
-	cPoints.push_back( p );
-	return cPoints.size()-1;
+				for( size_t i=0; i< cPoints.size(); i++)
+					{
+						Float3& lPt = cPoints[i];
+						if( lPt == p )
+							{
+								// already exist, return indice
+								return i;
+							}
+					}
+				// no find, create it
+				cPoints.push_back( p );
+				
+				return cPoints.size()-1; // return indice
       }
 	 
-   void addFacet(  Float3 p0, Float3 p1, Float3 p2 )
-   {     
-     cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2) ));
-   }
-   void addFacet(Float3 p0, Float3 p1, Float3 p2, Float3 p3)
-   {
-     cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3))); 
-   }
-    void addFacet(  Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4)
-    {
-      cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3),  addPoint(p4))); 
-   }
-   void addFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4, Float3 p5 )
-   {
-     cFacets.push_back( new MyFacet(  addPoint(p0),  addPoint(p1),  addPoint(p2),  addPoint(p3),  addPoint(p4),  addPoint(p5 ))); 
-   }
-   };
+			void addFacet(  Float3 p0, Float3 p1, Float3 p2 )
+			{     
+				cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2) ));
+			}
+			void addFacet(Float3 p0, Float3 p1, Float3 p2, Float3 p3)
+			{
+				cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3))); 
+			}
+			void addFacet(  Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4)
+			{
+				cFacets.push_back( new MyFacet( addPoint(p0), addPoint(p1), addPoint(p2), addPoint(p3),  addPoint(p4))); 
+			}
+			void addFacet( Float3 p0, Float3 p1, Float3 p2, Float3 p3, Float3 p4, Float3 p5 )
+			{
+				cFacets.push_back( new MyFacet(  addPoint(p0),  addPoint(p1),  addPoint(p2),  addPoint(p3),  addPoint(p4),  addPoint(p5 ))); 
+			}
+		};
+		
 
    
     //				public Object3d getObject3d() {
@@ -154,15 +160,6 @@ namespace  PP3d {
       };
     */
     //================================================
-    // For create an Object3d
-    class SubParamObject3d : public SubParam {
-								
-    public:
-      SubParamObject3d( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize );
-      void set( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType  pNormalize );
-    };
-		
-		//--------------------------------------
 
 	public:
 		static void      Subdivide5(  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth );
@@ -181,7 +178,7 @@ namespace  PP3d {
 
 		static void Triangle( SubDiv::SubParam& pParam, int i, Float3 data[], int nd[][3]);
 		static void Triangle( SubDiv::SubParam& pParam,  Float3 x0, Float3 x1,  Float3 x2 );
-
+	
   };
   //**************************************
 

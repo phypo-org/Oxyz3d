@@ -82,7 +82,9 @@ namespace PP3d{
 		};
 		static const char* GetTypeName(PrimitivFactory::Type pType);
 		
-		static Poly* Create( PrimitivFactory::Type pType, float pSz=1 );		
+		static Poly* Create( PrimitivFactory::Type pType, float pSz=1 );
+		static Poly* CreatePoly( Point3d* pPoints, size_t pSzPt, PrimFacet *pFacets, size_t pSzFac );
+
 	};
 	//************************
 };

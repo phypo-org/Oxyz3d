@@ -123,6 +123,7 @@ namespace  PP3d {
     return new SubParamDrawing(   pDepth, pFact, pCentralPoint, pNormalize, pFlagStripFill );
     }
   */
+	/*
   //**************************************
   SubDiv::SubParamObject3d::SubParamObject3d( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize )
     :SubDiv::SubParam( pDepth, pFact, pCentralPoint, pNormalize)
@@ -135,6 +136,7 @@ namespace  PP3d {
     reset( pDepth, pFact, pCentralPoint, pNormalize );		
     //	cFacet = new std::vector<MyFacet>();
   }
+	*/
   //------------------------------------------------
   //------------------------------------------------
   //------------------------------------------------
@@ -674,6 +676,45 @@ static Float3 sOcta[] = {
 
     return pParam;
   }
+  //-----------------------
+	Poly* SubDiv::SubParam::finish( float iScale )
+	{
+
+		std::cout << " ====================== SubDiv::finish " << cPoints.size() << " " <<  cFacets.size() << std::endl;
+
+		
+		Poly* lPoly = new Poly();           //mettre unique_ptr
+
+		// on creer les points 
+		std::vector<Point*> lPointsPtr( cPoints.size() );		
+		for( size_t p =0; p< cPoints.size(); p++)
+			{
+				lPointsPtr[p]= new Point( cPoints[p] ); // points sans id
+			}
+				
+			
+		for( size_t f=0; f< cFacets.size() ; f++ )              // pour toutes les PrimFacet
+			{
+				PrimFacet& lPrimFacet  = *cFacets[f];
+				
+				Facet* lCurFacet = new Facet();                // nouvelle facette vide sans id
+				uint i=0;
+				for( ; i< lPrimFacet.size()-1; i++ ) // pour les points de la facette courante
+					{					 
+						Line* lLine = new Line( lPointsPtr[ lPrimFacet[i]] , lPointsPtr[ lPrimFacet[i+1]] );
+						lCurFacet->addLine( lLine );
+					}
+				Line* lLine = new Line( lPointsPtr[ lPrimFacet[i]] , lPointsPtr[ lPrimFacet[0]] );
+				lCurFacet->addLine( lLine );
+			
+				lPoly->addFacet( lCurFacet );
+			}
+		
+		Point3d lScale( iScale, iScale, iScale );
+		lPoly->scale( lScale );
+
+		return lPoly;
+	}
 
   //**************************************
 
