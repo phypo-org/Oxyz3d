@@ -489,8 +489,8 @@ namespace M3d {
 				Fl_Native_File_Chooser fnfc;
 				fnfc.title("Pick a file for write");
 				fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-				fnfc.filter("3D\t*.pp3\n"
-										"3D Files\t*.{pp3}");
+				fnfc.filter("3D\t*.oxyz\n"
+										"3D Files\t*.{oxyz}");
 				fnfc.directory(".");           // default directory to use
 				// Show native chooser
 				switch ( fnfc.show() ) {
@@ -553,8 +553,8 @@ namespace M3d {
 						Fl_Native_File_Chooser fnfc;
 						fnfc.title("Pick a file for read");
 						fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-						fnfc.filter("3D\t*.pp3\n"
-												"3D Files\t*.{pp3}");
+						fnfc.filter("3D\t*.oxyz\n"
+												"3D Files\t*.{oxyz}");
 						fnfc.directory(".");           // default directory to use
 						// Show native chooser
 						switch ( fnfc.show() ) {

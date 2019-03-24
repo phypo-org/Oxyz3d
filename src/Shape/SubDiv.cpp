@@ -288,6 +288,8 @@ namespace  PP3d {
   //------------------------------------------------
 	SubDiv::SubParam&  SubDiv::Create(  SubDiv::GeometryType iGtype, SubDiv::SubParam&  pParam )
 	{
+	  SubParam& lParam = pParam ;
+
 		switch(iGtype )
 			{
 			case   GeometryType::CUBE :          return Cube        (  pParam, 1 );
@@ -296,11 +298,14 @@ namespace  PP3d {
 			case   GeometryType::DODECAHEDRON :  return Dodecahedron(  pParam );
 			case   GeometryType::OCTAHEDRON :    return Octahedron  (  pParam );
 			case   GeometryType::ICOSAHEDRON :   return Icosahedron (  pParam );
-			case  	GeometryType::TETRAHEDRON :   return Tetrahedron (  pParam );
-			case   GeometryType::ODRON   :       return Odron       (  pParam );
-			default:;
+			case   GeometryType::TETRAHEDRON :   return Tetrahedron (  pParam );
+			case   GeometryType::ODRON   :
+			default:
+			           return Odron       (  pParam );
 			}
-		return Odron       (  pParam );
+
+		
+		return lParam;
 	}
 
   //------------------------------------------------
@@ -682,6 +687,10 @@ namespace  PP3d {
 		Point3d lScale( iScale, iScale, iScale );
 		lPoly->scale( lScale );
 
+		float lSz = 1/cFact;
+		Point3d lScale2( lSz, lSz, lSz );
+		lPoly->scale( lScale2 );
+		
 		return lPoly;
 	}
 
