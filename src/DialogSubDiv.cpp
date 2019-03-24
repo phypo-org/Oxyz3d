@@ -37,16 +37,19 @@ namespace M3d {
 class DialogSubDiv {
 	
  Canvas3d *cMyCanvas;
-	PP3d::GeometryType      cGeoType;
-	PP3d::SubNormalizeType  cNormType;
+	PP3d::SubDiv::GeometryType      cGeoType;
+	PP3d::SubDiv::SubNormalizeType  cNormType;
 
 	Fl_Double_Window* myWindow;
 
 	std::unique_ptr<MySlider> cSliderDepth;
-	std::unique_ptr<MySlider> cSlize;
+	std::unique_ptr<MySlider> cSliderSize;
 		
-	std::unique_ptr<MyCheckbutton> cCheckCentralPoint; 
-	
+	std::unique_ptr<MyCheckbutton> cCheckCentralPoint;
+
+	std::unique_ptr<MyChoiceButton> cChoiceNormalize;
+	std::unique_ptr<MyChoiceButton> cChoiceGeometry;
+
 
 	std::unique_ptr<MySlider> cSliderPosX;
 	std::unique_ptr<MySlider> cSliderPosY;
@@ -57,7 +60,7 @@ class DialogSubDiv {
 
 	
 public:
-	DialogSubDiv( Canvas3d* pCanvas,  TypeRevol pTypeRevol );
+	DialogSubDiv( Canvas3d* iCanvas );
 	bool cContinue;
 
 protected:
@@ -69,6 +72,7 @@ protected:
  	static void SizeCB      ( Fl_Widget*, void* iUserData );
  	static void SliderCB    ( Fl_Widget*, void* iUserData );
  	static void CheckCB     ( Fl_Widget*, void* iUserData );
+ 	static void ChoiceCB     ( Fl_Widget*, void* iUserData );
 	void maj();
 	
 };
@@ -82,59 +86,121 @@ protected:
      
     PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 
-		//    std::cout << " Slider " << cSliderPas->value() << std::endl;
-    
-    int  lNbPas = cSliderPas->value();
-		double  lAngleTotal = cSliderAngle->value();
+		
+		std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
+		std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
 
+		std::cout << " Depth    :" << cSliderDepth->value() << std::endl;
+ 		std::cout << " Size     :" << cSliderSize->value()   << std::endl;
+		std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
 
-			PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( cMyCanvas->getDataBase().getCurrentLine(), lNbPas, lMatTran, lFlagClose,
-																																 lFlagCloseSeg, lFlagCloseSegEnd, lFlagCloseHight, lFlagCloseLow );
-			if( lShape != nullptr )
-				{
-					cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
-				}
-		}
-	
+		
+		PP3d::SubDiv::GeometryType     lGeoType  = static_cast<PP3d::SubDiv::GeometryType>( cChoiceGeometry ->value() );
+		PP3d::SubDiv::SubNormalizeType lNormType = static_cast<PP3d::SubDiv::SubNormalizeType>(  cChoiceNormalize->value() );		
+		int   lDepth  =  cSliderDepth->value();
+		float lSize   =  cSliderSize->value() ;
+		bool  lCentralPoint = cCheckCentralPoint->value();
+
+			
+		std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
+		std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
+
+		std::cout << "2 Depth    :" << lDepth << std::endl;
+ 		std::cout << "2 Size     :" << lSize  << std::endl;
+		std::cout << "2 Central  :" << (int)(lCentralPoint) << std::endl;
+
+		PP3d::SubDiv::SubParam lParam( lDepth, lSize, lCentralPoint, lNormType);
+		PP3d::SubDiv::Create( lGeoType, lParam );
+		
+		PP3d::Poly* lShape = lParam.finish();
+		
+		cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Subdivide", lShape ) );  
+				
+		lShape->move(lCenter );
+		
+
 		Application::Instance().redrawAllCanvas3d();
+		
   }
-
-   //----------------------------------------
- 
-	DialogSubDiv::DialogSubDiv( Canvas3d* pCanvas,  TypeRevol pType )
+   //---------------------------------------- 
+	DialogSubDiv::DialogSubDiv( Canvas3d* pCanvas )
 		:cMyCanvas( pCanvas )
 	{
-		cMyType = pType;
-
 		int lX = 20;
 		int lY= 30;
 		int lW = 300;
 		int lH = 20;
 		int lYStep = 40;
 
-		myWindow = new Fl_Double_Window(500, 511, "Division");
+		myWindow = new Fl_Double_Window(500, 540, "Subdivide object generator");
 		myWindow->callback((Fl_Callback*)CancelCB, this);
-
-   
-		cSliderDepth =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Iterations", SliderCB, this, 0, 10 ));
-		cSliderPas->value( 1 );
-		lY += lYStep;
-	 
- 		cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Angle", SliderCB, this, 0.1, 10 ));
-		cSliderAngle->value( 1 );
-		lY += lYStep;
-	 
-		cCheckCentralPoint = std::unique_ptr<MyCheckbutton>( new MyCheckbutton( lX, lY, 30,15, "Central Point", CheckCB, this, 0 ));
-		cCheckTore->callback((Fl_Callback*)CheckCB, this );
-		cCheckTore->value( false );
-		lY += lYStep;;
-
 
 		
 
-		{  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
+		{  Fl_Group* o = new Fl_Group(lX-5, lY, lW+110, lH*12, "Generator:");
 			o->box(FL_ENGRAVED_FRAME);
-			lY += lYStep; 
+					lY += lYStep; 
+
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+
+		cChoiceGeometry =  std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Initial template", ChoiceCB, this ))  ;
+		cChoiceGeometry->callback((Fl_Callback*)ChoiceCB, this );
+		cChoiceGeometry->add("Parallelepiped");																					
+		cChoiceGeometry->add("Cube");																					
+		cChoiceGeometry->add("Pyramid4");																					
+		cChoiceGeometry->add("Octodron");																					
+		cChoiceGeometry->add("Dodecahedron");																					
+		cChoiceGeometry->add("Icosahedron");																					
+		cChoiceGeometry->add("Tetrahedron");																					
+		cChoiceGeometry->add("Odron");
+	  cChoiceGeometry->value(1);
+		
+		cChoiceGeometry->tooltip("The original object to be subdivided");
+	
+		//	cChoiceGeometry->add("");
+		lY += lYStep;
+
+		cChoiceNormalize =  std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Normalize", ChoiceCB, this ))  ;
+		cChoiceNormalize->callback((Fl_Callback*)ChoiceCB, this );
+		cChoiceNormalize->add("None");
+		cChoiceNormalize->add("Normalize");
+		cChoiceNormalize->add("Only init");
+		cChoiceNormalize->add("Inc init");		
+		cChoiceNormalize->add("Dec init");
+		cChoiceNormalize->add("Only sub");
+		cChoiceNormalize->add("Mul sub");
+		cChoiceNormalize->add("Dec sub **");
+		cChoiceNormalize->add("Inc sub ***");
+		cChoiceNormalize->add("Mul init (trou ou pic (GrowFactor)");
+		cChoiceGeometry->tooltip("The normalize method use for resize the subdivision");
+		cChoiceNormalize->value( 8 );
+	//	cChoiceNormalize->add("");
+																										
+		lY += lYStep;
+
+   
+		cSliderDepth =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Depth", SliderCB, this, 0, 10 ));
+		cSliderDepth->value( 1 );
+		lY += lYStep;
+	 
+ 		cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.1, 10 ));
+		cSliderSize->value( 1 );
+		lY += lYStep;
+	 
+		cCheckCentralPoint = std::unique_ptr<MyCheckbutton>( new MyCheckbutton( lX, lY, 30,15, "Central Point", CheckCB, this, 0 ));
+		cCheckCentralPoint->callback((Fl_Callback*)CheckCB, this );
+		cCheckCentralPoint->value( false );
+		lY += lYStep;;
+
+      o->end();
+		} // Fl_Group* o
+
+		lY += lYStep;
+
+
+		{  Fl_Group* o = new Fl_Group(lX-5, lY, lW+25, lH*8, "Position:");
+			o->box(FL_ENGRAVED_FRAME);
+					lY += lYStep; 
 
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
@@ -159,16 +225,17 @@ protected:
 
 		lY += lYStep;
 			
-		{ Fl_Button* o = new Fl_Button(10, lY, 75, 25, "Reset");
-			o->callback((Fl_Callback*)ResetCB, this );
+
+
+		{ Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
+			o->callback((Fl_Callback*)OkCB, this );
 		} // Fl_Button* o
 		{ Fl_Button* o = new Fl_Button(210, lY, 75, 25, "Cancel");
 			o->callback((Fl_Callback*)CancelCB, this );
 		} // Fl_Button* o
-		{ Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
-			o->callback((Fl_Callback*)OkCB, this );
+		{ Fl_Button* o = new Fl_Button(400, lY, 75, 25, "Reset");
+			o->callback((Fl_Callback*)ResetCB, this );
 		} // Fl_Button* o
-	 
 
     myWindow->end();
 		
@@ -184,36 +251,13 @@ protected:
 		std::cout << "*********************************** FIN DIALIOGUE **************************" << std::endl;
 	
 	}
-//----------------------------------------
 
-void DialogSubDiv::CancelCB( Fl_Widget*, void* pUserData ) {
- 
-  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
-  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
-
-	Application::Instance().redrawAllCanvas3d();
-
-  Fl::delete_widget( lDialog->myWindow );
-	lDialog->cContinue = false;
-}
-//----------------------------------------
-void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData ) {
- 
-  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
-	//  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
-
-	Application::Instance().redrawAllCanvas3d();
-
-  Fl::delete_widget( lDialog->myWindow );
-	lDialog->cContinue = false;
-}
 //----------------------------------------
  void DialogSubDiv::SliderCB( Fl_Widget*, void*pUserData )
  {
 	std::cout << "DialogSubDiv::SliderCB " << pUserData << std::endl;
 
    DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
-   std::cout << "DialogSubDiv::SliderCB " << lDialog->cSliderPas->value() << std::endl;
    lDialog->maj();
  }
 //----------------------------------------
@@ -241,6 +285,36 @@ void DialogSubDiv::CheckCB( Fl_Widget*, void*pUserData )
   lDialog->maj(); 
 }
 //----------------------------------------
+void DialogSubDiv::ChoiceCB( Fl_Widget*, void*pUserData )
+{
+	//	std::cout << "DialogSubDiv::CheckCB " << pUserData << std::endl;
+																											 //  MyCheckbutton *lCheck= reinterpret_cast<MyCheckbutton*>(pUserData);
+																											 //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  
+																											 
+  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
+  lDialog->maj(); 
+}
+//----------------------------------------
+
+void DialogSubDiv::CancelCB( Fl_Widget*, void* pUserData ) {
+ 
+  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
+  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
+
+	Application::Instance().redrawAllCanvas3d();
+
+  Fl::delete_widget( lDialog->myWindow );
+	lDialog->cContinue = false;
+}
+//----------------------------------------
+void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData ) {
+ 
+	//  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
+	//  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
+
+	Application::Instance().redrawAllCanvas3d();
+}
+//----------------------------------------
 void DialogSubDiv::OkCB( Fl_Widget*, void*pUserData )
 {
   DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
@@ -259,21 +333,20 @@ void DialogSubDiv::OkCB( Fl_Widget*, void*pUserData )
 	lDialog->cContinue = false;
 }
 //************************
-};
+} // fin namespace
 
 
 //************************
-extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType )
+extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas)
 {
-	// Il faudrait envoyer un ptr sur une variable de type DialogPrimitv
-	// Que l'on remplirais et qui servirais de flag, en meme temps
-	// on pourrait faire un show dessus!
-	
 	if( pFlagAlreadyExist == true )
 		return ;
 	
 	pFlagAlreadyExist = true;
-	M3d::DialogSubDiv( pCanvas, pType );
+
+	
+	M3d::DialogSubDiv Diag( iCanvas );
+	
 	pFlagAlreadyExist = false;
 }
 //************************

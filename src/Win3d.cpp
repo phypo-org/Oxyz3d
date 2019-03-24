@@ -71,6 +71,9 @@ namespace M3d {
 #define StrMenu_CreateShapePolyline  StrMenu_CreateShape  "Polyline"
 #define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
 
+	
+#define StrMenu_CallDialoDiagSub     "New Subdivide"
+
 #define StrMenu_Revol     "New Revol "
 #define StrMenu_RevolX    StrMenu_Revol "X"
 #define StrMenu_RevolY    StrMenu_Revol "Y"
@@ -99,6 +102,7 @@ namespace M3d {
 #define StrMenu_CreateIcosahe   "Icosaedre"
 
 #define StrMenu_Demo1            "Demo 1"
+#define StrMenu_Demo2            "Demo 2"
 
 	
 	using namespace std;
@@ -408,9 +412,10 @@ namespace M3d {
 
 		cMenubar.add("&Create/" StrMenu_RevolX, "", MyMenuCallback, this);
 		cMenubar.add("&Create/" StrMenu_RevolY, "", MyMenuCallback, this);
-		cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this);
+		cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
-		
+		cMenubar.add("&Create/" StrMenu_CallDialoDiagSub, "^t",MyMenuCallback, this, FL_MENU_DIVIDER);
+
 		cMenubar.add("&Transform/" StrMenu_TransformMoveX, "", MyMenuCallback, this);
 		cMenubar.add("&Transform/" StrMenu_TransformMoveY, "", MyMenuCallback, this);
 		cMenubar.add("&Transform/" StrMenu_TransformMoveZ, "", MyMenuCallback, this);
@@ -427,6 +432,7 @@ namespace M3d {
 		cMenubar.add("&Win/" StrMenu_ConsolSystem, nullptr, MyMenuCallback, this);
 
 		cMenubar.add("&Debug/" StrMenu_Demo1, nullptr, MyMenuCallback, this);
+		cMenubar.add("&Debug/" StrMenu_Demo2, nullptr, MyMenuCallback, this);
 
 		
 		/*
@@ -659,6 +665,10 @@ namespace M3d {
 						{
 							CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
 						}
+					else if( strcmp( m->label(), StrMenu_CallDialoDiagSub ) == 0)
+						{
+							CallDialogSubDiv( slFlagDialog, lCanvas );
+						}
 					else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
 						{
 							PP3d::Object * lShape=nullptr;
@@ -778,6 +788,12 @@ namespace M3d {
 					else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 						{
 							lCanvas->getDataBase().demo1();
+							Application::Instance().redrawAllCanvas3d();
+							Application::Instance().redrawObjectTree();
+						}
+					else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
+						{
+							lCanvas->getDataBase().demo2();
 							Application::Instance().redrawAllCanvas3d();
 							Application::Instance().redrawObjectTree();
 						}

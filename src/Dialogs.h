@@ -21,6 +21,7 @@ enum class TypeRevol{ RevolX, RevolY, RevolZ };
 void CallDialogRevol( bool &cFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pTypeRevol);
 
 
+extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 
 
 Fl_Double_Window* CallConsolePython();

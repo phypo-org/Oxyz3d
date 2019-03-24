@@ -31,34 +31,36 @@ namespace  PP3d {
     cNormalize = pNormalize;
   }
   //------------------------------------------------
-  void SubDiv::SubParam::normEffectSub( Float3 pVal, int  pDepth)
+  void SubDiv::SubParam::normEffectSub( Float3& pVal, int  pDepth)
   {
-    switch( cNormalize ){
-    case NORMALIZE:
-    case NORMALIZE_ONLY_SUB:
-    case NORMALIZE_HALF_INIT:
-    case NORMALIZE_DEC_INIT:
-    case NORMALIZE_INC_INIT:
-    case NORMALIZE_MUL_INIT:
-      pVal.normalize( cFact );
-      break;
-								
-    case 	NORMALIZE_DEC_SUB:
-      pVal.normalize( cFact / (1+pDepth*cDepthGrowFactor) );
-      break;
-								
-    case 	NORMALIZE_INC_SUB:
-      pVal.normalize( cFact * (1+pDepth*cDepthGrowFactor) );
-      break;
-    case 	NORMALIZE_MUL_SUB:
-      pVal.normalize( cFact *cDepthGrowFactor );
-      break;
-
-    case NORMALIZE_ONLY_INIT:								
-    case NORMALIZE_NONE:
-      pVal *= cFact ;
-      break;
-    }
+		//		std::cout << "normEffectSub " << pVal 
+    switch( cNormalize )
+			{
+			case SubNormalizeType::NORMALIZE:
+			case SubNormalizeType::NORMALIZE_ONLY_SUB:
+			case SubNormalizeType::NORMALIZE_HALF_INIT:
+			case SubNormalizeType::NORMALIZE_DEC_INIT:
+			case SubNormalizeType::NORMALIZE_INC_INIT:
+			case SubNormalizeType::NORMALIZE_MUL_INIT:
+				pVal.normalize( cFact );
+				break;
+				
+			case 	SubNormalizeType::NORMALIZE_DEC_SUB:
+				pVal.normalize( cFact / (1+pDepth*cDepthGrowFactor) );
+				break;
+				
+			case 	SubNormalizeType::NORMALIZE_INC_SUB:
+				pVal.normalize( cFact * (1+pDepth*cDepthGrowFactor) );
+				break;
+			case 	SubNormalizeType::NORMALIZE_MUL_SUB:
+				pVal.normalize( cFact *cDepthGrowFactor );
+				break;
+				
+			case SubNormalizeType::NORMALIZE_ONLY_INIT:								
+			case SubNormalizeType::NORMALIZE_NONE:
+				pVal *= cFact ;
+				break;
+			}
   }	 
   //------------------------------------------------
   void SubDiv::SubParam::normEffectInit( Float3* iArray, int iLength )
@@ -69,95 +71,42 @@ namespace  PP3d {
 				switch( cNormalize )
 					{
 										
-					case NORMALIZE:
-					case NORMALIZE_DEC_SUB:
-					case NORMALIZE_INC_SUB:
-					case NORMALIZE_MUL_SUB:
-					case NORMALIZE_ONLY_INIT:	
+					case SubNormalizeType::NORMALIZE:
+					case SubNormalizeType::NORMALIZE_DEC_SUB:
+					case SubNormalizeType::NORMALIZE_INC_SUB:
+					case SubNormalizeType::NORMALIZE_MUL_SUB:
+					case SubNormalizeType::NORMALIZE_ONLY_INIT:	
 						iArray[i].normalize( cFact );
 						break;
 										
-					case NORMALIZE_HALF_INIT:
+					case SubNormalizeType::NORMALIZE_HALF_INIT:
 						if( i % 2 == 0  )
 							iArray[i].normalize( cFact );
 						else
 							iArray[i] *=  cFact ;
 						break;
 										
-					case NORMALIZE_DEC_INIT:
+					case SubNormalizeType::NORMALIZE_DEC_INIT:
 						iArray[i].normalize( cFact / (1+i*cInitGrowFactor) );
 						break;
 										
-					case NORMALIZE_INC_INIT:			
+					case SubNormalizeType::NORMALIZE_INC_INIT:			
 						iArray[i].normalize( cFact * (1+i*cInitGrowFactor) );
 						break;
 
-					case	NORMALIZE_MUL_INIT:								
+					case	SubNormalizeType::NORMALIZE_MUL_INIT:								
 						iArray[i].normalize( cFact *cInitGrowFactor );
 						break;
 
 
-					case NORMALIZE_NONE:										
-					case NORMALIZE_ONLY_SUB:
+					case SubNormalizeType::NORMALIZE_NONE:										
+					case SubNormalizeType::NORMALIZE_ONLY_SUB:
 						iArray[i] *= cFact;
 						break;
 					}
       }	 
   }	
 	
-  //**************************************
-  /*
-    SubDiv::SubParamDrawing::SubParamDrawing( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize,  int pFlagStripFill )
-    :SubParam( pDepth, pFact, pCentralPoint, pNormalize)
-    {		
-    cFlagStripFill =  pFlagStripFill;
-    }
-    //------------------------------------------------
-    void SubParamDrawing::set( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize,  int pFlagStripFill  ){						
-    reset( pDepth, pFact, pCentralPoint, pNormalize );
-    cFlagStripFill =  pFlagStripFill;
-    }
-    //------------------------------------------------
-    SubParamDrawing SubParamDrawing::getSubParamDrawing(  int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize, int pFlagStripFill )
-    {
-    return new SubParamDrawing(   pDepth, pFact, pCentralPoint, pNormalize, pFlagStripFill );
-    }
-  */
-	/*
-  //**************************************
-  SubDiv::SubParamObject3d::SubParamObject3d( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize )
-    :SubDiv::SubParam( pDepth, pFact, pCentralPoint, pNormalize)
-  {		
-    //	cFacet = new std::vector<MyFacet>();
-  }	 
-  //------------------------------------------------
-  void SubDiv::SubParamObject3d::set( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType  pNormalize )
-  {			
-    reset( pDepth, pFact, pCentralPoint, pNormalize );		
-    //	cFacet = new std::vector<MyFacet>();
-  }
-	*/
-  //------------------------------------------------
-  //------------------------------------------------
-  //------------------------------------------------
-  /*
-    SubParamObject3d* GetSubParamObject3d(  int pDepth, float pFact, bool pCentralPoint,  SubNormalizeType pNormalize )
-    {
-    return new SubParamObject3d( pDepth, pFact, pCentralPoint, pNormalize );
-    }
-  */
-  //------------------------------------------------
-  /*		public Object3d getObject3d() {
-
-				Facet [] lFacetArray = new Facet[ cFacets.size() ];
-				Object3d lObject3d = new Object3d( cFacets.toArray( lFacetArray )  );
-				lObject3d.setUseTexture( cUseTexture);
-
-				cFacets = new ArrayList(); // reset for future use !
-					
-				return lObject3d; 
-				}
-  */
   //------------------------------------------------
   void SubDiv::Subdivide5( SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth )
   {
@@ -335,6 +284,26 @@ namespace  PP3d {
       }
   }
   //------------------------------------------------
+  //------------------------------------------------
+  //------------------------------------------------
+	SubDiv::SubParam&  SubDiv::Create(  SubDiv::GeometryType iGtype, SubDiv::SubParam&  pParam )
+	{
+		switch(iGtype )
+			{
+			case   GeometryType::CUBE :          return Cube        (  pParam, 1 );
+			case   GeometryType::PYRAMID4 :      return Pyramid4    (  pParam, 0, 0, 0, 1, 1 );
+			case   GeometryType::OCTODRON :      return Octodron    (  pParam );
+			case   GeometryType::DODECAHEDRON :  return Dodecahedron(  pParam );
+			case   GeometryType::OCTAHEDRON :    return Octahedron  (  pParam );
+			case   GeometryType::ICOSAHEDRON :   return Icosahedron (  pParam );
+			case  	GeometryType::TETRAHEDRON :   return Tetrahedron (  pParam );
+			case   GeometryType::ODRON   :       return Odron       (  pParam );
+			default:;
+			}
+		return Odron       (  pParam );
+	}
+
+  //------------------------------------------------
   SubDiv::SubParam& SubDiv::Parallelepiped( SubDiv::SubParam& pParam,  float pSzX, float pSzY, float pSzZ )
   {				
     Float3 lA(  pSzX*0.5, -pSzY*0.5, -pSzZ*0.5 ); 
@@ -408,31 +377,31 @@ namespace  PP3d {
     pParam.normEffectInit( lData, 4 );
 
 		/*
-    if( pParam.cUseTexture )
+			if( pParam.cUseTexture )
       {
 
-				//				System.out.println( "********** Odron Text");
-				// A MODIFIER  il faut modifier les coordonnees qui sont fauses
+			//				System.out.println( "********** Odron Text");
+			// A MODIFIER  il faut modifier les coordonnees qui sont fauses
 
-				Float2 lTexa[ 3 ];
-				lTexa[ 0 ] = Float2( 0.5, 1.0 ); //0.0						
-				lTexa[ 1 ] = Float2( 0.0, 0.0 ); //1.0;						
-				lTexa[ 2 ] = Float2( 1.0, 0.0 ); //1.0
+			Float2 lTexa[ 3 ];
+			lTexa[ 0 ] = Float2( 0.5, 1.0 ); //0.0						
+			lTexa[ 1 ] = Float2( 0.0, 0.0 ); //1.0;						
+			lTexa[ 2 ] = Float2( 1.0, 0.0 ); //1.0
 	
 						
-				Subdivide3Tex( pParam, lData[0], lData[1], lData[3], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
-				Subdivide3Tex( pParam, lData[2], lData[1], lData[0], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
-				Subdivide3Tex( pParam, lData[3], lData[2], lData[0], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
-				Subdivide3Tex( pParam, lData[1], lData[2], lData[3], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );		
+			Subdivide3Tex( pParam, lData[0], lData[1], lData[3], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
+			Subdivide3Tex( pParam, lData[2], lData[1], lData[0], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
+			Subdivide3Tex( pParam, lData[3], lData[2], lData[0], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );
+			Subdivide3Tex( pParam, lData[1], lData[2], lData[3], lTexa[0], lTexa[1], lTexa[2], pParam.cDepth );		
 						
       }
 			else*/
-      {						
-				Subdivide( pParam, lData[0], lData[1], lData[3], pParam.cDepth );
-				Subdivide( pParam, lData[2], lData[1], lData[0], pParam.cDepth );
-				Subdivide( pParam, lData[3], lData[2], lData[0], pParam.cDepth );
-				Subdivide( pParam, lData[1], lData[2], lData[3], pParam.cDepth );		
-      }
+		{						
+			Subdivide( pParam, lData[0], lData[1], lData[3], pParam.cDepth );
+			Subdivide( pParam, lData[2], lData[1], lData[0], pParam.cDepth );
+			Subdivide( pParam, lData[3], lData[2], lData[0], pParam.cDepth );
+			Subdivide( pParam, lData[1], lData[2], lData[3], pParam.cDepth );		
+		}
     return pParam;
   }
 
@@ -471,7 +440,7 @@ namespace  PP3d {
 
 		double alpha =(sqrt(2.0 / (3.0 + sqrt(5.0))));
 		double beta =(1.0 + sqrt(6.0 / (3.0 + sqrt(5.0)) -
-																			 2.0 + 2.0 * sqrt(2.0 / (3.0 + sqrt(5.0)))));
+														 2.0 + 2.0 * sqrt(2.0 / (3.0 + sqrt(5.0)))));
 
               
 
@@ -498,19 +467,19 @@ namespace  PP3d {
 
 		/*
 
-		int  lDodecaIdx[][] = {
-				{0, 1, 9, 16, 5},
-				{1, 0, 3, 18, 7},
-				{1, 7, 11, 10, 9},
-				{11, 7, 18, 19, 6},
-				{8, 17, 16, 9, 10},
-				{2, 14, 15, 6, 19},
-				{2, 13, 12, 4, 14},
-				{2, 19, 18, 3, 13},
-				{3, 0, 5, 12, 13},
-				{6, 15, 8, 10, 11},
-				{4, 17, 8, 15, 14},
-				{4, 12, 5, 16, 17}
+			int  lDodecaIdx[][] = {
+			{0, 1, 9, 16, 5},
+			{1, 0, 3, 18, 7},
+			{1, 7, 11, 10, 9},
+			{11, 7, 18, 19, 6},
+			{8, 17, 16, 9, 10},
+			{2, 14, 15, 6, 19},
+			{2, 13, 12, 4, 14},
+			{2, 19, 18, 3, 13},
+			{3, 0, 5, 12, 13},
+			{6, 15, 8, 10, 11},
+			{4, 17, 8, 15, 14},
+			{4, 12, 5, 16, 17}
 		*/
 
     Subdivide5( pParam, lDodec[0], lDodec[ 1], lDodec[ 9], lDodec[ 16], lDodec[ 5], pParam.cDepth);
@@ -551,16 +520,16 @@ namespace  PP3d {
   /* octahedron data: The octahedron produced is centered at the
      origin and has radius 1.0 */
 
-static Float3 sOcta[] = {	
-	Float3( 1.0, 0.0, 0.0),
-	Float3(-1.0, 0.0, 0.0),
-	Float3(0.0, 1.0, 0.0),
-	Float3(0.0, -1.0, 0.0),
-	Float3(0.0, 0.0, 1.0),
-	Float3(0.0, 0.0, -1.0)				
+	static Float3 sOcta[] = {	
+		Float3( 1.0, 0.0, 0.0),
+		Float3(-1.0, 0.0, 0.0),
+		Float3(0.0, 1.0, 0.0),
+		Float3(0.0, -1.0, 0.0),
+		Float3(0.0, 0.0, 1.0),
+		Float3(0.0, 0.0, -1.0)				
   };
 	
- static int  sOctaIdx[][3] = {
+	static int  sOctaIdx[][3] = {
     {0, 4, 2},
     {1, 2, 4},
     {0, 3, 4},
@@ -577,7 +546,7 @@ static Float3 sOcta[] = {
 				
     pParam.normEffectInit( sOcta, 6 );
 		/*
-		Triangle( pParam, sOcta[1], sOcta[3], sOcta[5] );
+			Triangle( pParam, sOcta[1], sOcta[3], sOcta[5] );
 			Triangle( pParam, sOcta[0], sOcta[5], sOcta[3] );
 			Triangle( pParam, sOcta[1], sOcta[5], sOcta[2] );
 			Triangle( pParam, sOcta[0], sOcta[2], sOcta[5] );
@@ -587,9 +556,9 @@ static Float3 sOcta[] = {
 			Triangle( pParam, sOcta[0], sOcta[4], sOcta[2] );
 		*/
 		
-				for ( int i = 7; i >= 0; i--) {
-					Triangle( pParam, i, sOcta, sOctaIdx  );
-				}
+		for ( int i = 7; i >= 0; i--) {
+			Triangle( pParam, i, sOcta, sOctaIdx  );
+		}
 
     return pParam;
   }

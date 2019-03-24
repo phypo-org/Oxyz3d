@@ -19,52 +19,25 @@ namespace  PP3d {
   //**************************************
   class SubDiv{
 
-    /*
-    //======================================
-    class MyFacet {
+	public:
+		enum class GeometryType {
+			PARALLELEPIPED=0,
+			CUBE          ,
+			PYRAMID4      ,
+			OCTODRON     ,
+			DODECAHEDRON  ,
+			OCTAHEDRON   ,
+			ICOSAHEDRON   ,
+			TETRAHEDRON   ,
+			ODRON         
+		};
 
-    public:
-
-		std::vector<size_t> cPoints;
-      
-		//    MyFacet()
-		//	{
-		//	}
-		MyFacet( size_t p0, size_t p1, size_t p2 ) {
-		cPoints.push_back( p0);
-		cPoints.push_back( p1);
-		cPoints.push_back( p2);
-		}
-
-		MyFacet( size_t p0, size_t p1, size_t p2, int p3 ) {
-		cPoints.push_back( p0);
-		cPoints.push_back( p1);
-		cPoints.push_back( p2);
-		cPoints.push_back( p3);
-		}
-		MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4 ) {
-		cPoints.push_back( p0);
-		cPoints.push_back( p1);
-		cPoints.push_back( p2);
-		cPoints.push_back( p3);
-		cPoints.push_back( p4);
-		}
-		MyFacet( size_t p0, size_t p1, size_t p2, size_t p3, size_t p4, size_t p5 ) {
-		cPoints.push_back( p0);
-		cPoints.push_back( p1);
-		cPoints.push_back( p2);
-		cPoints.push_back( p3);
-		cPoints.push_back( p4);
-		cPoints.push_back( p5);
-		}
-    };
-    */
 	
     //======================================
 	public:
-    enum  SubNormalizeType{
-      NORMALIZE_NONE,  // DEVIENT TROP PETIT 
-			NORMALIZE,
+    enum  class SubNormalizeType{
+      NORMALIZE_NONE=0,  // DEVIENT TROP PETIT 
+			NORMALIZE=1,
 			NORMALIZE_ONLY_INIT, // BELLE ETOILE QD DEPTH
 			NORMALIZE_INC_INIT,  // FORME IRREGULIERE 
 			NORMALIZE_DEC_INIT, // FORME IRREGULIERE avec trou
@@ -105,7 +78,7 @@ namespace  PP3d {
  	
 			Poly* finish( float lScale=1 );
 
-			void normEffectSub ( Float3 pVal, int  pDepth);
+			void normEffectSub ( Float3& pVal, int  pDepth);
       void normEffectInit( Float3* lArray, int iLength );
 
       PIndex addPoint( Float3& p )
@@ -169,12 +142,13 @@ namespace  PP3d {
 		static SubParam& Parallelepiped( SubDiv::SubParam&  pParam, float pSzX, float pSzY, float pSzZ );
 		static SubParam& Cube          ( SubDiv::SubParam&  pParam, float pSz   );
 		static SubParam& Pyramid4      ( SubDiv::SubParam&  pParam, float pX, float pY, float pZ, float  pWidth, float pHeight  );
-		static SubParam& Odron         ( SubDiv::SubParam&  pParam );
 		static SubParam& Octodron      ( SubDiv::SubParam&  pParam );
 		static SubParam& Dodecahedron  ( SubDiv::SubParam&  pParam );
 		static SubParam& Octahedron    ( SubDiv::SubParam&  pParam );
 		static SubParam& Icosahedron   ( SubDiv::SubParam&  pParam );
 		static SubParam& Tetrahedron   ( SubDiv::SubParam&  pParam );
+		static SubParam& Odron         ( SubDiv::SubParam&  pParam );
+		static SubParam& Create        ( GeometryType iGtype, SubDiv::SubParam&  pParam );
 
 		static void Triangle( SubDiv::SubParam& pParam, int i, Float3 data[], int nd[][3]);
 		static void Triangle( SubDiv::SubParam& pParam,  Float3 x0, Float3 x1,  Float3 x2 );

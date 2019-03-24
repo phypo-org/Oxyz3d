@@ -11,6 +11,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Choice.H>
 
 namespace M3d {
 	
@@ -37,6 +38,7 @@ namespace M3d {
 	using MyInput        = TMyFltk<Fl_Input>;
 	using MyButton       = TMyFltk<Fl_Button>;
 	using MyToggleButton = TMyFltk<Fl_Toggle_Button>;
+	using MyChoiceButton = TMyFltk<Fl_Choice>;
 
 
 
