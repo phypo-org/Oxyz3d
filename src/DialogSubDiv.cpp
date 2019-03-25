@@ -82,7 +82,7 @@ namespace M3d {
     static void SizeCB      ( Fl_Widget*, void* iUserData );
     static void SliderCB    ( Fl_Widget*, void* iUserData );
     static void CheckCB     ( Fl_Widget*, void* iUserData );
-    static void ChoiceCB     ( Fl_Widget*, void* iUserData );
+    static void ChoiceCB    ( Fl_Widget*, void* iUserData );
     void maj();
 	
   };
@@ -100,7 +100,7 @@ namespace M3d {
     std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
     std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
 
-    std::cout << " Depth    :" << cSliderDepth->value() << std::endl;
+    std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
     std::cout << " Size     :" << cSliderSize->value()   << std::endl;
     std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
 
@@ -113,7 +113,7 @@ namespace M3d {
     bool  lCentralPoint = cCheckCentralPoint->value();
 
     float lDepthGrowFactor = cSliderDepthGrowFactor->value();
-    float lInitGrowFactor  = lInitGrowFactor->value();
+    float lInitGrowFactor  = cSliderInitGrowFactor->value();
 
     int   lHoleFacet  =  cChoiceHoleFacet->value() -1;
     int   lHoleDepth  =  cChoiceHoleDepth->value() -1;
@@ -212,7 +212,7 @@ namespace M3d {
       lY += lYStep;
 
    
-      cChoiceDepth =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Depth", ChoiceCB, this ))
+      cChoiceDepth =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Depth", ChoiceCB, this )) ;
 	cChoiceDepth->add("0");
 	cChoiceDepth->add("1");
 	cChoiceDepth->add("2");
@@ -221,7 +221,7 @@ namespace M3d {
 	cChoiceDepth->add("5");
 	cChoiceDepth->add("6");
 	cChoiceDepth->add("7");
-	cSliderDepth->value( 1 );
+	cChoiceDepth->value( 1 );
 	lY += lYStep;
 	 
       cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.1, 10 ));
@@ -240,12 +240,12 @@ namespace M3d {
       lY += lYStep;
 
       cSliderInitGrowFactor =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Init frow factor", SliderCB, this, 0, 5 ));
-      cSliderDepth->value( 0.3 );
+      cSliderInitGrowFactor->value( 0.3 );
       lY += lYStep;
 
    
 
-      cChoiceHoleFacet =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ))
+      cChoiceHoleFacet =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
 	cChoiceHoleFacet->add("no");
 	cChoiceHoleFacet->add("0");
 	cChoiceHoleFacet->add("1");
@@ -257,7 +257,7 @@ namespace M3d {
 	lY += lYStep;
    
 
-      cChoiceHoleDepth=   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ))
+	cChoiceHoleDepth=   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
 	cChoiceHoleFacet->add("no");
 	cChoiceHoleFacet->add("0");
 	cChoiceHoleFacet->add("1");

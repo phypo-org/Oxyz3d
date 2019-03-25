@@ -609,11 +609,9 @@ namespace  PP3d {
       }
 		
     float lSz = iScale/cFact;
-    //  Point3d lScale( iScale, iScale, iScale );
-    //    lPoly->scale( lScale );
-    //    float lSz = 1/cFact;
-    //    Point3d lScale2( lSz, lSz, lSz );
+    Point3d lScale( lSz, lSz, lSz );
 
+    
     //phipo 20190325 );
     lPoly->scale( lScale );
 		
