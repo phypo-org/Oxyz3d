@@ -84,17 +84,16 @@ namespace M3d {
     static void CheckCB     ( Fl_Widget*, void* iUserData );
     static void ChoiceCB    ( Fl_Widget*, void* iUserData );
     void maj();
-	
   };
 
 
   //************************
   void DialogSubDiv::maj()
   {
-    std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
+    //   std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
     std::cout << "DialogSubDiv::maj " << this << std::endl;
      
-    PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
+    //    PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 
 		
     std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
@@ -149,7 +148,7 @@ namespace M3d {
 		
     cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Subdivide", lShape ) );  
 				
-    lShape->move(lCenter );
+    //////  lShape->move(lCenter );
 		
 
     Application::Instance().redrawAllCanvas3d();
@@ -165,12 +164,13 @@ namespace M3d {
     int lH = 20;
     int lYStep = 40;
 
+    
     myWindow = new Fl_Double_Window(500, 540, "Subdivide object generator");
     myWindow->callback((Fl_Callback*)CancelCB, this);
 
 		
 
-    {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+110, lH*12, "Generator:");
+    {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+110, lH*17, "Generator:");
       o->box(FL_ENGRAVED_FRAME);
       lY += lYStep; 
 
@@ -258,13 +258,13 @@ namespace M3d {
    
 
 	cChoiceHoleDepth=   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
-	cChoiceHoleFacet->add("no");
-	cChoiceHoleFacet->add("0");
-	cChoiceHoleFacet->add("1");
-	cChoiceHoleFacet->add("2");
-	cChoiceHoleFacet->add("3");
-	cChoiceHoleFacet->add("4");
-	cChoiceHoleFacet->add("5");
+	cChoiceHoleDepth->add("no");
+	cChoiceHoleDepth->add("0");
+	cChoiceHoleDepth->add("1");
+	cChoiceHoleDepth->add("2");
+	cChoiceHoleDepth->add("3");
+	cChoiceHoleDepth->add("4");
+	cChoiceHoleDepth->add("5");
 	cChoiceHoleDepth->value( 0 );
 	lY += lYStep;
 
@@ -421,7 +421,7 @@ extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas)
 {
   if( pFlagAlreadyExist == true )
     return ;
-	
+
   pFlagAlreadyExist = true;
 
 	
