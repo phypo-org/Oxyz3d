@@ -90,10 +90,10 @@ namespace M3d {
   //************************
   void DialogSubDiv::maj()
   {
-    //   std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
+    std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
     std::cout << "DialogSubDiv::maj " << this << std::endl;
      
-    //    PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
+        PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 
 		
     std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
@@ -106,7 +106,8 @@ namespace M3d {
 
     
     PP3d::SubDiv::GeometryType     lGeoType  = static_cast<PP3d::SubDiv::GeometryType>( cChoiceGeometry ->value() );
-    PP3d::SubDiv::SubNormalizeType lNormType = static_cast<PP3d::SubDiv::SubNormalizeType>(  cChoiceNormalize->value() );		
+    PP3d::SubDiv::SubNormalizeType lNormType = static_cast<PP3d::SubDiv::SubNormalizeType>(  cChoiceNormalize->value() );
+    
     int   lDepth  =  cChoiceDepth->value();
     float lSize   =  cSliderSize->value() ;
     bool  lCentralPoint = cCheckCentralPoint->value();
@@ -170,7 +171,7 @@ namespace M3d {
 
 		
 
-    {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+110, lH*17, "Generator:");
+    {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+110, lH*30, "Generator:");
       o->box(FL_ENGRAVED_FRAME);
       lY += lYStep; 
 
@@ -205,7 +206,7 @@ namespace M3d {
       cChoiceNormalize->add("Dec sub **");
       cChoiceNormalize->add("Inc sub ***");
       cChoiceNormalize->add("Mul init (trou ou pic (GrowFactor)");
-      cChoiceGeometry->tooltip("The normalize method use for resize the subdivision");
+      cChoiceNormalize->tooltip("The normalize method use for resize the subdivision");
       cChoiceNormalize->value( 8 );
       //	cChoiceNormalize->add("");
 																										
@@ -213,16 +214,16 @@ namespace M3d {
 
    
       cChoiceDepth =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Depth", ChoiceCB, this )) ;
-	cChoiceDepth->add("0");
-	cChoiceDepth->add("1");
-	cChoiceDepth->add("2");
-	cChoiceDepth->add("3");
-	cChoiceDepth->add("4");
-	cChoiceDepth->add("5");
-	cChoiceDepth->add("6");
-	cChoiceDepth->add("7");
-	cChoiceDepth->value( 1 );
-	lY += lYStep;
+      cChoiceDepth->add("0");
+      cChoiceDepth->add("1");
+      cChoiceDepth->add("2");
+      cChoiceDepth->add("3");
+      cChoiceDepth->add("4");
+      cChoiceDepth->add("5");
+      cChoiceDepth->add("6");
+      cChoiceDepth->add("7");
+      cChoiceDepth->value( 1 );
+      lY += lYStep;
 	 
       cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.1, 10 ));
       cSliderSize->value( 1 );
@@ -246,27 +247,27 @@ namespace M3d {
    
 
       cChoiceHoleFacet =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
-	cChoiceHoleFacet->add("no");
-	cChoiceHoleFacet->add("0");
-	cChoiceHoleFacet->add("1");
-	cChoiceHoleFacet->add("2");
-	cChoiceHoleFacet->add("3");
-	cChoiceHoleFacet->add("4");
-	cChoiceHoleFacet->add("5");
-	cChoiceHoleFacet->value( 0 );
-	lY += lYStep;
+      cChoiceHoleFacet->add("no");
+      cChoiceHoleFacet->add("0");
+      cChoiceHoleFacet->add("1");
+      cChoiceHoleFacet->add("2");
+      cChoiceHoleFacet->add("3");
+      cChoiceHoleFacet->add("4");
+      cChoiceHoleFacet->add("5");
+      cChoiceHoleFacet->value( 0 );
+      lY += lYStep;
    
 
-	cChoiceHoleDepth=   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
-	cChoiceHoleDepth->add("no");
-	cChoiceHoleDepth->add("0");
-	cChoiceHoleDepth->add("1");
-	cChoiceHoleDepth->add("2");
-	cChoiceHoleDepth->add("3");
-	cChoiceHoleDepth->add("4");
-	cChoiceHoleDepth->add("5");
-	cChoiceHoleDepth->value( 0 );
-	lY += lYStep;
+      cChoiceHoleDepth=   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole depth", ChoiceCB, this ));
+      cChoiceHoleDepth->add("no");
+      cChoiceHoleDepth->add("0");
+      cChoiceHoleDepth->add("1");
+      cChoiceHoleDepth->add("2");
+      cChoiceHoleDepth->add("3");
+      cChoiceHoleDepth->add("4");
+      cChoiceHoleDepth->add("5");
+      cChoiceHoleDepth->value( 0 );
+      lY += lYStep;
 
       
       o->end();
@@ -277,7 +278,7 @@ namespace M3d {
 
 		
 
-    /*
+    
       {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+25, lH*8, "Position:");
       o->box(FL_ENGRAVED_FRAME);
       lY += lYStep; 
@@ -301,21 +302,24 @@ namespace M3d {
 
       //		lY += lYStep;
 
-      */
+      
 
     lY += lYStep;
 			
 
+    {  Fl_Group* o = new Fl_Group(lX-5, lY, lW+10, lH*8, "");
 
-    { Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
-      o->callback((Fl_Callback*)OkCB, this );
-    } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(210, lY, 75, 25, "Cancel");
-      o->callback((Fl_Callback*)CancelCB, this );
-    } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(400, lY, 75, 25, "Reset");
-      o->callback((Fl_Callback*)ResetCB, this );
-    } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
+	o->callback((Fl_Callback*)OkCB, this );
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(210, lY, 75, 25, "Cancel");
+	o->callback((Fl_Callback*)CancelCB, this );
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(400, lY, 75, 25, "Reset");
+	o->callback((Fl_Callback*)ResetCB, this );
+      } // Fl_Button* o
+      o->end();
+    }
 
     myWindow->end();
 		
@@ -335,17 +339,13 @@ namespace M3d {
   //----------------------------------------
   void DialogSubDiv::SliderCB( Fl_Widget*, void*pUserData )
   {
-    std::cout << "DialogSubDiv::SliderCB " << pUserData << std::endl;
-
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     lDialog->maj();
   }
   //----------------------------------------
   void DialogSubDiv::SizeCB( Fl_Widget*, void*pUserData )
   {
-    std::cout << "DialogSubDiv::SizeCB " << pUserData << std::endl;
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
-    // lDialog->cSizeSliderX->value(  atof(wSizeX->value()) );
     lDialog->maj();
   }
   //----------------------------------------
@@ -356,26 +356,17 @@ namespace M3d {
   }
   //----------------------------------------
   void DialogSubDiv::CheckCB( Fl_Widget*, void*pUserData )
-  {
-    //	std::cout << "DialogSubDiv::CheckCB " << pUserData << std::endl;
-    //  MyCheckbutton *lCheck= reinterpret_cast<MyCheckbutton*>(pUserData);
-    //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  
-																											 
+  {									 
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     lDialog->maj(); 
   }
   //----------------------------------------
   void DialogSubDiv::ChoiceCB( Fl_Widget*, void*pUserData )
-  {
-    //	std::cout << "DialogSubDiv::CheckCB " << pUserData << std::endl;
-    //  MyCheckbutton *lCheck= reinterpret_cast<MyCheckbutton*>(pUserData);
-    //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  
-																											 
+  {									 
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     lDialog->maj(); 
   }
   //----------------------------------------
-
   void DialogSubDiv::CancelCB( Fl_Widget*, void* pUserData ) {
  
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
@@ -389,7 +380,7 @@ namespace M3d {
   //----------------------------------------
   void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData ) {
  
-    //  DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
+    //    DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     //  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
 
     Application::Instance().redrawAllCanvas3d();
