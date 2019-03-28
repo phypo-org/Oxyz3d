@@ -13,11 +13,11 @@ MySlider::MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Call
   
   cInput->callback((Fl_Callback*)sInputCB, this);
   
-		cSlider = new Fl_Hor_Nice_Slider( pX+pW/4, pY, (pW/4)*3, pH, "");
-		cSlider->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-		cSlider->bounds(lMin, lMax );
+  cSlider = new Fl_Hor_Nice_Slider( pX+pW/4, pY, (pW/4)*3, pH, "");
+  cSlider->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+  cSlider->bounds(lMin, lMax );
 	
-    cSlider->callback((Fl_Callback*)sSliderCB, this);
+  cSlider->callback((Fl_Callback*)sSliderCB, this);
 }
 //-------------------------------------------------
 void MySlider::sSliderCB( Fl_Widget*pWidget, void*pUserData )
