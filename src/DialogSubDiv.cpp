@@ -73,6 +73,7 @@ namespace M3d {
     static void CancelCB    ( Fl_Widget*, void* iUserData );
     static void OkCB        ( Fl_Widget*, void* iUserData);
     static void ResetCB     ( Fl_Widget*, void* iUserData);
+    static void DirectSavExpCB( Fl_Widget*, void* iUserData);
 
     static void SizeSliderCB( Fl_Widget*, void* iUserData );
     static void SizeCB      ( Fl_Widget*, void* iUserData );
@@ -86,19 +87,21 @@ namespace M3d {
   //************************
   void DialogSubDiv::maj()
   {
+    /*
     std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
     std::cout << "DialogSubDiv::maj " << this << std::endl;
-     
+    */
+    
     PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 
-		
+    /*		
     std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
     std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
 
     std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
     std::cout << " Size     :" << cSliderSize->value()   << std::endl;
     std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
-
+    */
 
     
     PP3d::SubDiv::GeometryType     lGeoType  = static_cast<PP3d::SubDiv::GeometryType>( cChoiceGeometry ->value() );
@@ -114,7 +117,7 @@ namespace M3d {
     int   lHoleFacet  =  cChoiceHoleFacet->value() -1;
     int   lHoleDepth  =  cChoiceHoleDepth->value() -1;
 
-			
+    /*	
     std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
     std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
 
@@ -128,7 +131,7 @@ namespace M3d {
 
     std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
     std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
-
+    */
 
     PP3d::SubDiv::SubParam lParam( lDepth, lSize, lCentralPoint, lNormType);
     
@@ -145,7 +148,7 @@ namespace M3d {
 		
     cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Subdivide", lShape ) );  
 				
-    //////  lShape->move(lCenter );
+    lShape->move(lCenter );
 		
 
     Application::Instance().redrawAllCanvas3d();
@@ -308,14 +311,17 @@ namespace M3d {
 
     { Fl_Group* o3 = new Fl_Group(lX-5, lY, lW+10, lH*8, "");
 
-      { Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
+      { Fl_Button* o = new Fl_Button(lX, lY, 75, 25, "OK");
 	o->callback((Fl_Callback*)OkCB, this );
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(210, lY, 75, 25, "Cancel");
+      { Fl_Button* o = new Fl_Button(lX+100, lY, 75, 25, "Cancel");
 	o->callback((Fl_Callback*)CancelCB, this );
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(400, lY, 75, 25, "Reset");
+      { Fl_Button* o = new Fl_Button(lX+250, lY, 75, 25, "Reset");
 	o->callback((Fl_Callback*)ResetCB, this );
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(lX+350, lY, 100, 25, "Direct export");
+	o->callback((Fl_Callback*)DirectSavExpCB, this );
       } // Fl_Button* o
       o3->end();
     }
@@ -332,7 +338,8 @@ namespace M3d {
     std::cout << "***********************************  DIALOGUE **************************" << std::endl;
     std::cout << "***********************************  DIALOGUE **************************" << std::endl;
 	
-    
+    maj();
+  
     cContinue = true;
     while (Fl::wait() && cContinue );
 
@@ -385,7 +392,13 @@ namespace M3d {
     lDialog->cContinue = false;
   }
   //----------------------------------------
-  void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData ) {
+  void DialogSubDiv::DirectSavExpCB( Fl_Widget*, void* pUserData )
+  {
+    Application::Instance().redrawAllCanvas3d();
+  }
+  //----------------------------------------
+  void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData )
+  {
  
     //    DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     //  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
