@@ -12,10 +12,12 @@
 #include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/Fl_Hor_Nice_Slider.H>
+#include <FL/Fl_Native_File_Chooser.H>
 
 
 #include <sstream>
 #include <stdlib.h>
+#include <fstream>
 
 #include <stdlib.h>
 #include <math.h>
@@ -28,6 +30,8 @@
 #include "Shape/Maker.h"
 
 #include "Shape/SubDiv.h"
+#include "Shape/ExportObj.h"
+
 
 //Tout mettre dans le Dialogue
 
@@ -73,7 +77,7 @@ namespace M3d {
     static void CancelCB    ( Fl_Widget*, void* iUserData );
     static void OkCB        ( Fl_Widget*, void* iUserData);
     static void ResetCB     ( Fl_Widget*, void* iUserData);
-    static void DirectSavExpCB( Fl_Widget*, void* iUserData);
+    static void DirectExpCB ( Fl_Widget*, void* iUserData);
 
     static void SizeSliderCB( Fl_Widget*, void* iUserData );
     static void SizeCB      ( Fl_Widget*, void* iUserData );
@@ -309,22 +313,27 @@ namespace M3d {
     lY += lYStep;
 			
 
-    { Fl_Group* o3 = new Fl_Group(lX-5, lY, lW+10, lH*8, "");
+		{ Fl_Group* o3 = new Fl_Group(lX-5, lY, lW+130, lH*6, "");
+      o3->box(FL_ENGRAVED_FRAME);
+			lY += lYStep/3;
 
       { Fl_Button* o = new Fl_Button(lX, lY, 75, 25, "OK");
-	o->callback((Fl_Callback*)OkCB, this );
+				o->callback((Fl_Callback*)OkCB, this );
       } // Fl_Button* o
+			
       { Fl_Button* o = new Fl_Button(lX+100, lY, 75, 25, "Cancel");
-	o->callback((Fl_Callback*)CancelCB, this );
+				o->callback((Fl_Callback*)CancelCB, this );
       } // Fl_Button* o
+			
       { Fl_Button* o = new Fl_Button(lX+250, lY, 75, 25, "Reset");
-	o->callback((Fl_Callback*)ResetCB, this );
+				o->callback((Fl_Callback*)ResetCB, this );
       } // Fl_Button* o
+			
       { Fl_Button* o = new Fl_Button(lX+350, lY, 100, 25, "Direct export");
-	o->callback((Fl_Callback*)DirectSavExpCB, this );
+				o->callback((Fl_Callback*)DirectExpCB, this );
       } // Fl_Button* o
       o3->end();
-    }
+		}
     
 
     myWindow->end();
@@ -392,9 +401,43 @@ namespace M3d {
     lDialog->cContinue = false;
   }
   //----------------------------------------
-  void DialogSubDiv::DirectSavExpCB( Fl_Widget*, void* pUserData )
+  void DialogSubDiv::DirectExpCB( Fl_Widget*, void* pUserData )
   {
-    Application::Instance().redrawAllCanvas3d();
+    DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
+
+		Fl_Native_File_Chooser fnfc;
+		fnfc.title("Pick a file for export");
+		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+		fnfc.filter("3D obj\t*.obj\n"
+								"3D obj Files\t*.{obj}");
+		fnfc.directory(".");           // default directory to use
+		// Show native chooser
+		switch ( fnfc.show() )
+			{
+			case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+			case  1: printf("CANCEL\n");                      break;  // CANCEL
+			default:
+				{
+					std::cout << "PICKED: " << fnfc.filename() << std::endl;
+					PP3d::Object* lObject =  lDialog->cMyCanvas->getDataBase().getCurrentCreation();
+					if( lObject != nullptr )
+						{
+							std::ofstream lOut;						
+							lOut.open( fnfc.filename());
+							if( lOut.good() )
+								{
+									
+									PP3d::MyExportObj lExpObj( lOut );
+									{
+										lExpObj.save(  lObject );
+									}
+									
+									lOut.close();
+								}
+						}
+				}
+				break;						
+			}				 
   }
   //----------------------------------------
   void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData )

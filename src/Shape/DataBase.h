@@ -56,7 +56,8 @@ namespace PP3d {
 		const std::set<Object*> & getAllObject()  const { return  cContainerObject;}
 		const std::unordered_map<EntityId, Entity*>& getEntities() const { return  cEntities;}
 
-		Object* validCurrentCreation();
+		Object*   getCurrentCreation();
+		Object*   validCurrentCreation();
 		void      cancelCurrentCreation( );
 		void      swapCurrentCreation( Object* pCurrentCreation );
 

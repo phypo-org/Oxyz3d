@@ -29,6 +29,7 @@ namespace PP3d {
 			:cOut( pOut )
 		{;}
 
+		bool save( Object* lObject );
 		bool save( DataBase& pData );		
 	};
 	//*************************************

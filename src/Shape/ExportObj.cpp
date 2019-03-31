@@ -67,35 +67,42 @@ namespace PP3d {
 	// On pourrait mettre des meta information
 	// dans le nom et/ou les commentaires 
 	//--------------------------------------
-	
+
+	bool MyExportObj::save( Object* lEntity )
+	{				
+		switch( lEntity->getObjType() )
+			{
+			case ObjectType::ObjPoly:
+				{
+					auto lEntityPoly = dynamic_cast<ObjectPoly*>(lEntity);
+					cOut << "o " << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
+									
+					VisitorSavPoints lVisPts( *this );
+					lEntityPoly->getPoly()->execVisitor( lVisPts );
+					cOut << 'g' << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
+					cOut <<  "usemtl default" << std::endl;
+					cOut << "s 1" <<  std::endl;
+					VisitorSavFacets lVisFacs( *this );
+					lEntityPoly->getPoly()->execVisitor( lVisFacs );																	
+				}
+			default: ;
+			}
+		return true;
+	}
+	//--------------------------------------
+
 	bool MyExportObj::save( DataBase& pData )
 	{
 		auto lEntities = pData.getEntities();
 		
 		for( auto lPairEntity :  lEntities )
-				{				
-					if( lPairEntity.second->getType() != ShapeType::Object )
-						continue;
+			{				
+				if( lPairEntity.second->getType() != ShapeType::Object )
+					continue;
 					
-					auto lEntity = dynamic_cast<Object*>(lPairEntity.second);
-					switch( lEntity->getObjType() )
-						{
-							case ObjectType::ObjPoly:
-								{
-									auto lEntityPoly = dynamic_cast<ObjectPoly*>(lEntity);
-									cOut << "o " << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
-									
-									VisitorSavPoints lVisPts( *this );
-									lEntityPoly->getPoly()->execVisitor( lVisPts );
-									cOut << 'g' << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
-									cOut <<  "usemtl default" << std::endl;
-									cOut << "s 1" <<  std::endl;
-									VisitorSavFacets lVisFacs( *this );
-									lEntityPoly->getPoly()->execVisitor( lVisFacs );																	
-								}
-						default: ;
-						}
-				}
+				auto lEntity = dynamic_cast<Object*>(lPairEntity.second);
+				save( lEntity );
+			}
 		return true;
 	}
  

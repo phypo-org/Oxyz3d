@@ -340,8 +340,11 @@ namespace PP3d {
 		      cCurrentCreation = pCurrentCreation;
 		    }
 		}
-
-
+	//------------------------------------------		
+	Object* DataBase::getCurrentCreation( )
+	{		  
+		return cCurrentCreation;			
+	}
 	//-------------------------------------------------------------
 	void DataBase::drawGL(ViewProps& pViewProps, GLMode pSelectOrDrawMode )
 	{
