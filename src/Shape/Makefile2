@@ -1,4 +1,4 @@
-GCC=/home/phipo/Bin/gcc-8.2/usr/local/gcc-8.2
+GCC8=~/Bin/gcc-8.2/usr/local/gcc-8.2
 
 TARGET=Shape
 
@@ -14,9 +14,9 @@ HDRS = $(SRCS:.cpp=.h)
 
 CFLAGS = -g -std=c++17 -O3  -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT 
 
-CINCLUDE=-I$(GCC)/include -I.  -DLINUX
+CINCLUDE=-I$(GCC8)/include -I.  -DLINUX
 CC=/usr/bin/clang
-CC=$(GCC)/bin/g++
+CC=$(GCC8)/bin/g++
 
 
 
