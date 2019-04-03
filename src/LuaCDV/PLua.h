@@ -30,31 +30,28 @@ public:
 
 
 protected:
-	PPTools::PPStringDyn cNameSession;
-	lua_State            *cLuaState;
-	int                  cSecurityLevel;
+  std::string cNameSession;
+  lua_State            *cLuaState;
 
-	std::ostrstream      *cCurrentStream;
+  std::ostrstream      *cCurrentStream;
 
-	// Only for prototype
-	PLuaSession();
+  // Only for prototype
+  PLuaSession();
 
-	PLuaSession( int pSecurityLevel, std::ostrstream* pStream = NULL );
-	PLuaSession( int pSecurityLevel, const char* pNameSession, std::ostrstream* pStream =NULL );
+  PLuaSession( std::ostrstream* pStream = NULL );
+  PLuaSession( const char* pNameSession, std::ostrstream* pStream =NULL );
 
 public:
-	virtual ~PLuaSession();
-	const char* getSessionName() { return cNameSession; }
+  virtual ~PLuaSession();
+  const char* getSessionName() { return cNameSession; }
 
-	int getSecurityLevel() { return cSecurityLevel; }
-	void setSecurityLevel(int pSecurityLevel) { cSecurityLevel = pSecurityLevel; }
 
 public:
 	typedef int (*CLibraryFonction)(lua_State*); 
 	bool registerFunction( const char* pLibName, const char*pName, CLibraryFonction pFtn, int pSecurityLevel);
 
 protected:
-	virtual PLuaSession* getNewPrototypeSession( int pSecurityLevel, const char* pNameSession, std::ostrstream* pStream );
+	virtual PLuaSession* getNewPrototypeSession(  const char* pNameSession, std::ostrstream* pStream );
 	
 public:
 	const char* doCode( const char* pCode);
@@ -73,14 +70,14 @@ public:
 private:
 
 	static 	ContainerSessionLua    *sContainerLuaSessions;
-	static 	PPTools::PSimpleMutex  *sContainerLuaSessionsMutex;
+	static 	mutex                  *sContainerLuaSessionsMutex;
 
 	static void AddSession( PLuaSession* pSession );
 	static bool RemoveSession( PLuaSession* pSession );
 	static bool RemoveSession( const char* pSessionName );
 
 public:
-	static PLuaSession* GetSession( int pSecurityLevel, const char* pSessionName, std::ostrstream* pStream =NULL );
+	static PLuaSession* GetSession( const char* pSessionName, std::ostrstream* pStream =NULL );
 	static PLuaSession* GetOrCreateSession( int pSecurityLevel, const char* pSessionName, std::ostrstream* pStream =NULL );
 
 	// use for derivated class
