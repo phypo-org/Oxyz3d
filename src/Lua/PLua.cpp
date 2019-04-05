@@ -3,21 +3,25 @@
 #include <condition_variable>
 
 
+#define lua_open()  luaL_newstate()
+
+// for multitreading
+//  #define LOCK std::unique_lock<std::mutex> lLock( sContainerLuaSessionsMutex );
+#define LOCK
+
+
 namespace PLua{
 
 
-  PLuaSession::ContainerSessionLua PLuaSession::sContainerLuaSessions ;//= NULL;
-  std::mutex                       PLuaSession::sContainerLuaSessionsMutex;// = NULL;
+  PLuaSession::ContainerSessionLua PLuaSession::sContainerLuaSessions ;//= nullptr;
+  std::mutex                       PLuaSession::sContainerLuaSessionsMutex;// = nullptr;
 	
-  PLuaSession* PLuaSession::sPLuaSessionPrototype=NULL;
+  PLuaSession* PLuaSession::sPLuaSessionPrototype=nullptr;
 
- 
-#define PCOUT std::cout
- 
   //*************************************************
   // CLibraryRegistry
   /*
-  PLuaSession::ContainerCLibraryRegister *PLuaSession::sContainerCLibraryRegister = NULL;
+  PLuaSession::ContainerCLibraryRegister *PLuaSession::sContainerCLibraryRegister = nullptr;
 	
   unsigned long HashAssocCLibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A )
   {
@@ -34,7 +38,7 @@ namespace PLua{
   //------------------------------------------------
 
   bool 
-  PLuaSession::RegisterCLibrary( std::string& pLibraryName, CLibraryRegisterFunction pFtn )
+  PLuaSession::RegisterCLibrary( const std::string& pLibraryName, CLibraryRegisterFunction pFtn )
   {
     Init();
     sContainerCLibraryRegister.insert( { pLibraryName,  new CLibraryRegisterFunctionStruct( pFtn)} );
@@ -72,10 +76,10 @@ namespace PLua{
   PLuaSession::Init()
   {
     /*
-    if( sContainerLuaSessionsMutex == NULL && sContainerLuaSessions == NULL )
+    if( sContainerLuaSessionsMutex == nullptr && sContainerLuaSessions == nullptr )
       {
 	sContainerLuaSessionsMutex = new std::mutex();
-	std::unique_lock<std::mutex> lLock(*sContainerLuaSessionsMutex);
+	LOCK;
 	PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
 	sContainerLuaSessions = new ContainerSessionLua( HashAssoc, CmpAssoc );
 
@@ -86,22 +90,22 @@ namespace PLua{
       } 
     */
     return false; 
-  } 
+  }
   //------------------------------------------------
   //------------------------------------------------
   //------------------------------------------------
   bool 
-  PLuaSession::registerFunction( std::string& pLibName, std::string& pName, CLibraryFonction pFtn, int pSecurityLevel  )
+  PLuaSession::registerFunction( const std::string& iLibName, const std::string& iName, CLibraryFonction iFtn )
   {
-    PCOUT << "registerFunction " << pLibName << " "<<  pName;
+    PCOUT << "registerFunction " << iLibName << " "<<  iName;
 
 	
-    std::string pStr( pLibName );
-    pStr += '_';
-    pStr += pName;
+    std::string lStr( iLibName );
+    lStr += '_';
+    lStr += iName;
 	
-    lua_register( cLuaState, pStr.get(),  pFtn );
-    cVectRegisterFtn.add( pStr.give() );
+    lua_register( cLuaState, lStr.c_str(),  iFtn );
+    cVectRegisterFtn.insert( { lStr, iFtn } );
 
     return true;
   }
@@ -109,7 +113,7 @@ namespace PLua{
   void 
   PLuaSession::registerInternals()
   {	
-    lua_pushlightuserdata( cLuaState, (void *)sContainerLuaSessions);  /* push class address */
+    lua_pushlightuserdata( cLuaState, (void *)&sContainerLuaSessions);  /* push class address */
     lua_pushlightuserdata( cLuaState, this );
     lua_settable( cLuaState , LUA_REGISTRYINDEX);
 
@@ -132,21 +136,18 @@ namespace PLua{
   // Only for prototype
 
   PLuaSession::PLuaSession()
-    :cNameSession( "Prototype" ),
-     cLuaState( NULL),
-     cCurrentStream(NULL),
-     cSecurityLevel( 0 ),
-     cVectRegisterFtn( NULL, NULL, 0 )
+    :cNameSession( "Prototype")
+    ,cLuaState( nullptr)
+    ,cCurrentStream(nullptr)
   {
-    OS_TRACE( "PLuaSession::PLuaSession 1 Prototype "  );
+    OS_TRACE( "PLuaSession::PLuaSession 1 Prototype " );
   }
+
   //------------------------------------------------
-  PLuaSession::PLuaSession( int pSecurityLevel, std::ostrstream* pStream )
-    :cNameSession( "Temporary" ),
-     cLuaState( NULL),
-     cCurrentStream(pStream),
-     cSecurityLevel( pSecurityLevel ),
-     cVectRegisterFtn( CmpStrRegisterFtn, CmpStrRegisterFtn, 32 )
+  PLuaSession::PLuaSession( std::ostream* pStream )
+    :cNameSession( "Temporary" )
+    ,cLuaState( nullptr)
+    ,cCurrentStream(pStream)
   {
     OS_TRACE( "PLuaSession::PLuaSession 2" );
 
@@ -159,12 +160,11 @@ namespace PLua{
     registerExternals();
   }
   //------------------------------------------------
-  PLuaSession::PLuaSession( int pSecurityLevel, const char* pNameSession,std::ostrstream* pStream  )
-    :cNameSession( pNameSession ),
-     cLuaState( NULL),
-     cCurrentStream(pStream),
-     cSecurityLevel( pSecurityLevel ),
-     cVectRegisterFtn( CmpStrRegisterFtn, CmpStrRegisterFtn, 32 )
+  PLuaSession::PLuaSession( const std::string& pNameSession,
+			    std::ostream* pStream  )
+    :cNameSession( pNameSession )
+    ,cLuaState( nullptr)
+    ,cCurrentStream(pStream)
   {
     OS_TRACE( "PLuaSession::PLuaSession 3" );
 
@@ -179,8 +179,9 @@ namespace PLua{
 
 
     { //  LOCK
-      PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-      sContainerLuaSessions->add( cNameSession.get(), this );
+	LOCK;
+      std::unique_lock<std::mutex> lLock( sContainerLuaSessionsMutex );
+      sContainerLuaSessions.insert( {cNameSession, this} );
     } //  UNLOCK
   }
   //------------------------------------------------
@@ -197,7 +198,7 @@ namespace PLua{
     if(cLuaState ) 
       lua_close( cLuaState );
 
-    cLuaState = NULL;
+    cLuaState = nullptr;
   }
   //------------------------------------------------
   void 
@@ -205,71 +206,67 @@ namespace PLua{
   {
     Init();
 
-    PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-    sContainerLuaSessions->add( pSession->cNameSession.get(), pSession );
+	LOCK;
+    std::unique_lock<std::mutex> lLock( sContainerLuaSessionsMutex );
+    sContainerLuaSessions.insert( { pSession->cNameSession, pSession} );
   }
   //------------------------------------------------
   bool 
-  PLuaSession::RemoveSession( PLuaSession* pSession )
+  PLuaSession::RemoveSession( PLuaSession* iSession )
   {
-    if( sContainerLuaSessions )
       {
-	PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-	return sContainerLuaSessions->removeType( pSession->cNameSession.get() );
+	LOCK;
+	return sContainerLuaSessions.erase( iSession->cNameSession) !=0;
       }
     return false;
   }
   //------------------------------------------------
   bool 
-  PLuaSession::RemoveSession( const char* pSessionName )
+  PLuaSession::RemoveSession( std::string& iSessionName )
   {
-    if( sContainerLuaSessions )
       {
-	PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-	return sContainerLuaSessions->removeType( pSessionName );
+	LOCK;
+	return sContainerLuaSessions.erase( iSessionName  );
       }
     return false;
   }
   //------------------------------------------------
   PLuaSession* 
-  PLuaSession::GetSession(  int pSecurityLevel, const char* pSessionName, std::ostrstream* pStream )
-  {
-    if( sContainerLuaSessions )
-      {
-	PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-
-	PLuaSession* lSession = NULL;
-
-	if( sContainerLuaSessions->get( pSessionName, lSession ) )
-	  { 
-	    if( pStream != lSession->cCurrentStream && pStream != NULL)
-	      lSession->cCurrentStream = pStream;
-	    return lSession ;			
-	  }
-      } 
-    return NULL;
+  PLuaSession::GetSession( const std::string& iSessionName, std::ostream* iStream )
+  {    
+    PLuaSession* lSession = nullptr;
+    
+    try {
+      LOCK;
+      
+      lSession = sContainerLuaSessions.at( iSessionName );
+      if( iStream != lSession->cCurrentStream && iStream != nullptr)
+	lSession->cCurrentStream = iStream;	  
+      return lSession;
+    }catch( ... )
+      { ;}	    	  
+    
+    return nullptr;
   }
   //------------------------------------------------
   PLuaSession* 
-  PLuaSession::getNewPrototypeSession( int pSecurityLevel, const char* pNameSession, std::ostrstream* pStream )
+  PLuaSession::getNewPrototypeSession( const std::string& iSessionName, std::ostream* iStream )
   {
-    return new PLuaSession( pSecurityLevel, pNameSession, pStream );
+    return new PLuaSession( iSessionName, iStream );
   }
   //------------------------------------------------
-
+  
   PLuaSession*  
-  PLuaSession::GetOrCreateSession( int pSecurityLevel, const char* pSessionName, std::ostrstream* pStream )
+  PLuaSession::GetOrCreateSession( const std::string& iSessionName, std::ostream* iStream )
   {
-    if( pSessionName == NULL )
-      THROW_OS_ERROR( "PLuaSession::GetOrCreateSession", "SessionNamestream is null", ERR_GRAV_0, LOG_INTERNE, ERR_STREAM_NULL );
-
-    PLuaSession* lSession = NULL;
-    if( (lSession=GetSession( pSecurityLevel, pSessionName ) ) == NULL)
+    PLuaSession* lSession = nullptr;
+    
+    if( (lSession=GetSession(iSessionName, iStream ) ) == nullptr)
       {
-	if( sPLuaSessionPrototype != NULL )
-	  lSession = sPLuaSessionPrototype->getNewPrototypeSession( pSecurityLevel, pSessionName, pStream );
+	if( sPLuaSessionPrototype != nullptr )
+	  lSession = sPLuaSessionPrototype->getNewPrototypeSession(iSessionName, iStream );
 	else
-	  lSession = new PLuaSession( pSecurityLevel, pSessionName, pStream );
+	  lSession = new PLuaSession(  iSessionName, iStream );
 
 	AddSession( lSession );
       } 
@@ -279,15 +276,18 @@ namespace PLua{
   //------------------------------------------------
   //------------------------------------------------
   bool
-  PLuaSession::loadCLibrary( const char* pCLibraryName )
+  PLuaSession::loadCLibrary( const std::string & pCLibraryName )
   {
-    CLibraryRegisterFunctionStruct* lRegistryFtn = NULL;
-	
-    if( sContainerCLibraryRegister->get( pCLibraryName, lRegistryFtn ) )
-      {
-	if(	(*lRegistryFtn->cFtnRegist)( pCLibraryName, *this ) )
-	  return true;
-      }
+    CLibraryRegisterFunctionStruct* lRegistryFtn = nullptr;
+
+    try{
+      lRegistryFtn = sContainerCLibraryRegister.at( pCLibraryName );
+      
+      if( (*lRegistryFtn->cFtnRegist)( pCLibraryName.c_str(), *this ) )
+	return true;
+      
+    } catch(...){;}
+  
     return false;
   }
   //------------------------------------------------
@@ -318,187 +318,22 @@ namespace PLua{
   //------------------------------------------------
   //------------------------------------------------
   //------------------------------------------------
-  bool 
-  PLuaSession::CmdLua( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel  )
+
+  std::ostream&  
+  PLuaSession::out() throw( std::exception )
   {
-    static long lNbSession = 0;
-
-    //	pOs <<"CmdLua"  << std::endl;
-    OS_TRACE( "Cmd");
-    PCOUT << "Cmd" << std::endl ;
-	
-    const char* lCode     = pOs.getInputBuffer();
-    if( lCode == NULL || strlen( lCode )<=0)
-      {
-	pOs << "No lua code found !" << std::endl;
-      }
-    //	pOs <<"Code:"  << lCode << std::endl;
-    OS_TRACE( "Code:"<< lCode);
-    PCOUT << "Code:" << lCode << std::endl ;
-	
-	
-    PLuaSession lLuaSession( pSecLevel, &pOs); // session temporaire a la duré de l'appel
- 	
-    pOs << lLuaSession.doCode( lCode ) << std::endl;
-	
-    return TRUE;	
-  }
-  //------------------------------------------------
-  bool 
-  PLuaSession::CmdLuaFile( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel  )
-  {
-    static long lNbSession = 0;
-
-
-    //	pOs <<"CmdLua"  << std::endl;
-    OS_TRACE( "Cmd");
-    PCOUT << "Cmd" << std::endl ;
-	
-    const char* lFilename    = pOs.getInputBuffer();
-    if( lFilename == NULL || strlen( lFilename )<=0)
-      {
-	pOs << "No lua filename found !" << std::endl;
-      }
-    pOs <<"File:"  << lFilename << std::endl;
-    OS_TRACE( "File:"<< lFilename );
-    PCOUT << "File:" << lFilename << std::endl ;
-	
-    PLuaSession lLuaSession( pSecLevel, &pOs); // session temporaire a la duré de l'appel
-	
-    pOs << lLuaSession.doFile( lFilename ) << std::endl;
-	
-    return TRUE;	
-  }
-  //------------------------------------------------
-  bool 
-  PLuaSession::CmdLuaSession( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel  )
-  {
-    //	pOs <<"CmdLuaSession"  << std::endl;
-    OS_TRACE( "CmdLuaSession");
-    PCOUT << "CmdLuaSession" << std::endl ;
-	
-    const char* lSession  = pOs.getString();
-    if( lSession == NULL || strlen( lSession )<=0 )
-      {
-	pOs << "No lua session !" << std::endl;
-	return TRUE;	
-      }
-    //	pOs <<"Session:"  << lSession << std::endl;
-    OS_TRACE( "Session:"<< lSession);
-    PCOUT << "Session:" << lSession << std::endl ;
-	
-    const char* lCode     = pOs.getInputBuffer();
-    if( lCode == NULL || strlen( lCode )<=0)
-      {
-	pOs << "No lua code found !" << std::endl;
-      }
-    //	pOs <<"Code:"  << lCode << std::endl;
-    OS_TRACE( "Code:"<< lCode);
-    PCOUT << "Code:" << lCode << std::endl ;
-	
-	
-    PLuaSession * lLuaSession = GetOrCreateSession( pSecLevel, lSession, &pOs  );
-
-    pOs << lLuaSession->doCode( lCode ) << std::endl;
-	
-    return TRUE;	
-  }
-  //------------------------------------------------
-  bool 
-  PLuaSession::CmdLuaSessionFile( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel  )
-  {
-    //	pOs <<"CmdLuaSessionFile"  << std::endl;
-    OS_TRACE( "CmdLuaSessionFile");
-    PCOUT << "CmdLuaSessionFile" << std::endl ;
-	
-    const char* lSession  = pOs.getString();
-    if( lSession == NULL || strlen( lSession )<=0 )
-      {
-	pOs << "No lua session !" << std::endl;
-	return TRUE;	
-      }
-    //	pOs <<"Session:"  << lSession << std::endl;
-    OS_TRACE( "Session:"<< lSession);
-    PCOUT << "Session:" << lSession << std::endl ;
-	
-    const char* lCode     = pOs.getInputBuffer();
-    if( lCode == NULL || strlen( lCode )<=0)
-      {
-	pOs << "No lua filename found !" << std::endl;
-      }
-    //	pOs <<"File:"  << lCode << std::endl;
-    OS_TRACE( "File:"<< lCode);
-    PCOUT << "File:" << lCode << std::endl ;
-	
-    PLuaSession * lLuaSession = GetOrCreateSession( pSecLevel, lSession, &pOs  );
-
-    pOs << lLuaSession->doFile( lCode ) << std::endl;
-	
-    return TRUE;	
-  }
-  //------------------------------------------------
-  //------------------------------------------------
-  //------------------------------------------------
-  bool 
-  PLuaSession::CmdLuaSessionClose( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel )
-  {
-    //	pOs << "CmdLuaSessionClose"  << std::endl;
-    OS_TRACE( "CmdLuaSessionClose");
-    PCOUT << "CmdLuaSessionClose" << std::endl ;
-	
-    const char* lSession  = pOs.getString();
-    if( lSession == NULL || strlen( lSession )<=0 )
-      {
-	pOs << "No lua session !" << std::endl;
-	return TRUE;	
-      }
-
-    pOs <<"Session:"  << lSession << std::endl;
-    OS_TRACE( "Session:"<< lSession);
-    PCOUT << "Session:" << lSession << std::endl ;
-
-    if( RemoveSession( lSession ) )
-      pOs << lSession << " removed." << std::endl ;
-    else
-      pOs << lSession << " not found."  << std::endl;
-
-
-    return TRUE;	
-  }
-  //------------------------------------------------
-  bool 
-  PLuaSession::CmdLuaSessionList( ExtendIOStream& pOs, bool pLast,  CmdPList* pCmdPList, int pSecLevel )
-  {
-    PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-
-    PPTools::PAssocTypeIter<const char*, PLuaSession*> lIter( *sContainerLuaSessions );
-    while( lIter.hasNext() )
-      {
-	PPTools::PAssocType<const char*, PLuaSession*>::PAssocAtom *A = lIter.next();
-	pOs << A->cData->cNameSession << std::endl;
-      }
-
-    return TRUE;
-  }
-  //------------------------------------------------
-  //------------------------------------------------
-  //------------------------------------------------
-
-  std::ostrstream&  
-  PLuaSession::out() throw( IM_Error )
-  {
-    if( cCurrentStream == NULL )
-      THROW_OS_ERROR( "PLuaSession::out", "stream is null", ERR_GRAV_0, LOG_INTERNE, ERR_STREAM_NULL );
+    if( cCurrentStream == nullptr )
+      THROW_OS_ERROR( "PLuaSession::out", "stream is null" );
 
     return *cCurrentStream;
   }
   //------------------------------------------------
 
-  std::ostrstream&  
-  PLuaSession::err() throw( IM_Error )
+  std::ostream&  
+  PLuaSession::err() throw( std::exception )
   {
-    if( cCurrentStream == NULL )
-      THROW_OS_ERROR( "PLuaSession::err", "stream is null", ERR_GRAV_0, LOG_INTERNE, ERR_STREAM_NULL );
+    if( cCurrentStream == nullptr )
+      THROW_OS_ERROR( "PLuaSession::err", "stream is null" );
 
     return *cCurrentStream;
   }
@@ -507,14 +342,14 @@ namespace PLua{
   PLuaSession& 
   PLuaSession::lua_GetSession(lua_State* pLua)
   {
-    lua_pushlightuserdata( pLua, (void *)sContainerLuaSessions);  /* push class address */
+    lua_pushlightuserdata( pLua, (void *)&sContainerLuaSessions);  /* push class address */
     lua_gettable( pLua, LUA_REGISTRYINDEX);  /* retrieve value */
     void* lPtr  = lua_touserdata(pLua, -1);  /* convert to number */
 
     std::cout <<">>>>>>>>>>>>> LUA_GetSession: "<<  lPtr<< std::endl;
 
-    if( lPtr == NULL )
-      THROW_OS_ERROR( "PLuaSession::lua_GetSession", "lua session is null", ERR_GRAV_0, LOG_INTERNE, ERR_LUA_SESSION_NULL );
+    if( lPtr == nullptr )
+      THROW_OS_ERROR( "PLuaSession::lua_GetSession", "lua session is null" );
 
 	
     return *((PLuaSession*)lPtr);
@@ -527,8 +362,9 @@ namespace PLua{
   {
     try { 
       PLuaSession& lLuaSession( PLuaSession::lua_GetSession( pLua )); 
-      std::ostrstream&  lOut( lLuaSession.PLuaSession::out()); 
-      std::ostrstream&  lErr( lLuaSession.PLuaSession::err()); 
+      std::ostream&  lOut( lLuaSession.PLuaSession::out() ); 
+      //  std::ostream&  lErr( lLuaSession.PLuaSession::err() );
+      
       int lNbParam = lua_gettop(pLua); \
 	
 	
@@ -625,18 +461,11 @@ namespace PLua{
   CLUA_OPEN_CODE( (PLuaSession::LUA_ListLibraryFonction), 0)
 
   //lOut << "Params:" << lNbParams << std::endl;
-	
-
-
-  // A TERME RENVOYER LES VALEURS DANS  UN TABLEAU LUA
-
-  PPTools::PVectorTypeIter<const char*> lIter( lLuaSession.cVectRegisterFtn );
-  while( lIter.hasNext() )
+  for( auto lPair: lLuaSession.cVectRegisterFtn )
     {
-      const char* lStr = lIter.next();
-      lOut << lStr << std::endl;
-      PCOUT << lStr << std::endl;
-      lua_pushstring( pLua, lStr );
+      lOut << lPair.first << std::endl;
+      PCOUT << lPair.first << std::endl;
+      lua_pushstring( pLua, lPair.first.c_str() );
     }
   PCOUT << lLuaSession.cVectRegisterFtn.size() << std::endl;
   return (int)lLuaSession.cVectRegisterFtn.size();
@@ -651,27 +480,19 @@ namespace PLua{
 
 
   // A TERME RENVOYER LES VALEURS DANS  UN TABLEAU LUA
-
-  PPTools::PAssocTypeIter<const char*, CLibraryRegisterFunctionStruct*> lIter( *sContainerCLibraryRegister );
-  while( lIter.hasNext() )
+  for( auto lPair: sContainerCLibraryRegister )
     {
-      ContainerCLibraryRegister::PAssocAtom *lAtom = lIter.next();
-
-      lOut << lAtom->cKey << std::endl;
-      PCOUT << lAtom->cKey << std::endl;
-      lua_pushstring( pLua, lAtom->cKey );
+      lOut << lPair.first << std::endl;
+      PCOUT << lPair.first<< std::endl;
+      lua_pushstring( pLua, lPair.first.c_str() );
     }
   PCOUT << lLuaSession.cVectRegisterFtn.size() << std::endl;
   return (int)lLuaSession.cVectRegisterFtn.size();
 
-  CLUA_CLOSE_CODE( 0 );	
+  CLUA_CLOSE_CODE( 0 );
 
+  
   //*************************************************
-
-
-
-
-
 
 }; // fin namespace PLua
  

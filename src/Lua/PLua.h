@@ -2,6 +2,7 @@
 #define __PLUA__
 
 
+#include "lua/lua.h"
 #include "lua/lua.hpp"
 
 #include <string>
@@ -11,16 +12,23 @@
 #include <sstream>
 #include <mutex>
 
-
+#include "PPExcept.h"
 
 
 struct lua_State;
 
 
  
+ 
+#define PCOUT    std::cout
+#define OS_TRACE(A)  { std::cerr << A << std::endl; }
+#define OS_ERR_MIDDLE(A)  { std::cerr << A << std::endl; }
+#define THROW_OS_ERROR( A, B ) { std::cerr << A << " : " << B <<  std::endl; throw std::exception(); }  
+
+
 namespace PLua {
 
-
+ 
   //*************************************************
 
   class PLuaSession { 
@@ -34,13 +42,14 @@ namespace PLua {
     std::string          cNameSession;
     lua_State            *cLuaState;
 
-    std::ostringstream      *cCurrentStream;
+    std::ostream         *cCurrentStream;
 
     // Only for prototype
     PLuaSession();
 
-    PLuaSession( std::ostringstream* pStream = NULL );
-    PLuaSession( const char* pNameSession, std::ostringstream* pStream =NULL );
+    PLuaSession( std::ostream* pStream = nullptr );
+    PLuaSession( const std::string& pNameSession,
+		 std::ostream* pStream =nullptr );
 
   public:
     virtual     ~PLuaSession();
@@ -49,10 +58,10 @@ namespace PLua {
 
   public:
     typedef int (*CLibraryFonction)(lua_State*); 
-    bool registerFunction( std::string& pLibName, std::string& pName, CLibraryFonction pFtn, int pSecurityLevel);
+    bool registerFunction( const std::string& pLibName, const std::string& pName, CLibraryFonction pFtn);
 
   protected:
-    virtual PLuaSession* getNewPrototypeSession(  const char* pNameSession, std::ostringstream* pStream );
+    virtual PLuaSession* getNewPrototypeSession(   const std::string& iSessionName, std::ostream* iStream );
 	
   public:
     const char* doCode( const char* pCode);
@@ -62,7 +71,7 @@ namespace PLua {
     virtual void  registerInternals();
     virtual void  registerExternals();
 
-    bool loadCLibrary( const char* pCLibraryName );
+    bool loadCLibrary( const std::string& pCLibraryName );
 	
 
 
@@ -74,12 +83,12 @@ namespace PLua {
     static 	std::mutex             sContainerLuaSessionsMutex;
 
     static void AddSession( PLuaSession* pSession );
-    static bool RemoveSession( PLuaSession* pSession );
-    static bool RemoveSession( const char* pSessionName );
+    static bool RemoveSession( PLuaSession* iSession );
+    static bool RemoveSession( std::string &iSessionName );
 
   public:
-    static PLuaSession* GetSession( const char* pSessionName, std::ostringstream* pStream =NULL );
-    static PLuaSession* GetOrCreateSession( int pSecurityLevel, const char* pSessionName, std::ostringstream* pStream =NULL );
+    static PLuaSession* GetSession( const std::string& iSessionName, std::ostream* pStream=nullptr );
+    static PLuaSession* GetOrCreateSession( const std::string& pSessionName,  std::ostream* pStream =nullptr );
 
     // use for derivated class
 
@@ -109,8 +118,8 @@ namespace PLua {
     // Fonction a utilser dans le code C++ appelé par lua 
     static PLuaSession& lua_GetSession(lua_State* pLua);
 	
-    std::ostringstream&     out() throw( std::exception );
-    std::ostringstream&     err() throw(  std::exception );
+    std::ostream&     out() throw( std::exception );
+    std::ostream&     err() throw( std::exception );
 
 	
     // Fonctions appelables dans du code lua (voir PApplication.cc pour leur nom lua)
@@ -136,7 +145,7 @@ namespace PLua {
   protected:
 
 
-    std::map<const char*, const char*> cVectRegisterFtn; // tableau des fonctions deja enregistrer
+    std::map<std::string, CLibraryFonction> cVectRegisterFtn; // tableau des fonctions deja enregistrer
 
     // la structure qui stocke les fonctions de registration
     struct CLibraryRegisterFunctionStruct{
@@ -154,7 +163,7 @@ namespace PLua {
   public:
     typedef	std::unordered_map< std::string , CLibraryRegisterFunctionStruct*> ContainerCLibraryRegister;
 
-    static bool RegisterCLibrary( std::string& pLibraryName, CLibraryRegisterFunction pFtn );
+    static bool RegisterCLibrary( const std::string& pLibraryName, CLibraryRegisterFunction pFtn );
     static ContainerCLibraryRegister sContainerCLibraryRegister;
     /*
     static bool CmdLuaCLibraryList( ExtendIOStream& pOs, bool pLas,  CmdPList* pCmdList, int pSecLevelt );
@@ -178,16 +187,17 @@ namespace PLua {
     int _NbReturn = 0;							\
     try {								\
       PLuaSession& lLuaSession( PLuaSession::lua_GetSession( pLua ));	\
-      std::ostrstream&  lOut( lLuaSession.PLuaSession::out());		\
-      std::ostrstream&  lErr( lLuaSession.PLuaSession::err());		\
+      std::ostream&  lOut( lLuaSession.PLuaSession::out());		\
+      std::ostream&  lErr( lLuaSession.PLuaSession::err());		\
       int lNbParam = lua_gettop(pLua);					\
       if( (lNbParam-1) != NBPARAM )					\
 	{								\
 	  lErr << "Bad parameters number for "  << #NAME << ": " << (lNbParam-1) << " since " << NBPARAM << std::endl; \
 	  if( std::uncaught_exception() == false )			\
-	    throw IM_Error( (#NAME), std::string("Bad parameters number"), ERR_GRAV_0, LOG_INTERNE, ERR_LUA_PARAMETERS, __FILE__, __LINE__ ); \
+	    THROW_STREAM(  (#NAME), "Bad parameters number");		\
 	  return 0;							\
-	}								\
+	}                                                               \
+      if(false)lOut <<	"just for avoid unused variable warning"; 	\
 
 
 #define CLUA_CLOSE_CODE(A)			\
