@@ -17,13 +17,14 @@ namespace PLua{
   std::mutex                       PLuaSession::sContainerLuaSessionsMutex;// = nullptr;
 	
   PLuaSession* PLuaSession::sPLuaSessionPrototype=nullptr;
-
+  PLuaSession::ContainerCLibraryRegister PLuaSession::sContainerCLibraryRegister;
+  
   //*************************************************
   // CLibraryRegistry
   /*
   PLuaSession::ContainerCLibraryRegister *PLuaSession::sContainerCLibraryRegister = nullptr;
 	
-  unsigned long HashAssocCLibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A )
+  unsigned long HashAssocibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A )
   {
     return PPTools::hash_string( A->cKey );
   }

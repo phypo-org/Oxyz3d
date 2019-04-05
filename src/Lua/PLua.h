@@ -161,7 +161,8 @@ namespace PLua {
 
 
   public:
-    typedef	std::unordered_map< std::string , CLibraryRegisterFunctionStruct*> ContainerCLibraryRegister;
+    //   typedef	std::unordered_map< std::string , CLibraryRegisterFunctionStruct*> ContainerCLibraryRegister;
+    using ContainerCLibraryRegister = std::unordered_map< std::string , CLibraryRegisterFunctionStruct*> ;
 
     static bool RegisterCLibrary( const std::string& pLibraryName, CLibraryRegisterFunction pFtn );
     static ContainerCLibraryRegister sContainerCLibraryRegister;
