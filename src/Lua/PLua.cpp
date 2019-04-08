@@ -120,12 +120,12 @@ namespace PLua{
 
     std::cout <<">>>>>>>>>>>>>>>>>>>>> this: "<<  this << std::endl;
 
-    lua_register( cLuaState, "Ors_Cprint",         LUA_PrintParametersToStream  );
-    lua_register( cLuaState, "Ors_Cprintln",       LUA_PrintParametersToStreamLn  );
-    lua_register( cLuaState, "Ors_CloadLib",       LUA_LoadCLibrary  );
-    lua_register( cLuaState, "Ors_ClistLibFtn",    LUA_ListLibraryFonction );
-    lua_register( cLuaState, "Ors_ClistLib",       LUA_ListLibrary );
-    lua_register( cLuaState, "Ors_CLoadFile",      LUA_LoadFile );
+    lua_register( cLuaState, "PLC_Print",         LUA_PrintParametersToStream  );
+    lua_register( cLuaState, "PLC_Println",       LUA_PrintParametersToStreamLn  );
+    lua_register( cLuaState, "PLC_LoadLib",       LUA_LoadCLibrary  );
+    lua_register( cLuaState, "PLC_ListLibFtn",    LUA_ListLibraryFonction );
+    lua_register( cLuaState, "PLC_ListLib",       LUA_ListLibrary );
+    lua_register( cLuaState, "PLC_LoadFile",      LUA_LoadFile );
   }
   //------------------------------------------------
   void 
@@ -478,7 +478,6 @@ namespace PLua{
 
   //lOut << "Params:" << lNbParams << std::endl;
 	
-
 
   // A TERME RENVOYER LES VALEURS DANS  UN TABLEAU LUA
   for( auto lPair: sContainerCLibraryRegister )

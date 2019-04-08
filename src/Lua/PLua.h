@@ -40,13 +40,11 @@ namespace PLua {
 
   protected:
     std::string          cNameSession;
-    lua_State            *cLuaState;
-
+    lua_State            *cLuaState;       // the lua 
     std::ostream         *cCurrentStream;
 
     // Only for prototype
     PLuaSession();
-
     PLuaSession( std::ostream* pStream = nullptr );
     PLuaSession( const std::string& pNameSession,
 		 std::ostream* pStream =nullptr );
@@ -64,8 +62,8 @@ namespace PLua {
     virtual PLuaSession* getNewPrototypeSession(   const std::string& iSessionName, std::ostream* iStream );
 	
   public:
-    const char* doCode( const char* pCode);
-    const char* doFile( const char* pFile);
+    const char* doCode( const char* pCode);  // run lua code
+    const char* doFile( const char* pFile);  // run lua file code
     void  setCurrentStream( std::ostringstream* pStream ) { cCurrentStream = pStream; }
 
     virtual void  registerInternals();
@@ -79,12 +77,12 @@ namespace PLua {
 
   private:
 
-    static 	ContainerSessionLua    sContainerLuaSessions;
+    static 	ContainerSessionLua    sContainerLuaSessions;       // all the open lua session
     static 	std::mutex             sContainerLuaSessionsMutex;
 
     static void AddSession( PLuaSession* pSession );
-    static bool RemoveSession( PLuaSession* iSession );
-    static bool RemoveSession( std::string &iSessionName );
+    static bool RemoveSession( PLuaSession* iSession );             // remove session by pointer
+    static bool RemoveSession( std::string &iSessionName );         // remove session by name
 
   public:
     static PLuaSession* GetSession( const std::string& iSessionName, std::ostream* pStream=nullptr );
@@ -133,11 +131,7 @@ namespace PLua {
     //	static int LUA_GetServerTimeUTC70(lua_State* pLua);
 
 
-
-
-    // CLibraryRegistry
-
-
+    // For function registry 
   public:
     // definition du type des fonctions d'enregistrement
     typedef bool (*CLibraryRegisterFunction)(const char*, PLuaSession&); 
@@ -151,8 +145,7 @@ namespace PLua {
     struct CLibraryRegisterFunctionStruct{
 
       CLibraryRegisterFunction cFtnRegist;
-      //		int cSecurityLevel;
-
+ 
       CLibraryRegisterFunctionStruct( CLibraryRegisterFunction pFtnRegist  )
 	:cFtnRegist( pFtnRegist )
       {
@@ -169,16 +162,9 @@ namespace PLua {
     /*
     static bool CmdLuaCLibraryList( ExtendIOStream& pOs, bool pLas,  CmdPList* pCmdList, int pSecLevelt );
     */
-
-
-    // CLibraryRegistry
-
-
   };
   //*************************************************
-	
-	
-
+	       
 }; // fin namespace PLua
 
 
