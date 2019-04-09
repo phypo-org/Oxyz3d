@@ -1,9 +1,11 @@
 #ifndef __PLUA__
 #define __PLUA__
 
-
-#include "lua/lua.h"
-#include "lua/lua.hpp"
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
 
 #include <string>
 #include <unordered_map>
