@@ -2,7 +2,7 @@ include ${FLTK_PATH}/makeinclude
 
 TARGET=Oxyz3d
 
-SRCS= main.cpp Application.cpp Win3d.cpp Canvas3d.cpp Canvas3dMenu.cpp  Service.cpp  DialogPrimitiv.cpp DialogPerspectiv.cpp MySlider.cpp WinObjTree.cpp  ConsoleSystem.cpp DialogRevol.cpp  DialogSubDiv.cpp
+SRCS= main.cpp Application.cpp Win3d.cpp Canvas3d.cpp Canvas3dMenu.cpp  Service.cpp  DialogPrimitiv.cpp DialogPerspectiv.cpp MySlider.cpp WinObjTree.cpp  DialogRevol.cpp  DialogSubDiv.cpp  ConsoleLua.cpp ConsoleSystem.cpp
 
 
 OBJS =  $(SRCS:.cpp=.o)
@@ -13,7 +13,7 @@ HDRS = $(SRCS:.cpp=.h)
 CFLAGS = -g -std=c++17 -O3   -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
 
 # CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6
-CINCLUDE=-I. -IShape -DLINUX 
+CINCLUDE=-I. -IShape -ILua -DLINUX 
 CC=/usr/bin/clang
 CC=g++
 
@@ -23,14 +23,14 @@ XXXXLIBS=   Shape/*.o -L${FLTK_PATH}/lib  -lfltk  -LGLU -lGL   -lstdc++ -lpthrea
 
 #  LIBS=  Shape/*.o -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -L/usr/lib/python3.6/onfig-3.6m-x86_64-linux-gnu -lpython3.6m -ljpeg -lpng  -lXinerama -lpthread -ldl -lm
 
-LIBS=  Shape/*.o -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -lpython3.6m -ljpeg -lpng  -lXinerama -lpthread -ldl -lm  
+LIBS=  Shape/*.o Lua/*.o -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -lpython3.6m -ljpeg -lpng  -lXinerama -llua -lpthread -ldl -lm  
 
 
 
 # ---------------------------------------------------
 
 
-all::			start; make -C Shape  ;
+all::			start; make -C Shape  ; make -C Lua
 
 all::		$(OBJS)
 
@@ -45,7 +45,7 @@ clean::
 		rm     -f *.o    *.a  core mem.err $(TARGET)
 
 cleanall:
-		cd Shape; make clean ;cd ..;\
+		cd Shape; make clean ;;cd Lua; make clean; cd ..;\
 		rm     -f *.o    *.a  core $(TARGET)
 
 

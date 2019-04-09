@@ -321,7 +321,7 @@ namespace PLua{
   //------------------------------------------------
 
   std::ostream&  
-  PLuaSession::out() throw( std::exception )
+  PLuaSession::out()
   {
     if( cCurrentStream == nullptr )
       THROW_OS_ERROR( "PLuaSession::out", "stream is null" );
@@ -331,7 +331,7 @@ namespace PLua{
   //------------------------------------------------
 
   std::ostream&  
-  PLuaSession::err() throw( std::exception )
+  PLuaSession::err()
   {
     if( cCurrentStream == nullptr )
       THROW_OS_ERROR( "PLuaSession::err", "stream is null" );

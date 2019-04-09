@@ -61,6 +61,7 @@ namespace M3d {
 #define StrMenu_ObjectTree      "Objects Tree"
 #define StrMenu_ConsolPython    "Console python"
 #define StrMenu_ConsolSystem    "Console system"
+#define StrMenu_ConsolLua       "Console lua"
 
 
 #define StrMenu_UnselectAll     "Unselect all"
@@ -430,6 +431,7 @@ namespace M3d {
 		cMenubar.add("&Win/" StrMenu_ObjectTree, "^t", MyMenuCallback, this);
 		//		cMenubar.add("&Win/" StrMenu_ConsolPython, nullptr, MyMenuCallback, this);
 		cMenubar.add("&Win/" StrMenu_ConsolSystem, nullptr, MyMenuCallback, this);
+		cMenubar.add("&Win/" StrMenu_ConsolLua, nullptr, MyMenuCallback, this);
 
 		cMenubar.add("&Debug/" StrMenu_Demo1, nullptr, MyMenuCallback, this);
 		cMenubar.add("&Debug/" StrMenu_Demo2, nullptr, MyMenuCallback, this);
@@ -784,6 +786,10 @@ namespace M3d {
 					else if( strcmp( m->label(), StrMenu_ConsolSystem ) == 0)
 						{
 							CallConsoleSystem( );
+						}
+					else if( strcmp( m->label(), StrMenu_ConsolLua ) == 0)
+						{
+							CallConsoleLua();
 						}
 					else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 						{

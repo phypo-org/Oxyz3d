@@ -116,8 +116,8 @@ namespace PLua {
     // Fonction a utilser dans le code C++ appelé par lua 
     static PLuaSession& lua_GetSession(lua_State* pLua);
 	
-    std::ostream&     out() throw( std::exception );
-    std::ostream&     err() throw( std::exception );
+    std::ostream&     out() ;
+    std::ostream&     err() ;
 
 	
     // Fonctions appelables dans du code lua (voir PApplication.cc pour leur nom lua)
@@ -180,8 +180,6 @@ namespace PLua {
       if( (lNbParam-1) != NBPARAM )					\
 	{								\
 	  lErr << "Bad parameters number for "  << #NAME << ": " << (lNbParam-1) << " since " << NBPARAM << std::endl; \
-	  if( std::uncaught_exception() == false )			\
-	    THROW_STREAM(  (#NAME), "Bad parameters number");		\
 	  return 0;							\
 	}                                                               \
       if(false)lOut <<	"just for avoid unused variable warning"; 	\
