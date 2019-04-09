@@ -2,7 +2,7 @@ include ${FLTK_PATH}/makeinclude
 
 TARGET=Oxyz3d
 
-SRCS= main.cpp Application.cpp Win3d.cpp Canvas3d.cpp Canvas3dMenu.cpp  Service.cpp  DialogPrimitiv.cpp DialogPerspectiv.cpp MySlider.cpp WinObjTree.cpp  DialogRevol.cpp  DialogSubDiv.cpp  ConsoleLua.cpp ConsoleSystem.cpp
+SRCS= main.cpp Application.cpp Win3d.cpp Canvas3d.cpp Canvas3dMenu.cpp  Service.cpp  DialogPrimitiv.cpp DialogPerspectiv.cpp MySlider.cpp WinObjTree.cpp  DialogRevol.cpp  DialogSubDiv.cpp  ConsoleLua.cpp ConsoleSystem.cpp ShapeLua.cpp
 
 
 OBJS =  $(SRCS:.cpp=.o)

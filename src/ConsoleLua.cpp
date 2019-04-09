@@ -4,7 +4,8 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Text_Editor.H>
 
-#include <Lua/PLua.h>
+#include "Lua/PLua.h"
+#include "ShapeLua.h"
 
 using namespace std;
 using namespace PLua;
@@ -32,10 +33,10 @@ class ConsoleLua : public Fl_Text_Editor {
   wchar_t *lProgram=nullptr;
   
   
-  PLuaSession* cLua=nullptr;
+	M3d::ShapeLua* cLua=nullptr;
   
 public:
-  ConsoleLua(int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
+  ConsoleLua(PP3d::DataBase&iDataBase,int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
   {
     buff = new Fl_Text_Buffer();
     buffer(buff);
@@ -43,9 +44,16 @@ public:
     textsize(12);
     cmd[0] = 0;
 
-    cLua=  PLuaSession::GetOrCreateSession( "Console", &cout );
-    cLua->registerFunction( "TOTO", "Test1", LUA_Test1  );  
+    cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Console", &cout );
+		cLua->setDatabase( iDataBase );
+    cLua->registerFunction( "TOTO", "Test1", LUA_Test1  );
+		
+		cLua->doCode( "PLC_Println(\"Hello it's C++\" )");
+		cLua->doCode( "PLC_ListLib()");
+		cLua->doCode( "PLC_ListLibFtn()" );
     cLua->doCode( "print(\"Hello it's Lua\")" );
+		cLua->doCode("TOTO_Test1(\"Coucou\")");
+		cLua->doCode("Shape_AddPoint(2,4,6)");
   }
   //---------------------------------------------------
   ~ConsoleLua()
@@ -99,7 +107,7 @@ public:
       // Enter key? Execute the command, clear command buffer
       if ( key == FL_Enter ) {
 	// Execute your commands here
-	strcat(cmd, " 2>&1");                // stderr + stdout
+	strcat(cmd, "");                // stderr + stdout
 	RunCommand(cmd);
 	cmd[0] = 0;
 	append("\n$ ");
@@ -127,14 +135,14 @@ public:
 //--------------------------------------------------
 //--------------------------------------------------
 //--------------------------------------------------
-extern Fl_Double_Window* CallConsoleLua()
+extern Fl_Double_Window* CallConsoleLua(PP3d::DataBase&iDataBase)
 {	
   static Fl_Double_Window* lWin = nullptr;
 
   if( lWin == nullptr )
     {
       lWin =new Fl_Double_Window(600, 400, "Lua");
-      ConsoleLua* lConsol  = new  ConsoleLua(10,10, lWin->w()-20, lWin->h()-20);
+      ConsoleLua* lConsol  = new  ConsoleLua(iDataBase, 10,10, lWin->w()-20, lWin->h()-20);
       lConsol->append(">");
       lWin->end();
 			

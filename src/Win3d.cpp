@@ -789,7 +789,7 @@ namespace M3d {
 						}
 					else if( strcmp( m->label(), StrMenu_ConsolLua ) == 0)
 						{
-							CallConsoleLua();
+							CallConsoleLua(lCanvas->getDataBase() );
 						}
 					else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 						{

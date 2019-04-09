@@ -295,6 +295,7 @@ namespace PLua{
   const char*
   PLuaSession::doCode( const char* pCode)
   {
+		std::cout <<"docode <" << pCode << ">" << std::endl;
     //	if (luaL_dofile( cLuaState, pCode)!=0)
     if (luaL_dostring( cLuaState, pCode)!=0)
       {
