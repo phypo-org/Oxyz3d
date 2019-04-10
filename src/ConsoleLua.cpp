@@ -26,7 +26,8 @@ CLUA_CLOSE_CODE(1);
 
 //*********************************************
 class ConsoleLua : public Fl_Text_Editor {
-
+	
+	
   Fl_Text_Buffer *buff;
   char cmd[1024];
 	
@@ -38,7 +39,9 @@ class ConsoleLua : public Fl_Text_Editor {
 public:
   ConsoleLua(PP3d::DataBase&iDataBase,int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
   {
-    buff = new Fl_Text_Buffer();
+		M3d::ShapeLua::SetPrototype();
+		
+		buff = new Fl_Text_Buffer();
     buffer(buff);
     textfont(FL_COURIER);
     textsize(12);
@@ -75,22 +78,10 @@ public:
   void RunCommand(const char *command)
   {
     append("\n");
-    fprintf(stderr, "EXECUTING: '%s'\n", command);
+    fprintf(stderr, "RunCommand: '%s'\n", command);
 
     cLua->doCode( command );
 		
-    FILE *fp = popen(command, "r");
-    if ( fp == 0 ) {
-      append("Failed to execute: '");
-      append(command);
-      append("'\n");
-    } else {
-      char s[1024];
-      while ( fgets(s, sizeof(s)-1, fp) ) {
-	append(s);
-      }
-      pclose(fp);
-    }
   }
   //---------------------------------------------------
   // Handle events in the Fl_Text_Editor

@@ -47,7 +47,7 @@ namespace PLua {
 
     // Only for prototype
     PLuaSession();
-    PLuaSession( std::ostream* pStream = nullptr );
+    PLuaSession( std::ostream* pStream );
     PLuaSession( const std::string& pNameSession,
 		 std::ostream* pStream =nullptr );
 
@@ -173,6 +173,7 @@ namespace PLua {
 #define CLUA_OPEN_CODE( NAME, NBPARAM)					\
   int NAME( lua_State* pLua )						\
   {									\
+	std::cout << "CLUA_OPEN_CODE " << #NAME <<":"<< NBPARAM << std::endl;	\
     int _NbReturn = 0;							\
     try {								\
       PLuaSession& lLuaSession( PLuaSession::lua_GetSession( pLua ));	\
@@ -188,9 +189,13 @@ namespace PLua {
 
 
 #define CLUA_CLOSE_CODE(A)			\
-  } catch(...) {}				\
+  } catch(...) { \
+std::cout << "CLUA_OPEN_CODE " << "CATCH THROW" << std::endl; \
+}				\
     if( _NbReturn == 0 )			\
+			{ \
       _NbReturn = A;				\
+    } \
     return _NbReturn;				\
     }						\
 

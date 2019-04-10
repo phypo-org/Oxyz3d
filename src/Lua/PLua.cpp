@@ -104,6 +104,9 @@ namespace PLua{
     std::string lStr( iLibName );
     lStr += '_';
     lStr += iName;
+		
+		PCOUT << "registerFunction " << iLibName << " "<<  iName << "->" << lStr << std::endl;
+
 	
     lua_register( cLuaState, lStr.c_str(),  iFtn );
     cVectRegisterFtn.insert( { lStr, iFtn } );
@@ -266,8 +269,8 @@ namespace PLua{
       {
 	if( sPLuaSessionPrototype != nullptr )
 	  lSession = sPLuaSessionPrototype->getNewPrototypeSession(iSessionName, iStream );
-	else
-	  lSession = new PLuaSession(  iSessionName, iStream );
+	 else
+		 lSession = new PLuaSession(  iSessionName, iStream );
 
 	AddSession( lSession );
       } 
@@ -297,10 +300,16 @@ namespace PLua{
   {
 		std::cout <<"docode <" << pCode << ">" << std::endl;
     //	if (luaL_dofile( cLuaState, pCode)!=0)
-    if (luaL_dostring( cLuaState, pCode)!=0)
+		int lRet =luaL_dostring( cLuaState, pCode);
+    if (lRet!=0)
       {
+				std::cerr << "ERROR Lua::doCode - luaL_dostring "
+									<< lRet << std::endl;
+				std::cerr << "ERROR Lua::doCode - luaL_dostring "
+									<< lua_tostring( cLuaState ,-1) << std::endl;
+
 	// il y a eu une erreur dans le script
-	return lua_tostring( cLuaState ,-1);
+				return lua_tostring( cLuaState ,-1);
       }
     return "lua>Ok";
   }
