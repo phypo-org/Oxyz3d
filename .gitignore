@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+**/.vs/*
+\#*\#
+*~
+
+*.sav
+toto*
+titi*
+tutu*

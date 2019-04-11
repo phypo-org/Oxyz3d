@@ -13,67 +13,74 @@
 
 namespace M3d{
 
-	class Win3d;
+  class Win3d;
 	
-	enum class Transform{ Nothing, MoveX, MoveY, MoveZ, CenterRotX, CenterRotY, CenterRotZ };
+  enum class Transform{ Nothing, MoveX, MoveY, MoveZ, CenterRotX, CenterRotY, CenterRotZ };
 
-	//************************************
-	// Application est un singleton 
+  //************************************
+  // Application est un singleton 
 
-	class Application{ 
+  class Application{ 
  
-		std::vector< std::unique_ptr<Win3d> > cAllWin3d;
-		std::unique_ptr<PP3d::DataBase>       cuDatabase;
+    std::vector< std::unique_ptr<Win3d> > cAllWin3d;
+    std::unique_ptr<PP3d::DataBase>       cuDatabase;
 	
-	private:			
-		static Application* sTheAppli;
-		Application();
-		virtual ~Application();
+  private:			
+    static Application* sTheAppli;
+    Application();
+    virtual ~Application();
 		
 
 		
-		Transform       cCurrentTransform;
-		PP3d::Transf3d  cCurrentTransf;
+    Transform       cCurrentTransform;
+    PP3d::Transf3d  cCurrentTransf;
 
-	public:
-		static const int sIconSize = 32;
+  public:
+    static const int sIconSize = 32;
 	
-		static Application& Instance()
-		{
-			if( sTheAppli == nullptr )
-				{
-					sTheAppli = new Application( );
-				}
-			return *sTheAppli; 
-		}
-		void setCurrentTransformType( Transform lTrans)
-		{	
-			cCurrentTransf.raz();
-			cCurrentTransform= lTrans;
+    static Application& Instance()
+    {
+      if( sTheAppli == nullptr )
+	{
+	  sTheAppli = new Application( );
+	}
+      return *sTheAppli; 
+    }
+    void setCurrentTransformType( Transform lTrans)
+    {	
+      cCurrentTransf.raz();
+      cCurrentTransform= lTrans;
 			
-		}
-		Transform getCurrentTransformType()   { return cCurrentTransform;}
-		PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
+    }
+    Transform getCurrentTransformType()   { return cCurrentTransform;}
+    PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
 
 		
-		int init( int argc, char* argv[] );
+    int init( int argc, char* argv[] );
 
-		std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
+    std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
-		PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
+    PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
 
 		
-		Win3d & createNewWin3d( int pW, int pH );
-		void redrawAllCanvas3d();
-		void changeAllSelectType( PP3d::SelectType pType );
+    Win3d & createNewWin3d( int pW, int pH );
+    void    redrawAllCanvas3d();
+    Win3d*  findCanvas3d( int iId );
+    void    changeAllSelectType( PP3d::SelectType pType );
 		
-		void createObjectTree( );
-		void redrawObjectTree();
-		
-		void setCursorPosition( PP3d::Point3d& pPos);
+    void    createObjectTree( );
+    void    redrawObjectTree();
+	  
+    void redrawAll()
+    {
+      redrawAllCanvas3d();
+      redrawObjectTree();
+    }
+	
+    void setCursorPosition( PP3d::Point3d& pPos);
 
-	};
-	//************************************
+  };
+  //************************************
 
 };
 

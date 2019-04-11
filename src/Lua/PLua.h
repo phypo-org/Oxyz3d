@@ -44,7 +44,8 @@ namespace PLua {
     std::string          cNameSession;
     lua_State            *cLuaState;       // the lua 
     std::ostream         *cCurrentStream;
-
+    static char          sLibSep; //Separateur entre lib et function
+    
     // Only for prototype
     PLuaSession();
     PLuaSession( std::ostream* pStream );

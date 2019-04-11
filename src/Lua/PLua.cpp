@@ -12,6 +12,7 @@
 
 namespace PLua{
 
+  char PLuaSession::sLibSep='_'; //Separateur entre lib et function
 
   PLuaSession::ContainerSessionLua PLuaSession::sContainerLuaSessions ;//= nullptr;
   std::mutex                       PLuaSession::sContainerLuaSessionsMutex;// = nullptr;
@@ -102,7 +103,10 @@ namespace PLua{
 
 	
     std::string lStr( iLibName );
-    lStr += '_';
+    if( sLibSep != 0 )
+      {
+	lStr += sLibSep;
+      }
     lStr += iName;
 		
 		PCOUT << "registerFunction " << iLibName << " "<<  iName << "->" << lStr << std::endl;
