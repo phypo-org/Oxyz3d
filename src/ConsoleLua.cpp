@@ -39,9 +39,9 @@ class ConsoleLua : public Fl_Text_Editor {
 public:
   ConsoleLua(PP3d::DataBase&iDataBase,int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
   {
-		M3d::ShapeLua::SetPrototype();
-		
-		buff = new Fl_Text_Buffer();
+    M3d::ShapeLua::SetPrototype();
+    
+    buff = new Fl_Text_Buffer();
     buffer(buff);
     textfont(FL_COURIER);
     textsize(12);
@@ -49,14 +49,16 @@ public:
 
     cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Console", &cout );
 		cLua->setDatabase( iDataBase );
-    cLua->registerFunction( "TOTO", "Test1", LUA_Test1  );
+    cLua->registerFunction( "", "Test1", LUA_Test1  );
 		
-		cLua->doCode( "PLC_Println(\"Hello it's C++\" )");
-		cLua->doCode( "PLC_ListLib()");
-		cLua->doCode( "PLC_ListLibFtn()" );
+		cLua->doCode( "PPrintln(\"Hello it's C++\" )");
+		cLua->doCode( "PListLib()");
+		cLua->doCode( "PListLibFtn()" );
     cLua->doCode( "print(\"Hello it's Lua\")" );
-		cLua->doCode("TOTO_Test1(\"Coucou\")");
-		cLua->doCode("Shape_AddPoint(2,4,6)");
+		cLua->doCode("Test1(\"Coucou\")");
+		cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
+		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
+		cLua->doCode("WinNewCanvas3d(800,600)");
   }
   //---------------------------------------------------
   ~ConsoleLua()

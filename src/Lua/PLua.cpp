@@ -127,12 +127,12 @@ namespace PLua{
 
     std::cout <<">>>>>>>>>>>>>>>>>>>>> this: "<<  this << std::endl;
 
-    lua_register( cLuaState, "PLC_Print",         LUA_PrintParametersToStream  );
-    lua_register( cLuaState, "PLC_Println",       LUA_PrintParametersToStreamLn  );
-    lua_register( cLuaState, "PLC_LoadLib",       LUA_LoadCLibrary  );
-    lua_register( cLuaState, "PLC_ListLibFtn",    LUA_ListLibraryFonction );
-    lua_register( cLuaState, "PLC_ListLib",       LUA_ListLibrary );
-    lua_register( cLuaState, "PLC_LoadFile",      LUA_LoadFile );
+    lua_register( cLuaState, "PPrint",         LUA_PrintParametersToStream  );
+    lua_register( cLuaState, "PPrintln",       LUA_PrintParametersToStreamLn  );
+    lua_register( cLuaState, "PLoadLib",       LUA_LoadCLibrary  );
+    lua_register( cLuaState, "PListLibFtn",    LUA_ListLibraryFonction );
+    lua_register( cLuaState, "PListLib",       LUA_ListLibrary );
+    lua_register( cLuaState, "PLoadFile",      LUA_LoadFile );
   }
   //------------------------------------------------
   void 

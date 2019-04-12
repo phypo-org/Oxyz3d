@@ -33,9 +33,27 @@ namespace M3d {
   //  std::cout << "************ lX:" << lX <<  " lY:" << lY << " lZ:" << lZ << std::endl;
   
   lDatabase->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
+  lua_pushinteger( pLua, lWin.getId() );
 	
   CLUA_CLOSE_CODE(0);
   //-----------------------------------------
+  CLUA_OPEN_CODE( LUA_CurrentToFacet, 0);
+  PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
+  
+  PP3d::ObjectFacet* lObj = lDatabase->convertCurrentLineToFacet();
+  lua_pushinteger( pLua, lObj->getId() );
+  
+  CLUA_CLOSE_CODE(0);
+  //-----------------------------------------
+  CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
+  PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
+  
+  PP3d::ObjectPolyline* lObj= lDatabase->convertCurrentLineToPolylines();
+  lua_pushinteger( pLua, lObj->getId() );
+
+  CLUA_CLOSE_CODE(0);
+  //===========================================
+
   CLUA_OPEN_CODE( LUA_RedrawAllCanvas3d, 0);
   
   Application::Instance().redrawAllCanvas3d();
@@ -63,6 +81,8 @@ namespace M3d {
     registerFunction( "Win",   "NewCanvas3d",         LUA_NewCanvas3d );
     //=====================		      
     registerFunction( "Shape", "AddCurrentPoint",     LUA_AddCurrentPointXYZ  );
+    registerFunction( "Shape", "CurrentToFacet",      LUA_CurrentToFacet  );
+    registerFunction( "Shape", "CurrentToPoly",       LUA_CurrentToPoly );
     //=====================
     registerFunction( "Oxyz",  "RedrawCanvas",        LUA_RedrawAllCanvas3d   );
     registerFunction( "Oxyz",  "RedrawAll",           LUA_RedrawAll   );
