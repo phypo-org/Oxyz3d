@@ -27,7 +27,7 @@ namespace PP3d {
 	
 	//************************************
 	class  DataBase{
-
+	 
 		static TUniqueId<EntityId, 1>         sUniqueId;
 		std::unordered_map<EntityId, Entity*> cEntities;
 		std::set<Object*>                     cContainerObject;

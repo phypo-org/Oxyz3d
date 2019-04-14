@@ -32,8 +32,8 @@ namespace M3d {
 	
   //  std::cout << "************ lX:" << lX <<  " lY:" << lY << " lZ:" << lZ << std::endl;
   
-  lDatabase->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
-  lua_pushinteger( pLua, lWin.getId() );
+	 lDatabase->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
+  //lua_pushinteger( pLua, lWin.getId() );
 	
   CLUA_CLOSE_CODE(0);
   //-----------------------------------------
@@ -48,7 +48,7 @@ namespace M3d {
   CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
   PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
   
-  PP3d::ObjectPolyline* lObj= lDatabase->convertCurrentLineToPolylines();
+  PP3d::ObjectPolylines* lObj= lDatabase->convertCurrentLineToPolylines();
   lua_pushinteger( pLua, lObj->getId() );
 
   CLUA_CLOSE_CODE(0);

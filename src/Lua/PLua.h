@@ -65,9 +65,14 @@ namespace PLua {
     virtual PLuaSession* getNewPrototypeSession(   const std::string& iSessionName, std::ostream* iStream );
 	
   public:
-    const char* doCode( const char* pCode);  // run lua code
-    const char* doFile( const char* pFile);  // run lua file code
-    void  setCurrentStream( std::ostringstream* pStream ) { cCurrentStream = pStream; }
+    const char* doCode( const char* pCode, std::ostream* iStream = nullptr);  // run lua code
+    const char* doFile( const char* pFile, std::ostream* iStream = nullptr);  // run lua file code
+		std::ostream*  setCurrentStream( std::ostream* pStream )
+		{
+			std::ostream*  lTmp = cCurrentStream;
+			cCurrentStream = pStream;
+			return lTmp;
+		}
 
     virtual void  registerInternals();
     virtual void  registerExternals();
@@ -121,7 +126,7 @@ namespace PLua {
 	
     std::ostream&     out() ;
     std::ostream&     err() ;
-
+		
 	
     // Fonctions appelables dans du code lua (voir PApplication.cc pour leur nom lua)
     static int LUA_PrintParametersToStream(lua_State* pLua);

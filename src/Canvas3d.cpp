@@ -554,9 +554,17 @@ namespace M3d {
 	
 		cDataBase.setCursorPosition(	pResult );
 		Application::Instance().setCursorPosition( pResult );
-
-		
-		cDataBase.addPointToCurrentLine( pResult );
+		{
+			std::ostringstream lOsLuaCode;
+			std::ostringstream lOsLuaOut;
+			
+			lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
+			lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
+			if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
+				{
+				}
+		}
+		//		cDataBase.addPointToCurrentLine( pResult );
 		
 		
 		Application::Instance().redrawAllCanvas3d();

@@ -467,7 +467,9 @@ namespace M3d {
   void Win3d::MyMenuCallback(Fl_Widget* w, void* pUserData) {
 		
     static bool slFlagDialog=false; // C'est moche !!!!
-		
+		std::ostringstream lOsLuaCode;
+		std::ostringstream lOsLuaOut;
+	
 							
 		
     Fl_Menu_* mw = (Fl_Menu_*)w;
@@ -774,7 +776,9 @@ namespace M3d {
     //================= WINDOWS ===================
 	  else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
 	    {
-	      Application::Instance().createNewWin3d( 1000, 800 );
+				lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
+	
+				//	      Application::Instance().createNewWin3d( 1000, 800 );
 	    }
 	  else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
 	    {
@@ -790,7 +794,7 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), StrMenu_ConsolLua ) == 0)
 	    {
-	      CallConsoleLua(lCanvas->getDataBase() );
+	      CallConsoleLua( );
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
@@ -804,6 +808,16 @@ namespace M3d {
 	      Application::Instance().redrawAllCanvas3d();
 	      Application::Instance().redrawObjectTree();
 	    }
+
+				 
+		if( lOsLuaCode.str().size() > 0 )
+			{
+				// Ily a du lua a executer
+				if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) != nullptr)
+					{
+						// ERREUR
+					}
+			}
   }
   //-------------------------------------------
   void Win3d::QuitCallback(Fl_Widget*, void*) {exit(0);}

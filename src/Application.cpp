@@ -16,16 +16,33 @@ namespace M3d{
   Application* Application::sTheAppli = nullptr;
 
   //************************************
-  Application::Application( )	
+  Application::Application()	
 
     :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
     , cCurrentTransform( Transform::Nothing)
   {
     std::cout << "========= Application::Application" << std::endl;
+		
+		M3d::ShapeLua::SetPrototype();
+		
+		cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
+		cLua->setDatabase( *cuDatabase.get() );
+	
+		cLua->doCode( "PPrintln(\"Hello it's C++\" )");
+		cLua->doCode( "PListLib()");
+		cLua->doCode( "PListLibFtn()" );
+		cLua->doCode( "print(\"Hello it's Lua\")" );
+
+		cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
+		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
   }
+  //-----------------------------------
+	TODO  MAKE Database AutoSave 
   //-----------------------------------
   Application::~Application()
   {
+		delete cLua;
+    cLua = nullptr;
   }
   //-----------------------------------
   //-----------------------------------

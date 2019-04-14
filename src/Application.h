@@ -9,6 +9,9 @@
 
 #include "WinObjTree.h"
 #include "Shape/PP3dType.h"
+#include "Lua/PLua.h"
+#include "ShapeLua.h"
+
 
 
 namespace M3d{
@@ -24,6 +27,8 @@ namespace M3d{
  
     std::vector< std::unique_ptr<Win3d> > cAllWin3d;
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
+		M3d::ShapeLua*                        cLua=nullptr;
+
 	
   private:			
     static Application* sTheAppli;
@@ -61,7 +66,23 @@ namespace M3d{
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
-
+		M3d::ShapeLua&  getLua() { return *cLua; }
+		const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
+		{			
+			return getLua().doCode( iLuaCode.c_str(), &iOut );
+		}				
+		const char*    execLuaHisto( std::ostringstream& iIn, std::ostream& iOut )
+		{
+			return execLuaHisto( iIn.str(), iOut );
+		}
+		const char*    	execLua(const  std::string& iLuaCode, std::ostream& iOut )
+		{			
+			return getLua().doCode( iLuaCode.c_str(), &iOut );
+		}				
+		const char*    execLua( std::ostringstream& iIn, std::ostream& iOut )
+		{
+			return execLua( iIn.str(), iOut );
+		}
 		
     Win3d & createNewWin3d( int pW, int pH );
     void    redrawAllCanvas3d();

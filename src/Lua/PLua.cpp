@@ -300,8 +300,14 @@ namespace PLua{
   }
   //------------------------------------------------
   const char*
-  PLuaSession::doCode( const char* pCode)
+  PLuaSession::doCode( const char* pCode, std::ostream* iStream )
   {
+		std::ostream* lSavStream=nullptr ;
+		if( iStream != nullptr )
+			{
+				lSavStream = setCurrentStream( iStream );
+			}
+		
 		std::cout <<"docode <" << pCode << ">" << std::endl;
     //	if (luaL_dofile( cLuaState, pCode)!=0)
 		int lRet =luaL_dostring( cLuaState, pCode);
@@ -315,20 +321,40 @@ namespace PLua{
 	// il y a eu une erreur dans le script
 				return lua_tostring( cLuaState ,-1);
       }
-    return "lua>Ok";
+		
+		if( iStream != nullptr )
+			{
+				 setCurrentStream( lSavStream  );
+			}
+		
+    return nullptr;
   }
   //------------------------------------------------
   const char*
-  PLuaSession::doFile( const char* pFile)
+  PLuaSession::doFile( const char* pFile, std::ostream* iStream)
   {
-    if (luaL_dofile( cLuaState, pFile )!=0)
+		std::ostream* lSavStream=nullptr	;
+		if( iStream != nullptr )
+			{
+				lSavStream = setCurrentStream( iStream );
+			}
+
+    int lRet =  luaL_dofile( cLuaState, pFile );
+		
+		if( iStream != nullptr )
+			{
+				setCurrentStream( lSavStream  );
+			}
+		
+		if( lRet != 0 )
       {
-	OS_TRACE( "PLuaSession::doFile : " << pFile );
-	// il y a eu une erreur dans le script
-	return lua_tostring( cLuaState ,-1);
+				// il y a eu une erreur dans le script
+				OS_TRACE( "PLuaSession::doFile : " << pFile );
+				
+				return lua_tostring( cLuaState ,-1);
       }
-	
-    return "lua>Ok";
+
+    return nullptr;
   }
   //------------------------------------------------
   //------------------------------------------------
