@@ -37,7 +37,7 @@ namespace M3d{
 		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
   }
   //-----------------------------------
-	TODO  MAKE Database AutoSave 
+  //	TODO  MAKE Database AutoSave 
   //-----------------------------------
   Application::~Application()
   {
