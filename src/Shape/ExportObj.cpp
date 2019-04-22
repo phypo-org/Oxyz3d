@@ -70,10 +70,13 @@ namespace PP3d {
 
 	bool MyExportObj::save( Object* lEntity )
 	{				
+	  std::cout << "   ExportObj::save Entity" << std::endl;
 		switch( lEntity->getObjType() )
 			{
 			case ObjectType::ObjPoly:
 				{
+				  std::cout << "      ExportObj::save Poly" << std::endl;
+
 					auto lEntityPoly = dynamic_cast<ObjectPoly*>(lEntity);
 					cOut << "o " << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
 									
@@ -83,8 +86,8 @@ namespace PP3d {
 					cOut <<  "usemtl default" << std::endl;
 					cOut << "s 1" <<  std::endl;
 					VisitorSavFacets lVisFacs( *this );
-					lEntityPoly->getPoly()->execVisitor( lVisFacs );																	
-				}
+					lEntityPoly->getPoly()->execVisitor( lVisFacs );														}
+			   break;	
 			default: ;
 			}
 		return true;
@@ -93,6 +96,9 @@ namespace PP3d {
 
 	bool MyExportObj::save( DataBase& pData )
 	{
+	  std::cout << "ExportObj::save" << std::endl;
+
+					    
 		auto lEntities = pData.getEntities();
 		
 		for( auto lPairEntity :  lEntities )

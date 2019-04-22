@@ -503,7 +503,7 @@ namespace M3d {
 	case  1: printf("CANCEL\n");                      break;  // CANCEL
 	default:
 	  {
-	    std::cout << "PICKED: " << fnfc.filename() << std::endl;
+	    std::cout << "SAVE TO: " << fnfc.filename() << std::endl;
 
 	    std::ofstream lOut;						
 	    lOut.open( fnfc.filename());
@@ -535,7 +535,7 @@ namespace M3d {
 	  case  1: printf("CANCEL\n");                      break;  // CANCEL
 	  default:
 	    {
-	      std::cout << "PICKED: " << fnfc.filename() << std::endl;
+	      std::cout << "EXPORT TO: " << fnfc.filename() << std::endl;
 
 	      std::ofstream lOut;						
 	      lOut.open( fnfc.filename());
@@ -569,7 +569,7 @@ namespace M3d {
 	    default:
 	      {
 			
-		std::cout << "PICKED: " << fnfc.filename() << std::endl;
+		std::cout << " READ FROM : " << fnfc.filename() << std::endl;
 						
 		std::ifstream lFileIn;						
 		lFileIn.open( fnfc.filename());
@@ -606,7 +606,7 @@ namespace M3d {
 	      default:
 		{
 									
-		  std::cout << "PICKED: " << fnfc.filename() << std::endl;
+		  std::cout << "IMPORT FROM : " << fnfc.filename() << std::endl;
 									
 		  std::ifstream lFileIn;						
 		  lFileIn.open( fnfc.filename());
