@@ -292,6 +292,11 @@ namespace M3d {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::MoveZ);
       }
+    else if( strcmp( m->label(), StrMenu_MoveNormal ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::MoveNormal);
+      }
     else if( strcmp( m->label(), StrMenu_RotX ) == 0)
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );

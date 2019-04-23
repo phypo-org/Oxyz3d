@@ -18,7 +18,7 @@ namespace M3d{
 
   class Win3d;
 	
-  enum class Transform{ Nothing, MoveX, MoveY, MoveZ, CenterRotX, CenterRotY, CenterRotZ };
+  enum class Transform{ Nothing, MoveX, MoveY, MoveZ, MoveNormal, CenterRotX, CenterRotY, CenterRotZ };
 
   //************************************
   // Application est un singleton 

@@ -454,6 +454,14 @@ namespace M3d {
 			}
 				break;
 				
+			case Transform::MoveNormal:
+				{
+				  // chaque composant doit etre modifier celon sa normale propre normale, pas possible avec la matrice
+				  //	Application::Instance().currentTransform().position().z() += lDx/10;
+				  //	lMatTran.initMove( 0, 0, Application::Instance().currentTransform().position().z() );
+			}
+				break;
+				
 			case Transform::CenterRotX :
 			case Transform::CenterRotY :
 			case Transform::CenterRotZ :
