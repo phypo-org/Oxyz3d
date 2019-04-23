@@ -57,6 +57,7 @@ namespace M3d {
 #define StrMenu_MoveX    "Move X"
 #define StrMenu_MoveY    "Move Y"
 #define StrMenu_MoveZ    "Move Z"
+#define StrMenu_MoveNormal    "Move normal"
 
 #define StrMenu_Rot      "Rotate"
 #define StrMenu_RotX     "Rotate X"
@@ -68,18 +69,41 @@ namespace M3d {
 #define StrMenu_DupMoveX    StrMenu_Dup  " move X"
 #define StrMenu_DupMoveY    StrMenu_Dup  " move Y"
 #define StrMenu_DupMoveZ    StrMenu_Dup  " move Z"
+#define StrMenu_DupNormal   StrMenu_Dup  " move normal"
+
 #define StrMenu_DupRotX     StrMenu_Dup  " rotate X"
 #define StrMenu_DupRotY     StrMenu_Dup  " rotate Y"
 #define StrMenu_DupRotZ     StrMenu_Dup  " rotate Z"
 
-	
+#define StrMenu_Extrude     "Extrude"
+#define StrMenu_ExtrudeX    StrMenu_Extrude  "  move X"
+#define StrMenu_ExtrudeY    StrMenu_Extrude  "  move Y"
+#define StrMenu_ExtrudeZ    StrMenu_Extrude  "  move Z"
+#define StrMenu_ExtrudeNorm StrMenu_Extrude  "  move normal"
+
+  
+  
+  //-------------------------------------------
+   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
+   {
+     if( PP3d::Selection::Instance().getNbSelected() > 0 )
+       {										
+	 makeMenuSelect(  *cPopup);
+       }
+     else
+       {
+	 makeMenuPrimitiv( *cPopup );
+       }
+   }
   //-------------------------------------------
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
+
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this);
-		
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this);
+	
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this);
@@ -91,9 +115,24 @@ namespace M3d {
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);
 
-    if( PP3d::Selection::Instance().getSelectType() == PP3d::SelectType::Point )
+    switch( PP3d::Selection::Instance().getSelectType() )
       {
-				
+      case PP3d::SelectType::Point :
+      case PP3d::SelectType::Line :
+      case PP3d::SelectType::Facet :	
+	{
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", MyMenuCallbackExtrude, this);
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "", MyMenuCallbackExtrude, this);
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "", MyMenuCallbackExtrude, this);
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
+	}
+	break;
+      case PP3d::SelectType::Poly :
+	    pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
+	    break;
+      case PP3d::SelectType::Object :
+      case PP3d::SelectType::All :
+      default:;
       }
   }
   //-------------------------------------------
@@ -197,12 +236,32 @@ namespace M3d {
   }
 
 
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
+  {	  		
+    Fl_Menu_* mw = (Fl_Menu_*)w;
+    const Fl_Menu_Item* m = mw->mvalue();		
+    if (!m)
+      {
+	printf("NULL\n");
+				
+	return ;
+      }
 
+
+    printf("%s\n", m->label());
+    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
+
+		
+    //============== TRANSFORMATION ====================
+    if( strcmp( m->label(), StrMenu_ExtrudeX ) == 0)
+      {
+	std::cout << "Extrude X" << std::endl;
+      }
+  }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
-  {
-	  
-		
+  {	  		
     Fl_Menu_* mw = (Fl_Menu_*)w;
     const Fl_Menu_Item* m = mw->mvalue();		
     if (!m)

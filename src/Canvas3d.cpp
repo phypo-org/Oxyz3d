@@ -717,15 +717,8 @@ namespace M3d {
 						
 						
 						if( cMode == ModeUser::MODE_BASE )
-							{								
-								if( PP3d::Selection::Instance().getNbSelected() > 0 )
-									{										
-										makeMenuSelect(  *cPopup);
-									}
-								else
-									{
-										makeMenuPrimitiv( *cPopup );
-									}
+							{
+							  makeMenu( *cPopup); 
 							}
 					}
 				cPopup->position( Fl::event_x() , Fl::event_y());

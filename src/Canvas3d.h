@@ -117,9 +117,11 @@ class Win3d;
 
 
 		//=========== MENUS =================
+		void makeMenu( Fl_Menu_Button& pMenu);
 		void makeMenuSelect( Fl_Menu_Button& pMenu);
 		void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
 		
+		static void MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData );
 		static void MyMenuCallbackSelect(Fl_Widget* w, void* pUserData );
 		static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
 		//=========== MENUS =================
