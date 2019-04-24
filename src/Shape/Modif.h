@@ -81,7 +81,7 @@ namespace PP3d {
       cCoef = iCoef;
     }   
     //---------------------------------			  
-    virtual void execPoint( Point* pPoint )
+     void execPoint( Point* pPoint ) override
     {
       switch( cMode )
 	{
@@ -119,10 +119,13 @@ namespace PP3d {
     void modifSelection( Mode iMode)
     {
       cMode = iMode;
+      std::cout << "========  modifSelection " << Selection::Instance().getSelection().size()  <<std::endl;
       
       for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	{	
+      std::cout << "========  modifSelection execVisitor1"  <<std::endl;
 	  lEntity->execVisitor( *this );	  	
+      std::cout << "========  modifSelection execVisitor2"  <<std::endl;
 	}           
     }
   };
@@ -138,18 +141,28 @@ namespace PP3d {
     //---------------------------------		
     void execEndFacet( Facet* pEntity) override
     {
-      VisitorModifPoints::execEndFacet(pEntity); 
+ 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
+     VisitorModifPoints::execEndFacet(pEntity); 
+	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
 
       if( cMode == Mode::MODIF )
 	{
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  
 	  Point3d cNorm = pEntity->getNormal();
 	  for( Point* lPt:cModifPt )
 	    {
 	      lPt->get() += cNorm*cCoef; // si plusieurs facette les modifs s'additionnent	      
 	    }
 	  cModifPt.clear(); 
-	}  
-      
+	}        
    }
  
   };

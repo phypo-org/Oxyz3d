@@ -450,6 +450,10 @@ namespace M3d {
 	//================
       case Transform::MoveNormal:
 	{
+	 
+	  std::cout << "======== Grab Normal " << std::endl;
+ 
+	  
 	  if(cVisitModifSelect == nullptr )
 	    {
 	      cVisitModifSelect = new PP3d::VisitorMoveNormal();
@@ -458,10 +462,15 @@ namespace M3d {
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL); // remise a zero des modifs
 	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/10 );
+	  std::cout << "======== Grab Normal 1111111111" << std::endl; 
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF);
-	  return; //////////// ATTENTION 
+
+	  std::cout << "======== Grab Normal 2222222222"
+		    << std::endl; 
+	  
+	  return;    //////////// ATTENTION 
 	}
-	break;	
+	break;	 
 	//================
 			
       case Transform::MoveX:
