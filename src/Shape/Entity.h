@@ -70,8 +70,7 @@ namespace PP3d {
 
 	public:
 		bool isSelect()                 { return   cIsSelected;}
-		void setSelect( bool pFlag )    { cIsSelected  = pFlag;}
-		
+		void setSelect( bool pFlag )    { cIsSelected  = pFlag;}		
 		bool& isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche !
 		void setHighlight( bool pFlag ) { cIsHighlight =  pFlag;}
 

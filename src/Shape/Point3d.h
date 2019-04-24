@@ -104,6 +104,11 @@ namespace PP3d {
 		{
 			return TPoint3d( A.cX*pK, A.cY*pK, A.cZ*pK );
 		}
+		//--------------------------------------------		
+		friend TPoint3d operator + ( TPoint3d A, TFLOAT pK )
+		{
+			return TPoint3d( A.cX+pK, A.cY+pK, A.cZ+pK );
+		}
 		//--------------------------------------------
 		friend bool operator == ( TPoint3d  A, TPoint3d B )
 		{

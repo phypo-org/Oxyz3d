@@ -21,6 +21,7 @@
 #include "Shape/Point3d.h"
 #include "Shape/Entity.h"
 
+#include "Shape/Modif.h"
 
 
 
@@ -63,8 +64,9 @@ class Win3d;
 		PP3d::ViewProps cViewProps;
 		
 	
-		Fl_Menu_Button* cPopup=nullptr;
-		
+		Fl_Menu_Button*          cPopup=nullptr;
+	        PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
+
 
 		// Pour le dragging 
 		PP3d::PointPtrSet  cDragPoints;      // les points concernées par la selection
@@ -102,6 +104,7 @@ class Win3d;
 		int       cRectBeginY=-1;
 		
 		void userPrepareAction( int	pEvent );
+		void userCancelAction(	int	pEvent );						 
 		void userTerminateAction(	int	pEvent );						 
 		void userChangeKameraView(int	pEvent);
 		void userInputPoint(int	pEvent);

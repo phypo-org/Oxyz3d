@@ -90,8 +90,9 @@ namespace PP3d{
 		}
 	};
 	//*********************************************
+        // calcule et stocke la normale pour chaque facette
 	struct VisitorNormalFacet : public EntityVisitor	{
-	
+	  
 		virtual void execBeginFacet( Facet* pFacet )override;
 	};
 	//*********************************************
@@ -272,6 +273,8 @@ namespace PP3d{
 		void execEndObject( Object* pObject )   override;
 	};
 
+	//*********************************************
+	//*********************************************
 	//*********************************************
 };
 
