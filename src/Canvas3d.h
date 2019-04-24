@@ -97,6 +97,8 @@ class Win3d;
 		void changeUserMode( ModeUser pMode ) { cMode = pMode; }
 		void setVisualMode( GLuint pMode ) { cViewProps.cViewMode = pMode; }
 		//------------------------------
+		int       cMouseInitPosX=-1;
+		int       cMouseInitPosY=-1;
 		int       cMouseLastPosX=-1;
 		int       cMouseLastPosY=-1;
 	 

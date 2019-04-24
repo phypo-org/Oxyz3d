@@ -66,8 +66,10 @@ namespace PP3d {
   {	
     std::unordered_map<EntityId, Point3d> lSavPt;
  
+    std::unordered_set<Point*> cModifPt;
+    
     enum class Mode{ SAV, MODIF, CANCEL };
-    Mode  cMode = Mode::SAV; 
+    Mode    cMode = Mode::SAV; 
     double  cCoef=1;
     //---------------------------------
     VisitorModifPoints()
@@ -81,20 +83,32 @@ namespace PP3d {
     //---------------------------------			  
     virtual void execPoint( Point* pPoint )
     {
-      if( cMode == Mode::SAV )
+      switch( cMode )
 	{
+	case Mode::SAV :
+	  {
+	    if( pPoint->isSelect() || lCptSelect > 0 )
+	      {
+		lSavPt.insert( { pPoint->getId(), pPoint->get() } ); 
+	      }
+	  }
+	  break;
+	  
+	case Mode::MODIF:
 	  if( pPoint->isSelect() || lCptSelect > 0 )
 	    {
-	      lSavPt.insert( { pPoint->getId(), pPoint->get() } ); 
+	      cModifPt.emplace( pPoint );
 	    }
-	}
-      else
-	{ // mode restore
-	  auto lIter = lSavPt.find( pPoint->getId() );
-	  if(  lIter != lSavPt.end() )
-	    {
-	      pPoint->get() =  lIter->second;
-	    }
+	  break;
+	  
+	case Mode::CANCEL:
+	  { // mode restore
+	    auto lIter = lSavPt.find( pPoint->getId() );
+	    if(  lIter != lSavPt.end() )
+	      {
+		pPoint->get() =  lIter->second;
+	      }
+	  }
 	}
     }	  
     //---------------------------------		
@@ -115,36 +129,28 @@ namespace PP3d {
   //**************************
   struct VisitorMoveNormal : public  VisitorModifPoints
   {
-    Point3d cNorm;
+    //    Point3d cNorm;
 
     //---------------------------------			  
     VisitorMoveNormal()
     {
     }
-    //---------------------------------			  
-    virtual void execPoint( Point* pPoint )
-    {
-      VisitorModifPoints::execPoint( pPoint ); 
-      if( cMode == Mode::MODIF )
-	{
-	  std::cout << "execPoint:" << pPoint->get() << std::endl;
-	  pPoint->get() += cNorm*cCoef; // si plusieurs facette les modifs s'additionnent
-	}
-    }
-    //---------------------------------		
-    void execBeginFacet( Facet* pEntity ) override
-    {
-      VisitorModifPoints::execBeginFacet(pEntity); // sav/restore
-      if( cMode == Mode::MODIF  )
-	cNorm = pEntity->getNormal();
-    }
     //---------------------------------		
     void execEndFacet( Facet* pEntity) override
     {
-      VisitorModifPoints::execEndFacet(pEntity); // sav/restore
-      if( cMode == Mode::MODIF )	
-	cNorm.zero();      
-    }
+      VisitorModifPoints::execEndFacet(pEntity); 
+
+      if( cMode == Mode::MODIF )
+	{
+	  Point3d cNorm = pEntity->getNormal();
+	  for( Point* lPt:cModifPt )
+	    {
+	      lPt->get() += cNorm*cCoef; // si plusieurs facette les modifs s'additionnent	      
+	    }
+	  cModifPt.clear(); 
+	}  
+      
+   }
  
   };
   //*************************************

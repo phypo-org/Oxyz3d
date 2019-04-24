@@ -288,8 +288,8 @@ namespace M3d {
   //---------------------------
   void Canvas3d::userPrepareAction( int	pEvent )
   {	
-    cMouseLastPosX = Fl::event_x();
-    cMouseLastPosY = Fl::event_y();
+    cMouseInitPosX = cMouseLastPosX = Fl::event_x();
+    cMouseInitPosY = cMouseLastPosY = Fl::event_y();
 
     Application::Instance().currentTransform().raz();
   }
@@ -307,8 +307,8 @@ namespace M3d {
   {
     std::cout << "TERMINATE" << std::endl;
 		
-    cMouseLastPosX = -1;
-    cMouseLastPosY = -1;
+    cMouseInitPosX = cMouseLastPosX = -1;
+    cMouseInitPosY = cMouseLastPosY = -1;
     cRectBeginX = -1;
     cRectBeginY = -1;
     Application::Instance().setCurrentTransformType( Transform::Nothing );
@@ -456,9 +456,9 @@ namespace M3d {
 	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV);
 	    }
 	  
-	  cVisitModifSelect->setCoef( lDx/10 );
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL); // remise a zero des modifs
+	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/10 );
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF);
-	  // METTRE UN CANCEL
 	  return; //////////// ATTENTION 
 	}
 	break;	
