@@ -2,7 +2,6 @@
 
 namespace PP3d {
 
-  // Memorize les coordonnees des points des entites selectionnes
   struct VisitorModifSelect : public EntityVisitor	{
 	
     int                                   lCptSelect=0;
@@ -64,16 +63,38 @@ namespace PP3d {
   //**************************
   struct VisitorModifPoints : public VisitorModifSelect
   {	
-    std::unordered_map<EntityId, Point3d> lSavPt;
+   // Memorize les coordonnees des points des entites selectionnes
+    
+   std::unordered_map<EntityId, Point3d> lSavPt;
  
-    std::unordered_set<Point*> cModifPt;
+    std::unordered_set<Point*>    cModifPt;    
+    std::unordered_set<EntityPtr> cOwners;
+    
     
     enum class Mode{ SAV, MODIF, CANCEL };
     Mode    cMode = Mode::SAV; 
     double  cCoef=1;
+    
+    //---------------------------------
+    void addOwner( EntityPtr iEntity )
+    {
+      if( iEntity->getType() >= ShapeType::Facet )
+	{
+	  cOwners.emplace( iEntity );
+	}     
+      else
+	for( EntityPtr lEntity : iEntity->getOwners() )
+	  {
+	    addOwner( lEntity );
+	  }       
+    }
     //---------------------------------
     VisitorModifPoints()
     {
+      for( EntityPtr lEntity : Selection::Instance().getSelection() )
+	{
+	  addOwner( lEntity );
+	}  
     }    
     //---------------------------------
     void setCoef( double iCoef )
@@ -120,23 +141,31 @@ namespace PP3d {
     {
       cMode = iMode;
       std::cout << "========  modifSelection " << Selection::Instance().getSelection().size()  <<std::endl;
-      
+
+      /*
       for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	{	
       std::cout << "========  modifSelection execVisitor1"  <<std::endl;
 	  lEntity->execVisitor( *this );	  	
-      std::cout << "========  modifSelection execVisitor2"  <<std::endl;
-	}           
+      std::cout << "========  modifSelection exelEntity != nullptr &&cVis		r2"  <<std::endl;
+	} 	}
+      */
+    
+      for( EntityPtr lEntity : cOwners )
+	{	
+      std::cout << "========  modif execVisitor1"  <<std::endl;
+	  lEntity->execVisitor( *this );	  	
+      std::cout << "========  modif execVisitor2"  <<std::endl;
+	}
     }
   };
   //**************************
   struct VisitorMoveNormal : public  VisitorModifPoints
   {
-    //    Point3d cNorm;
-
     //---------------------------------			  
     VisitorMoveNormal()
     {
+
     }
     //---------------------------------		
     void execEndFacet( Facet* pEntity) override

@@ -3,7 +3,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 
-
+ 
 #include <FL/gl.h>
 
 #include <FL/names.h>
@@ -440,7 +440,7 @@ namespace M3d {
 		
     PP3d::Mat4 lMatTran;
     lMatTran.Identity();
-
+  
     switch( Application::Instance().getCurrentTransformType() )
       {
       case Transform::Nothing:
