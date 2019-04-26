@@ -415,7 +415,8 @@ namespace M3d {
 
     cMenubar.add("&Create/" StrMenu_RevolX, "", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_RevolY, "", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this, );
+    cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this
+		 );
     cMenubar.add("&Create/" StrMenu_RevolFreeAxe,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
 		 
     cMenubar.add("&Create/" StrMenu_CallDialoDiagSub, "^t",MyMenuCallback, this, FL_MENU_DIVIDER);

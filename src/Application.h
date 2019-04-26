@@ -29,7 +29,7 @@ namespace M3d{
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
 		M3d::ShapeLua*            cLua=nullptr;
 
-    History 
+		//	History 
 
 	
   private:			

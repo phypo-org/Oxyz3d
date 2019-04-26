@@ -243,7 +243,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::picking( int pX, int pY, bool pFlagMove )
   {
-    std::cout << "=== picking:" << pX << " " << pY << " SM:" << cSelectMode <<  std::endl;
+    //    std::cout << "=== picking:" << pX << " " << pY << " SM:" << cSelectMode <<  std::endl;
 
     GLint lViewport[4];
     glGetIntegerv(GL_VIEWPORT, lViewport);
@@ -465,7 +465,7 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL); // remise a zero des modifs
-	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/10 );
+	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/300.0 );
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF);
 	  return; //////////// ATTENTION 
 	}

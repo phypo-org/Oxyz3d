@@ -44,7 +44,6 @@ namespace PP3d {
 		DataBase();
 		virtual ~DataBase();
 
-	        bool copyTo( DataBase& ioDest );
 
 		void demo1();
 		void demo2();

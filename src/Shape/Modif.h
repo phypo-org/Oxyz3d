@@ -195,7 +195,7 @@ namespace PP3d {
 	      cFacets.clear();
 	      addFacets( lEntity ); // on recupere toutes les facettes auquel appartient le point ou la ligne
 	      
-	      std::cout << ">>>>>>> Facets number:" << cFacets.size() << std::endl;
+	      //	      std::cout << ">>>>>>> Facets number:" << cFacets.size() << std::endl;
 	      for( FacetPtr lFacet: cFacets )
 		{
 		  VisitorNormalFacet lVisitNorm;
@@ -220,7 +220,7 @@ namespace PP3d {
       
       if( cMode == Mode::MODIF )
 	{
-	  std::cout << "NbPoint>>>>>> :" << cModifPt.size() << std::endl;
+	  //	  std::cout << "NbPoint>>>>>> :" << cModifPt.size() << std::endl;
 	  Point3d cNorm = pEntity->getNormal();
 	  for( Point* lPt:cModifPt )
 	    {

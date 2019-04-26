@@ -30,10 +30,6 @@ namespace PP3d {
 
 	}
 	//------------------------------------------
-        bool copyTo( DataBase& ioDest )
-	{
-	}
-	//------------------------------------------
 	void 	DataBase::demo1()
 	{
 
@@ -355,7 +351,7 @@ namespace PP3d {
 		pViewProps.cSelectType = Selection::Instance().getSelectType();
 		pViewProps.cGLMode     = pSelectOrDrawMode;
 
-		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType << std::endl;
+		//		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType << std::endl;
 		//		if( pViewProps.cDebugView )
 		{
 			//						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	pViewProps.cSelectType) << std::endl;
@@ -365,7 +361,7 @@ namespace PP3d {
 			{
 				if(  pSelectOrDrawMode == GLMode::Draw  )
 					{
-						std::cout << "draw lObj:" << lObj->getName() << std::endl;
+					  //	std::cout << "draw lObj:" << lObj->getName() << std::endl;
 						lObj->drawGL( pViewProps );
 					}
 				else
@@ -373,7 +369,7 @@ namespace PP3d {
 						lObj->selectGL( pViewProps );
 						std::cout << "select lObj:" << lObj->getName() << std::endl;
 					}
-				std::cout << " fin lObj:" << lObj->getName() << std::endl;
+				//	std::cout << " fin lObj:" << lObj->getName() << std::endl;
 			}
 		
 		
