@@ -44,6 +44,8 @@ namespace PP3d {
 		DataBase();
 		virtual ~DataBase();
 
+	        bool copyTo( DataBase& ioDest );
+
 		void demo1();
 		void demo2();
 		void makeDemo2( float iPos,  int iDepth, float iSize, bool iCentralPoint, SubDiv::SubNormalizeType iNormalize);

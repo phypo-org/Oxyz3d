@@ -16,7 +16,7 @@ void CallDialogPrimitiv( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, PP3d::
 
 
 
-enum class TypeRevol{ RevolX, RevolY, RevolZ };
+enum class TypeRevol{ RevolX, RevolY, RevolZ, RevolFreeAxe };
 
 void CallDialogRevol( bool &cFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pTypeRevol);
 

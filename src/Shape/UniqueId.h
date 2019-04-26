@@ -12,7 +12,9 @@ namespace PP3d {
 		TYPE   cId=VALUE;
 	public:
 
-		TYPE getNewId() { return cId++; }	
+		TYPE getNewId() { return cId++; }
+	  TYPE getCurrentId() { return cId; }
+	  void setCurrentId(TYPE iId )  { cId = iId; }
 	};
 	//*********************************************	
 };

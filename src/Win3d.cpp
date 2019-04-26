@@ -75,10 +75,11 @@ namespace M3d {
 	
 #define StrMenu_CallDialoDiagSub     "New Subdivide"
 
-#define StrMenu_Revol     "New Revol "
+#define StrMenu_Revol     "New Revol"
 #define StrMenu_RevolX    StrMenu_Revol "X"
 #define StrMenu_RevolY    StrMenu_Revol "Y"
 #define StrMenu_RevolZ    StrMenu_Revol "Z"
+#define StrMenu_RevolFreeAxe StrMenu_Revol "free axe (disabled)"
 
 
 	
@@ -414,8 +415,9 @@ namespace M3d {
 
     cMenubar.add("&Create/" StrMenu_RevolX, "", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_RevolY, "", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this, FL_MENU_DIVIDER);
-
+    cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this, );
+    cMenubar.add("&Create/" StrMenu_RevolFreeAxe,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+		 
     cMenubar.add("&Create/" StrMenu_CallDialoDiagSub, "^t",MyMenuCallback, this, FL_MENU_DIVIDER);
 
     cMenubar.add("&Transform/" StrMenu_TransformMoveX, "", MyMenuCallback, this);
@@ -727,6 +729,10 @@ namespace M3d {
 	      else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
 		{
 		  CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolZ  );
+		}
+	      else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
+		{
+		  CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolFreeAxe  );
 		}									
 	    }
     //============== TRANSFORMATION ====================
