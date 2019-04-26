@@ -92,7 +92,7 @@ namespace PP3d{
 		if( pViewProps.cGLMode != GLMode::Select  )
 			{
 				//  CHANGER DE PLACE : a ne faire quand cas de changement de l'objet 
-				recomputeAll( cMyProps );
+			  //			recomputeAll( cMyProps );
 			}
 
 		switch( pViewProps.cSelectType )

@@ -39,7 +39,7 @@ using namespace std;
 
 
 namespace M3d {
-  
+   
   const char * const ANNULE_ACTION="e";
   
   const char * const CHG_AXIS="a";
@@ -67,7 +67,7 @@ namespace M3d {
     ,cMyWin3d(pW3d)
     ,cScale(1.0)
     ,cMode( ModeUser::MODE_BASE )
-    ,cAxisFlag( true )
+    ,cAxisFlag( true ) 
     ,cFlagLightColor( true)
      //	 cGridMode( ModeGrid::GRID_3D )
     ,cGridMode( ModeGrid::GRID_2D )
@@ -452,7 +452,7 @@ namespace M3d {
 	{
 	  if(cVisitModifSelect == nullptr )
 	    {
-	      if( Selection::Instance.getSelectType() >= SelectType::Facet)
+	      if( PP3d::Selection::Instance().getSelectType() >=  PP3d::SelectType::Facet)
 		{
 		  cVisitModifSelect = new PP3d::VisitorFacetMoveNormal();
 		}
@@ -998,7 +998,7 @@ namespace M3d {
 	break;
 
 
-      case FL_MOUSEWHEEL:
+      case FL_MOUSEWHEEL: 
 	Fl::focus(this);
 	if( cMode == ModeUser::MODE_MOVE_CAMERA )
 	  {

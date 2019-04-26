@@ -97,7 +97,8 @@ namespace PP3d {
 	  
 	case Mode::MODIF:
 	  // on stockes les points qui font partie de la selection 
-	  cModifPt.emplace( pPoint );
+	  if( pPoint->isSelect() || lCptSelect > 0 )
+	    cModifPt.emplace( pPoint );
 	  break;
 	  
 	case Mode::CANCEL:
@@ -144,7 +145,9 @@ namespace PP3d {
     //---------------------------------		
     virtual void modifSelection( Mode iMode)
     {
-      cMode = iMode;    
+      reset();
+      
+     cMode = iMode;    
       
       for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	{	
@@ -174,6 +177,7 @@ namespace PP3d {
     //---------------------------------
     void modifSelection( Mode iMode)
     {
+      reset();
       cMode = iMode;
           
       if( iMode == Mode::SAV || iMode== Mode::CANCEL )
@@ -183,35 +187,40 @@ namespace PP3d {
 	      lEntity->execVisitor( *this );	  	
 	    }
 	}
-      
+      else
       if( iMode == Mode::MODIF )
 	{
 	  for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	    {
 	      cFacets.clear();
 	      addFacets( lEntity ); // on recupere toutes les facettes auquel appartient le point ou la ligne
+	      
+	      std::cout << ">>>>>>> Facets number:" << cFacets.size() << std::endl;
 	      for( FacetPtr lFacet: cFacets )
 		{
+		  VisitorNormalFacet lVisitNorm;
+		  lFacet->execVisitor( lVisitNorm );
+		  
 		  lFacet->execVisitor( *this );	  	
 		}
 	    }
 	  
 	}
-    }
- 
+    }   
     //---------------------------------		
     void execBeginFacet( Facet* pEntity) override
     {
-      //      VisitorModifPoints::execBeginFacet(pEntity);      
+      VisitorModifPoints::execBeginFacet(pEntity);      
       cModifPt.clear(); // on ne prend que ceux de la facette
     }
     //---------------------------------		
     void execEndFacet( Facet* pEntity) override
     {
-      //   VisitorModifPoints::execEndFacet(pEntity);  
+      VisitorModifPoints::execEndFacet(pEntity);  
       
       if( cMode == Mode::MODIF )
 	{
+	  std::cout << "NbPoint>>>>>> :" << cModifPt.size() << std::endl;
 	  Point3d cNorm = pEntity->getNormal();
 	  for( Point* lPt:cModifPt )
 	    {

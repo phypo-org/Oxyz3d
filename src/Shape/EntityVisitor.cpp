@@ -35,21 +35,31 @@ namespace PP3d {
 				<< std::endl;
 	}
 
-	//*********************************************
-	void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
-	{
-		if( pFacet->getLines().size() > 1 )
-			{
-				Normal(
-							 pFacet->getLines()[0]->getFirst()->get(),
-							 pFacet->getLines()[0]->getSecond()->get(),
-							 pFacet->getLines()[1]->getSecond()->get(), // pas first !!!		
-							 pFacet->getNormal() );	
-			}
-	}
-	//*********************************************
-	//*********************************************
-	//*********************************************
+  //*********************************************
+  void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
+  {
+    if( pFacet->getLines().size() > 1 )
+      {
+	if( pFacet->getNbLines() < 4 )
+	  {
+	    Normal(
+	       pFacet->getLines()[0]->getFirst()->get(),
+	       pFacet->getLines()[0]->getSecond()->get(),
+	       pFacet->getLines()[1]->getSecond()->get(), // pas first !!!		
+	       pFacet->getNormal() );
+	  }
+	else {
+	  Normal(
+		 pFacet->getLines()[0]->getFirst()->get(),
+		 pFacet->getLines()[pFacet->getNbLines()/3]->getSecond()->get(),
+		 pFacet->getLines()[pFacet->getNbLines()/2]->getSecond()->get(), // pas first !!!		
+		 pFacet->getNormal() );	  
+	}	
+      }
+  }  
+  //*********************************************
+  //*********************************************
+  //*********************************************
 
 	void DebugFacet( Facet* pFacet )
 	{
