@@ -452,7 +452,15 @@ namespace M3d {
 	{
 	  if(cVisitModifSelect == nullptr )
 	    {
-	      cVisitModifSelect = new PP3d::VisitorMoveNormal();
+	      if( Selection::Instance.getSelectType() >= SelectType::Facet)
+		{
+		  cVisitModifSelect = new PP3d::VisitorFacetMoveNormal();
+		}
+	      else		
+		{
+		  cVisitModifSelect = new PP3d::VisitorPointLineMoveNormal();
+		}	      
+	      
 	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV);
 	    }
 	  
