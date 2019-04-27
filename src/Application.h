@@ -11,7 +11,7 @@
 #include "Shape/PP3dType.h"
 #include "Lua/PLua.h"
 #include "ShapeLua.h"
-
+#include "History.h"
 
 
 namespace M3d{
@@ -27,6 +27,9 @@ namespace M3d{
  
     std::vector< std::unique_ptr<Win3d> > cAllWin3d;
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
+    std::unique_ptr<History>              cuHistory;
+
+		
 		M3d::ShapeLua*            cLua=nullptr;
 
 		//	History 

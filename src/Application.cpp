@@ -21,12 +21,17 @@ namespace M3d{
     :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
     , cCurrentTransform( Transform::Nothing)
   {
+		cuHistory->save( *cuDatabase, History::SaveMode::SaveFull );
+		
     std::cout << "========= Application::Application" << std::endl;
+
+
 		
 		M3d::ShapeLua::SetPrototype();
 		
 		cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
 		cLua->setDatabase( *cuDatabase.get() );
+		
 	
 		cLua->doCode( "PPrintln(\"Hello it's C++\" )");
 		cLua->doCode( "PListLib()");
@@ -35,6 +40,8 @@ namespace M3d{
 
 		cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
 		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
+
+		
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 

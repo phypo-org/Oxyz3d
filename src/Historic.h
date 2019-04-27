@@ -52,7 +52,6 @@ namespace M3d{
 
 		bool forgetOldestLinkr();
 
-
 		
 		int  getCurrentHistoDepth();
 		bool reward( int iStep=1 );
