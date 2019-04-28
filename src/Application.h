@@ -71,6 +71,7 @@ namespace M3d{
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
+    History* getHistory()    { return cuHistory.get(); }
 		M3d::ShapeLua&  getLua() { return *cLua; }
 		const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
 		{			
@@ -90,20 +91,27 @@ namespace M3d{
 		}
 		
     Win3d & createNewWin3d( int pW, int pH );
-    void    redrawAllCanvas3d();
     Win3d*  findCanvas3d( int iId );
     void    changeAllSelectType( PP3d::SelectType pType );
 		
     void    createObjectTree( );
     void    redrawObjectTree();
-	  
-    void redrawAll()
+    void    createWinHisto( );
+		void    redrawWinHisto( );
+
+
+    void setCursorPosition( PP3d::Point3d& pPos);
+
+    void    redrawAllCanvas3d();	  
+    void    redrawAll()
     {
       redrawAllCanvas3d();
       redrawObjectTree();
     }
 	
-    void setCursorPosition( PP3d::Point3d& pPos);
+
+		
+		void    validate( History::SaveMode iMode );
 
   };
   //************************************

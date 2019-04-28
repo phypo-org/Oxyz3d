@@ -10,14 +10,15 @@ namespace M3d{
 
 	//************************************
 
-	bool History::save( PP3d::DataBase& iData, SaveMode iMode)
+	bool History::internalSave( PP3d::DataBase& iData, SaveMode iMode)
 	{
 		static size_t sId=1; 
 		std::unique_ptr<HistoryLink> luLink = std::make_unique<HistoryLink>(sId++);
 
 		luLink->cSaveMode = iMode;
 	
-		if( iMode == SaveMode::SaveFull )
+		if( iMode == SaveMode::Full
+				|| iMode == SaveMode::Diff ) // a virer plus tard 
 			{
 				PP3d::MySav lSav( luLink->cSavData );
 				luLink->cSavId =  PP3d::DataBase::sUniqueId.getCurrentId();
@@ -37,7 +38,7 @@ namespace M3d{
 		return false;
 	}
 	//--------------------------------------
-	PP3d::DataBase* History::restore( int iId )
+	PP3d::DataBase* History::internalRestore( int iId )
 	{
 	
 		HistoryLink* lLink = nullptr;
@@ -51,8 +52,10 @@ namespace M3d{
 				// the database has already by reloaded 
 				return  lLink->cuMyBase.get();
 			}
-	
-		if( lLink->cSaveMode == SaveMode::SaveFull )
+
+		//=================
+		
+		if( lLink->cSaveMode == SaveMode::Full )
 			{
 				std::unique_ptr<PP3d::DataBase> luBase =  std::make_unique< PP3d::DataBase>();
   
@@ -61,15 +64,45 @@ namespace M3d{
 					{
 						return nullptr;
 					}
-				lLink->cuMyBase = luBase.release(); 
-				return lLink->cuMyBase.get();    //ATTENTION dans Application c ausi un unique_ptr
-			}
-
-		// read Saisie
-		// read selection
-		// read View
+				//				PP3d::DataBase * lBase =  luBase.release(); 
 	
-		// FAIRE QQ CHOSE
+				// read Saisie
+				// read selection
+				// read View
+	
+				// FAIRE QQ CHOSE			lLink->cuMyBase = std::move( luBase );
+
+			}	
+		return lLink->cuMyBase.get();    //ATTENTION dans Application c ausi un unique_ptr
+	}
+ 
+	//--------------------------------------
+	bool History::save(  PP3d::DataBase& iBase, SaveMode iSaveMode)
+	{
+			
+		// AFAIRE
+		// LOCK MUTEX
+		// LANCER DANS UN THREAD INDEPENDANT
+		// FAIRE UNE PURGE EVENTUELLE SI TROP RESSOURCE UTILISE
+		// OU DEPASSEMENT DE cMaxDepthness
+			
+		if( iSaveMode == SaveMode::NoSav )
+			return true;
+			
+		return internalSave( iBase, iSaveMode );
 	}
 	//--------------------------------------
-};
+	bool History::restore( int iPos)
+	{
+		// LOCK MUTEX
+		return internalRestore( iPos );
+	}
+	//--------------------------------------
+	bool History::reset(  PP3d::DataBase& iBase )
+	{
+		// LOCK MUTEX
+			
+		return true;
+	}
+	//************************************
+}

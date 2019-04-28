@@ -335,9 +335,7 @@ void DialogRevol::OkCB( Fl_Widget*, void*pUserData )
 			lObj->rename(  "Revol"  );
 		}
 
-
-	Application::Instance().redrawAllCanvas3d();
-	Application::Instance().redrawObjectTree();
+	Application::Instance().validate( History::SaveMode::Diff);			
 
   Fl::delete_widget(lDialog->myWindow);  // Normly if I am understand the documentation, it will destroy all the children
 	lDialog->cContinue = false;

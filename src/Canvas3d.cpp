@@ -235,8 +235,7 @@ namespace M3d {
 				
 	if( PP3d::Selection::Instance().selectPickingHit( lVectHits, cDataBase, cSelectMode, pFlagMove ))
 	  {
-	    Application::Instance().redrawAllCanvas3d();
-	    Application::Instance().redrawObjectTree();			
+			Application::Instance().validate( History::SaveMode::Mini);			
 	  }
       }
   }
@@ -601,13 +600,10 @@ namespace M3d {
       lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
       lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
       if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
-	{
-	}
+				{
+				}
     }
-    //		cDataBase.addPointToCurrentLine( pResult );
-		
-		
-    Application::Instance().redrawAllCanvas3d();
+    //		cDataBase.addPointToCurrentLine( pResult );				
   }
   //---------------------------
   PP3d::Point3d Canvas3d::tranform2Dto3D(  int pX, int pY, int pZ )
@@ -799,7 +795,7 @@ namespace M3d {
 	  {
 	    userTransformSelection(pEvent, true );
 	    userTerminateAction( pEvent );
-	    Application::Instance().redrawAllCanvas3d();
+			Application::Instance().validate( History::SaveMode::Diff);		 
 	  }
 				
 	if( cMode == ModeUser::MODE_SELECT_RECT )

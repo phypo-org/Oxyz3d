@@ -3,6 +3,7 @@
 
 #include "Win3d.h"
 #include "WinObjTree.h"
+#include "WinHisto.h"
 
 #include "Shape/DataBase.h"
 
@@ -19,9 +20,10 @@ namespace M3d{
   Application::Application()	
 
     :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
+		, cuHistory( std::unique_ptr<History>( new History() ))
     , cCurrentTransform( Transform::Nothing)
   {
-		cuHistory->save( *cuDatabase, History::SaveMode::SaveFull );
+		cuHistory->save( *cuDatabase, History::SaveMode::Full );
 		
     std::cout << "========= Application::Application" << std::endl;
 
@@ -39,9 +41,7 @@ namespace M3d{
 		cLua->doCode( "print(\"Hello it's Lua\")" );
 
 		cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
-		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
-
-		
+		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");		
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
@@ -82,7 +82,7 @@ namespace M3d{
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
-	lWin->canvasRedraw();
+				lWin->canvasRedraw();
       }
   }
   //-----------------------------------	
@@ -98,10 +98,10 @@ namespace M3d{
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
-	if( lWin->getId() == iId )
-	  {
-	    return lWin.get();
-	  }
+				if( lWin->getId() == iId )
+					{
+						return lWin.get();
+					}
       }
     return nullptr;
   }
@@ -116,5 +116,35 @@ namespace M3d{
   {
     WinObjTree::Instance().rebuild();		
   }
+  //----------------------------------------
+  void Application::createWinHisto()
+  {
+    WinHisto::Instance().show();
+    redrawWinHisto();
+  }
+  //----------------------------------------
+  void Application::redrawWinHisto()
+  {
+    WinHisto::Instance().rebuild();		
+  }
+  //----------------------------------------
+	void Application::validate( History::SaveMode iMode )
+	{
+		if( iMode ==  History::SaveMode::Reset )
+			{				
+				cuHistory = std::make_unique<History>();
+				cuHistory->save( *cuDatabase, History::SaveMode::Full );		
+			}
+		else
+			{
+				cuHistory->save(  *cuDatabase, iMode );
+			}
+		
+    redrawAllCanvas3d();
+	  redrawObjectTree();
+	  redrawWinHisto();
+
+	 
+	}
   //************************************
 };

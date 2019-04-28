@@ -1,4 +1,4 @@
-#include "WinObjTree.h"
+#include "WinHisto.h"
 
 #include <FL/Fl_Group.H>
 
@@ -17,15 +17,15 @@
 
 namespace M3d {
 
-	WinObjTree* WinObjTree::sTheWinObjTree =nullptr;
+	WinHisto* WinHisto::sTheWinHisto =nullptr;
 
 	
 	//****************************************************
-	WinObjTree::WinObjTree( )
+	WinHisto::WinHisto( )
 	{
-		cWin  = new Fl_Double_Window(400, 580, "tree");
+		cWin  = new Fl_Double_Window(400, 580, "Histoy");
 		
-    cTree = new Fl_Tree( 1, 1, 390, 570, "Tree");
+    cTree = new Fl_Tree( 1, 1, 390, 570, "HistoyTree");
 		
 		cTree->callback((Fl_Callback*)CallBackTree, (void*)(this));
 		cWin->end();
@@ -34,7 +34,7 @@ namespace M3d {
 		//   Fl::run();
 	}
 //--------------------------------------------
-	void WinObjTree::show()
+	void WinHisto::show()
 	{
 		cWin->show();
 	}
@@ -57,7 +57,7 @@ namespace M3d {
 	{
 		MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 		
-		//		WinObjTree* lWinTree = reinterpret_cast<WinObjTree*>(lCheck->cUserData1);
+		//		WinHisto* lWinTree = reinterpret_cast<WinHisto*>(lCheck->cUserData1);
 		PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lCheck->cUserData2);
 
 		lObj->setVisible( (lCheck->value() != 0) );
@@ -69,43 +69,51 @@ namespace M3d {
 		MyInput* lInput = reinterpret_cast<MyInput*>(pData);
 
 		
-		PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lInput->cUserData2);
+		History::HistoryLink*lObj  = reinterpret_cast<History::HistoryLink*>(lInput->cUserData2);
 		
 		std::cout << "Rename " << lInput->value() << std::endl;
-		lObj->rename( (lInput->value()) );
-		Application::Instance().validate( History::SaveMode::Diff);			
+		lObj->cName = lInput->value();
+		//		Application::Instance().validate( History::SaveMode::Diff);
+		
 	}
 //--------------------------------------------
-	void WinObjTree::draw()
+	void WinHisto::draw()
 	{
 				rebuild();
 	}		
 //--------------------------------------------
-	void WinObjTree::rebuild()
+	void WinHisto::rebuild()
 	{
 		std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
 		cTree->clear();
-		for( PP3d::Object* lObj : Application::Instance().getDatabase()->getAllObject() )
+
+		
+		for( History::HistoryLink* lHistoLink : Application::Instance().getHistory()->getHistoLinks() )
 			{
 				cTree->begin();
 				std::ostringstream lOstr;
 				
-				lOstr << "type:" << lObj->getStrType() << '/' << lObj->getName() << '_' << lObj->getId();
-				Fl_Tree_Item* lINode = cTree->add( lOstr.str().c_str() );
+				lOstr << lHistoLink->cIdLink
+							<< ":" << lHistoLink->getStrSavMode()
+							<< ":" << lHistoLink->cName
+							<< ":" << lHistoLink->cTime 
+							<< ":" << (lHistoLink->cuMyBase.get() != nullptr ? "*" : "0" ) << "/ 3333  ";
+					
+				Fl_Tree_Item* lNode = cTree->add( lOstr.str().c_str() );
 						cTree->end();				
 						cTree->begin();
 						
-				Fl_Group* lGroup = new Fl_Group(100,100,140,18);
+				Fl_Group* lGroup = new Fl_Group(200,100,140,18);
 				lGroup->color( FL_WHITE );
 				lGroup->begin();
 				std::ostringstream lOstrName;
 
-				lOstrName << "type:" << lObj->getName() << '_' << lObj->getId();
+				lOstrName << "type:" << lHistoLink->cName;
 
 				int lX = lGroup->x();
 				int lY = lGroup->y()+2;
 
-				//------------				
+				/*		//------------				
 				MyCheckbutton *lCheckSel = new MyCheckbutton( lX, lY, 30,15, "S", SelectOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
 				lCheckSel->value( PP3d::Selection::Instance().isSelected( lObj->getShape() ));
 				lX += lCheckSel->w()+4;
@@ -116,11 +124,11 @@ namespace M3d {
 				lCheckView->value( lObj->isVisible());
 				lX += lCheckView->w()+4;
 				
-
+				*/
 				//------------
 				
-				MyInput* lInput = new MyInput( lX, lY, 100, 15, "", RenameObject, this, lObj );
-				lInput->value( lObj->getName().c_str() );
+				MyInput* lInput = new MyInput( lX, lY, 100, 15, "", RenameObject, this, lHistoLink  );
+				lInput->value( lHistoLink->cName.c_str() );
 			
 				//------------
 
@@ -130,16 +138,16 @@ namespace M3d {
 				cTree->end();
         
 				lGroup->show();
-				lINode->widget(lGroup);				
+				lNode->widget(lGroup);				
 			}
 		std::cout << "------- REBUILD TREE ---------" << std::endl;
 
 		cTree->redraw();
 	}
 	//--------------------------------------------
-	void WinObjTree::CallBackTree( Fl_Widget* pWidget, void* pUserData )
+	void WinHisto::CallBackTree( Fl_Widget* pWidget, void* pUserData )
 	{
-		//		WinObjTree* lWinTree = reinterpret_cast<WinObjTree*>( pUserData );
+		//		WinHisto* lWinTree = reinterpret_cast<WinHisto*>( pUserData );
 	}
 	//****************************************************
 	

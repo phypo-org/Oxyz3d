@@ -228,9 +228,9 @@ namespace M3d {
 	if( lShape != nullptr )
 	  {
 	    //						lCanvas->getDataBase().addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
-								
-	    Application::Instance().redrawAllCanvas3d();
-	    Application::Instance().redrawObjectTree();
+
+			Application::Instance().validate( History::SaveMode::Diff);		 
+
 	  }
       }
   }

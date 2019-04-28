@@ -1,5 +1,5 @@
-#ifndef  H__WinObjTree__H
-#define  H__WinObjTree__H
+#ifndef  H__WinHisto__H
+#define  H__WinHisto__H
 
 
 
@@ -23,14 +23,14 @@
 namespace M3d {
 	
 	//****************************************
-	class WinObjTree 
+	class WinHisto 
 	{
 	protected:
 		
-		Fl_Double_Window *cWin;
-		Fl_Tree          *cTree;
+		Fl_Double_Window     *cWin;
+		Fl_Tree              *cTree;
 		//	Fl_Tree_Item     cRoot;
-		WinObjTree();
+		WinHisto();
 		
 	public:
 		void rebuild();
@@ -40,16 +40,16 @@ namespace M3d {
 		static void NodeButton_CB( Fl_Widget* pWidget, void* pUserData );
 
 	private:
-		static WinObjTree* sTheWinObjTree;
+		static WinHisto* sTheWinHisto;
 
 	public:
-		static WinObjTree& Instance()
+		static WinHisto& Instance()
 		{
-			if( sTheWinObjTree == nullptr )
+			if( sTheWinHisto == nullptr )
 				{
-					sTheWinObjTree = new WinObjTree();
-				}			
-			return *sTheWinObjTree ; 
+					sTheWinHisto = new WinHisto();
+				}
+			return *sTheWinHisto ; 
 		}
 		
 		void redraw() { cWin->redraw(); }

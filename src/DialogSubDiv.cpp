@@ -459,9 +459,8 @@ namespace M3d {
 	lObj->rename(  "Polyedre : Division"  );
       }
 
+		Application::Instance().validate( History::SaveMode::Diff);			
 
-    Application::Instance().redrawAllCanvas3d();
-    Application::Instance().redrawObjectTree();
 
     Fl::delete_widget(lDialog->myWindow);  // Normly if I am understand the documentation, it will destroy all the children
     lDialog->cContinue = false;
