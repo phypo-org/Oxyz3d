@@ -24,8 +24,15 @@ namespace M3d{
       {
 	PP3d::MySav lSav( luLink->cSavData );
 	luLink->cSavId =  PP3d::DataBase::sUniqueId.getCurrentId();
+
+
+
 	if( lSav.save( iData ) )
 	  {
+	    //    std::cout << " History::internalSave <<<<<<"
+	    //	      <<  luLink->cSavData.str()
+	    //	      << ">>>>>>>>>>" << std::endl;
+	    
 	    cLinks.push_back( luLink.release() );
 	    cCurrentLink = -1;
 	    return true;
@@ -48,6 +55,7 @@ namespace M3d{
 	return nullptr;
       }
 
+    std::cout << " History::internalRestore : " << iId  << std::endl;
     /*    if( lLink->cuMyBase.get() != nullptr )
       {
 	// the database has already by reloaded 
@@ -59,8 +67,14 @@ namespace M3d{
 		
     //   if( lLink->cSaveMode == SaveMode::Full )
     //      {
-	std::unique_ptr<PP3d::DataBase> luBase =  std::make_unique< PP3d::DataBase>();
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+
+    // std::cout << " History::internalRestore <<<<<<"
+    //	    <<  lLink->cSavData.str()
+    //	    << ">>>>>>>>>>" << std::endl;
   
+    PP3d::DataBase::sUniqueId.setCurrentId( lLink->cSavId );
+
 	PP3d::MyRead lRead( lLink->cSavData );
 	if( lRead.read( *luBase, true ) == false )
 	  {

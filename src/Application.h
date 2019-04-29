@@ -72,23 +72,23 @@ namespace M3d{
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
     History* getHistory()    { return cuHistory.get(); }
-		M3d::ShapeLua&  getLua() { return *cLua; }
-		const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
-		{			
-			return getLua().doCode( iLuaCode.c_str(), &iOut );
-		}				
-		const char*    execLuaHisto( std::ostringstream& iIn, std::ostream& iOut )
-		{
-			return execLuaHisto( iIn.str(), iOut );
-		}
-		const char*    	execLua(const  std::string& iLuaCode, std::ostream& iOut )
-		{			
-			return getLua().doCode( iLuaCode.c_str(), &iOut );
-		}				
-		const char*    execLua( std::ostringstream& iIn, std::ostream& iOut )
-		{
-			return execLua( iIn.str(), iOut );
-		}
+    M3d::ShapeLua&  getLua() { return *cLua; }
+    const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
+    {			
+      return getLua().doCode( iLuaCode.c_str(), &iOut );
+    }				
+    const char*    execLuaHisto( std::ostringstream& iIn, std::ostream& iOut )
+    {
+      return execLuaHisto( iIn.str(), iOut );
+    }
+    const char*    	execLua(const  std::string& iLuaCode, std::ostream& iOut )
+    {			
+      return getLua().doCode( iLuaCode.c_str(), &iOut );
+    }				
+    const char*    execLua( std::ostringstream& iIn, std::ostream& iOut )
+    {
+      return execLua( iIn.str(), iOut );
+    }
 		
     Win3d & createNewWin3d( int pW, int pH );
     Win3d*  findCanvas3d( int iId );

@@ -148,10 +148,10 @@ namespace M3d {
     if( getDataBase().isCurrentPoints()&& getDataBase().getNbCurrentPoints() == 2 )
       pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
 		
-    if( getDataBase().isCurrentPoints() && getDataBase().getNbCurrentPoints()  >= 3 )
+    if( Application::Instance().getDatabase()->isCurrentPoints() && getDataBase().getNbCurrentPoints()  >= 3 )
       pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
 
-    if( getDataBase().isCurrentPoints()&& getDataBase().getNbCurrentPoints() >= 2 )
+    if( Application::Instance().getDatabase()->isCurrentPoints()&& getDataBase().getNbCurrentPoints() >= 2 )
       pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this);
   }
   //-------------------------------------------
@@ -206,23 +206,23 @@ namespace M3d {
 						
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() >= 3 )
+	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
 	      {
 		lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
 	      }
 	  }
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() >= 2 )
+	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
 	      {
-		lShape = lCanvas->getDataBase().convertCurrentLineToPolylines();
+		lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
 	      }
 	  } 
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() == 2 )
+	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
 	      {
-		lShape = lCanvas->getDataBase().convertCurrentLineToLine();
+		lShape = Application::Instance().getDatabase()->convertCurrentLineToLine();
 	      }
 	  } 
 	if( lShape != nullptr )

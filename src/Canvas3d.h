@@ -25,7 +25,6 @@
 
 
 
-
 class Fl_Menu_Button;
 struct Fl_Menu_Item;
 
@@ -56,9 +55,6 @@ class Win3d;
 
 		bool      cDebug;
 
-		PP3d::DataBase& cDataBase;
-		//	DataBase cDataBaseLight;
-		
 		bool    cFlagCursor3d;
 		
 		PP3d::ViewProps cViewProps;
@@ -81,17 +77,18 @@ class Win3d;
 		// Selection
 		PP3d::SelectMode cSelectMode= PP3d::SelectMode::Undefine;
 		// Selection
-		
+
+	  
 	public:
-		Canvas3d( Win3d& pW3d, int pX, int pY, int pW, int pH , PP3d::DataBase& pDatabase, const char *l=nullptr);
+		Canvas3d( Win3d& pW3d, int pX, int pY, int pW, int pH ,  const char *l=nullptr);
 		virtual ~Canvas3d(  );
 
 		void draw();
 		int  handle(	int	pEventh	); 
 
 		PP3d::Kamera&   getKamera()   { return cKamera;   }
-		PP3d::DataBase& getDataBase() { return cDataBase; }
-		
+	  
+	  PP3d::DataBase& getDataBase();
 
 
 		void changeUserMode( ModeUser pMode ) { cMode = pMode; }

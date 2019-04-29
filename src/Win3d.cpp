@@ -76,6 +76,7 @@
 #include "Dialogs.h"
 
 #include "Application.h"
+#include "History.h"
 #include "MyFlWidget.h"
 #include "MyImage.h"
 
@@ -168,13 +169,14 @@ namespace M3d {
       GLuint             cVal;
       PP3d::SelectType   cSelType; 
     };
-	
-	}
+    
+    Application::Instance().getHistory()->undo();
+  }
   //-------------------------------------------
   static void	RedoCB(Fl_Widget*w, void*pData)
   {
-		//  MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
-		//  Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
+    //  MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
+    //  Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
 	
     union ConvVoid
     {
@@ -182,9 +184,10 @@ namespace M3d {
       GLuint             cVal;
       PP3d::SelectType   cSelType; 
     };
+    Application::Instance().getHistory()->redo();
 	
-	}
-	//-------------------------------------------
+  }
+  //-------------------------------------------
   static void	BasculeSelModeCB(Fl_Widget*w, void*pData)
   {
     MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
@@ -293,7 +296,7 @@ namespace M3d {
     static int slWinId=1;
     cWinId=slWinId++;
     
-    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , cDatabase, "1" );
+    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , "1" );
 		
     // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
     //sw.mode(FL_RGB);
@@ -562,11 +565,12 @@ namespace M3d {
   void Win3d::MyMenuCallback(Fl_Widget* w, void* pUserData) {
 		
     static bool slFlagDialog=false; // C'est moche !!!!
-		std::ostringstream lOsLuaCode;
-		std::ostringstream lOsLuaOut;
+    std::ostringstream lOsLuaCode;
+    std::ostringstream lOsLuaOut;
 	
-							
-		
+    PP3d::DataBase &lDatabase = *Application::Instance().getDatabase();
+
+	  
     Fl_Menu_* mw = (Fl_Menu_*)w;
     const Fl_Menu_Item* m = mw->mvalue();		
     if (!m)
@@ -607,7 +611,7 @@ namespace M3d {
 				
 		PP3d::MySav lSav( lOut );
 				
-		lSav.save( lCanvas->getDataBase());
+		lSav.save( *Application::Instance().getDatabase());
 
 		lOut.close();
 	      }
@@ -639,7 +643,7 @@ namespace M3d {
 				
 		  PP3d::MyExportObj lExpObj( lOut );
 				
-		  lExpObj.save( lCanvas->getDataBase());
+		  lExpObj.save(  *Application::Instance().getDatabase());
 
 		  lOut.close();
 		}
@@ -672,14 +676,14 @@ namespace M3d {
 		if( lFileIn.good() )
 		  {								
 		    PP3d::MyRead lRead( lFileIn );
-		    lRead.read( lCanvas->getDataBase() );
+		    lRead.read(  *Application::Instance().getDatabase() );
 		    lFileIn.close();								
 		  }
 	      }
 	      break;						
 	    }
 			
-			Application::Instance().validate( History::SaveMode::Reset );
+	    Application::Instance().validate( History::SaveMode::Reset );
 			
 	    return;
 	  }	
@@ -708,7 +712,7 @@ namespace M3d {
 						if( lFileIn.good() )
 							{								
 								PP3d::MyImportObj lRead( lFileIn );
-								lRead.read( lCanvas->getDataBase() );
+								lRead.read( *Application::Instance().getDatabase() );
 								lFileIn.close();								
 							}
 					}
@@ -727,14 +731,14 @@ namespace M3d {
 	  else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_DeleteSelect << endl;
-	      PP3d::Selection::Instance().deleteAllFromDatabase(lCanvas->getDataBase());
+	      PP3d::Selection::Instance().deleteAllFromDatabase(*Application::Instance().getDatabase() );
 				Application::Instance().validate( History::SaveMode::Full);			
 
 	    }
 	  else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
-	      PP3d::Selection::Instance().addSelectionToInput(lCanvas->getDataBase(), false);				
+	      PP3d::Selection::Instance().addSelectionToInput(*Application::Instance().getDatabase(), false);				
 				Application::Instance().validate( History::SaveMode::Mini);			
 	    }
 	  else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
@@ -771,9 +775,9 @@ namespace M3d {
 				
 	      if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		{
-		  if(  lCanvas->getDataBase().getNbCurrentPoints() >= 3 )
+		  if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
 		    {
-		      lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
+		      lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		    }
 		  else {
 		    SINFO ( lWin3d, "Error : Almost 3 points is requiered to create facet" );
@@ -781,17 +785,17 @@ namespace M3d {
 		}
 	      else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 		{
-		  if(  lCanvas->getDataBase().getNbCurrentPoints() >= 2 )
+		  if(   Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
 		    {
-		      lShape = lCanvas->getDataBase().convertCurrentLineToPolylines();
+		      lShape = lDatabase.convertCurrentLineToPolylines();
 		    }
 		  else {				
-		    if(  lCanvas->getDataBase().getNbCurrentPoints() < 2 )
+		    if(  Application::Instance().getDatabase()->getNbCurrentPoints() < 2 )
 		      return;
 							
 		    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		      {						
-			lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
+			lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		      }
 						
 		    SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
@@ -896,13 +900,13 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
-	      lCanvas->getDataBase().demo1();
+	      lDatabase.demo1();
 				Application::Instance().validate( History::SaveMode::Diff);			
 
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 	    {
-	      lCanvas->getDataBase().demo2();
+	      lDatabase.demo2();
 				Application::Instance().validate( History::SaveMode::Diff);			
 	    }
 
