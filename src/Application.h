@@ -109,9 +109,10 @@ namespace M3d{
       redrawObjectTree();
     }
 	
+    PP3d::DataBase* swapBase( PP3d::DataBase* ioBase );
 
 		
-		void    validate( History::SaveMode iMode );
+    void    validate( History::SaveMode iMode );
 
   };
   //************************************

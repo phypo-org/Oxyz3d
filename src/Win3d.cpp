@@ -44,6 +44,52 @@
 
 
 #include <FL/Fl_Native_File_Chooser.H>
+#include <config.h>
+
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Hor_Slider.H>
+#include <FL/Fl_Toggle_Button.H>
+#include <FL/math.h>
+
+#include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Choice.H>
+
+#include <FL/Fl_File_Icon.H>
+#include <FL/Fl_Button.H>
+
+#include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_JPEG_Image.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Output.H>
+
+
+#include "Shape/DataBase.h"
+#include "Shape/ObjectFacet.h"
+#include "Shape/ObjectLine.h"
+
+#include "Win3d.h"
+#include "Canvas3d.h"
+#include "Dialogs.h"
+
+#include "Application.h"
+#include "MyFlWidget.h"
+#include "MyImage.h"
+
+#include "Selection.h"
+
+#include "Shape/SavRead.h"
+#include "Shape/ExportObj.h"
+
+#include <memory>
+
+#include <fstream>
+
+
+#include <FL/Fl_Native_File_Chooser.H>
 
 
 namespace M3d {

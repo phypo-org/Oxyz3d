@@ -20,35 +20,35 @@ namespace M3d{
   Application::Application()	
 
     :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
-		, cuHistory( std::unique_ptr<History>( new History() ))
+    , cuHistory( std::unique_ptr<History>( new History() ))
     , cCurrentTransform( Transform::Nothing)
   {
-		cuHistory->save( *cuDatabase, History::SaveMode::Full );
+    cuHistory->save( *cuDatabase, History::SaveMode::Full );
 		
     std::cout << "========= Application::Application" << std::endl;
 
 
 		
-		M3d::ShapeLua::SetPrototype();
+    M3d::ShapeLua::SetPrototype();
 		
-		cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
-		cLua->setDatabase( *cuDatabase.get() );
+    cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
+    cLua->setDatabase( *cuDatabase.get() );
 		
 	
-		cLua->doCode( "PPrintln(\"Hello it's C++\" )");
-		cLua->doCode( "PListLib()");
-		cLua->doCode( "PListLibFtn()" );
-		cLua->doCode( "print(\"Hello it's Lua\")" );
+    cLua->doCode( "PPrintln(\"Hello it's C++\" )");
+    cLua->doCode( "PListLib()");
+    cLua->doCode( "PListLibFtn()" );
+    cLua->doCode( "print(\"Hello it's Lua\")" );
 
-		cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
-		cLua->doCode("ShapeAddCurrentPoint(4,5,7)");		
+    cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
+    cLua->doCode("ShapeAddCurrentPoint(4,5,7)");		
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
   //-----------------------------------
   Application::~Application()
   {
-		delete cLua;
+    delete cLua;
     cLua = nullptr;
   }
   //-----------------------------------
@@ -82,7 +82,7 @@ namespace M3d{
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
-				lWin->canvasRedraw();
+	lWin->canvasRedraw();
       }
   }
   //-----------------------------------	
@@ -98,10 +98,10 @@ namespace M3d{
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
-				if( lWin->getId() == iId )
-					{
-						return lWin.get();
-					}
+	if( lWin->getId() == iId )
+	  {
+	    return lWin.get();
+	  }
       }
     return nullptr;
   }
@@ -128,23 +128,37 @@ namespace M3d{
     WinHisto::Instance().rebuild();		
   }
   //----------------------------------------
-	void Application::validate( History::SaveMode iMode )
-	{
-		if( iMode ==  History::SaveMode::Reset )
-			{				
-				cuHistory = std::make_unique<History>();
-				cuHistory->save( *cuDatabase, History::SaveMode::Full );		
-			}
-		else
-			{
-				cuHistory->save(  *cuDatabase, iMode );
-			}
+  void Application::validate( History::SaveMode iMode )
+  {
+    if( iMode ==  History::SaveMode::Reset )
+      {				
+	cuHistory = std::make_unique<History>();
+	cuHistory->save( *cuDatabase, History::SaveMode::Full );		
+      }
+    else
+      {
+	cuHistory->save(  *cuDatabase, iMode );
+      }
 		
     redrawAllCanvas3d();
-	  redrawObjectTree();
-	  redrawWinHisto();
+    redrawObjectTree();
+    redrawWinHisto();	 
+  }
+  //----------------------------------------
+  PP3d::DataBase* Application::swapBase( PP3d::DataBase* ioBase )
+  {
+    if( ioBase == nullptr )
+      return nullptr;
 
-	 
-	}
+    PP3d::DataBase* lOldBase = cuDatabase.release();
+    cuDatabase.reset(ioBase );
+ 
+    
+    redrawAllCanvas3d();
+    redrawObjectTree();
+    redrawWinHisto();
+
+    return lOldBase;
+  }
   //************************************
 };
