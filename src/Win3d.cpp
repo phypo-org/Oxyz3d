@@ -1,5 +1,3 @@
-#include <config.h>
-
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Double_Window.H>
@@ -33,7 +31,7 @@
 #include "MyFlWidget.h"
 #include "MyImage.h"
 
-#include "Selection.h"
+#include "Shape/Selection.h"
 
 #include "Shape/SavRead.h"
 #include "Shape/ExportObj.h"
@@ -44,7 +42,7 @@
 
 
 #include <FL/Fl_Native_File_Chooser.H>
-#include <config.h>
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -80,7 +78,7 @@
 #include "MyFlWidget.h"
 #include "MyImage.h"
 
-#include "Selection.h"
+#include "Shape/Selection.h"
 
 #include "Shape/SavRead.h"
 #include "Shape/ExportObj.h"
@@ -95,7 +93,7 @@
 
 namespace M3d {
 
-  
+
 
 #define StrMenu_SaveAll         "Save all"
 #define StrMenu_Open            "Open"
@@ -120,7 +118,7 @@ namespace M3d {
 #define StrMenu_CreateShapePolyline  StrMenu_CreateShape  "Polyline"
 #define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
 
-	
+
 #define StrMenu_CallDialoDiagSub     "New Subdivide"
 
 #define StrMenu_Revol     "New Revol"
@@ -130,7 +128,7 @@ namespace M3d {
 #define StrMenu_RevolFreeAxe StrMenu_Revol "free axe (disabled)"
 
 
-	
+
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings"
 
@@ -143,7 +141,7 @@ namespace M3d {
 #define StrMenu_TransformRotY     "Rotate Y"
 #define StrMenu_TransformRotZ     "Rotate Z"
 
-	
+
 #define StrMenu_CreateCube      "Cube"
 #define StrMenu_CreateTetra     "Tetraede"
 #define StrMenu_CreatePyramid   "Pyramide"
@@ -154,7 +152,7 @@ namespace M3d {
 #define StrMenu_Demo1            "Demo 1"
 #define StrMenu_Demo2            "Demo 2"
 
-	
+
   using namespace std;
 
   //-------------------------------------------
@@ -162,14 +160,14 @@ namespace M3d {
   {
 		//    MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
 		//   Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
-	
+
     union ConvVoid
     {
       void *             cPtr;
       GLuint             cVal;
-      PP3d::SelectType   cSelType; 
+      PP3d::SelectType   cSelType;
     };
-    
+
     Application::Instance().getHistory()->undo();
   }
   //-------------------------------------------
@@ -177,42 +175,42 @@ namespace M3d {
   {
     //  MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
     //  Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
-	
+
     union ConvVoid
     {
       void *             cPtr;
       GLuint             cVal;
-      PP3d::SelectType   cSelType; 
+      PP3d::SelectType   cSelType;
     };
     Application::Instance().getHistory()->redo();
-	
+
   }
   //-------------------------------------------
   static void	BasculeSelModeCB(Fl_Widget*w, void*pData)
   {
     MyButton* lToggle = reinterpret_cast<MyButton*>( pData);
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
-	
+
     union ConvVoid
     {
       void *             cPtr;
       GLuint             cVal;
-      PP3d::SelectType   cSelType; 
+      PP3d::SelectType   cSelType;
     };
-	
+
     ConvVoid lVal;
     lVal.cPtr=  lToggle->cUserData2;
-	
+
     PP3d::Selection::Instance().changeSelectType( lVal.cSelType );
     std::cout << "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) << std::endl;
 
-		
+
     MyToggleButton* 	lBut0 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData3 );
     MyToggleButton* 	lBut1 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData4 );
     MyToggleButton* 	lBut2 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData5 );
     MyToggleButton* 	lBut3 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData6 );
     MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData7 );
-	
+
     lBut0->value( true );
     lBut1->value( false );
     lBut2->value( false );
@@ -221,7 +219,7 @@ namespace M3d {
 
     std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
 
-	
+
     lWin3d->canvasRedraw();
   }
   //-------------------------------------------
@@ -229,7 +227,7 @@ namespace M3d {
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
-	
+
 
     std::cout << " value:" << (int)lToggle->value();
     if( lToggle->value() )
@@ -238,9 +236,9 @@ namespace M3d {
       lToggle->value( false );
     std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
 
-		
+
     lWin3d->cuCanvas3d->setVisualMode(  (int)lToggle->value() );
-		
+
 
     lWin3d->canvasRedraw();
   }
@@ -251,31 +249,31 @@ namespace M3d {
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
     bool* lBool = reinterpret_cast<bool*>( lToggle->cUserData2);
     *lBool = ! *lBool;
-		
+
     lWin3d->canvasRedraw();
   }
   //-------------------------------------------
-	
+
   static void	BasculeGridCB(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
     Win3d* lWin3d        = reinterpret_cast<Win3d*>( lToggle->cUserData1);
-		
+
     ModeGrid *lGridMode = reinterpret_cast<ModeGrid*>( lToggle->cUserData2);
-	 
+
     if( *lGridMode == ModeGrid::NO_GRID )
       {
 	*lGridMode = ModeGrid::GRID_2D;
       }
-    else 
+    else
       {
 	*lGridMode = ModeGrid::NO_GRID;
       }
-		
+
     lWin3d->canvasRedraw();
   }
   //-------------------------------------------
-	
+
   static void	BasculePerspective(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
@@ -283,9 +281,9 @@ namespace M3d {
 
     cout << "Changement perpective button" << endl;
     lWin3d->getKamera().chgModeKamera();
-		
+
     lWin3d->canvasRedraw();
-  }		
+  }
   //****************************************
 
   Win3d::Win3d(const char*pName, int pW, int pH, PP3d::DataBase & pDatabase )
@@ -295,19 +293,19 @@ namespace M3d {
   {
     static int slWinId=1;
     cWinId=slWinId++;
-    
+
     cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , "1" );
-		
+
     // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
     //sw.mode(FL_RGB);
     this->resizable( cuCanvas3d.get() );
-	
+
     //================
     int lX = 15;
     int lY = cMenubar.h();
     int lH = cMenubar.h()*0.6;
     int lW = 70;
-											
+
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
     cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
@@ -318,10 +316,10 @@ namespace M3d {
 
     lW =  Application::sIconSize+4;
     lH =  Application::sIconSize+4;
-		
+
     lX += lW;
 
-    //========================		
+    //========================
     Fl_Image* lPixSel = MyImage::LoadImage("Icons/undo.png", Application::sIconSize);
 
 
@@ -330,7 +328,7 @@ namespace M3d {
     lButUndo->value(false );
     lButUndo->image( lPixSel );
     lX += lW;
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/redo.png", Application::sIconSize);
 
     MyButton*
@@ -338,18 +336,18 @@ namespace M3d {
     lButRedo->value(false );
     lButRedo->image( lPixSel );
     lX += lW;
-    //========================		
-			
+    //========================
+
 		lButUndo->setUserData( this, lButUndo,  lButRedo  );
 		lButRedo->setUserData( this, lButUndo,  lButRedo  );
 
-    //========================		
-    //========================		
-    //========================		
+    //========================
+    //========================
+    //========================
 
 
     lX += lW*2;
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/all.png", Application::sIconSize);
 
     MyToggleButton*
@@ -359,7 +357,7 @@ namespace M3d {
     lButSel00->image( lPixSel );
     lX += lW;
 
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/vertex.png", Application::sIconSize);
 
     MyToggleButton*
@@ -368,7 +366,7 @@ namespace M3d {
     lButSel0->value(false);
     lButSel0->image( lPixSel );
     lX += lW;
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/edge.png", Application::sIconSize);
 
     MyToggleButton*
@@ -377,7 +375,7 @@ namespace M3d {
     lButSel1->value(false );
     lButSel1->image( lPixSel );
     lX += lW;
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/face.png", Application::sIconSize);
 
     MyToggleButton*
@@ -386,7 +384,7 @@ namespace M3d {
     lButSel2->value(false );
     lButSel2->image( lPixSel );
     lX += lW;
-    //========================		
+    //========================
     lPixSel = MyImage::LoadImage("Icons/body.png", Application::sIconSize);
 
     MyToggleButton*
@@ -408,7 +406,7 @@ namespace M3d {
     //========================
     MyToggleButton*			lBut = nullptr;
 
-		//========================		
+		//========================
     lPixSel = MyImage::LoadImage("Icons/skelet.png", Application::sIconSize);
 
 
@@ -418,21 +416,21 @@ namespace M3d {
     lBut1->value(false );
     lBut1->image( lPixSel );
     lX += lW;
-   
+
     //========================
 
     Fl_Image* lPixDif = MyImage::LoadImage("Icons/color.png", Application::sIconSize);
-		
+
     lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagLightColor  );
     lBut->value( cuCanvas3d->cFlagLightColor);
     lBut->image( lPixDif );
     lX += lW;
-		
+
     //========================
 
     Fl_Image* lPixBug = MyImage::LoadImage("Icons/debug.png", Application::sIconSize);
-		
+
     lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cDebug );
     lBut->value( cuCanvas3d->cDebug);
@@ -440,23 +438,23 @@ namespace M3d {
     lX += lW;
 
 
-		
+
     //=================================================================
     lX += lW*2;
     //========================
     lBut = nullptr;
-		
+
     Fl_Image* lPixPersp = MyImage::LoadImage("Icons/perspective.png", Application::sIconSize);
-		
+
     lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
 			       BasculePerspective, this );
     lBut->value( cuCanvas3d->getKamera().isPerspectiveOn() );
     lBut->image( lPixPersp );
     lX += lW;
     //========================
-		
+
     Fl_Image* lPix2 = MyImage::LoadImage("Icons/grid.png", Application::sIconSize);
-		
+
     lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
 			       BasculeGridCB, this, &cuCanvas3d->cGridMode );
     lBut->value( cuCanvas3d->cGridMode ==  ModeGrid::GRID_2D );
@@ -473,16 +471,16 @@ namespace M3d {
 
 
 
-		
+
     cInfoOutput = new Fl_Output( 1, this->h() -16 , this->w()-2, 16, "Fl_InfoOutput");
     cInfoOutput->align(FL_ALIGN_BOTTOM);
     cInfoOutput->value("Welcome ...");
 
-			
-    //=================================================================
-		
 
-    // Fl_Menu_Bar cMenubar(0,0,window.w(),30); 
+    //=================================================================
+
+
+    // Fl_Menu_Bar cMenubar(0,0,window.w(),30);
 
     cMenubar.add("&File/"         StrMenu_Open,     "", MyMenuCallback, this);
     cMenubar.add("&File/"         StrMenu_SaveAll,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
@@ -496,14 +494,14 @@ namespace M3d {
     cMenubar.add("&Selection/"  StrMenu_DeleteSelect, "", MyMenuCallback, this);
     cMenubar.add("&Selection/"  StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
 
-			
+
     cMenubar.add("&Create/" StrMenu_CreateCube , "^c", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_CreateTetra, "^t", MyMenuCallback, this );
     cMenubar.add("&Create/" StrMenu_CreatePyramid, "^t", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_CreateOcto, "^t", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_CreateDodec, "^t", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_CreateIcosahe, "^t", MyMenuCallback, this, FL_MENU_DIVIDER);
-		
+
     cMenubar.add("&Create/" StrMenu_CreateShapeFacet, "^t", MyMenuCallback, this);
     cMenubar.add("&Create/" StrMenu_CreateShapePolyline, "^t",MyMenuCallback, this, FL_MENU_DIVIDER);
 
@@ -512,7 +510,7 @@ namespace M3d {
     cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this
 		 );
     cMenubar.add("&Create/" StrMenu_RevolFreeAxe,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
-		 
+
     cMenubar.add("&Create/" StrMenu_CallDialoDiagSub, "^t",MyMenuCallback, this, FL_MENU_DIVIDER);
 
     cMenubar.add("&Transform/" StrMenu_TransformMoveX, "", MyMenuCallback, this);
@@ -521,8 +519,8 @@ namespace M3d {
     cMenubar.add("&Transform/" StrMenu_TransformRotX, "", MyMenuCallback, this);
     cMenubar.add("&Transform/" StrMenu_TransformRotY, "", MyMenuCallback, this);
     cMenubar.add("&Transform/" StrMenu_TransformRotZ, "", MyMenuCallback, this);
-	
-		
+
+
     cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^t", MyMenuCallback, this);
 
     cMenubar.add("&Win/" StrMenu_Create3dView, "^t", MyMenuCallback, this);
@@ -535,44 +533,44 @@ namespace M3d {
     cMenubar.add("&Debug/" StrMenu_Demo1, nullptr, MyMenuCallback, this);
     cMenubar.add("&Debug/" StrMenu_Demo2, nullptr, MyMenuCallback, this);
 
-		
+
     /*
       menubar.menu(menutable);
       menubar.callback(test_cb);
       menus[0] = &menubar;
-      Fl_Menu_Bar menubar2(0,31,window.w(),30); 
+      Fl_Menu_Bar menubar2(0,31,window.w(),30);
       menubar2.menu(menutable);
       menubar2.callback(test_cb);
       menus[1] = &menubar2;
     */
-		
-		
+
+
     cuCanvas3d->cPopup = new	Fl_Menu_Button( 0, 0, 1, 1);
-		
+
     //		cuCanvas3d->cPopup->type(Fl_Menu_Button::POPUP3);
     //	cuCanvas3d->cPopup->add("This|is|a popup|menu");
-		
+
     //================
-	
+
     end();
     show(0,nullptr);
-	
+
     cuCanvas3d->show();
     resizable(*this);
   }
 
   //-------------------------------------------
   void Win3d::MyMenuCallback(Fl_Widget* w, void* pUserData) {
-		
+
     static bool slFlagDialog=false; // C'est moche !!!!
     std::ostringstream lOsLuaCode;
     std::ostringstream lOsLuaOut;
-	
+
     PP3d::DataBase &lDatabase = *Application::Instance().getDatabase();
 
-	  
+
     Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
+    const Fl_Menu_Item* m = mw->mvalue();
     if (!m)
       {
 	printf("NULL\n");
@@ -584,162 +582,164 @@ namespace M3d {
     M3d::Win3d* lWin3d = reinterpret_cast<M3d::Win3d*>(pUserData);
     M3d::Canvas3d* lCanvas =lWin3d->cuCanvas3d.get();
 
-		
+
     Fl::focus(lCanvas);
 
 
     if( strcmp( m->label(),StrMenu_SaveAll	) == 0)
       {
-	Fl_Native_File_Chooser fnfc;
-	fnfc.title("Pick a file for write");
-	fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	fnfc.filter("3D\t*.oxyz\n"
+	Fl_Native_File_Chooser lFileChooser;
+	lFileChooser.title("Pick a file for write");
+	lFileChooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+	lFileChooser.filter("3D\t*.oxyz\n"
 		    "3D Files\t*.{oxyz}");
-	fnfc.directory(".");           // default directory to use
+	lFileChooser.directory(".");           // default directory to use
 	// Show native chooser
-	switch ( fnfc.show() ) {
-	case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+	switch ( lFileChooser.show() ) {
+	case -1: printf("ERROR: %s\n", lFileChooser.errmsg());    break;  // ERROR
 	case  1: printf("CANCEL\n");                      break;  // CANCEL
 	default:
 	  {
-	    std::cout << "SAVE TO: " << fnfc.filename() << std::endl;
+	    std::cout << "SAVE TO: " << lFileChooser.filename() << std::endl;
 
-	    std::ofstream lOut;						
-	    lOut.open( fnfc.filename());
+	    std::ofstream lOut;
+	    lOut.open( lFileChooser.filename());
 	    if( lOut.good() )
 	      {
-				
+
 		PP3d::MySav lSav( lOut );
-				
+
 		lSav.save( *Application::Instance().getDatabase());
 
 		lOut.close();
 	      }
 	  }
-	  break;						
-	}				 
+	  break;
+	}
       }
     else
       if( strcmp( m->label(),StrMenu_ExportAllObj	) == 0)
 	{
-	  Fl_Native_File_Chooser fnfc;
-	  fnfc.title("Pick a file for export (.obj)");
-	  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	  fnfc.filter("3D obj\t*.obj\n"
+	  Fl_Native_File_Chooser lFileChooser;
+	  lFileChooser.title("Pick a file for export (.obj)");
+	  lFileChooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+	  lFileChooser.filter("3D obj\t*.obj\n"
 		      "3D obj Files\t*.{obj}");
-	  fnfc.directory(".");           // default directory to use
+	  lFileChooser.directory(".");           // default directory to use
 	  // Show native chooser
-	  switch ( fnfc.show() ) {
-	  case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+	  switch ( lFileChooser.show() ) {
+	  case -1: printf("ERROR: %s\n", lFileChooser.errmsg());    break;  // ERROR
 	  case  1: printf("CANCEL\n");                      break;  // CANCEL
 	  default:
 	    {
-	      std::cout << "EXPORT TO: " << fnfc.filename() << std::endl;
+	      std::cout << "EXPORT TO: " << lFileChooser.filename() << std::endl;
 
-	      std::ofstream lOut;						
-	      lOut.open( fnfc.filename());
+	      std::ofstream lOut;
+	      lOut.open( lFileChooser.filename());
 	      if( lOut.good() )
 		{
-				
+
 		  PP3d::MyExportObj lExpObj( lOut );
-				
+
 		  lExpObj.save(  *Application::Instance().getDatabase());
 
 		  lOut.close();
 		}
 	    }
-	    break;						
-	  }				 
+	    break;
+	  }
 	}
       else
 	if( strcmp( m->label(), StrMenu_Open )== 0 )
-	  {				
-	    Fl_Native_File_Chooser fnfc;
-	    fnfc.title("Pick a file for read");
-	    fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	    fnfc.filter("3D\t*.oxyz\n"
-			"3D Files\t*.{oxyz}");
-	    fnfc.directory(".");           // default directory to use
-	    // Show native chooser
-	    switch ( fnfc.show() ) {
-	    case -1: printf(">>>>>>>>>>>>>>ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
-	    case  1: printf(">>>>>>>>>>>>>>CANCEL\n");                      break;  // CANCEL
-
-	    default:
+	  {
+	    std::string lFilename;
+	    {
+	      Fl_Native_File_Chooser lFileChooser;
+	      lFileChooser.title("Pick a 3d file for read");
+	      lFileChooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+	      lFileChooser.filter("3D\t*.oxyz\n"
+				  "3D Files\t*.{oxyz}");
+	      lFileChooser.directory(".");           // default directory to use
+	      // Show native chooser
+	      switch ( lFileChooser.show() )
+		{
+		case -1: printf(">>>>>>>>>>>>>>ERROR: %s\n", lFileChooser.errmsg());    break;  // ERROR
+		case  1: printf(">>>>>>>>>>>>>>CANCEL\n");                      break;  // CANCEL		
+		default: lFilename = lFileChooser.filename();
+		  break;
+		}
+	    }
+	    if( lFilename.size() > 0 )
 	      {
-			
-		std::cout << " READ FROM : " << fnfc.filename() << std::endl;
-						
-		std::ifstream lFileIn;						
-		lFileIn.open( fnfc.filename());
-						
+		std::cout << " READ FROM : " << lFilename << std::endl;
+		
+		std::ifstream lFileIn;
+		lFileIn.open( lFilename );
+		
 		if( lFileIn.good() )
-		  {								
+		  {
 		    PP3d::MyRead lRead( lFileIn );
 		    lRead.read(  *Application::Instance().getDatabase() );
-		    lFileIn.close();								
+		    lFileIn.close();
 		  }
 	      }
-	      break;						
-	    }
-			
-	    Application::Instance().validate( History::SaveMode::Reset );
-			
+	    
+	    //   Application::Instance().validate( History::SaveMode::Reset );
 	    return;
-	  }	
+	  }
 	else
 	  if( strcmp( m->label(), StrMenu_ImportObj )== 0 )
-	    {				
-	      Fl_Native_File_Chooser fnfc;
-	      fnfc.title("Pick a file for read");
-	      fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	      fnfc.filter("3D\t*.obj\n"
+	    {
+	      Fl_Native_File_Chooser lFileChooser;
+	      lFileChooser.title("Pick a file for read");
+	      lFileChooser.type(Fl_Native_File_Chooser::BROWSE_FILE);
+	      lFileChooser.filter("3D\t*.obj\n"
 										"3D Files\t*.{obj}");
-	      fnfc.directory(".");           // default directory to use
+	      lFileChooser.directory(".");           // default directory to use
 	      // Show native chooser
-	      switch ( fnfc.show() ) {
-	      case -1: printf(">>>>>>>>>>>>>>ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+	      switch ( lFileChooser.show() ) {
+	      case -1: printf(">>>>>>>>>>>>>>ERROR: %s\n", lFileChooser.errmsg());    break;  // ERROR
 	      case  1: printf(">>>>>>>>>>>>>>CANCEL\n");                      break;  // CANCEL
-								
+
 	      default:
 					{
-									
-						std::cout << "IMPORT FROM : " << fnfc.filename() << std::endl;
-									
-						std::ifstream lFileIn;						
-						lFileIn.open( fnfc.filename());
-									
+
+						std::cout << "IMPORT FROM : " << lFileChooser.filename() << std::endl;
+
+						std::ifstream lFileIn;
+						lFileIn.open( lFileChooser.filename());
+
 						if( lFileIn.good() )
-							{								
+							{
 								PP3d::MyImportObj lRead( lFileIn );
 								lRead.read( *Application::Instance().getDatabase() );
-								lFileIn.close();								
+								lFileIn.close();
 							}
 					}
-					break;						
-	      }				 
-				Application::Instance().validate( History::SaveMode::Full);			
+					break;
+	      }
+				Application::Instance().validate( History::SaveMode::Full);
 
 	      return;
 	    }
-		
+
 	  else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 	    {
 	      PP3d::Selection::Instance().removeAll();
-				Application::Instance().validate( History::SaveMode::Mini);			
+				Application::Instance().validate( History::SaveMode::Mini);
 	    }
 	  else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_DeleteSelect << endl;
 	      PP3d::Selection::Instance().deleteAllFromDatabase(*Application::Instance().getDatabase() );
-				Application::Instance().validate( History::SaveMode::Full);			
+				Application::Instance().validate( History::SaveMode::Full);
 
 	    }
 	  else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
-	      PP3d::Selection::Instance().addSelectionToInput(*Application::Instance().getDatabase(), false);				
-				Application::Instance().validate( History::SaveMode::Mini);			
+	      PP3d::Selection::Instance().addSelectionToInput(*Application::Instance().getDatabase(), false);
+				Application::Instance().validate( History::SaveMode::Mini);
 	    }
 	  else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
 	    {
@@ -772,7 +772,7 @@ namespace M3d {
 	  else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
 	    {
 	      PP3d::Object * lShape=nullptr;
-				
+
 	      if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		{
 		  if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
@@ -789,22 +789,22 @@ namespace M3d {
 		    {
 		      lShape = lDatabase.convertCurrentLineToPolylines();
 		    }
-		  else {				
+		  else {
 		    if(  Application::Instance().getDatabase()->getNbCurrentPoints() < 2 )
 		      return;
-							
+
 		    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
-		      {						
+		      {
 			lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		      }
-						
+
 		    SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
 		  }
 		}
-			
+
 	      if( lShape != nullptr )
 		{
-			Application::Instance().validate( History::SaveMode::Diff);			
+			Application::Instance().validate( History::SaveMode::Diff);
 		}
 	    }
 	  else if( strncmp( m->label(), StrMenu_Revol, strlen(StrMenu_Revol)  ) == 0)
@@ -825,7 +825,7 @@ namespace M3d {
 	      else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
 		{
 		  CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolFreeAxe  );
-		}									
+		}
 	    }
     //============== TRANSFORMATION ====================
 	  else if( strcmp( m->label(), StrMenu_TransformMoveX ) == 0)
@@ -866,7 +866,7 @@ namespace M3d {
 	      // Mettre un RAII
 	      //		if( cFlagDialogPerspectiv )
 	      //			return;
-					 
+
 	      //		cFlagDialogPerspectiv = true;
 	      CallDialogPerspectiv( lCanvas,  lCanvas->getKamera() );
 	      //			cFlagDialogPerspectiv = false;
@@ -875,7 +875,7 @@ namespace M3d {
 	  else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
 	    {
 				lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
-	
+
 				//	      Application::Instance().createNewWin3d( 1000, 800 );
 	    }
 	  else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
@@ -901,16 +901,16 @@ namespace M3d {
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
 	      lDatabase.demo1();
-				Application::Instance().validate( History::SaveMode::Diff);			
+				Application::Instance().validate( History::SaveMode::Diff);
 
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 	    {
 	      lDatabase.demo2();
-				Application::Instance().validate( History::SaveMode::Diff);			
+				Application::Instance().validate( History::SaveMode::Diff);
 	    }
 
-				 
+
 		if( lOsLuaCode.str().size() > 0 )
 			{
 				// Ily a du lua a executer
