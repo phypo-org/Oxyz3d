@@ -128,7 +128,7 @@ namespace M3d{
     WinHisto::Instance().rebuild();		
   }
   //----------------------------------------
-  void Application::validate( History::SaveMode iMode )
+  void Application::validate( History::SaveMode iMode, DeferRedraw iFlagDefer )
   {
     if( iMode ==  History::SaveMode::Reset )
       {				
@@ -139,10 +139,34 @@ namespace M3d{
       {
 	cuHistory->save(  *cuDatabase, iMode );
       }
-		
-    redrawAllCanvas3d();
-    redrawObjectTree();
-    redrawWinHisto();	 
+
+    if( iFlagDefer == DeferRedraw::DeferTrue )
+      {
+	cDeferFlagRedraw = DeferRedraw::DeferTrue;
+      }
+    else
+      {
+	cDeferFlagRedraw = DeferRedraw::DeferFalse;
+	
+	redrawAllCanvas3d();
+	redrawObjectTree();
+	redrawWinHisto();
+      }
+  }
+  //----------------------------------------
+  void Application::makeDefer( )
+  {
+    std::cout << "Application::makeDefer redraw " << (int) cDeferFlagRedraw <<  std::endl;
+    
+    if( cDeferFlagRedraw == DeferRedraw::DeferTrue )
+      {
+	std::cout << "Application::makeDefer redraw " << std::endl;
+	
+	redrawAllCanvas3d();
+	redrawObjectTree();
+	redrawWinHisto();
+	cDeferFlagRedraw = DeferRedraw::DeferFalse;
+      }
   }
   //----------------------------------------
   PP3d::DataBase* Application::swapBase( PP3d::DataBase* ioBase )
@@ -159,6 +183,13 @@ namespace M3d{
     redrawWinHisto();
 
     return lOldBase;
+  }
+  //----------------------------------------
+  void Application::FlCheckCallback( void* )
+  {
+    std::cout << "************************ FlCheckCallback ************************" << std::endl;
+      
+    Instance().makeDefer();
   }
   //************************************
 };

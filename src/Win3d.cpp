@@ -684,7 +684,7 @@ namespace M3d {
 		  }
 	      }
 	    
-	    //   Application::Instance().validate( History::SaveMode::Reset );
+	    Application::Instance().validate( History::SaveMode::Reset, Application::DeferRedraw::DeferTrue );
 	    return;
 	  }
 	else
