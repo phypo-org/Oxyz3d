@@ -228,7 +228,7 @@ namespace M3d {
 	  {
 	    //						lCanvas->getDataBase().addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 
-			Application::Instance().validate( History::SaveMode::Diff);
+	    Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue );
 
 	  }
       }
@@ -249,7 +249,7 @@ namespace M3d {
 
 
     printf("%s\n", m->label());
-    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
+    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData );
 
 
     //============== TRANSFORMATION ====================

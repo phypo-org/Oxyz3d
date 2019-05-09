@@ -121,7 +121,7 @@ namespace M3d{
     PP3d::DataBase* swapBase( PP3d::DataBase* ioBase );
 
 		
-    void    validate( History::SaveMode iMode, DeferRedraw iFlagDeverRedraw =  DeferRedraw::DeferFalse );
+    void    validate( History::SaveMode iMode, DeferRedraw iFlagDeverRedraw );
     void    makeDefer();
 
   };

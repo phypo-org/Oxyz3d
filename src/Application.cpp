@@ -5,6 +5,8 @@
 #include "WinObjTree.h"
 #include "WinHisto.h"
 
+#include <FL/Fl_PNG_Image.H>
+
 #include "Shape/DataBase.h"
 
 #include <sstream>
@@ -49,6 +51,7 @@ namespace M3d{
   Application::~Application()
   {
     delete cLua;
+    
     cLua = nullptr;
   }
   //-----------------------------------
@@ -56,6 +59,11 @@ namespace M3d{
   //-----------------------------------
   int Application::init( int argc, char* argv[] )
   {
+    fl_open_display();
+
+    Fl_RGB_Image* lImg = new Fl_PNG_Image("Icons/Oxyz3d.png");
+    Fl_Window::default_icon( lImg );
+    
     return 0;
   }
   //-----------------------------------

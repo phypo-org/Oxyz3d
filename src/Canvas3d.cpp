@@ -237,7 +237,7 @@ namespace M3d {
 							  *Application::Instance().getDatabase(),
 							  cSelectMode, pFlagMove ))
 	  {
-			Application::Instance().validate( History::SaveMode::Mini);
+	    Application::Instance().validate( History::SaveMode::Mini, Application::DeferRedraw::DeferTrue );  /// PHIPO_TEST
 	  }
       }
   }
@@ -798,7 +798,7 @@ namespace M3d {
 	  {
 	    userTransformSelection(pEvent, true );
 	    userTerminateAction( pEvent );
-			Application::Instance().validate( History::SaveMode::Diff);
+	    Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue ); // PHIPO_TEST
 	  }
 
 	if( cMode == ModeUser::MODE_SELECT_RECT )

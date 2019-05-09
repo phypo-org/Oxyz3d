@@ -718,7 +718,7 @@ namespace M3d {
 					}
 					break;
 	      }
-				Application::Instance().validate( History::SaveMode::Full);
+	      Application::Instance().validate( History::SaveMode::Full, Application::DeferRedraw::DeferTrue );
 
 	      return;
 	    }
@@ -726,20 +726,20 @@ namespace M3d {
 	  else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 	    {
 	      PP3d::Selection::Instance().removeAll();
-				Application::Instance().validate( History::SaveMode::Mini);
+				Application::Instance().validate( History::SaveMode::Mini, Application::DeferRedraw::DeferTrue );
 	    }
 	  else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_DeleteSelect << endl;
 	      PP3d::Selection::Instance().deleteAllFromDatabase(*Application::Instance().getDatabase() );
-				Application::Instance().validate( History::SaveMode::Full);
+				Application::Instance().validate( History::SaveMode::Full, Application::DeferRedraw::DeferTrue );
 
 	    }
 	  else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
 	      PP3d::Selection::Instance().addSelectionToInput(*Application::Instance().getDatabase(), false);
-				Application::Instance().validate( History::SaveMode::Mini);
+				Application::Instance().validate( History::SaveMode::Mini, Application::DeferRedraw::DeferTrue );
 	    }
 	  else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
 	    {
@@ -804,7 +804,7 @@ namespace M3d {
 
 	      if( lShape != nullptr )
 		{
-			Application::Instance().validate( History::SaveMode::Diff);
+			Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue );
 		}
 	    }
 	  else if( strncmp( m->label(), StrMenu_Revol, strlen(StrMenu_Revol)  ) == 0)
@@ -901,13 +901,13 @@ namespace M3d {
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
 	      lDatabase.demo1();
-				Application::Instance().validate( History::SaveMode::Diff);
+				Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue );
 
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 	    {
 	      lDatabase.demo2();
-				Application::Instance().validate( History::SaveMode::Diff);
+				Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue );
 	    }
 
 

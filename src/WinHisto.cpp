@@ -49,11 +49,11 @@ namespace M3d {
     //	std::cout << "Box:"  << (lCheck->value() != 0) << std::endl;
     if( PP3d::Selection::Instance().addToSelection( lObj->getShape() ) )
       {
-	Application::Instance().validate( History::SaveMode::Mini);			
+	Application::Instance().validate( History::SaveMode::Mini, Application::DeferRedraw::DeferTrue );			
       }
   }
   //--------------------------------------------
-  static void	ViewOneObject(Fl_Widget*w, void*pData)
+  static void ViewOneObject(Fl_Widget*w, void*pData)
   {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 		
