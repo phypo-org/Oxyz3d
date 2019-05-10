@@ -86,7 +86,19 @@ namespace M3d{
 	
   }
   //-----------------------------------	
-  void Application::redrawAllCanvas3d()
+  void Application::redrawAllCanvas3d(  DeferRedraw iFlagDeverRedraw )
+  { 
+    if( iFlagDeverRedraw == DeferRedraw::DeferTrue )
+      {
+	cDeferFlagRedraw =  DeferRedraw::DeferTrue;
+      }
+    else
+      {
+	trueRedrawAllCanvas3d();
+      }    
+  }
+  //-----------------------------------	
+  void Application::trueRedrawAllCanvas3d()
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
@@ -170,7 +182,7 @@ namespace M3d{
       {
 	std::cout << "Application::makeDefer redraw " << std::endl;
 	
-	redrawAllCanvas3d();
+	trueRedrawAllCanvas3d();
 	redrawObjectTree();
 	redrawWinHisto();
 	cDeferFlagRedraw = DeferRedraw::DeferFalse;

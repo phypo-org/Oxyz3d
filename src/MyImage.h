@@ -30,7 +30,7 @@ namespace M3d {
 				return lTmp;
 
 			
-			Fl_PNG_Image* lTmp2  = lTmp->copy( pSize, pSize );
+			Fl_PNG_Image* lTmp2  = (Fl_PNG_Image*)lTmp->copy( pSize, pSize );
 			delete lTmp;
 			
 			return lTmp2;

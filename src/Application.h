@@ -111,7 +111,8 @@ namespace M3d{
 
     void setCursorPosition( PP3d::Point3d& pPos);
 
-    void    redrawAllCanvas3d();	  
+    void    redrawAllCanvas3d( DeferRedraw iFlagDeverRedraw = DeferRedraw::DeferTrue );	  
+    void    trueRedrawAllCanvas3d();	  
     void    redrawAll()
     {
       redrawAllCanvas3d();
