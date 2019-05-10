@@ -125,6 +125,8 @@ namespace M3d{
     void    validate( History::SaveMode iMode, DeferRedraw iFlagDeverRedraw );
     void    makeDefer();
 
+
+#define SINFO(A)  // faire une trace dans le terminal de l'appli 
   };
   //************************************
 

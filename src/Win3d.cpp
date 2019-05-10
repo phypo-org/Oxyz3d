@@ -202,7 +202,7 @@ namespace M3d {
     lVal.cPtr=  lToggle->cUserData2;
 
     PP3d::Selection::Instance().changeSelectType( lVal.cSelType );
-    std::cout << "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) << std::endl;
+    DBG3(  "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) );
 
 
     MyToggleButton* 	lBut0 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData3 );
@@ -217,7 +217,7 @@ namespace M3d {
     lBut3->value( false );
     lBut4->value( false );
 
-    std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
+    DBG3( "BasculeSelModeCB " << lVal.cVal );
 
 
     lWin3d->canvasRedraw();
@@ -229,12 +229,14 @@ namespace M3d {
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
 
 
-    std::cout << " value:" << (int)lToggle->value();
+    DBG3( " value:" << (int)lToggle->value() );
+
     if( lToggle->value() )
       lToggle->value( true );
     else
       lToggle->value( false );
-    std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
+
+    DBG3( " ---> value:" << (int)lToggle->value() );
 
 
     lWin3d->cuCanvas3d->setVisualMode(  (int)lToggle->value() );
@@ -279,7 +281,6 @@ namespace M3d {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
     Win3d* lWin3d           = reinterpret_cast<Win3d*>( lToggle->cUserData1);
 
-    cout << "Changement perpective button" << endl;
     lWin3d->getKamera().chgModeKamera();
 
     lWin3d->canvasRedraw();
@@ -600,7 +601,7 @@ namespace M3d {
 	case  1: printf("CANCEL\n");                      break;  // CANCEL
 	default:
 	  {
-	    std::cout << "SAVE TO: " << lFileChooser.filename() << std::endl;
+	    DBG( "SAVE TO: " << lFileChooser.filename() );
 
 	    std::ofstream lOut;
 	    lOut.open( lFileChooser.filename());
@@ -632,7 +633,7 @@ namespace M3d {
 	  case  1: printf("CANCEL\n");                      break;  // CANCEL
 	  default:
 	    {
-	      std::cout << "EXPORT TO: " << lFileChooser.filename() << std::endl;
+	      DBG( "EXPORT TO: " << lFileChooser.filename() );
 
 	      std::ofstream lOut;
 	      lOut.open( lFileChooser.filename());
@@ -671,7 +672,7 @@ namespace M3d {
 	    }
 	    if( lFilename.size() > 0 )
 	      {
-		std::cout << " READ FROM : " << lFilename << std::endl;
+		DBG( " READ FROM : " << lFilename );
 		
 		std::ifstream lFileIn;
 		lFileIn.open( lFilename );
@@ -704,7 +705,7 @@ namespace M3d {
 	      default:
 					{
 
-						std::cout << "IMPORT FROM : " << lFileChooser.filename() << std::endl;
+					  DBG(  "IMPORT FROM : " << lFileChooser.filename() );
 
 						std::ifstream lFileIn;
 						lFileIn.open( lFileChooser.filename());
@@ -730,14 +731,14 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 	    {
-	      cout << "Select menu :" << StrMenu_DeleteSelect << endl;
+	      DBG( "Select menu :" << StrMenu_DeleteSelect );
 	      PP3d::Selection::Instance().deleteAllFromDatabase(*Application::Instance().getDatabase() );
 				Application::Instance().validate( History::SaveMode::Full, Application::DeferRedraw::DeferTrue );
 
 	    }
 	  else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 	    {
-	      cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
+	      DBG( "Select menu :" << StrMenu_AddSelectCopyToInput );
 	      PP3d::Selection::Instance().addSelectionToInput(*Application::Instance().getDatabase(), false);
 				Application::Instance().validate( History::SaveMode::Mini, Application::DeferRedraw::DeferTrue );
 	    }
@@ -780,7 +781,7 @@ namespace M3d {
 		      lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		    }
 		  else {
-		    SINFO ( lWin3d, "Error : Almost 3 points is requiered to create facet" );
+		    SINFO ( "Error : Almost 3 points is requiered to create facet" );
 		  }
 		}
 	      else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
@@ -798,7 +799,7 @@ namespace M3d {
 			lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		      }
 
-		    SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
+		    SINFO (  "Error : Almost 2 points is requiered to create facet" );
 		  }
 		}
 

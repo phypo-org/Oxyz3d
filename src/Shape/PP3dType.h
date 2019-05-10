@@ -16,7 +16,51 @@
 
 #include "string.h"
 
+
+#define INFO3( A ) if( PP3d::sVerbose > 3 )	\
+  { \
+    std::cout <<  "       " << A ) << std::endl;	\
+  }
+  
+#define INFO2( A )  if( PP3d::sVerbose > 2 ) \
+  { \
+    std::cout <<  "    "<<A << std::endl;	\
+  }
+  
+#define INFO1( A )  if( PP3d::sVerbose > 1 ) \
+  { \
+    std::cout<< "  " <<  A << std::endl;		\
+  } 
+   
+#define INFO( A )  if( PP3d::sVerbose > 0) \
+  { \
+     std::cout <<  A << std::endl; \
+  } 
+   
+#define DBG3( A )  if(PP3d::sDebug > 3 )	\
+  { \
+    std::cout <<  "%       " << A  << std::endl;	\
+  }
+  
+#define DBG2( A )  if( PP3d::sDebug > 2 ) \
+  { \
+    std::cout <<  "%    "<< A << std::endl;	\
+  }
+  
+#define DBG1( A )  if( PP3d::sDebug > 1 )	\
+  { \
+    std::cout<< "%  " <<  A << std::endl;  \
+  } 
+   
+#define DBG( A )  if( PP3d::sDebug > 0) \
+  { \
+    std::cout << '%' << A << std::endl;	\
+  } 
+   
 namespace PP3d {
+
+  extern int sVerbose;
+  extern int sDebug;
 	
   using   PDouble =  GLdouble;
   using   PIndex  =  size_t ;

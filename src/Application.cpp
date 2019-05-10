@@ -12,6 +12,8 @@
 #include <sstream>
 #include <ostream>
 
+#include <getopt.h>
+
 
 
 namespace M3d{
@@ -27,7 +29,7 @@ namespace M3d{
   {
     cuHistory->save( *cuDatabase, History::SaveMode::Full );
 		
-    std::cout << "========= Application::Application" << std::endl;
+    INFO(  "========= Application::Application" );
 
 
 		
@@ -36,14 +38,15 @@ namespace M3d{
     cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
     cLua->setDatabase( *cuDatabase.get() );
 		
-	
+    /*
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");
     cLua->doCode( "PListLib()");
     cLua->doCode( "PListLibFtn()" );
     cLua->doCode( "print(\"Hello it's Lua\")" );
 
     cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
-    cLua->doCode("ShapeAddCurrentPoint(4,5,7)");		
+    cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
+    */		
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
@@ -59,6 +62,30 @@ namespace M3d{
   //-----------------------------------
   int Application::init( int argc, char* argv[] )
   {
+    char c;
+    while ( (c = getopt(argc, argv, "hf:vV:gG:")) != -1 ) 	
+      {
+	switch ( c )
+	  {
+	  case 'v':          
+	    PP3d::sVerbose++;
+	    break;
+	    
+	  case 'V':	
+	    PP3d::sVerbose = atoi(optarg);
+	    break;
+	    
+	  case 'g':          
+	    PP3d::sDebug++;
+	    break;
+	  
+	  case 'G':	
+	  PP3d::sDebug = atoi(optarg);
+	  break;
+	  
+	}
+       
+      }
     fl_open_display();
 
     Fl_RGB_Image* lImg = new Fl_PNG_Image("Icons/Oxyz3d.png");
@@ -66,6 +93,8 @@ namespace M3d{
     
     return 0;
   }
+  //-----------------------------------
+  //-----------------------------------
   //-----------------------------------
   Win3d & Application::createNewWin3d( int pW, int pH )
   {
@@ -176,11 +205,11 @@ namespace M3d{
   //----------------------------------------
   void Application::makeDefer( )
   {
-    std::cout << "Application::makeDefer redraw " << (int) cDeferFlagRedraw <<  std::endl;
+    DBG1( "Application::makeDefer redraw " << (int) cDeferFlagRedraw );
     
     if( cDeferFlagRedraw == DeferRedraw::DeferTrue )
       {
-	std::cout << "Application::makeDefer redraw " << std::endl;
+	DBG1( "Application::makeDefer redraw ");
 	
 	trueRedrawAllCanvas3d();
 	redrawObjectTree();
@@ -207,7 +236,7 @@ namespace M3d{
   //----------------------------------------
   void Application::FlCheckCallback( void* )
   {
-    std::cout << "************************ FlCheckCallback ************************" << std::endl;
+    DBG( "************************ FlCheckCallback ************************" );
       
     Instance().makeDefer();
   }

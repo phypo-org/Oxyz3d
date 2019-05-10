@@ -88,19 +88,19 @@ namespace M3d {
     switch( cMode )
       {
       case ModeUser::MODE_BASE:
-	std::cout << "MODE_BASE  ";
+	DBG( "MODE_BASE  ");
 	break;
       case ModeUser::MODE_SELECT:
-	std::cout << "MODE_SELECT  ";
+	DBG( "MODE_SELECT  ");
 	break;
       case ModeUser::MODE_SELECT_RECT:
-	std::cout << "MODE_SELECT_RECT  ";
+	DBG( "MODE_SELECT_RECT  ");
 	break;
       case ModeUser::MODE_MOVE_CAMERA:
-	std::cout << "MODE_MOVE_CAMERA  ";
+	DBG( "MODE_MOVE_CAMERA  ");
 	break;
       case ModeUser::MODE_TRANSFORM :
-	std::cout << "MODE_TRANSFORM  " ;
+	DBG( "MODE_TRANSFORM  " );
 	break;
       }
   }
@@ -244,7 +244,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::picking( int pX, int pY, bool pFlagMove )
   {
-    //    std::cout << "=== picking:" << pX << " " << pY << " SM:" << cSelectMode <<  std::endl;
+    //    DBG( "=== picking:" << pX << " " << pY << " SM:" << cSelectMode <<  std::endl;
 
     GLint lViewport[4];
     glGetIntegerv(GL_VIEWPORT, lViewport);
@@ -306,7 +306,7 @@ namespace M3d {
  //------------------------------
   void Canvas3d::userTerminateAction(	int	pEvent )
   {
-    std::cout << "TERMINATE" << std::endl;
+    DBG( "TERMINATE action" );
 
     cMouseInitPosX = cMouseLastPosX = -1;
     cMouseInitPosY = cMouseLastPosY = -1;
@@ -436,7 +436,7 @@ namespace M3d {
     cMouseLastPosX = lX;
     cMouseLastPosY = lY;
 
-    std::cout << "***** Canvas3d::userTransformSelection **** " << lDx << " " << lDy << std::endl;
+    DBG( "***** Canvas3d::userTransformSelection **** " << lDx << " " << lDy );
 
 
     PP3d::Mat4 lMatTran;
@@ -445,7 +445,7 @@ namespace M3d {
     switch( Application::Instance().getCurrentTransformType() )
       {
       case Transform::Nothing:
-	std::cout << "Nothing to do !!!" << std::endl;
+	DBG( "Nothing to do !!!" );
 	return ;
 
 	//================
@@ -501,13 +501,13 @@ namespace M3d {
 	{
 	  PP3d::Point3d lCenter =    PP3d::Selection::Instance().getCenter( *Application::Instance().getDatabase() );
 
-	  std::cout << "Center:" << lCenter ;
+	  DBG( "Center:" << lCenter );
 	  PP3d::Mat4 lMatRecenter;
 	  lMatRecenter.initMove( lCenter ); //on revient au centre;
 
 
 	  PP3d::Point3d lNCenter =  -lCenter;
-	  std::cout << " Neg:" << lNCenter << std::endl;
+	  DBG( " Neg:" << lNCenter );
 	  PP3d::Mat4 lMatZero;
 	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
@@ -536,14 +536,14 @@ namespace M3d {
 	break;
 
       default:
-	std::cout << "Nothing to do 2!!!" << std::endl;
+	DBG( "Nothing to do 2!!!" );
       }
 
     //		PP3d::Mat4 lTmp;
     //		lTmp.set( Application::Instance().getCurrentTransform() );
     // Faire une sauvegarde de la selection
     // ou alors utiliser des matrice opengl pour chaque objet a modifier (y compris les points !!!!)?
-    std::cout << "pos:" << Application::Instance().currentTransform().position() << std::endl;
+    DBG1( "pos:" << Application::Instance().currentTransform().position() );
 
 
     if( pFlagFinalize == false )
@@ -553,10 +553,10 @@ namespace M3d {
       }
     else
       {
-	cout << "============= VALIDATE ===================" << endl;
+	DBG1( "============= VALIDATE ===================" );
 	//			cout << lMatTran << endl;
 	validDragSelect( lMatTran );
-	cout << "============= VALIDATE ===================" << endl;
+	DBG1( "============= VALIDATE ===================" );
 
 	//				PP3d::Selection::Instance().execModificationMatrice( lMatTran );
       }
@@ -576,22 +576,22 @@ namespace M3d {
     getKamera().projectObjectToWin( lPt0, lResult0, true);
 
 
-    std::cout << "==========================================================================" << std::endl;
-    // std::cout << "1----> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " << std::endl;
+    DBG( "==========================================================================" );
+    // DBG( "1----> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " );
 
     // On projette ensuite ce point dans l'espace 3d
 
     PP3d::Point3d pResult;
 
-    std::cout << "lX:" << lX << " lY:" << lY ;
+    DBG( "lX:" << lX << " lY:" << lY );
     getKamera().projectWinToObject( PP3d::Point3d( lX, lY, lResult0.cZ), pResult, true);
-    std::cout << " --> (" << pResult.cX<< "  " << pResult.cY << "  " << pResult.cZ << " ) " << std::endl;
+    DBG( " --> (" << pResult.cX<< "  " << pResult.cY << "  " << pResult.cZ << " ) " );
 
     // Pour verifier on fait l'operation inverse
     getKamera().projectObjectToWin( pResult, lResult0, true);
-    std::cout << " ==> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " << std::endl;
+    DBG( " ==> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " );
 
-    std::cout << "==========================================================================" << std::endl;
+    DBG( "==========================================================================" );
 
 
     Application::Instance().getDatabase()->setCursorPosition(	pResult );
@@ -600,8 +600,8 @@ namespace M3d {
       std::ostringstream lOsLuaCode;
       std::ostringstream lOsLuaOut;
 
-      lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
-      lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
+      //      lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')');
+      //      lOsLuaCode << "OxyzRedrawCanvas()");
       if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
 				{
 				}
@@ -673,7 +673,7 @@ namespace M3d {
     traceMode();
 
 
-    std::cout << " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> " ;
+    DBG( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> " );
 
 
     switch( pEvent )
@@ -681,17 +681,17 @@ namespace M3d {
 	//===========================
 
       case FL_PUSH :
-	cout << " Button Push"  << std::endl;
+	DBG( " Button Push"  );
 	Fl::focus(this);
 
 
-	//		std::cout << " ctrl: " << Fl::event_ctrl() << " " ;
+	//		DBG( " ctrl: " << Fl::event_ctrl() << " " ;
 
 	// SAISIE DE POINT
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_ctrl() &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    std::cout << " **************** cUserActionSaisie " << endl;
+	    DBG( " **************** cUserActionSaisie " );
 
 	    userInputPoint( pEvent );
 
@@ -702,7 +702,7 @@ namespace M3d {
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    std::cout << " cUserActionRectangle " << endl;
+	    DBG( " cUserActionRectangle " );
 	    cMode = ModeUser::MODE_SELECT_RECT;
 
 	    userPrepareAction( pEvent );
@@ -782,13 +782,13 @@ namespace M3d {
 		userTerminateAction( pEvent );
 	      }
 
-	    std::cout << "LEFT "<< std::endl;
+	    DBG( "LEFT ");
 	    break;
 	  case FL_MIDDLE_MOUSE :
-	    std::cout << "MIDDLE "<< std::endl;
+	    DBG( "MIDDLE ");
 	    break;
 	  case FL_RIGHT_MOUSE :
-	    std::cout << "RIGHT "<< std::endl;
+	    DBG( "RIGHT ");
 
 	    break;
 	  }
@@ -864,7 +864,7 @@ namespace M3d {
 
 
 	  //			cout << " Move : x="<< lX << " y=" << lY <<  std::endl;
-	  //			cout << " Cursor :  x=" << pResult.cX << " y=" << pResult.cY << " z=" << pResult.cZ << std::endl;
+	  //			cout << " Cursor :  x=" << pResult.cX << " y=" << pResult.cY << " z=" << pResult.cZ );
 	}
 	break;
 	//==============================
