@@ -169,7 +169,7 @@ namespace PP3d {
 			cPoints = { lA, lB };
 			lA->addOwner( this );
 			if( lA != lB )
-				lB->addOwner( this );
+			  lB->addOwner( this );
 			
 		}
 		bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette

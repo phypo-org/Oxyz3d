@@ -578,7 +578,7 @@ namespace  PP3d {
   Poly* SubDiv::SubParam::finish( float iScale )
   {
 
-    std::cout << " ====================== SubDiv::finish " << cPoints.size() << " " <<  cFacets.size() << std::endl;
+    DBG1(  " ====================== SubDiv::finish " << cPoints.size() << " " <<  cFacets.size() );
 
 		
     Poly* lPoly = new Poly();           //mettre unique_ptr

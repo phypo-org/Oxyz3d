@@ -302,7 +302,7 @@ double constexpr sqrtconstexpr(double x)
 	Poly*  PrimitivFactory::CreatePoly( Point3d* pPoints, size_t pSzPt, PrimFacet *pFacets, size_t pSzFac )
 	{
 
-		std::cout << " ====================== PrimitivFactory::CreatePoly " << pSzPt << " " << pSzFac << std::endl;
+	  DBG(  " ====================== PrimitivFactory::CreatePoly " << pSzPt << " " << pSzFac );
 
 
 		

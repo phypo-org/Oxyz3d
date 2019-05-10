@@ -37,6 +37,11 @@
      std::cout <<  A << std::endl; \
   } 
    
+#define DBG4( A )  if(PP3d::sDebug > 4 )	\
+  { \
+    std::cout <<  "%         " << A  << std::endl;	\
+  }
+
 #define DBG3( A )  if(PP3d::sDebug > 3 )	\
   { \
     std::cout <<  "%       " << A  << std::endl;	\
