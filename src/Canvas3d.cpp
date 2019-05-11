@@ -203,7 +203,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
   {
-    cout << " processHits=" <<  pNbHits <<  endl;
+    //cout << " processHits=" <<  pNbHits <<  endl;
 
     GLuint*	ptr = (GLuint *) pSelectBuf;
 
@@ -216,7 +216,7 @@ namespace M3d {
 	GLuint lNbNames = *ptr;
 	ptr++;
 
-	cout << "Nb names :" << lNbNames << " >>> "  ;
+	// cout << "Nb names :" << lNbNames << " >>> "  ;
 
 	float lZ1 = (float) *ptr/0x7fffffff;		ptr++;
 	float lZ2 = (float) *ptr/0x7fffffff;		ptr++;
@@ -372,8 +372,8 @@ namespace M3d {
 	    getKamera().angle()[1] -= 360;
 
 
-	cout << "angle X: " <<	getKamera().angle()[0]
-	     << "angle Y: " <<	getKamera().angle()[1] ;
+	//cout << "angle X: " <<	getKamera().angle()[0]
+//	     << "angle Y: " <<	getKamera().angle()[1] ;
 	redraw();
 	cMouseLastPosX = lX;
 	cMouseLastPosY = lY;
@@ -828,7 +828,7 @@ namespace M3d {
 
       case FL_DRAG:
 	Fl::focus(this);
-	cout << " <DRAG> " << cMouseLastPosX;
+	//cout << " <DRAG> " << cMouseLastPosX;
 	if( cMouseLastPosX != -1 )
 	  {
 	    if( cMode == ModeUser::MODE_TRANSFORM )
@@ -853,7 +853,7 @@ namespace M3d {
 
       case FL_MOVE:
 	{
-	  cout << " <MOVE> " << cMouseLastPosX <<  std::endl;
+	  //cout << " <MOVE> " << cMouseLastPosX <<  std::endl;
 	  if( cMouseLastPosX != -1 )
 	    {
 	      if( cMode == ModeUser::MODE_MOVE_CAMERA )

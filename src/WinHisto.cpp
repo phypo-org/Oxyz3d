@@ -84,7 +84,7 @@ namespace M3d {
   //--------------------------------------------
   void WinHisto::rebuild()
   {
-    std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
+    //std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
     cTree->clear();
 
 		
@@ -140,7 +140,7 @@ namespace M3d {
 	lGroup->show();
 	lNode->widget(lGroup);				
       }
-    std::cout << "------- REBUILD TREE ---------" << std::endl;
+    //std::cout << "------- REBUILD TREE ---------" << std::endl;
 
     cTree->redraw();
   }

@@ -145,7 +145,7 @@ namespace PP3d {
 	  cIn >> lToken;
 	  //				std::getline( cIn, lToken, ' ' );
 				
-	  std::cout << "Token: <<" << lToken << ">> ";
+	  //std::cout << "Token: <<" << lToken << ">> ";
 						
 	  EntityId lId;
 	  if( lToken == TokPoint )
@@ -154,7 +154,7 @@ namespace PP3d {
 						
 	      cIn >> lId >> lX >> lY >> lZ;
 					 
-	      std::cout << " - Read Point<<" << lId <<" : " << lX << " : " << lY << " : " << lZ <<  std::endl;
+	     // std::cout << " - Read Point<<" << lId <<" : " << lX << " : " << lY << " : " << lZ <<  std::endl;
 						
 	      Point* lPoint = new Point( Point3d( lX, lY, lZ ) );
 
@@ -168,7 +168,7 @@ namespace PP3d {
 		EntityId lFirstId, lSecondId;
 									
 		cIn >> lId >> lFirstId >> lSecondId ;	
-		std::cout << " - Read Line <<" << lId <<" : " << lFirstId<< " : " << lSecondId <<  std::endl;
+		//std::cout << " - Read Line <<" << lId <<" : " << lFirstId<< " : " << lSecondId <<  std::endl;
 							
 		Line* lLine = new Line( static_cast<PointPtr>(lLocalDico.at(lFirstId)),
 					static_cast<PointPtr>(lLocalDico.at(lSecondId)) );
@@ -183,7 +183,7 @@ namespace PP3d {
 		  EntityId lLineId;
 												
 		  cIn >> lId >> lNb  ;
-		  std::cout << " - Read Facet <<" << lId <<" : " << lNb <<  std::endl;
+		  //std::cout << " - Read Facet <<" << lId <<" : " << lNb <<  std::endl;
 		  Facet *lFacet = new Facet();
 												
 		  for( size_t i=0; i< lNb; i++)
@@ -191,7 +191,7 @@ namespace PP3d {
 		      cIn >> lLineId ;
 		      lFacet->addLine( static_cast<LinePtr>(lLocalDico.at(lLineId)) );
 														
-		      std::cout << "    "  << i << ":" << lLineId <<  std::endl;														
+		      //std::cout << "    "  << i << ":" << lLineId <<  std::endl;														
 		    }
 		  lLocalDico.insert( { lId, lFacet } );
 												
@@ -204,7 +204,7 @@ namespace PP3d {
 		    EntityId lFacetId;
 													
 		    cIn >> lId >> lNb  ;
-		    std::cout << " - Read Poly <<" << lId <<" : " << lNb <<  std::endl;
+		    //std::cout << " - Read Poly <<" << lId <<" : " << lNb <<  std::endl;
 													
 		    Poly* lPoly = new Poly();
 													
@@ -212,7 +212,7 @@ namespace PP3d {
 		      {
 			cIn >> lFacetId;
 															
-			std::cout << "   " <<  i << ":" << lFacetId <<  std::endl;
+			//std::cout << "   " <<  i << ":" << lFacetId <<  std::endl;
 			lPoly->addFacet( static_cast<FacetPtr>(lLocalDico.at(lFacetId)));
 															
 															
@@ -233,7 +233,7 @@ namespace PP3d {
 		      std::getline(	cIn,  lName, '@' ); // pour eviter de recuperer l'espace devant le nom
 		      std::getline(	cIn,  lName, '\n' );
 														
-		      std::cout << " - Read object <<" << lId <<" : " << lSubType << " : " <<  lSubId  << " <<" << lName << ">>" <<  std::endl;
+		      //std::cout << " - Read object <<" << lId <<" : " << lSubType << " : " <<  lSubId  << " <<" << lName << ">>" <<  std::endl;
 														
 		      Object* lObj=nullptr;
 														

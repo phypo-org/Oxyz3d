@@ -155,7 +155,7 @@ namespace PP3d {
 				pHit.cEntity = lEntity;
 			}
 
-		cout<<"**************** 22222 ***********************"<< endl;
+		//cout<<"**************** 22222 ***********************"<< endl;
 		
 		// On tri les plus petits objets en premier, entre meme type c'est le Z qui compte
 		//	std::sort( pHits.begin(), pHits.end(), MyCmp );
@@ -186,7 +186,7 @@ namespace PP3d {
 							{
 								cout<<"Selection Error "<< lEntity->getId() <<" mismach"<< endl;
 							}
-						cout <<  " S " ;
+						//cout <<  " S " ;
 						switch( pSelectMode )
 							{
 							case SelectMode::Undefine:
@@ -196,15 +196,15 @@ namespace PP3d {
 									removeEntity(lEntity);
 									break;
 							case SelectMode::Select:
-								cout <<  " NO " << endl;
+								//cout <<  " NO " << endl;
 							return false;
 							}
-						cout <<  " R ->SM:" << pSelectMode << endl;
+						//cout <<  " R ->SM:" << pSelectMode << endl;
 									return true;
 					}				
 				else
 					{
-						cout <<  " U " ;
+						//cout <<  " U " ;
 						switch( pSelectMode )
 							{
 							case SelectMode::Undefine:
@@ -214,11 +214,11 @@ namespace PP3d {
 								addEntity( lEntity );								
 								break;
 							case SelectMode::Unselect:
-								cout <<  " NO " << endl;
+								//cout <<  " NO " << endl;
 								return false;
 							}
 						
-						cout <<  " A ->SM:" << pSelectMode << endl;
+						//cout <<  " A ->SM:" << pSelectMode << endl;
 						return true;
 					}				
 			}

@@ -83,7 +83,7 @@ namespace M3d {
 //--------------------------------------------
 	void WinObjTree::rebuild()
 	{
-		std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
+		//std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
 		cTree->clear();
 		for( PP3d::Object* lObj : Application::Instance().getDatabase()->getAllObject() )
 			{
@@ -132,7 +132,7 @@ namespace M3d {
 				lGroup->show();
 				lINode->widget(lGroup);				
 			}
-		std::cout << "------- REBUILD TREE ---------" << std::endl;
+		//std::cout << "------- REBUILD TREE ---------" << std::endl;
 
 		cTree->redraw();
 	}
