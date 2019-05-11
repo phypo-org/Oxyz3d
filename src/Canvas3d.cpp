@@ -1,10 +1,10 @@
 #include "Canvas3d.h"
 
-#include <config.h>
 #include <FL/Fl.H>
 
 
 #include <FL/gl.h>
+#include <FL/glu.h>
 
 #include <FL/names.h>
 #include <FL/Fl_Menu_Button.H>
@@ -139,7 +139,7 @@ namespace M3d {
     PP3d::Light::AllGL();
 	
     glEnable(GL_LIGHTING); 
-    static float lModelAmbient[] {0.2, 0.2, 0.2, 1 };
+    static float lModelAmbient[] {0.2f, 0.2f, 0.2f, 1 };
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lModelAmbient );
     //===================================================================================
 
@@ -158,7 +158,7 @@ namespace M3d {
 	
     if( cGridMode == ModeGrid::GRID_2D )
       {
-	glColor4f( 0.4, 0.4, 0.4, 0.5 );
+	glColor4f( 0.4f, 0.4f, 0.4f, 0.5f );
 	PP3d::GLUtility::DrawGrid( cKamera.getSize()*10, 5, false);	 
 	//	if( cGridMode == ModeGrid::GRID_3D )
 	//				T3dPrimitiv::DrawNappeT3d( 1200, 6);
@@ -251,7 +251,7 @@ namespace M3d {
     glGetIntegerv(GL_VIEWPORT, lViewport);
 
 	 
-    int BUFSIZE = 4096;
+    const int BUFSIZE = 4096;
     GLuint lSelectBuf[BUFSIZE];
     memset(&lSelectBuf, 0, BUFSIZE );
 	 
@@ -267,8 +267,7 @@ namespace M3d {
     glPushMatrix();
     glLoadIdentity();
 	 
-    gluPickMatrix((GLdouble) pX, (GLdouble) (lViewport[3] - pY),
-		  10, 10, lViewport );
+    gluPickMatrix((GLdouble) pX, (GLdouble) (lViewport[3] - pY), 10, 10, lViewport );
 	 
     cKamera.execGL( true );
 	
@@ -603,9 +602,11 @@ namespace M3d {
 			
       lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
       lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
+#ifdef USE_LUA
       if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
 				{
 				}
+#endif
     }
     //		cDataBase.addPointToCurrentLine( pResult );				
   }

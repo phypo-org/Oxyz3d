@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{A9DE9C10-DBAE-4402-B6B1-1E08242749C1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>fltk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>true</EnableModules>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>fltk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fltkd.lib;fltkgld.lib;fltkimagesd.lib;fltkjpegd.lib;fltkpngd.lib;fltkzlibd.lib;glu32.lib;opengl32.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>fltk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>true</EnableModules>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>fltkd.lib;fltkgld.lib;fltkimagesd.lib;fltkjpegd.lib;fltkpngd.lib;fltkzlibd.lib;glu32.lib;opengl32.lib;comctl32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>fltk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>fltk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>true</EnableModules>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>fltkd.lib;fltkgld.lib;fltkimagesd.lib;fltkjpegd.lib;fltkpngd.lib;fltkzlibd.lib;glu32.lib;opengl32.lib;comctl32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>fltk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <EnableModules>true</EnableModules>
+      <AdditionalIncludeDirectories>fltk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>fltkd.lib;fltkgld.lib;fltkimagesd.lib;fltkjpegd.lib;fltkpngd.lib;fltkzlibd.lib;glu32.lib;opengl32.lib;comctl32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>fltk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Application.cpp" />
+    <ClCompile Include="..\src\Canvas3d.cpp" />
+    <ClCompile Include="..\src\Canvas3dMenu.cpp" />
+    <ClCompile Include="..\src\DialogPerspectiv.cpp" />
+    <ClCompile Include="..\src\DialogPrimitiv.cpp" />
+    <ClCompile Include="..\src\DialogRevol.cpp" />
+    <ClCompile Include="..\src\DialogSubDiv.cpp" />
+    <ClCompile Include="..\src\History.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\MySlider.cpp" />
+    <ClCompile Include="..\src\Service.cpp" />
+    <ClCompile Include="..\src\shape\Calcul3d.cpp" />
+    <ClCompile Include="..\src\shape\DataBase.cpp" />
+    <ClCompile Include="..\src\shape\Entity.cpp" />
+    <ClCompile Include="..\src\shape\EntityVisitor.cpp" />
+    <ClCompile Include="..\src\shape\ExportObj.cpp" />
+    <ClCompile Include="..\src\shape\GLUtility.cpp" />
+    <ClCompile Include="..\src\shape\Kamera.cpp" />
+    <ClCompile Include="..\src\shape\Light.cpp" />
+    <ClCompile Include="..\src\shape\Maker.cpp" />
+    <ClCompile Include="..\src\shape\Matrice.cpp" />
+    <ClCompile Include="..\src\shape\MinMaxBox3d.cpp" />
+    <ClCompile Include="..\src\shape\Object.cpp" />
+    <ClCompile Include="..\src\shape\Point3d.cpp" />
+    <ClCompile Include="..\src\shape\PP3dType.cpp" />
+    <ClCompile Include="..\src\shape\PrimitivFactory.cpp" />
+    <ClCompile Include="..\src\shape\SavRead.cpp" />
+    <ClCompile Include="..\src\shape\Selection.cpp" />
+    <ClCompile Include="..\src\shape\SubDiv.cpp" />
+    <ClCompile Include="..\src\shape\ViewProps.cpp" />
+    <ClCompile Include="..\src\Win3d.cpp" />
+    <ClCompile Include="..\src\WinHisto.cpp" />
+    <ClCompile Include="..\src\WinObjTree.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\FL\abi-version.h" />
+    <ClInclude Include="..\FL\dirent.h" />
+    <ClInclude Include="..\FL\mac.H" />
+    <ClInclude Include="..\FL\math.h" />
+    <ClInclude Include="..\FL\names.h" />
+    <ClInclude Include="..\FL\platform.H" />
+    <ClInclude Include="..\FL\win32.H" />
+    <ClInclude Include="..\src\Application.h" />
+    <ClInclude Include="..\src\Canvas3d.h" />
+    <ClInclude Include="..\src\Dialogs.h" />
+    <ClInclude Include="..\src\Historic.h" />
+    <ClInclude Include="..\src\History.h" />
+    <ClInclude Include="..\src\lua\PPExcept.h" />
+    <ClInclude Include="..\src\MyFlCallback.h" />
+    <ClInclude Include="..\src\MyFloatInput.h" />
+    <ClInclude Include="..\src\MyFlWidget.h" />
+    <ClInclude Include="..\src\MyImage.h" />
+    <ClInclude Include="..\src\MySlider.h" />
+    <ClInclude Include="..\src\Service.h" />
+    <ClInclude Include="..\src\ShapeLua.h" />
+    <ClInclude Include="..\src\shape\Calcul3d.h" />
+    <ClInclude Include="..\src\shape\ColorRGBA.h" />
+    <ClInclude Include="..\src\shape\DataBase.h" />
+    <ClInclude Include="..\src\shape\Entity.h" />
+    <ClInclude Include="..\src\shape\EntityVisitor.h" />
+    <ClInclude Include="..\src\shape\ExportObj.h" />
+    <ClInclude Include="..\src\shape\GLUtility.h" />
+    <ClInclude Include="..\src\shape\Kamera.h" />
+    <ClInclude Include="..\src\shape\Light.h" />
+    <ClInclude Include="..\src\shape\Maker.h" />
+    <ClInclude Include="..\src\shape\Matrice.h" />
+    <ClInclude Include="..\src\shape\MinMaxBox3d.h" />
+    <ClInclude Include="..\src\shape\Modif.h" />
+    <ClInclude Include="..\src\shape\Object.h" />
+    <ClInclude Include="..\src\shape\ObjectFacet.h" />
+    <ClInclude Include="..\src\shape\ObjectLine.h" />
+    <ClInclude Include="..\src\shape\ObjectPoly.h" />
+    <ClInclude Include="..\src\shape\ObjectPolylines.h" />
+    <ClInclude Include="..\src\shape\ObjProps.h" />
+    <ClInclude Include="..\src\shape\Point3d.h" />
+    <ClInclude Include="..\src\shape\PP3dType.h" />
+    <ClInclude Include="..\src\shape\PrimitivFactory.h" />
+    <ClInclude Include="..\src\shape\PropsExecutor.h" />
+    <ClInclude Include="..\src\shape\SavRead.h" />
+    <ClInclude Include="..\src\shape\Selection.h" />
+    <ClInclude Include="..\src\shape\SubDiv.h" />
+    <ClInclude Include="..\src\shape\UniqueId.h" />
+    <ClInclude Include="..\src\shape\ViewProps.h" />
+    <ClInclude Include="..\src\Win3d.h" />
+    <ClInclude Include="..\src\WinHisto.h" />
+    <ClInclude Include="..\src\WinObjTree.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

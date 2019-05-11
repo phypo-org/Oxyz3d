@@ -596,7 +596,7 @@ namespace  PP3d {
 	PrimFacet& lPrimFacet  = *cFacets[f];
 				
 	Facet* lCurFacet = new Facet();                // nouvelle facette vide sans id
-	uint i=0;
+	unsigned int i=0;
 	for( ; i< lPrimFacet.size()-1; i++ ) // pour les points de la facette courante
 	  {					 
 	    Line* lLine = new Line( lPointsPtr[ lPrimFacet[i]] , lPointsPtr[ lPrimFacet[i+1]] );

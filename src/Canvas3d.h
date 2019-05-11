@@ -7,11 +7,11 @@
 #include <FL/Fl_Gl_Window.H>
 #include <FL/Fl_Menu_Button.H>
 
-#include "DataBase.h"
+#include "Shape/DataBase.h"
 
 #include "MyFlWidget.h"
 
-#include "Kamera.h"
+#include "Shape/Kamera.h"
 
 
 #include "Shape/DataBase.h"

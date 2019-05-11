@@ -9,8 +9,11 @@
 
 #include "WinObjTree.h"
 #include "Shape/PP3dType.h"
+#ifdef USE_LUA
 #include "Lua/PLua.h"
 #include "ShapeLua.h"
+#endif
+
 #include "History.h"
 
 
@@ -29,8 +32,12 @@ namespace M3d{
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
     std::unique_ptr<History>              cuHistory;
 
-		
+#ifdef USE_LUA		
 		M3d::ShapeLua*            cLua=nullptr;
+#endif
+
+
+
 
 		//	History 
 
@@ -72,7 +79,9 @@ namespace M3d{
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
     History* getHistory()    { return cuHistory.get(); }
+#ifdef USE_LUA
     M3d::ShapeLua&  getLua() { return *cLua; }
+
     const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
     {			
       return getLua().doCode( iLuaCode.c_str(), &iOut );
@@ -89,6 +98,7 @@ namespace M3d{
     {
       return execLua( iIn.str(), iOut );
     }
+#endif
 		
     Win3d & createNewWin3d( int pW, int pH );
     Win3d*  findCanvas3d( int iId );

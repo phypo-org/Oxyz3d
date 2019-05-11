@@ -81,10 +81,10 @@ namespace PP3d {
 	PointPtr lMemFirstA=nullptr;
 	PointPtr lMemFirstD=nullptr;
 				
-	PointPtr A ;
-	PointPtr B ;
-	PointPtr C ;
-	PointPtr D ;
+	PointPtr A =nullptr ;
+	PointPtr B = nullptr;
+	PointPtr C = nullptr;
+	PointPtr D = nullptr;
 
 
 	for( PIndex lCol=0; lCol < lNbCol-1; lCol++ )

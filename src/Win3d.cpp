@@ -1,4 +1,3 @@
-#include <config.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -33,7 +32,7 @@
 #include "MyFlWidget.h"
 #include "MyImage.h"
 
-#include "Selection.h"
+#include "Shape/Selection.h"
 
 #include "Shape/SavRead.h"
 #include "Shape/ExportObj.h"
@@ -44,7 +43,7 @@
 
 
 #include <FL/Fl_Native_File_Chooser.H>
-#include <config.h>
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -80,7 +79,7 @@
 #include "MyFlWidget.h"
 #include "MyImage.h"
 
-#include "Selection.h"
+#include "Shape/Selection.h"
 
 #include "Shape/SavRead.h"
 #include "Shape/ExportObj.h"
@@ -305,7 +304,7 @@ namespace M3d {
     //================
     int lX = 15;
     int lY = cMenubar.h();
-    int lH = cMenubar.h()*0.6;
+    int lH = static_cast<int>(cMenubar.h()*0.6);
     int lW = 70;
 											
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
@@ -892,12 +891,14 @@ namespace M3d {
     //					}
 	  else if( strcmp( m->label(), StrMenu_ConsolSystem ) == 0)
 	    {
-	      CallConsoleSystem( );
+	    //  CallConsoleSystem( );
 	    }
+#ifdef USE_LUA
 	  else if( strcmp( m->label(), StrMenu_ConsolLua ) == 0)
 	    {
 	      CallConsoleLua( );
 	    }
+#endif
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
 	      lDatabase.demo1();
@@ -910,7 +911,7 @@ namespace M3d {
 				Application::Instance().validate( History::SaveMode::Diff);			
 	    }
 
-				 
+#ifdef USE_LUA				 
 		if( lOsLuaCode.str().size() > 0 )
 			{
 				// Ily a du lua a executer
@@ -919,6 +920,7 @@ namespace M3d {
 						// ERREUR
 					}
 			}
+#endif
   }
   //-------------------------------------------
   void Win3d::QuitCallback(Fl_Widget*, void*) {exit(0);}

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Shape">
+      <UniqueIdentifier>{417fe351-760d-4e22-acdd-78d5c0c9cd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shape">
+      <UniqueIdentifier>{0f3dbb14-6119-4219-a595-cdae26e6cff3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Canvas3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Canvas3dMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DialogPerspectiv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DialogPrimitiv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DialogRevol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DialogSubDiv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\History.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MySlider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Service.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Win3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WinHisto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WinObjTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Calcul3d.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\DataBase.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Entity.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\EntityVisitor.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\ExportObj.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\GLUtility.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Light.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Kamera.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Maker.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Matrice.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\MinMaxBox3d.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Object.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Point3d.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\PP3dType.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\PrimitivFactory.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\SavRead.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\Selection.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\SubDiv.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\shape\ViewProps.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Canvas3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Historic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\History.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MyFlCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MyFloatInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MyFlWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MyImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MySlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Service.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ShapeLua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Win3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\WinHisto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\WinObjTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Calcul3d.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ColorRGBA.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\DataBase.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Entity.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\EntityVisitor.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ExportObj.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\GLUtility.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Kamera.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Light.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Maker.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Matrice.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\MinMaxBox3d.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Modif.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Object.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ObjectFacet.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ObjectLine.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ObjectPoly.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ObjectPolylines.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ObjProps.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Point3d.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\PP3dType.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lua\PPExcept.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\PrimitivFactory.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\PropsExecutor.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\SavRead.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\Selection.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\SubDiv.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\UniqueId.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shape\ViewProps.h">
+      <Filter>Header Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\abi-version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\mac.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\names.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\platform.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FL\win32.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

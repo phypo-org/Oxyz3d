@@ -28,6 +28,10 @@
 #include "Shape/Maker.h"
 
 
+#ifndef M_PI
+#define M_PI       3.14159265358979323846
+#endif 
+
 //Tout mettre dans le Dialogue
 
 namespace M3d {
@@ -126,9 +130,7 @@ protected:
 		std::cout << "lFlagCloseHight:" << lFlagCloseHight <<  std::endl;
 
 		//	int lNbPas = 30 ; // pour les tests 
-    
-		
-
+ 
 		double lAngle  = lAngleTotal / lNbPas;
 		
     

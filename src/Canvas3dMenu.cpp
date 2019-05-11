@@ -1,6 +1,6 @@
 #include "Canvas3d.h"
 
-#include <config.h>
+
 #include <FL/Fl.H>
 
 
