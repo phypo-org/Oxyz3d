@@ -56,10 +56,4 @@ namespace M3d {
 };
 
 
-#define INFO( A )	{ ostringstream lInfoStream ; lInfoStream << A; cInfoOutput->value(lInfoStream.str().c_str() );}
-#define SINFO( WIN3D, A )	{ ostringstream lInfoStream ; lInfoStream << A; WIN3D->cInfoOutput->value(lInfoStream.str().c_str() );}
-
-#define CINFO( A )	{ ostringstream lInfoStream ; lInfoStream << A; cMyWin3d.cInfoOutput->value(lInfoStream.str().c_str() );}
-
-
 #endif

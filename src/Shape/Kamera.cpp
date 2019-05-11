@@ -1,5 +1,6 @@
 #include "Kamera.h"
 
+#include "FL/glu.H"
 
 namespace PP3d{
 
@@ -38,7 +39,7 @@ void Kamera::reset()
 //------------------------------------------------
 	void Kamera::initGL()
 	{	
-		glClearColor( 0.3, 0.3, 0.3, 1 );
+		glClearColor( 0.3f, 0.3f, 0.3f, 1 );
 		glClearDepth(1.0f);
 		glDepthFunc(GL_LEQUAL);
 		glEnable( GL_DEPTH_TEST );

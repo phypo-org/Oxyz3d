@@ -32,14 +32,10 @@ namespace M3d{
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
     std::unique_ptr<History>              cuHistory;
 
+
 #ifdef USE_LUA		
 		M3d::ShapeLua*            cLua=nullptr;
 #endif
-
-
-
-
-		//	History 
 
 	
   private:			
@@ -53,6 +49,11 @@ namespace M3d{
     PP3d::Transf3d  cCurrentTransf;
 
   public:
+    enum class DeferRedraw { DeferFalse=false, DeferTrue = true };
+  protected:
+    DeferRedraw  cDeferFlagRedraw = DeferRedraw::DeferFalse;
+
+  public:
     static const int sIconSize = 32;
 	
     static Application& Instance()
@@ -63,6 +64,10 @@ namespace M3d{
 	}
       return *sTheAppli; 
     }
+    
+    static void FlCheckCallback( void* );
+
+    
     void setCurrentTransformType( Transform lTrans)
     {	
       cCurrentTransf.raz();
@@ -70,7 +75,7 @@ namespace M3d{
 			
     }
     Transform getCurrentTransformType()   { return cCurrentTransform;}
-    PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
+    PP3d::Transf3d& currentTransform()    { return cCurrentTransf; }
 
 		
     int init( int argc, char* argv[] );
@@ -107,12 +112,13 @@ namespace M3d{
     void    createObjectTree( );
     void    redrawObjectTree();
     void    createWinHisto( );
-		void    redrawWinHisto( );
+    void    redrawWinHisto( );
 
 
     void setCursorPosition( PP3d::Point3d& pPos);
 
-    void    redrawAllCanvas3d();	  
+    void    redrawAllCanvas3d( DeferRedraw iFlagDeverRedraw = DeferRedraw::DeferTrue );	  
+    void    trueRedrawAllCanvas3d();	  
     void    redrawAll()
     {
       redrawAllCanvas3d();
@@ -122,11 +128,17 @@ namespace M3d{
     PP3d::DataBase* swapBase( PP3d::DataBase* ioBase );
 
 		
-    void    validate( History::SaveMode iMode );
+    void    validate( History::SaveMode iMode, DeferRedraw iFlagDeverRedraw );
+    void    makeDefer();
+
+
 
   };
   //************************************
 
 };
+
+#define SINFO( A )	{ ostringstream lInfoStream ; lInfoStream << A; lWin3d->cInfoOutput->value(lInfoStream.str().c_str() );}
+#define CINFO( A )	{ ostringstream lInfoStream ; lInfoStream << A; cMyWin3d.cInfoOutput->value(lInfoStream.str().c_str() );}
 
 #endif

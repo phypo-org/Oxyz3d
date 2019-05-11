@@ -35,7 +35,7 @@ namespace PP3d {
 
     PIndex  lNbCol  = lPointsPtr.size() ;
 
-    std::cout << "Maker Line: " << lNbLine << " Col:" << lNbCol << std::endl;
+    DBG3( "Maker Line: " << lNbLine << " Col:" << lNbCol );
 
 
     // on creer les points 
@@ -45,12 +45,12 @@ namespace PP3d {
       {
 	for( PIndex lCol=0; lCol < lNbCol; lCol++, p++ )
 	  {
-	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
+	    DBG3( ">>>Points:" << p << " " << p-lNbCol  );
 	    lPointsPtr.push_back( new Point( lPointsPtr[p-lNbCol]->get()*pMat ));
 	  }
       }
 
-    std::cout << "Points:" << lPointsPtr.size() << std::endl;
+    DBG3( "Points:" << lPointsPtr.size() );
 
 
     FacetPtr lFacetHight = nullptr;
@@ -90,19 +90,19 @@ namespace PP3d {
 	for( PIndex lCol=0; lCol < lNbCol-1; lCol++ )
 	  {						
 	    FacetPtr lFacet = new Facet();                // nouvelle facette vide sans id
-	    //					std::cout << "==== Line:" <<  lLine  << " Col:" <<  lCol<< std::endl;
+	    //					DBG3( "==== Line:" <<  lLine  << " Col:" <<  lCol);
 						
 	    A = lPointsPtr[ lLine*lNbCol     + lCol     ];
-	    //				std::cout << "A:" <<  lLine*lNbCol     + lCol<< std::endl;
+	    //				DBG3( "A:" <<  lLine*lNbCol     + lCol);
 						
 	    B = lPointsPtr[ lLine*lNbCol     + lCol + 1 ];
-	    //			std::cout << "B:" <<  lLine*lNbCol     + lCol + 1 << std::endl;
+	    //			DBG3( "B:" <<  lLine*lNbCol     + lCol + 1 );
 						
 	    C = lPointsPtr[ (lLine+1)*lNbCol + lCol + 1 ];
-	    //			std::cout << "C:" << (lLine+1)*lNbCol + lCol + 1  << std::endl;
+	    //			DBG3( "C:" << (lLine+1)*lNbCol + lCol + 1  );
 						
 	    D = lPointsPtr[ (lLine+1)*lNbCol + lCol     ];
-	    //			std::cout << "D:" << (lLine+1)*lNbCol + lCol  << std::endl;
+	    //			DBG3( "D:" << (lLine+1)*lNbCol + lCol  );
 
 
 	    // Fermeture a 360
@@ -163,7 +163,7 @@ namespace PP3d {
 					
 	  for( PIndex lCol=0; lCol < lNbCol; lCol++ )
 	    {
-	      std::cout << " lCol : " << lCol << std::endl;
+	      DBG3( " lCol : " << lCol );
 							
 	      FacetPtr lFacet = lFacets[lCol];
 	      LinePtr lLine = lFacet->getLines()[0]; // on prend la premiere ligne
@@ -191,7 +191,7 @@ namespace PP3d {
 					
 	  for( PIndex lCol=0; lCol < lNbCol; lCol++ )
 	    {
-	      std::cout << " lCol : " << lCol << std::endl;
+	      DBG3( " lCol : " << lCol );
 							
 	      FacetPtr lFacet = lFacets[lBegin+lCol];
 	      LinePtr lLine = lFacet->getLines()[2];  // On prend le coté oppose
@@ -228,7 +228,7 @@ namespace PP3d {
       }
     else
       {
-	std::cout << "Delete facette low" << std::endl;
+	DBG3( "Delete facette low" );
 	delete lFacetLow;
       }
 

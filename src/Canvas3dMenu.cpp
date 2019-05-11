@@ -40,14 +40,14 @@ using namespace std;
 
 namespace M3d {
 
-	
+
 #define StrMenu_CreateCube      "Cube"
 #define StrMenu_CreateTetra     "Tetraede"
 #define StrMenu_CreatePyramid   "Pyramide"
 #define StrMenu_CreateOcto      "Octoedre"
 #define StrMenu_CreateDodec     "Dodecaedre"
 #define StrMenu_CreateIcosahe   "Icosaedre"
-	
+
 #define StrMenu_CreateShape          "New Shape "
 #define StrMenu_CreateShapeLine      StrMenu_CreateShape  "Line"
 #define StrMenu_CreateShapePolyline  StrMenu_CreateShape  "Polyline"
@@ -64,8 +64,8 @@ namespace M3d {
 #define StrMenu_RotY     "Rotate Y"
 #define StrMenu_RotZ     "Rotate Z"
 
-	
-#define StrMenu_Dup        "Dup"	
+
+#define StrMenu_Dup        "Dup"
 #define StrMenu_DupMoveX    StrMenu_Dup  " move X"
 #define StrMenu_DupMoveY    StrMenu_Dup  " move Y"
 #define StrMenu_DupMoveZ    StrMenu_Dup  " move Z"
@@ -81,13 +81,13 @@ namespace M3d {
 #define StrMenu_ExtrudeZ    StrMenu_Extrude  "  move Z"
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  "  move normal"
 
-  
-  
+
+
   //-------------------------------------------
    void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
    {
      if( PP3d::Selection::Instance().getNbSelected() > 0 )
-       {										
+       {
 	 makeMenuSelect(  *cPopup);
        }
      else
@@ -103,11 +103,11 @@ namespace M3d {
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this);
-	
+
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this);
-		
+
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this);
@@ -119,7 +119,7 @@ namespace M3d {
       {
       case PP3d::SelectType::Point :
       case PP3d::SelectType::Line :
-      case PP3d::SelectType::Facet :	
+      case PP3d::SelectType::Facet :
 	{
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "", MyMenuCallbackExtrude, this);
@@ -147,7 +147,7 @@ namespace M3d {
 
     if( getDataBase().isCurrentPoints()&& getDataBase().getNbCurrentPoints() == 2 )
       pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
-		
+
     if( Application::Instance().getDatabase()->isCurrentPoints() && getDataBase().getNbCurrentPoints()  >= 3 )
       pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
 
@@ -159,23 +159,23 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData)
   {
-		
+
     static bool slFlagDialogPrimitiv=false; // C'est moche !!!!
 
-		
+
     Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
+    const Fl_Menu_Item* m = mw->mvalue();
     if (!m)
       {
 	printf("NULL\n");
-				
+
 	return ;
       }
 
 
     printf("%s\n", m->label());
     M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
-				
+
     if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
       {
 	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::CUBE  );
@@ -203,7 +203,7 @@ namespace M3d {
     else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
       {
 	PP3d::Object* lShape=nullptr;
-						
+
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
 	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
@@ -217,19 +217,19 @@ namespace M3d {
 	      {
 		lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
 	      }
-	  } 
+	  }
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
 	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
 	      {
 		lShape = Application::Instance().getDatabase()->convertCurrentLineToLine();
 	      }
-	  } 
+	  }
 	if( lShape != nullptr )
 	  {
 	    //						lCanvas->getDataBase().addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 
-			Application::Instance().validate( History::SaveMode::Diff);		 
+	    Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue );
 
 	  }
       }
@@ -238,21 +238,21 @@ namespace M3d {
 
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
-  {	  		
+  {
     Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
+    const Fl_Menu_Item* m = mw->mvalue();
     if (!m)
       {
 	printf("NULL\n");
-				
+
 	return ;
       }
 
 
     printf("%s\n", m->label());
-    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
+    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData );
 
-		
+
     //============== TRANSFORMATION ====================
     if( strcmp( m->label(), StrMenu_ExtrudeX ) == 0)
       {
@@ -261,13 +261,13 @@ namespace M3d {
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
-  {	  		
+  {
     Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
+    const Fl_Menu_Item* m = mw->mvalue();
     if (!m)
       {
 	printf("NULL\n");
-				
+
 	return ;
       }
 
@@ -275,7 +275,7 @@ namespace M3d {
     printf("%s\n", m->label());
     M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
 
-		
+
     //============== TRANSFORMATION ====================
     if( strcmp( m->label(), StrMenu_MoveX ) == 0)
       {

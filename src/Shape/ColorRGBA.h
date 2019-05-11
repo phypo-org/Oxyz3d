@@ -80,8 +80,8 @@ namespace PP3d {
 			static void Black()     { glColor3f( 0.0, 0.0, 0.0 ); }
 		
 			static void Grey()	    { glColor3f(0.5,0.5,0.5); 	}
-			static void LightGrey()	{ glColor3f(0.7,0.7,0.7); 	}
-			static void DarkGrey()  { glColor3f( 0.3, 0.3, 0.3 ); }
+			static void LightGrey()	{ glColor3f(0.7f,0.7f,0.7f); 	}
+			static void DarkGrey()  { glColor3f( 0.3f, 0.3f, 0.3f ); }
 
 			friend  	std::ostream& operator <<( std::ostream& pOs, ColorRGBA pCol)
 			{

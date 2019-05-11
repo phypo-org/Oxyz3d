@@ -5,44 +5,47 @@
 #include "WinObjTree.h"
 #include "WinHisto.h"
 
+#include <FL/Fl_PNG_Image.H>
+#include <FL/x.H>
+
 #include "Shape/DataBase.h"
 
 #include <sstream>
 #include <ostream>
 
-
+////#include <getopt.h>
 
 namespace M3d{
 
   Application* Application::sTheAppli = nullptr;
 
   //************************************
-  Application::Application()	
-
-    :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
-    , cuHistory( std::unique_ptr<History>( new History() ))
-    , cCurrentTransform( Transform::Nothing)
+  Application::Application()
+	  :cuDatabase(std::unique_ptr<PP3d::DataBase>(new PP3d::DataBase()))
+	  , cuHistory(std::unique_ptr<History>(new History()))
+	  , cCurrentTransform(Transform::Nothing)
   {
-    cuHistory->save( *cuDatabase, History::SaveMode::Full );
-		
-    std::cout << "========= Application::Application" << std::endl;
+	  cuHistory->save(*cuDatabase, History::SaveMode::Full);
 
 
 #ifdef USE_LUA
-    M3d::ShapeLua::SetPrototype();
-		
-    cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
-    cLua->setDatabase( *cuDatabase.get() );
-		
-	
-    cLua->doCode( "PPrintln(\"Hello it's C++\" )");
-    cLua->doCode( "PListLib()");
-    cLua->doCode( "PListLibFtn()" );
-    cLua->doCode( "print(\"Hello it's Lua\")" );
+	  M3d::ShapeLua::SetPrototype();
 
-    cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
-    cLua->doCode("ShapeAddCurrentPoint(4,5,7)");		
+	  cLua = (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout);
+	  cLua->setDatabase(*cuDatabase.get());
+
+
+	  cLua->doCode("PPrintln(\"Hello it's C++\" )");
+	  cLua->doCode("PListLib()");
+	  cLua->doCode("PListLibFtn()");
+	  cLua->doCode("print(\"Hello it's Lua\")");
+
+	  cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
+
+	  cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
 #endif
+
+
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
@@ -59,8 +62,43 @@ namespace M3d{
   //-----------------------------------
   int Application::init( int argc, char* argv[] )
   {
+	  /*
+    char c;
+    while ( (c = getopt(argc, argv, "hf:vV:gG:")) != -1 ) 	
+      {
+	switch ( c )
+	  {
+	  case 'v':          
+	    PP3d::sVerbose++;
+	    break;
+	    
+	  case 'V':	
+	    PP3d::sVerbose = atoi(optarg);
+	    break;
+	    
+	  case 'g':          
+	    PP3d::sDebug++;
+	    break;
+	  
+	  case 'G':	
+	  PP3d::sDebug = atoi(optarg);
+	  break;
+	  
+	}
+       
+      }
+	  */
+#ifndef WIN32
+    fl_open_display();
+#endif
+
+    Fl_RGB_Image* lImg = new Fl_PNG_Image("Icons/Oxyz3d.png");
+    Fl_Window::default_icon( lImg );
+    
     return 0;
   }
+  //-----------------------------------
+  //-----------------------------------
   //-----------------------------------
   Win3d & Application::createNewWin3d( int pW, int pH )
   {
@@ -81,7 +119,19 @@ namespace M3d{
 	
   }
   //-----------------------------------	
-  void Application::redrawAllCanvas3d()
+  void Application::redrawAllCanvas3d(  DeferRedraw iFlagDeverRedraw )
+  { 
+    if( iFlagDeverRedraw == DeferRedraw::DeferTrue )
+      {
+	cDeferFlagRedraw =  DeferRedraw::DeferTrue;
+      }
+    else
+      {
+	trueRedrawAllCanvas3d();
+      }    
+  }
+  //-----------------------------------	
+  void Application::trueRedrawAllCanvas3d()
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
@@ -131,7 +181,7 @@ namespace M3d{
     WinHisto::Instance().rebuild();		
   }
   //----------------------------------------
-  void Application::validate( History::SaveMode iMode )
+  void Application::validate( History::SaveMode iMode, DeferRedraw iFlagDefer )
   {
     if( iMode ==  History::SaveMode::Reset )
       {				
@@ -142,10 +192,34 @@ namespace M3d{
       {
 	cuHistory->save(  *cuDatabase, iMode );
       }
-		
-    redrawAllCanvas3d();
-    redrawObjectTree();
-    redrawWinHisto();	 
+
+    if( iFlagDefer == DeferRedraw::DeferTrue )
+      {
+	cDeferFlagRedraw = DeferRedraw::DeferTrue;
+      }
+    else
+      {
+	cDeferFlagRedraw = DeferRedraw::DeferFalse;
+	
+	redrawAllCanvas3d();
+	redrawObjectTree();
+	redrawWinHisto();
+      }
+  }
+  //----------------------------------------
+  void Application::makeDefer( )
+  {
+    DBG1( "Application::makeDefer redraw " << (int) cDeferFlagRedraw );
+    
+    if( cDeferFlagRedraw == DeferRedraw::DeferTrue )
+      {
+	DBG1( "Application::makeDefer redraw ");
+	
+	trueRedrawAllCanvas3d();
+	redrawObjectTree();
+	redrawWinHisto();
+	cDeferFlagRedraw = DeferRedraw::DeferFalse;
+      }
   }
   //----------------------------------------
   PP3d::DataBase* Application::swapBase( PP3d::DataBase* ioBase )
@@ -162,6 +236,13 @@ namespace M3d{
     redrawWinHisto();
 
     return lOldBase;
+  }
+  //----------------------------------------
+  void Application::FlCheckCallback( void* )
+  {
+    DBG( "************************ FlCheckCallback ************************" );
+      
+    Instance().makeDefer();
   }
   //************************************
 };

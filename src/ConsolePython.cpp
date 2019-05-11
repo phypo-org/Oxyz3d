@@ -4,16 +4,15 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Text_Editor.H>
 
-#include <Python.h>
 
 //*********************************************
 class ConsolePython : public Fl_Text_Editor {
 
 	Fl_Text_Buffer *buff;
 	char cmd[1024];
-	
+
 	wchar_t *lProgram=nullptr;
-	
+
 public:
 	ConsolePython(int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
 	{
@@ -40,7 +39,7 @@ public:
 		fprintf(stderr, "EXECUTING: '%s'\n", command);
 
 		PyRun_SimpleString( command );
-		
+
 		FILE *fp = popen(command, "r");
 		if ( fp == 0 ) {
 			append("Failed to execute: '");
@@ -117,7 +116,7 @@ public:
 //--------------------------------------------------
 //--------------------------------------------------
 extern Fl_Double_Window* CallConsolePython()
-{	
+{
 	static Fl_Double_Window* lWin = nullptr;
 
 	if( lWin == nullptr )
@@ -126,9 +125,9 @@ extern Fl_Double_Window* CallConsolePython()
 			ConsolePython* lConsol  = new  ConsolePython(10,10, lWin->w()-20, lWin->h()-20);
 			lConsol->append(">");
 			lWin->end();
-			
+
 			lWin->resizable(*lWin);
-			
+
 		}
 	lWin->show();
 

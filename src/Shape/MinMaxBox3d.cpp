@@ -127,7 +127,7 @@ namespace PP3d {
 		glDisable( GL_LIGHTING );
 	
 		glPointSize( 5 );
-		glColor4f( 1, 0.8, 0, 0.5 );
+		glColor4f( 1, 0.8f, 0, 0.5f );
 		glBegin( GL_POINTS );
 		glVertex3dv( cMin.vectForGL() ); 
 		glVertex3dv( cMax.vectForGL() ); 
@@ -144,7 +144,7 @@ namespace PP3d {
 	char*
 	Rect3d::getInfoStr( char* pStr)
 	{
-		int lNb = sprintf( pStr, "(%f, %f, %f : %f, %f, %f )",
+		int lNb = sprintf_s( pStr, 128, "(%lf, %lf, %lf : %lf, %lf, %lf )",
 											 cMin.cX, cMin.cY, cMin.cZ, cMax.cX, cMax.cY, cMax.cZ );
 
 		return &pStr[lNb];

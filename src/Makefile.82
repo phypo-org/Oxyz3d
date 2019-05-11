@@ -2,6 +2,10 @@ GCC=/home/phipo/Bin/gcc-8.2/usr/local/gcc-8.2
 
 include ${FLTK_PATH}/makeinclude
 
+FLTK_CFLAGS   = $(shell fltk-config --use-gl --use-images --cxxflags )
+FLTK_LDFLAGS  = $(shell fltk-config --use-gl --use-images --ldflags )
+FLTK_LDSTATIC = $(shell fltk-config --use-gl --use-images --ldstaticflags )
+
 TARGET=Oxyz3d
 
 SRCS= main.cpp Application.cpp Win3d.cpp Canvas3d.cpp Canvas3dMenu.cpp  Service.cpp  DialogPrimitiv.cpp DialogPerspectiv.cpp MySlider.cpp WinObjTree.cpp   DialogRevol.cpp  DialogSubDiv.cpp ConsoleLua.cpp ConsoleSystem.cpp ShapeLua.cpp History.cpp WinHisto.cpp
@@ -12,7 +16,9 @@ OBJS =  $(SRCS:.cpp=.o)
 HDRS = $(SRCS:.cpp=.h)
 
 
-CFLAGS = -g -std=c++17 -O3   -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
+# CFLAGS = -g -std=c++17 -O3   -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
+
+CFLAGS =  -std=c++17 -ggdb -Og   -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
 
 # CINCLUDE=-I$(GCC)/include -I. -IShape -DLINUX -I/usr/include/python3.6
 CINCLUDE=-I$(GCC)/include -I. -IShape -ILua -DLINUX 

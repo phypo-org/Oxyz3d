@@ -1,5 +1,5 @@
 #! /bin/bash
 # ./PPD --sync
-./Oxyz3d --sync $*
+./Oxyz3d  $*
 
 # valgrind -v --tool=memcheck --leak-check=yes  --show-reachable=yes --error-limit=no --num-callers=50  --freelist-vol=20000000  --log-file=mem.err ./PPD --sync $*

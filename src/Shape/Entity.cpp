@@ -10,7 +10,7 @@ namespace PP3d {
 		// seront gérés par un Visiteur, 
 		// l'entité n'est detruite que quand sont elle n'a plus d'owner
 		if( howManyOwner() != 0 )
-			std::cout << "*** ERROR : Entity destroy when they are owner" << std::endl;
+		  INFO(  "*** ERROR : Entity destroy when they are owner" );
 	}	
 	//---------------------------
 	void Entity::move ( Point3d p )

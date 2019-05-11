@@ -139,13 +139,13 @@ namespace PP3d {
 		auto lIter = cEntities.find( pId );
 		if( lIter == cEntities.end() )
 			{
-				std::cout << "DataBase::removeEntityIfNoOwner not found" << std::endl;
+			  DBG3(  "DataBase::removeEntityIfNoOwner not found" );
 				return true;
 			}
 		
 		if( lIter->second->howManyOwner() == 0 )
 			{
-				std::cout << "DataBase::removeEntityIfNoOwner erase " << std::endl;
+			  DBG3( "DataBase::removeEntityIfNoOwner erase ");
 				cEntities.erase( lIter);
 				return true;
 			}
@@ -154,11 +154,11 @@ namespace PP3d {
 	//------------------------------------------
 	void DataBase::addPointToCurrentLine( Point3d pPt )
 	{
-		std::cout << "======== DataBase::addPointToCurrentLine" << std::endl;
+	  DBG3(  "======== DataBase::addPointToCurrentLine" );
 		// FAIRE QUELQUE CHODE DE PLUS PROPRE !!!
 		if( cCurrentLine == nullptr )
 			{
-				std::cout << "========= ObjectFacet"  << std::endl;
+			  DBG3( "========= ObjectFacet"  );
 
 				cCurrentLine= new ObjectPolylines("Saisie", new Facet());
 			}
@@ -169,22 +169,22 @@ namespace PP3d {
 		
 		LinePtrVect& lLines = lFacet->getLines();
 				
-		std::cout << " lLines size: "  << lLines.size()  <<std::endl;	
+		DBG3 ( " lLines size: "  << lLines.size()  );	
 		if( lLines.size() == 0 )
 			{
-				std::cout << " new line 0 "  << std::endl;	
+			  DBG3( " new line 0 "  );	
 				LinePtr lLine = new Line( lPoint, lPoint ); // Un point 
 				lLines.push_back( lLine );
-				std::cout << "2 lLines size: "  << lLines.size()  <<std::endl;
+				DBG3( "2 lLines size: "  << lLines.size() );
 			}
 		else if(lLines.size() == 1 && lLines[0]->isPoint() )  // Un  point !
 				{
-				std::cout << " is Point  "  << std::endl;	
+				  DBG3(  " is Point  " );	
 					lLines[0]->getPoints().second = lPoint;  // on change le second point
 				}
 		else
 			{
-				std::cout << " new line   "  << std::endl;	
+			  DBG3(  " new line   "  );	
 				LinePtr	lLine = new Line(  lLines[lLines.size()-1]->getPoints().second, lPoint);
 				lLines.push_back( lLine );
 			}		
@@ -351,25 +351,25 @@ namespace PP3d {
 		pViewProps.cSelectType = Selection::Instance().getSelectType();
 		pViewProps.cGLMode     = pSelectOrDrawMode;
 
-		//		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType << std::endl;
+		//		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType );
 		//		if( pViewProps.cDebugView )
 		{
-			//						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	pViewProps.cSelectType) << std::endl;
+			//						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	pViewProps.cSelectType) );
 		}
 		
 		for( Object* lObj : cContainerObject )
 			{
 				if(  pSelectOrDrawMode == GLMode::Draw  )
 					{
-					  //	std::cout << "draw lObj:" << lObj->getName() << std::endl;
+					  //	std::cout << "draw lObj:" << lObj->getName() );
 						lObj->drawGL( pViewProps );
 					}
 				else
 					{
 						lObj->selectGL( pViewProps );
-						std::cout << "select lObj:" << lObj->getName() << std::endl;
+					DBG3( "select lObj:" << lObj->getName() );
 					}
-				//	std::cout << " fin lObj:" << lObj->getName() << std::endl;
+				//DG3( " fin lObj:" << lObj->getName() );
 			}
 		
 		
@@ -377,7 +377,7 @@ namespace PP3d {
 			{
 				if( pSelectOrDrawMode == GLMode::Draw )
 					{
-						//		std::cout << "**************** draw currentline ****" << std::endl;
+						//	DG3( "**************** draw currentline ****" );
 						cCurrentLine->drawGL( pViewProps );
 					}
 				else
@@ -394,12 +394,12 @@ namespace PP3d {
 						cCurrentCreation->drawGL( pViewProps );						
 					}				
 			}		
-			std::cout << "******************** end DataBase::drawGL ********************** "  << std::endl;
+		DBG3( "******************** end DataBase::drawGL ********************** "  );
 }
 	//------------------------------------------
 	void DataBase::recomputeAll( )
 	{
-		//		std::cout << "******************** RecomputeAll **********************" << std::endl;
+		//	DG3( "******************** RecomputeAll **********************" );
 		for( auto iter = cContainerObject.begin(); iter != cContainerObject.end(); ++iter )
 			{
 				(*iter)->recomputeAll( (*iter)->cMyProps );
@@ -423,7 +423,7 @@ namespace PP3d {
 			{
 				if( lObj->cMyProps.cGLNameId == pNameId )
 					{
-						std::cout << "findObjectByGLNameId " << pNameId << " " << lObj->cMyProps.cGLNameId << std::endl;
+					DBG3( "findObjectByGLNameId " << pNameId << " " << lObj->cMyProps.cGLNameId );
 						return lObj;
 					}
 			}
@@ -474,12 +474,11 @@ namespace PP3d {
 	//------------------------------------------
 	bool DataBase::deleteEntity( EntityPtr pEntity)
 	{
-		std::cout << "DataBase::deleteEntity" << pEntity->getStrType()<<  std::endl;
-		if( pEntity->getType() == ShapeType::Object)
-			{
-				std::cout << "DataBase::deleteEntity Object "
-									<< pEntity->howManyOwner() << std::endl;
-		
+	  DBG3( "DataBase::deleteEntity" << pEntity->getStrType() );;
+	  if( pEntity->getType() == ShapeType::Object)
+	    {
+	      DBG3( "DataBase::deleteEntity Object "<< pEntity->howManyOwner() );
+	      
 				return removeEntityIfNoOwner( pEntity );
 			}
 		// FAIRE TOUT LES AUTRES CAS !!!!
@@ -489,7 +488,7 @@ namespace PP3d {
 	//------------------------------------------
 	void DataBase::addToInput( EntityPtr pEntity, bool pFlagLink )
 	{
-		std::cout << "DataBase::addToInput" << std::endl;
+	DBG3( "DataBase::addToInput" );
 		// Pour le moment ....
 		std::unordered_set<Point*> lVectPoints;
 		
@@ -498,7 +497,7 @@ namespace PP3d {
 
 		for( PointPtr lPt : lVectPoints )
 			{				
-				std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
+			  DBG3( "DataBase::addToInput addPointToCurrentLine " );
 				addPointToCurrentLine( lPt->get() );					
 			}
 

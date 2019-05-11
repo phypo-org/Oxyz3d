@@ -63,20 +63,19 @@ namespace PP3d {
 	}
 	//--------------------------------
 	bool Selection::addToSelection( EntityPtr lEntity)
-	{
-		std::cout << "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect() << " " ;
+	{	 
 		if( lEntity->isSelect() )
 			{
-				std::cout << " removeEntity " << std::endl;
+				DBG2(  "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect()  << " removeEntity " );
 				removeEntity( lEntity );
 			}
 		else
 			{
-				std::cout << " addEntity " << std::endl;
+				DBG2(  "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect() << "  addEntity " );
 				addEntity( lEntity );
 			}
 		
-		std::cout << " --> " << isSelected(lEntity) << " " << lEntity->isSelect() << " " ;
+		DBG2( " --> " << isSelected(lEntity) << " " << lEntity->isSelect() << " " );
 	
 		return true;
 	}
@@ -126,7 +125,7 @@ namespace PP3d {
 				PP3d::PickingHit key = pVect[i];
 				
 				j = i-1;  
-				cout << "i:" << i << " j:" << j << " size:" << size << endl;
+				//				DBG4( "i:" << i << " j:" << j << " size:" << size );
 				while (j >= 0 && MyCmp( pVect[j], key )  )
 					{
 						pVect[j+1] = pVect[j]; 
@@ -141,7 +140,7 @@ namespace PP3d {
 	//--------------------------------
 	bool Selection::selectPickingHit( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
 	{
-		cout << " <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " ;
+	  DBG2( " <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode  );
 		
 		
 		for( PP3d::PickingHit& pHit : pHits )
@@ -149,7 +148,7 @@ namespace PP3d {
 				EntityPtr lEntity = cBase.findEntity( pHit.cName );				
 				if( lEntity == nullptr )
 					{
-						cout<<"***************** Selection "<<pHit.cName<<" not found ! **********************"<< endl;
+					  DBG1( "***************** Selection "<<pHit.cName<<" not found ! **********************");
 						return false;
 					}				
 				
@@ -166,15 +165,13 @@ namespace PP3d {
 
 		for( PP3d::PickingHit& pHit : pHits )
 			{
-				cout << "Hit :" << pHit << endl;
-			
+			  DBG3( "Hit :" << pHit );			
 			}
-		cout<<"**************** 333 ***********************"<< endl;
 
 		
 		for( PP3d::PickingHit& pHit : pHits )
 			{				
-				cout << "Hit:" << pHit << endl;
+			  DBG3( "Hit:" << pHit);
 				EntityPtr lEntity = pHit.cEntity;
 								
 				if(pFlagOnlyHightlight)
@@ -290,14 +287,14 @@ namespace PP3d {
 		
 		for( auto lIter = cSelectObj.begin() ; lIter != cSelectObj.end(); ++lIter  )
 			{
-				//		std::cout << "        Selection::drawGL " << lSubSel.cObjId << std::endl;
+				//		std::cout << "        Selection::drawGL " << lSubSel.cObjId );
 				Entity* lObj =  (*lIter);
 				if( lObj != nullptr )
 					{
-						std::cout << "<<<     call    drawSelectionGL" << std::endl;
+						std::cout << "<<<     call    drawSelectionGL" );
 						lObj->drawSelectionGL( lViewProps );
 					}
-				std::cout << ">>>     fin call    drawSelectionGL" << std::endl;
+				std::cout << ">>>     fin call    drawSelectionGL" );
 
 			}
 		glPopMatrix();

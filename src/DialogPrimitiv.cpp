@@ -243,7 +243,7 @@ void DialogPrimitiv::OkCB( Fl_Widget*, void*pUserData )
 			lObj->rename( PP3d::PrimitivFactory::GetTypeName( lDialog->cMyType) );
 		}
 
-	Application::Instance().validate( History::SaveMode::Diff);			
+	Application::Instance().validate( History::SaveMode::Diff, Application::DeferRedraw::DeferTrue);			
 
 
   Fl::delete_widget(lDialog->myWindow);  // Normly if I am understand the documentation, it will destroy all the children
