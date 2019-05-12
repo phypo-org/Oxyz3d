@@ -10,7 +10,7 @@ OBJS =  $(SRCS:.cpp=.o)
 HDRS = $(SRCS:.cpp=.h)
 
 
-CFLAGS = -g -std=c++17 -O3   -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
+CFLAGS = -g -std=c++17 -O3   -DUSE_LUA -Wall  -pthread -D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE -D_REENTRANT -I${FLTK_PATH} -I/usr/include/freetype2
 
 # CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6
 CINCLUDE=-I. -IShape -ILua -DLINUX 

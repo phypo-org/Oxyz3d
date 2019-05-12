@@ -611,9 +611,9 @@ namespace M3d {
 
 
 #ifdef USE_LUA
-=======
-	lOsLuaCode << "ShapeAddCurrentPoint(" << pResult.cX << ',' << pResult.cY << ',' << pResult.cZ << ')' << std::endl;
-	lOsLuaCode << "OxyzRedrawCanvas()" << std::endl;
+
+			lOsLuaCode << "ShapeAddCurrentPoint(" << pResult.cX << ',' << pResult.cY << ',' << pResult.cZ << ')' << std::endl;
+			lOsLuaCode << "OxyzRedrawCanvas()" << std::endl;
      
 
       if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)

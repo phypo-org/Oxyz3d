@@ -1,6 +1,8 @@
 #include "Kamera.h"
 
+#ifdef WIN32
 #include "FL/glu.H"
+#endif
 
 namespace PP3d{
 

@@ -2,11 +2,11 @@
 #define H__PP3dType__H
 
 #if defined(_WIN32)
-#include<GL/glut.h>
+#include<FL/glut.h>
 #else
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glu.h>
+#include <FL/gl.h>
+//#include <FL/glx.h>
+#include <FL/glu.h>
 #endif
 
 #include <iostream>
