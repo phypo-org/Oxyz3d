@@ -144,7 +144,7 @@ namespace PP3d {
 	char*
 	Rect3d::getInfoStr( char* pStr)
 	{
-		int lNb = sprintf_s( pStr, 128, "(%lf, %lf, %lf : %lf, %lf, %lf )",
+		int lNb = sprintf( pStr, "(%lf, %lf, %lf : %lf, %lf, %lf )",
 											 cMin.cX, cMin.cY, cMin.cZ, cMax.cX, cMax.cY, cMax.cZ );
 
 		return &pStr[lNb];

@@ -80,6 +80,7 @@
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>4996;4244;26495;4305;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
