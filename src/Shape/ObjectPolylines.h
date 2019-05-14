@@ -42,9 +42,10 @@ namespace PP3d {
 				
 			default:
 				{
-					std::cout << ">>>>>>>>>>>>Polyline" << std::endl;
-					VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
-					execVisitor( lVisitL );			
+				  std::cout << "<<<<<<<<Polyline" << std::endl;
+				  VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
+				  execVisitor( lVisitL );			
+				  std::cout << ">>>>>>>>>Polyline" << std::endl;
 				}
 			}
 		}
