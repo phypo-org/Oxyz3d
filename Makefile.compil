@@ -1,0 +1,73 @@
+
+# recuperation du nom des .cpp et des .o
+#---------------------------------------
+
+ifeq ($(TARGET_DIR),Release)
+STRIP_CMD=strip -s
+else
+STRIP_CMD=echo
+endif
+
+OBJDIR=$(TARGET_DIR)/
+
+ifdef TARGET
+OTARGET=$(OBJDIR)$(TARGET)
+endif
+
+ifdef TARGET_LIB
+OTARGET_LIB=$(OBJDIR)$(TARGET_LIB)
+endif
+
+WLIB=Win
+SLIB=Shape
+LLIB=Lua
+
+WLIB_HDRS=$(wildcard $(WLIB)/*.h)
+WLIB_SRCS=$(wildcard $(WLIB)/*.cpp)
+WLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(WLIB_SRCS) ) )
+
+SLIB_HDRS=$(wildcard $(SLIB)/*.h)
+SLIB_SRCS=$(wildcard $(SLIB)/*.cpp)
+SLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SLIB_SRCS) ) )
+
+LLIB_HDRS=$(wildcard $(LLIB)/*.h)
+LLIB_SRCS=$(wildcard $(LLIB)/*.cpp)
+LLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(LLIB_SRCS) ) )
+
+# L'ensemble des .o pour le repertoires objs
+OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS))
+
+
+# Les chemins ou chercher les .cpp
+#----------------------------------
+vpath %.cpp $(WLIB) $(SLIB) $(LLIB) 
+
+
+
+# compilation, link ,clean ...
+#-------------------------------
+
+$(OBJDIR)%.o: %.cpp
+	@mkdir -p $(OBJDIR)
+	$(CC) -c  $(INCLUDE) $(CCFLAGS) -o $@  $^
+
+# link
+$(OTARGET): $(OBJECTS)
+	rm -rf $(OTARGET)
+	$(CC)  $(CCFLAGS) $(LDFLAGS)  -o  $@  $^  $(EXTERNAL_LIBS)
+
+# lib
+$(OTARGET_LIB): $(OBJECTS)
+	rm -rf  $(OTARGET_LIB)
+	ar cq  $(OTARGET_LIB) -o  $@  $^
+	$(STRIP_CMD) $(OTARGET_LIB)
+	   
+
+clean:
+	@rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR)
+	@rm -rf *.o *.a *.exe core $(OTARGET)
+
+.PHONY: clean
+
+# Pour le debuggage des variable  : make print-SLIB // par exemple
+print-%  : ; @echo $* = $($*)

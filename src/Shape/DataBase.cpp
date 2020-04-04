@@ -221,7 +221,7 @@ namespace PP3d {
 	{
 		if( cCurrentLine == nullptr ) return 0;
 		
-		return cCurrentLine->getPoints().size();
+		return (GLuint)cCurrentLine->getPoints().size();
 	}
 	//------------------------------------------		
 		Object* DataBase::validCurrentCreation()
@@ -511,4 +511,4 @@ namespace PP3d {
 
 	//************************************
 
-};
+}

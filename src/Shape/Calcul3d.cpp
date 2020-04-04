@@ -60,7 +60,7 @@ namespace PP3d{
 				pMiddle += pPoint;
 			}
 
-		pMiddle /= pPoints.size();
+		pMiddle /= (double)pPoints.size();
 	}
 	//------------------------------------------------
 	void GetMiddle( const std::vector<size_t> & pFacet, const std::vector<PP3d::Point3d>& pPoints,   PP3d::Point3d & pMiddle )
@@ -72,7 +72,7 @@ namespace PP3d{
 				pMiddle += pPoints[ pFacet[p] ];
 			}
 
-		pMiddle /= pFacet.size();
+		pMiddle /= (double)pFacet.size();
 	}
 	//------------------------------------------------
 	void GetMinMaxAndCenter( PP3d::ObjProps&pProps, const std::vector<PP3d::Point3d>& pPoints )
@@ -85,8 +85,8 @@ namespace PP3d{
 				pProps.cMinMaxBox.add( pPoint );
 			}
 
-		pProps.cCenter /= pPoints.size();
+		pProps.cCenter /= (double)pPoints.size();
 	}
 	//------------------------------------------------
 
-};
+}

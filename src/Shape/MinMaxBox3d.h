@@ -16,10 +16,10 @@
 
 namespace PP3d{
 //******************************************
-	class Rect3d
+  class Rect3d
 {
-	Point3d cMin;
-	Point3d cMax;
+  Point3d cMin;
+  Point3d cMax;
 	
 public:
 	Rect3d()
@@ -147,8 +147,8 @@ public:
 	friend class T3dVect3D;
 	friend std::ostream& operator <<( std::ostream& pOs, const Rect3d& pMM)
 	{
-		pOs << '[' << pMM.cMin << ' ' << pMM.cMax << ']';
-		return pOs;
+	  pOs << '[' << pMM.cMin << ' ' << pMM.cMax << ']';	 
+	 return pOs;
 	}
 
 };
@@ -156,7 +156,7 @@ public:
 	typedef Rect3d  MinMaxBox3d;
 	
 //***************************************
-};
+}
 
 
 #endif

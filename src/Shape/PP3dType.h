@@ -98,7 +98,7 @@ namespace PP3d {
 		return pOs;
 	}
 
-};
+}
 
 
 #include "Point3d.h"
@@ -138,9 +138,9 @@ namespace PP3d {
 			*this = pVal;
 		}
 
-		const PDouble x() const { return cVect[0]; }
-		const PDouble y() const { return cVect[1]; }
-		const PDouble z() const { return cVect[2]; }
+	  PDouble x() const { return cVect[0]; }
+	  PDouble y() const { return cVect[1]; }
+	  PDouble z() const { return cVect[2]; }
 	
 		PDouble& x() { return cVect[0]; }
 		PDouble& y() { return cVect[1]; }
@@ -299,7 +299,7 @@ namespace PP3d {
 
   //********************************************************
 
-};
+}
 
 
 

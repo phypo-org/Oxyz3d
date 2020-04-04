@@ -11,98 +11,103 @@
 namespace PP3d {
 
 
-	//********************************************************
+  //********************************************************
 
-	template <typename TFLOAT>
+  template <typename TFLOAT>
   class TPoint3d{
 	  
   public:
-		TFLOAT cX;
-		TFLOAT cY;
-		TFLOAT cZ;
+    TFLOAT cX;
+    TFLOAT cY;
+    TFLOAT cZ;
 
 
-		TPoint3d()	:cX(0), cY(0), cZ(0) {}
-		TPoint3d( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	:cX(pX), cY(pY), cZ(pZ) {}
-		void set ( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	{ cX = pX;	cY = pY;	cZ = pZ; }
-		void zero(){ cX=	cY=	cZ=0;	}
-		
+    TPoint3d()	:cX(0), cY(0), cZ(0) {}
+    TPoint3d( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	:cX(pX), cY(pY), cZ(pZ) {}
+    void set ( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	{ cX = pX;	cY = pY;	cZ = pZ; }
+    void zero(){ cX=	cY=	cZ=0;	}
+    TPoint3d(const TPoint3d& iSrc )
+      :cX(iSrc.cX), cY(iSrc.cY), cZ(iSrc.cZ)
+    {
+      
+    }
+	    
 
-		TPoint3d& operator = ( const TPoint3d pVar )
-		{
-			cX = pVar.cX;
-			cY = pVar.cY;
-			cZ = pVar.cZ;
-			return *this;
-		}
-		void  operator += ( const TPoint3d pVar )
-		{
-			cX += pVar.cX;
-			cY += pVar.cY;
-			cZ += pVar.cZ;
-		}
-    void  operator *= ( const TPoint3d pVar )
-		{
-			cX *= pVar.cX;
-			cY *= pVar.cY;
-			cZ *= pVar.cZ;
-		}
-    void  operator -= ( const TPoint3d pVar )
-		{
-			cX -= pVar.cX;
-			cY -= pVar.cY;
-			cZ -= pVar.cZ;
-		}
-    void  operator /= ( const TPoint3d pVar )
-		{
-			cX /= pVar.cX;
-			cY /= pVar.cY;
-			cZ /= pVar.cZ;
-		}
+      TPoint3d& operator = ( const TPoint3d& pVar )
+	{
+	  cX = pVar.cX;
+	  cY = pVar.cY;
+	  cZ = pVar.cZ;
+	  return *this;
+	}
+      void  operator += ( const TPoint3d& pVar )
+      {
+	cX += pVar.cX;
+	cY += pVar.cY;
+	cZ += pVar.cZ;
+      }
+      void  operator *= ( const TPoint3d& pVar )
+      {
+	cX *= pVar.cX;
+	cY *= pVar.cY;
+	cZ *= pVar.cZ;
+      }
+      void  operator -= ( const TPoint3d& pVar )
+      {
+	cX -= pVar.cX;
+	cY -= pVar.cY;
+	cZ -= pVar.cZ;
+      }
+      void  operator /= ( const TPoint3d& pVar )
+      {
+	cX /= pVar.cX;
+	cY /= pVar.cY;
+	cZ /= pVar.cZ;
+      }
 
-    void  operator += ( TFLOAT pVar )
-		{
-			cX += pVar;
-			cY += pVar;
-			cZ += pVar;
-		}
-    void  operator -= ( TFLOAT pVar )
-		{
-			cX -= pVar;
-			cY -= pVar;
-			cZ -= pVar;
-		}
-		void  operator *= ( TFLOAT pVar )
-		{
-			cX *= pVar;
-			cY *= pVar;
-			cZ *= pVar;
-		}
-		void  operator /= ( TFLOAT pVar )
-		{
-			cX /= pVar;
-			cY /= pVar;
-			cZ /= pVar;
-		}
-		void addX( TFLOAT pX) { cX += pX; }
-    void addY( TFLOAT pY) { cY += pY; }
-    void addZ( TFLOAT pZ) { cZ += pZ; }
+      void  operator += ( TFLOAT pVar )
+      {
+	cX += pVar;
+	cY += pVar;
+	cZ += pVar;
+      }
+      void  operator -= ( TFLOAT pVar )
+      {
+	cX -= pVar;
+	cY -= pVar;
+	cZ -= pVar;
+      }
+      void  operator *= ( TFLOAT pVar )
+      {
+	cX *= pVar;
+	cY *= pVar;
+	cZ *= pVar;
+      }
+      void  operator /= ( TFLOAT pVar )
+      {
+	cX /= pVar;
+	cY /= pVar;
+	cZ /= pVar;
+      }
+      void addX( TFLOAT pX) { cX += pX; }
+      void addY( TFLOAT pY) { cY += pY; }
+      void addZ( TFLOAT pZ) { cZ += pZ; }
 
-		TPoint3d  operator - ()	{	return TPoint3d( -cX, -cY, -cZ );	}
-		//--------------------------------
+      TPoint3d  operator - ()	{	return TPoint3d( -cX, -cY, -cZ );	}
+      //--------------------------------
   
-		const TFLOAT* vectForGL() const
-		{
-			return &cX;
-		}		
-		TFLOAT * operator *() 
-		{
-			return &cX;
-		}
-		//--------------------------------------------		
-		friend TPoint3d operator * ( TPoint3d A, TFLOAT pK )
-		{
-			return TPoint3d( A.cX*pK, A.cY*pK, A.cZ*pK );
+      const TFLOAT* vectForGL() const
+      {
+	return &cX;
+      }		
+      TFLOAT * operator *() 
+      {
+	return &cX;
+      }
+      //--------------------------------------------		
+      friend TPoint3d operator * ( TPoint3d A, TFLOAT pK )
+      {
+	return TPoint3d( A.cX*pK, A.cY*pK, A.cZ*pK );
 		}
 		//--------------------------------------------		
 		friend TPoint3d operator + ( TPoint3d A, TFLOAT pK )
@@ -133,7 +138,7 @@ namespace PP3d {
 		}
 
 		//--------------------------------	
-		friend std::ostream& operator <<( std::ostream& pOs, TPoint3d pPt)
+		friend std::ostream& operator <<( std::ostream& pOs, const TPoint3d& pPt)
 		{
 			pOs << "x:" << pPt.cX << " y:" << pPt.cY << " z:" << pPt.cZ; 
 			return pOs;
@@ -284,20 +289,20 @@ namespace PP3d {
 		}
 		//--------------------------------    
 		const std::vector<Point3d>& getVector() const { return cVect; }
-		std::vector<Point3d>& getVector() { return cVect; }
+		std::vector<Point3d>&       getVector() { return cVect; }
 		void resize( size_t pSize )  { cVect.resize( pSize ); }
 		void clear()                 { cVect.clear(); }
 		//--------------------------------    
 
-		void  operator += ( const Point3d pVar ) //  ne pas mettre de & a pVar
+		void  operator += ( const Point3d& pVar ) //  ne pas mettre de & a pVar
 		{
-			for( Point3d& lPt : cVect )
-				{
-					lPt += pVar;
-				}
+		  for( Point3d& lPt : cVect )
+		    {
+		      lPt += pVar;
+		    }
 		}
 		//--------------------------------    
-		void  operator *= ( const Point3d pVar ) 
+		void  operator *= ( const Point3d& pVar ) 
 		{
 			for( Point3d& lPt : cVect )
 				{
@@ -305,7 +310,7 @@ namespace PP3d {
 				}
 		}
 		//--------------------------------    
-		void  operator -= ( const Point3d pVar ) 
+		void  operator -= ( const Point3d& pVar ) 
 		{
 			for( Point3d& lPt : cVect )
 				{
@@ -313,7 +318,7 @@ namespace PP3d {
 				}
 		}
 		//--------------------------------    
-		void  operator /= ( const Point3d pVar ) 
+		void  operator /= ( const Point3d& pVar ) 
 		{
 			for( Point3d& lPt : cVect )
 				{
@@ -327,7 +332,7 @@ namespace PP3d {
 		{
 			for( Point3d& lPt : pPts.cVect )
 				{
-					pOs << lPt << std::endl;
+				  pOs << lPt << std::endl;
 				}
 
 			return pOs;
@@ -338,6 +343,6 @@ namespace PP3d {
 
 //********************************************************
 
-};
+}
 
 #endif

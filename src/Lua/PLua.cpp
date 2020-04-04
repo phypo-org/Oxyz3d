@@ -476,7 +476,7 @@ namespace PLua{
 	  //	renvoyer un code d'erreur pour lua
 	}
     }
-  CLUA_CLOSE_CODE(1);	
+  CLUA_CLOSE_CODE(1)
   //------------------------------------------------
   CLUA_OPEN_CODE( (PLuaSession::LUA_LoadFile), 1)
 
@@ -497,7 +497,7 @@ namespace PLua{
     lua_pushboolean( pLua, 0 );
 
 
-  CLUA_CLOSE_CODE(1);	
+  CLUA_CLOSE_CODE(1)
   //------------------------------------------------
   CLUA_OPEN_CODE( (PLuaSession::LUA_ListLibraryFonction), 0)
 
@@ -511,7 +511,7 @@ namespace PLua{
   PCOUT << lLuaSession.cVectRegisterFtn.size() << std::endl;
   return (int)lLuaSession.cVectRegisterFtn.size();
 
-  CLUA_CLOSE_CODE( 0 );	
+  CLUA_CLOSE_CODE( 0 )
 
   //------------------------------------------------
   CLUA_OPEN_CODE( (PLuaSession::LUA_ListLibrary), 0)
@@ -529,10 +529,10 @@ namespace PLua{
   PCOUT << lLuaSession.cVectRegisterFtn.size() << std::endl;
   return (int)lLuaSession.cVectRegisterFtn.size();
 
-  CLUA_CLOSE_CODE( 0 );
+  CLUA_CLOSE_CODE( 0 )
 
   
   //*************************************************
 
-}; // fin namespace PLua
+} // fin namespace PLua
  

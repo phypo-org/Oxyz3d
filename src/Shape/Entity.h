@@ -221,7 +221,7 @@ namespace PP3d {
 			pLine->addOwner( this );
 		}
 		LinePtrVect& getLines()   { return cLines;}
-		GLuint getNbLines()  const { return cLines.size(); }
+	  GLuint getNbLines()  const { return (GLuint )cLines.size(); }
 
 		Point3d & getNormal()     { return cNorm; }
 		
@@ -265,6 +265,6 @@ namespace PP3d {
 	using PolyPtrVect = std::vector<Poly*>;
 	//*********************************************
 	
-};
+}
 
 #endif

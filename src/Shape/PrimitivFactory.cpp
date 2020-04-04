@@ -370,4 +370,4 @@ double constexpr sqrtconstexpr(double x)
 	//************************
 
 
-};
+}

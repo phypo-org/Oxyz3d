@@ -42,6 +42,15 @@ namespace PP3d {
 		:cName( pP.cName), cZ1(pP.cZ1), cZ2( pP.cZ2 ), cEntity( pP.cEntity)
 		{			
 		}
+
+	  void operator = (  const PickingHit& pP )
+	  {
+	    cName =  pP.cName;
+	    cZ1  =pP.cZ1;
+	    cZ2 = pP.cZ2 ;
+	    cEntity =  pP.cEntity;
+	  }
+	    
 		friend std::ostream& operator <<( std::ostream& pOs,  const PickingHit& pHit )
 		{
 			pOs << pHit.cName << " z:" << pHit.cZ1 << " -> " << pHit.cZ2 << " " << (void*) pHit.cEntity << std::flush ;
@@ -123,7 +132,7 @@ namespace PP3d {
 	};
  //******************************************
 
-};
+}
 
 
 #endif

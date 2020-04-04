@@ -122,4 +122,4 @@ void Mat4::MulMat3( Mat4& matres, Mat4& mat1, Mat4& mat2 )
 
 	//**************************************
 
-};
+}

@@ -19,7 +19,7 @@ namespace PP3d {
 		glVertex3f( 0.0, 0.0, 0.0 );
 		glVertex3f( pSz, 0.0, 0.0 );
 		glEnd();
-				DrawX( pSz *1.1, 0.0, 0.0, pSz / 20.0 );
+				DrawX( pSz *1.1f, 0.0f, 0.0f, pSz / 20.0f );
 		
 		
 		ColorRGBA::Green();
@@ -28,7 +28,7 @@ namespace PP3d {
 		glVertex3f( 0.0, 0.0, 0.0 );
 		glVertex3f( 0.0, pSz, 0.0 );
 		glEnd();
-				DrawY( 0.0, pSz*1.1, 0.0, pSz/20.0 );
+				DrawY( 0.0f, pSz*1.1f, 0.0f, pSz/20.0f );
 		
 		
 		ColorRGBA::LightBlue();	
@@ -36,7 +36,7 @@ namespace PP3d {
 		glVertex3f( 0.0, 0.0, 0.0 );
 		glVertex3f( 0.0, 0.0, pSz );
 		glEnd();
-			DrawZ( 0.0, 0.0, pSz*1.1, pSz/20.0 );
+			DrawZ( 0.0, 0.0, pSz*1.1f, pSz/20.0f );
 		
 		
 		
@@ -66,16 +66,16 @@ namespace PP3d {
 				glDisable( GL_LINE_STIPPLE );
 				
 				ColorRGBA::Red();
-				DrawMinus( pSz*-1.1, 0.0, 0.0, pSz/20.0 );
-							DrawX( pSz*-1.1, 0.0, 0.0, pSz/20.0 );
+				DrawMinus( pSz*-1.1f, 0.0, 0.0, pSz/20.0f );
+							DrawX( pSz*-1.1f, 0.0, 0.0, pSz/20.0f );
 				
 				ColorRGBA::Green();
-				DrawMinus( 0.0, -pSz*1.1, 0.0, pSz/20.0 );
-							DrawY( 0.0, -pSz*1.1, 0.0, pSz/20.0 );
+				DrawMinus( 0.0f, -pSz*1.1f, 0.0, pSz/20.0f );
+							DrawY( 0.0f, -pSz*1.1f, 0.0f, pSz/20.0f );
 				
 				ColorRGBA::LightBlue();	
-				DrawMinus( 0.0, 0.0, -pSz*1.1, pSz/20.0 );
-								DrawZ( 0.0, 0.0, -pSz *1.1, pSz / 20.0 );
+				DrawMinus( 0.0f, 0.0f, -pSz*1.1f, pSz/20.0f );
+								DrawZ( 0.0f, 0.0f, -pSz *1.1f, pSz / 20.0f );
 			}
 
     glEnable(GL_LIGHTING);
@@ -90,10 +90,10 @@ namespace PP3d {
 		//  ColorRGBA::Grey();
 		glLineWidth( 1 );
 			
-		float lPas = pSz / pNb;
+		float lPas = (float)pSz / (float)pNb;
 		
 		if( pNombre == false )
-			lPas = pNb;
+		  lPas =(float) pNb;
 			
 		glDisable(GL_LIGHTING);
 		
@@ -137,68 +137,68 @@ namespace PP3d {
 
 		glBegin( GL_LINES );
 		glColor3f( 1, 1.0, 0 );
-		glVertex3f( pPt.cX, pPt.cY, pPt.cZ );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, (float)pPt.cZ );
 		glVertex3f( 0, 0 , 0 );
 		glEnd();
 
 
 		glBegin( GL_LINES );
 		glColor3f( 1.0, 0, 0 );
-		glVertex3f( pPt.cX, pPt.cY, pPt.cZ );
-		glVertex3f( 0, pPt.cY , pPt.cZ );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, (float)pPt.cZ );
+		glVertex3f( 0, (float)pPt.cY , (float)pPt.cZ );
 
-		glColor3f( 0.6, 0.6, 0.6 );
-		glVertex3f( 0, pPt.cY , pPt.cZ );
-		glVertex3f( 0, 0 , pPt.cZ );
-		glVertex3f( 0, pPt.cY , pPt.cZ );
-		glVertex3f( 0, pPt.cY , 0 );
+		glColor3f( 0.6f, 0.6f, 0.6f );
+		glVertex3f( 0, (float)pPt.cY , (float)pPt.cZ );
+		glVertex3f( 0, 0 , (float)pPt.cZ );
+		glVertex3f( 0, (float)pPt.cY , (float)pPt.cZ );
+		glVertex3f( 0, (float)pPt.cY , 0 );
 		glEnd();
 
 		glBegin( GL_LINES );
 		glColor3f( 0, 1, 0 );
-		glVertex3f( pPt.cX, pPt.cY, pPt.cZ );
-		glVertex3f( pPt.cX, 0, pPt.cZ );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, (float)pPt.cZ );
+		glVertex3f( (float)pPt.cX, 0, (float)pPt.cZ );
 
-		glColor3f( 0.6, 0.6, 0.6 );
-		glVertex3f( pPt.cX, 0, pPt.cZ );
-		glVertex3f( 0, 0, pPt.cZ );
-		glVertex3f( pPt.cX, 0, pPt.cZ );
-		glVertex3f( pPt.cX, 0, 0 );
+		glColor3f( 0.6f, 0.6f, 0.6f );
+		glVertex3f( (float)pPt.cX, 0,(float) pPt.cZ );
+		glVertex3f( 0, 0, (float)pPt.cZ );
+		glVertex3f( (float)pPt.cX, 0, (float)pPt.cZ );
+		glVertex3f( (float)pPt.cX, 0, 0 );
 		glEnd();
 
 
 		glBegin( GL_LINES );
 		glColor3f( 0, 0, 1 );
-		glVertex3f( pPt.cX, pPt.cY, pPt.cZ );
-		glVertex3f( pPt.cX, pPt.cY, 0);
-		glColor3f( 0.6, 0.6, 0.6 );
-		glVertex3f( pPt.cX, pPt.cY, 0);
-		glVertex3f( pPt.cX, 0, 0);
-		glVertex3f( pPt.cX, pPt.cY, 0);
-		glVertex3f( 0, pPt.cY, 0);
+		glVertex3f( (float)pPt.cX, (float)pPt.cY,(float) pPt.cZ );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, 0);
+		glColor3f( 0.6f, 0.6f, 0.6f );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, 0);
+		glVertex3f( (float)pPt.cX, 0, 0);
+		glVertex3f( (float)pPt.cX, (float)pPt.cY, 0);
+		glVertex3f( 0,(float) pPt.cY, 0);
 		glEnd();
 
 
 		glColor3f( 1.0, 1.0, 1.0 );
 		glBegin( GL_LINES );
 
-		glVertex3f( pPt.cX-pSz, pPt.cY-pSz, pPt.cZ );
-		glVertex3f( pPt.cX + pSz, pPt.cY + pSz, pPt.cZ );
+		glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY-pSz, (float)pPt.cZ );
+		glVertex3f( (float)pPt.cX + pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
 
-		glVertex3f( pPt.cX+pSz, pPt.cY-pSz, pPt.cZ  );
-		glVertex3f( pPt.cX - pSz, pPt.cY + pSz, pPt.cZ );
+		glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY-pSz, (float)pPt.cZ  );
+		glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
 
-		glVertex3f( pPt.cX-pSz, pPt.cY,    pPt.cZ-pSz );
-		glVertex3f( pPt.cX + pSz, pPt.cY , pPt.cZ+ pSz );
+		glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY,    (float)pPt.cZ-pSz );
+		glVertex3f( (float)pPt.cX + pSz, (float)pPt.cY , (float)pPt.cZ+ pSz );
 
-		glVertex3f( pPt.cX+pSz, pPt.cY, pPt.cZ-pSz  );
-		glVertex3f( pPt.cX - pSz, pPt.cY , pPt.cZ + pSz);
+		glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY, (float)pPt.cZ-pSz  );
+		glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY , (float)pPt.cZ + pSz);
 
-		glVertex3f( pPt.cX, pPt.cY-pSz,    pPt.cZ-pSz );
-		glVertex3f( pPt.cX, pPt.cY + pSz , pPt.cZ+ pSz );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz,    (float)pPt.cZ-pSz );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY + pSz , (float)pPt.cZ+ pSz );
 
-		glVertex3f( pPt.cX, pPt.cY+pSz, pPt.cZ-pSz  );
-		glVertex3f( pPt.cX, pPt.cY - pSz , pPt.cZ + pSz);
+		glVertex3f( (float)pPt.cX, (float)pPt.cY+pSz, (float)pPt.cZ-pSz  );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY - pSz , (float)pPt.cZ + pSz);
 
 		glEnd();
     glEnable(GL_LIGHTING);
@@ -211,23 +211,23 @@ namespace PP3d {
 		glDisable(GL_LIGHTING);
 		glBegin( GL_LINES );
 
-		glVertex3f( pPt.cX-pSz, pPt.cY-pSz, pPt.cZ );
-		glVertex3f( pPt.cX + pSz, pPt.cY + pSz, pPt.cZ );
+		glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY-pSz, (float)pPt.cZ );
+		glVertex3f( (float)pPt.cX + pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
 
-		glVertex3f( pPt.cX+pSz, pPt.cY-pSz, pPt.cZ  );
-		glVertex3f( pPt.cX - pSz, pPt.cY + pSz, pPt.cZ );
+		glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY-pSz, (float)pPt.cZ  );
+		glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
 
-		glVertex3f( pPt.cX-pSz, pPt.cY,    pPt.cZ-pSz );
-		glVertex3f( pPt.cX + pSz, pPt.cY , pPt.cZ+ pSz );
+		glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY,    (float)pPt.cZ-pSz );
+		glVertex3f( (float)pPt.cX + pSz,(float) pPt.cY , (float)pPt.cZ+ pSz );
 
-		glVertex3f( pPt.cX+pSz, pPt.cY, pPt.cZ-pSz  );
-		glVertex3f( pPt.cX - pSz, pPt.cY , pPt.cZ + pSz);
+		glVertex3f( (float)pPt.cX+pSz,(float) pPt.cY, (float)pPt.cZ-pSz  );
+		glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY , (float)pPt.cZ + pSz);
 
-		glVertex3f( pPt.cX, pPt.cY-pSz,    pPt.cZ-pSz );
-		glVertex3f( pPt.cX, pPt.cY + pSz , pPt.cZ+ pSz );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz,    (float)pPt.cZ-pSz );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY + pSz , (float)pPt.cZ+ pSz );
 
-		glVertex3f( pPt.cX, pPt.cY+pSz, pPt.cZ-pSz  );
-		glVertex3f( pPt.cX, pPt.cY - pSz , pPt.cZ + pSz);
+		glVertex3f( (float)pPt.cX, (float)pPt.cY+pSz, (float)pPt.cZ-pSz  );
+		glVertex3f( (float)pPt.cX, (float)pPt.cY - pSz , (float)pPt.cZ + pSz);
 
 		glEnd();
     glEnable(GL_LIGHTING);
@@ -276,9 +276,9 @@ namespace PP3d {
 	//--------------------------
 	void GLUtility::DrawChar(  Point3d pPos, float pSz,  char pChar )
 	{	
-		float pX = pPos.cX;
-		float pY = pPos.cY;
-		float pZ = pPos.cZ;
+		float pX = (float)pPos.cX;
+		float pY = (float)pPos.cY;
+		float pZ = (float) pPos.cZ;
 
 
 	Point3d P[ sTsz ][ sTsz ];
@@ -422,11 +422,11 @@ namespace PP3d {
 //----------------------------------------
 void GLUtility::DrawText(  bool pOrient, Point3d pPos, float pSz, const char* pStr,  int pReverse)
 {
-		float x = pPos.cX;
-		float y = pPos.cY;
-		float z = pPos.cZ;
+  float x = (float)pPos.cX;
+  float y = (float)pPos.cY;
+  float z = (float)pPos.cZ;
 
-		int lNb = ::strlen( pStr);
+  int lNb = (int)::strlen( pStr);
 
 //	DrawX( pX, pY, pZ, 10 );
 	if( pReverse == 0 )
@@ -484,5 +484,5 @@ void GLUtility::DrawText(  bool pOrient, Point3d pPos, float pSz, const char* pS
 
 	}
 	//********************************
-};
+}
 	 

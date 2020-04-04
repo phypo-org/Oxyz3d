@@ -17,7 +17,7 @@ namespace PP3d {
 		int         cHandleFind=-1;
 	};
 	//*********************************
-};
+}
 
 
 #endif

@@ -26,38 +26,39 @@ namespace PP3d {
 		PDouble cMat[4][4];
 
 	public:
-		//-----------------------------
-		Mat4() {;}
-		//-----------------------------
-		Mat4( const Mat4& pMat )
-		{
-			for ( int k = 0; k < 4; k++ )					
-				for ( int j = 0; j<4; j++ )
-					cMat[k][j]=pMat.cMat[k][j];
-		}
-		//-----------------------------
-		void raz()
-		{ 
-			for ( int k = 0; k < 4; k++ )					
-				for ( int j = 0; j<4; j++ )
-					cMat[k][j]=0;
-		}
-		//-----------------------------
-		void Identity()
-		{
-			for ( int j = 0; j < 4; j++ )
-				{
-					for ( int i = 0; i < 4; i++ )
-						cMat[i][j] = 0;
-				}
-			/*  place les 1 sur la diagonale  */
-			for ( int i = 0; i < 4; i++ )
-				cMat[i][i] = 1;
-		}
-		//-----------------------------
+	  //-----------------------------
+	  Mat4() {;}
+	  //-----------------------------
+	  Mat4( const Mat4& iSrc) 
+	  {
+	    ::memcpy( cMat, iSrc.cMat, sizeof( cMat ) );	    
+	  }
+	  //-----------------------------
+	  void operator = ( const Mat4& iSrc)
+	  {
+	    ::memcpy( cMat, iSrc.cMat, sizeof( cMat ) );
+	  }
+			   //-----------------------------
+			   void raz()
+			   {
+			     ::memset( cMat, 0, sizeof( cMat ) );
+			   }
+			   //-----------------------------
+			   void Identity()
+			   {
+			     for ( int j = 0; j < 4; j++ )
+			       {
+				 for ( int i = 0; i < 4; i++ )
+				   cMat[i][j] = 0;
+			       }
+			     /*  place les 1 sur la diagonale  */
+			     for ( int i = 0; i < 4; i++ )
+			       cMat[i][i] = 1;
+			   }
+			   //-----------------------------
 
-		void transpose()
-		{
+			   void transpose()
+			   {
 			std::swap( cMat[0][1], cMat[1][0] );
 			std::swap( cMat[0][2], cMat[2][0] );
 			std::swap( cMat[0][3], cMat[3][0] );
@@ -192,7 +193,7 @@ namespace PP3d {
 		void set( Transf3d& pTransform);
 
 		//-----------------------------
-		void  operator *= ( const Mat4  B )
+		void  operator *= ( const Mat4 & B )
 		{
 			const Mat4& A = *this;
 			*this = A * B;
@@ -210,7 +211,7 @@ namespace PP3d {
 
 
 	
-};
+}
 
 
 

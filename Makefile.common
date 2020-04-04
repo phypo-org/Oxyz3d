@@ -1,0 +1,118 @@
+include ${FLTK_PATH}/makeinclude
+
+
+
+
+ifndef FLAGS_COMPIL_EXT
+FLAGS_COMPIL_EXT=
+endif
+
+# Par default le source est directement dans les sous repertoires
+# Sinon il faut renseigner ROOT_POS. ex ROOT_POS=../../
+#------------------------------------------------------------------
+ifndef ROOT_POS
+ROOT_POS=
+endif
+
+
+DBG_DIR=Debug
+REL_DIR=Release
+
+TARGET_DIR=$(REL_DIR)
+
+# les macros definies sur la ligne de commande
+#---------------------------------------------
+
+
+ifdef DBG_LOG
+FLAGS_COMPIL_EXT += -DDBG_SESAM_ACTIVATED
+TARGET_DIR=$(DBG_DIR)
+# exemple make DBG_LOG=1
+endif
+
+ifdef FILE_LOG
+FLAGS_COMPIL_EXT += -DLOG_SESAM_ACTIVATED
+# exemple make FILE_LOG=1
+endif
+
+ifdef SMALL_DEBUG
+FLAGS_COMPIL_EXT += -DSMALL_DEBUG
+TARGET_DIR=$(DBG_DIR)
+endif
+
+ifdef USE_NATIVE
+FLAGS_COMPIL_EXT +=march=native
+# exemple make USE_NATIVE=1
+endif
+
+
+# Le compilateur utilisé
+#-----------------------
+
+ifdef USE_CC
+
+CC=$(USE_CC)bin/g++ -g
+# exemple make USE_CC=$GCC8
+# exemple make USE_CC=$GCC9
+else
+CC=g++ -g
+
+INCLUDE_CC=-I(USE_CC)include
+LIB_CC=-L$(USE_CC)/lib64
+
+endif
+
+
+
+# Les libs externes
+#-------------------
+
+EXTERNAL_PATH=$(ROOT_POS)../../srcv1_1/External
+#EXTERNAL_PATH=$(ROOT_POS)../../sesame-src/External
+
+
+PATH_YARA=$(EXTERNAL_PATH)/yara-3.11.0/libyara
+
+# Options de compilation
+#------------------------
+
+OPTIM=-D_FORTIFY_SOURCE=2 -Ofast
+STRIP_LINK=,--strip-all
+
+ifdef USE_GDB
+      OPTIM=-Og -ggdb3
+      TARGET_DIR=$(DBG_DIR)
+      STRIP_LINK=
+# exemple make USE_GDB=1
+endif
+
+
+CCFLAGS=-std=c++17 -m64 -Wall  -Wextra -Wformat=2 \
+		-Wl,-z,relro,-z,now$(STRIP_LINK) -Wconversion -fPIE -Wno-unused-parameter \
+		-Wshadow -Wpedantic -Wstack-protector -fstack-protector-all \
+		-D_REENTRANT $(OPTIM) \
+		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE\
+		$(FLAGS_COMPIL_EXT)
+
+# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6
+
+
+
+# Parametres de link
+#-------------------
+LDFLAGS= -pie -lpthread -ldl -lm 
+
+
+# Les includes
+#-----------------
+
+
+INCLUDE= -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2 
+
+
+
+# Les libbrairies externes
+#-------------------------
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  -lXinerama -llua
+
+# -lpython3.6m

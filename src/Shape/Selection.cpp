@@ -98,7 +98,7 @@ namespace PP3d {
 			}
 		
 		if( cPoints.size() > 0 )
-			lCenter /= cPoints.size();
+		  lCenter /= (double) cPoints.size();
 
 		return lCenter;
 	}
@@ -129,9 +129,9 @@ namespace PP3d {
 				cout << "i:" << i << " j:" << j << " size:" << size << endl;
 				while (j >= 0 && MyCmp( pVect[j], key )  )
 					{
-						pVect[j+1] = pVect[j]; 
+					  pVect[j+1] = pVect[j]; 
 						
-						j = j-1; 					
+					  j = j-1; 					
 					} 
 
 				pVect[j+1] = key; 
@@ -171,7 +171,13 @@ namespace PP3d {
 			}
 		cout<<"**************** 333 ***********************"<< endl;
 
-		
+						cout <<  " S " ;
+						
+#if __GNUC__ > 6 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+						
 		for( PP3d::PickingHit& pHit : pHits )
 			{				
 				cout << "Hit:" << pHit << endl;
@@ -189,8 +195,9 @@ namespace PP3d {
 							{
 								cout<<"Selection Error "<< lEntity->getId() <<" mismach"<< endl;
 							}
-						cout <<  " S " ;
-						switch( pSelectMode )
+
+
+	                                      switch( pSelectMode )
 							{
 							case SelectMode::Undefine:
 								pSelectMode = SelectMode::Unselect;
@@ -225,6 +232,9 @@ namespace PP3d {
 						return true;
 					}				
 			}
+#if __GNUC__ > 6 
+#pragma GCC diagnostic pop
+#endif		
 		
 		cout <<  " KO " << endl;
 		return false;
@@ -305,4 +315,4 @@ namespace PP3d {
 	*/
  //******************************************
 
-};
+}

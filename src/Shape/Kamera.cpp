@@ -38,7 +38,7 @@ void Kamera::reset()
 //------------------------------------------------
 	void Kamera::initGL()
 	{	
-		glClearColor( 0.3, 0.3, 0.3, 1 );
+		glClearColor( 0.3f, 0.3f, 0.3f, 1 );
 		glClearDepth(1.0f);
 		glDepthFunc(GL_LEQUAL);
 		glEnable( GL_DEPTH_TEST );
@@ -222,4 +222,4 @@ O3dKamera::setPick(  int pX, int pY, float pWidht, float pHeight )
 */
 
 
-};
+}

@@ -173,7 +173,7 @@ namespace PLua {
   };
   //*************************************************
 	       
-}; // fin namespace PLua
+} // fin namespace PLua
 
 
 #define CLUA_OPEN_CODE( NAME, NBPARAM)					\

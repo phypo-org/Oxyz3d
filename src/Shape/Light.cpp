@@ -155,9 +155,9 @@ namespace PP3d {
 	{
 		Light* l1= Light::GetNewLight();
 	
-		l1->cAmbient.set(  0.1, 0.1, 0.1,   1.0 );
+		l1->cAmbient.set(  0.1f, 0.1f, 0.1f,   1.0f );
 		l1->cDiffuse.set(  1,  0, 0, 1.0 );
-		l1->cSpecular.set(  0.1,  0.1, 0.1, 1.0 );
+		l1->cSpecular.set(  0.1f,  0.1f, 0.1f, 1.0f );
 		l1->cPosition.set(  1000000, 0, 0  );
 		l1->cEnable= true ;
 
@@ -198,26 +198,26 @@ namespace PP3d {
 	{
 		Light* l1= Light::GetNewLight();
 	
-		l1->cAmbient.set(  0.8, 0.8, 0.8,   1.0 );
-		l1->cDiffuse.set(  0.2,  0.2, 0.2,  1.0 );
-		l1->cSpecular.set(  0.1,  0.1, 0.1, 1.0 );
+		l1->cAmbient.set(  0.8f, 0.8f, 0.8f,   1.0f );
+		l1->cDiffuse.set(  0.2f,  0.2f, 0.2f,  1.0f );
+		l1->cSpecular.set(  0.1f,  0.1f, 0.1f, 1.0f );
 		l1->cPosition.set(  1000000,1000000, 0  );
 		l1->cEnable= true ;
 
 		l1= Light::GetNewLight();
-		l1->cDiffuse.set(  0.1,  0.1, 0.1,  1.0 );
-		l1->cSpecular.set(  0.1,  0.1, 0.1, 1.0 );
+		l1->cDiffuse.set(  0.1f,  0.1f, 0.1f,  1.0f );
+		l1->cSpecular.set(  0.1f,  0.1f, 0.1f, 1.0f );
 		l1->cPosition.set(  -1000000,1000000, 0  );
 		l1->cEnable= true ;
 
 		l1= Light::GetNewLight();
-		l1->cDiffuse.set(  0.3,  0.3, 0.3,  1.0 );
-		l1->cSpecular.set(  0.1,  0.1, 0.1, 1.0 );
+		l1->cDiffuse.set(  0.3f,  0.3f, 0.3f,  1.0f );
+		l1->cSpecular.set(  0.1f,  0.1f, 0.1f, 1.0f );
 		l1->cPosition.set(  1000000, -1000000, 10000000 );
 		l1->cEnable= true ;
 
 	}
   //******************************
 
-};
+}
 

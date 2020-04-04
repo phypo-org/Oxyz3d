@@ -94,10 +94,10 @@ namespace PP3d {
 	//*********************************************
 	void Facet::inverseLines( )
 	{		
-		GLuint lNbDemi = cLines.size()/2;
-		GLuint lLastPos = cLines.size()-1;
-		// si nombre impair, le milieu ne change pas !
-		for( GLuint l=0; l< lNbDemi; l++)
+	  GLuint lNbDemi  = (GLuint)cLines.size()/2;
+	  GLuint lLastPos = (GLuint)cLines.size()-1;
+	  // si nombre impair, le milieu ne change pas !
+	  for( GLuint l=0; l< lNbDemi; l++)
 			{
 				LinePtr lTmp = cLines[l];
 				cLines[l] = cLines[lLastPos-l];
@@ -162,4 +162,4 @@ namespace PP3d {
 	
 	//*********************************************
 	//*********************************************
-};
+}

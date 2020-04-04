@@ -67,7 +67,7 @@ namespace PP3d {
 			{
 				lMiddle += pPoint->cPt;
 			}
-		lMiddle /= lPoints.size();
+		lMiddle /= (double)lPoints.size();
 		
 		ColorRGBA::Green();
 		Point3d lNormMiddle( lMiddle );
@@ -245,7 +245,7 @@ namespace PP3d {
 		glNormal3dv( pFacet->getNormal().vectForGL() );
 		cViewProps.facetGL( pFacet->isSelect(), pFacet->isHighlight()  );
 
-		cNumLineEnd = pFacet->getLines().size()-1;
+		cNumLineEnd = (GLuint)(pFacet->getLines().size()-1);
 		cNumLine = 0;
 		
 		if( pFacet->getLines().size() == 3 )
@@ -299,7 +299,7 @@ namespace PP3d {
 
 		glNormal3dv( pFacet->getNormal().vectForGL() );
 
-		cNumLineEnd = pFacet->getLines().size()-1;
+		cNumLineEnd = (GLuint)(pFacet->getLines().size()-1);
 		cNumLine = 0;
 
 		if(   pFacet->getLines().size() == 3 )
@@ -396,5 +396,5 @@ namespace PP3d {
 	}
 
 //*********************************************
-};
+}
 

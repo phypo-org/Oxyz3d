@@ -24,6 +24,6 @@ namespace PP3d{
 	void GetMinMaxAndCenter( PP3d::ObjProps&pProps, const  std::vector<PP3d::Point3d>& pPoints );
 	//*******************************************
 
-};
+}
 
 #endif

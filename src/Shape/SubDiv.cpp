@@ -46,11 +46,11 @@ namespace  PP3d {
 	break;
 				
       case 	SubNormalizeType::NORMALIZE_DEC_SUB:
-	pVal.normalize( cFact / (1+pDepth*cDepthGrowFactor) );
+	pVal.normalize( cFact / (1+((float)pDepth)*cDepthGrowFactor) );
 	break;
 				
       case 	SubNormalizeType::NORMALIZE_INC_SUB:
-	pVal.normalize( cFact * (1+pDepth*cDepthGrowFactor) );
+	pVal.normalize( cFact * (1+((float)pDepth)*cDepthGrowFactor) );
 	break;
       case 	SubNormalizeType::NORMALIZE_MUL_SUB:
 	pVal.normalize( cFact *cDepthGrowFactor );
@@ -86,15 +86,15 @@ namespace  PP3d {
 	    break;
 										
 	  case SubNormalizeType::NORMALIZE_DEC_INIT:
-	    iArray[i].normalize( cFact / (1+i*cInitGrowFactor) );
+	    iArray[i].normalize( ((float)cFact) / (1+((float)i)*cInitGrowFactor) );
 	    break;
 										
 	  case SubNormalizeType::NORMALIZE_INC_INIT:			
-	    iArray[i].normalize( cFact * (1+i*cInitGrowFactor) );
+	    iArray[i].normalize(  ((float)cFact) * (1+((float)i)*cInitGrowFactor) );
 	    break;
 
 	  case	SubNormalizeType::NORMALIZE_MUL_INIT:								
-	    iArray[i].normalize( cFact *cInitGrowFactor );
+	    iArray[i].normalize(  ((float)cFact) *cInitGrowFactor );
 	    break;
 
 
@@ -620,4 +620,4 @@ namespace  PP3d {
 
   //**************************************
 
-}; // end namespace
+} // end namespace

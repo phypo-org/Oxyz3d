@@ -63,7 +63,7 @@ namespace  PP3d {
       std::vector<MyFacet*> cFacets;
 
       float                cDepthGrowFactor = 1;
-      float                cInitGrowFactor = 0.3;
+      float                cInitGrowFactor = 0.3f;
 
       int                  cHoleFacet = -1;
       int                  cHoleDepth = -1;
