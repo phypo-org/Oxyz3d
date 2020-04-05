@@ -1,6 +1,7 @@
 #include "ShapeLua.h"
 #include "Application.h"
 #include "Win3d.h"
+#include "Dialogs.h"
 
 #include "Shape/Selection.h"
 
@@ -85,6 +86,7 @@ namespace M3d {
 	  lSav.save( *Application::Instance().getDatabase());	  
 	  lFilSav.close();
 	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "Save ok");
 	  //	  Application::Instance().getLua().append("OK");
 	}
       else
@@ -94,7 +96,99 @@ namespace M3d {
     }
   else
     {
-  	  lOut << "KO"<< std::endl;
+      AppendConsoleLua( "Save failed" );
+    //      Application::Instance().getLua().append("Error : get filename");
+      //renvoyer une erreur 
+    }
+   
+  CLUA_CLOSE_CODE(0)
+  //-----------------------------------------
+  CLUA_OPEN_CODE( LUA_read, 1);
+  
+  if( lua_isstring(pLua, 1) )
+    {     
+      std::ifstream lFileIn;						
+      lFileIn.open(  lua_tostring(pLua, 1));
+      
+      if( lFileIn.good() )
+	{	  
+	  PP3d::MyRead lRead( lFileIn );
+	  lRead.read( *Application::Instance().getDatabase() );
+	  lFileIn.close();
+	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "read ok");
+	  //	  Application::Instance().getLua().append("OK");
+	  Application::Instance().redrawAll();
+	}
+      else
+	{
+	  lOut<<"Bad file" << std::endl;
+	}
+    }
+  else
+    {
+      AppendConsoleLua( "read failed" );
+    //      Application::Instance().getLua().append("Error : get filename");
+      //renvoyer une erreur 
+    }
+   
+  CLUA_CLOSE_CODE(0)
+  //-----------------------------------------
+  CLUA_OPEN_CODE( LUA_exportAll, 1);
+  
+  if( lua_isstring(pLua, 1) )
+    {     
+      std::ofstream lFilSav;						
+      lFilSav.open( lua_tostring(pLua, 1));
+      if( lFilSav.good() )
+	{	  
+	  PP3d::MyExportObj lExpObj( lFilSav );
+	  
+	  lExpObj.save( *Application::Instance().getDatabase());	  
+	  lFilSav.close();
+	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "export ok");
+	  //	  Application::Instance().getLua().append("OK");
+	}
+      else
+	{
+	  lOut<<"Bad file" << std::endl;
+	}
+    }
+  else
+    {
+      AppendConsoleLua( "export failed" );
+    //      Application::Instance().getLua().append("Error : get filename");
+      //renvoyer une erreur 
+    }
+   
+  CLUA_CLOSE_CODE(0)
+  //-----------------------------------------
+  CLUA_OPEN_CODE( LUA_import, 1);
+  
+  if( lua_isstring(pLua, 1) )
+    {     
+      std::ifstream lFileIn;						
+      lFileIn.open(  lua_tostring(pLua, 1));
+      
+      if( lFileIn.good() )
+	{	  
+	  PP3d::MyImportObj lRead( lFileIn );
+	  lRead.read( *Application::Instance().getDatabase() );
+	  lFileIn.close();
+	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "import ok");
+	  //	  Application::Instance().getLua().append("OK");
+	  Application::Instance().redrawAll();
+	}
+      else
+	{
+	  lOut<<"Bad file" << std::endl;
+	}
+    }
+  else
+    {
+      AppendConsoleLua( "import failed" );
     //      Application::Instance().getLua().append("Error : get filename");
       //renvoyer une erreur 
     }
@@ -117,12 +211,21 @@ namespace M3d {
     registerFunction( "Win",   "NewCanvas3d",         LUA_NewCanvas3d );
     //=====================		      
     registerFunction( "Shape", "AddCurrentPoint",     LUA_AddCurrentPointXYZ  );
+    registerFunction( "", "p",     LUA_AddCurrentPointXYZ  );
+    
     registerFunction( "Shape", "CurrentToFacet",      LUA_CurrentToFacet  );
+    registerFunction( "", "facet",      LUA_CurrentToFacet  );
+    
     registerFunction( "Shape", "CurrentToPoly",       LUA_CurrentToPoly );
+     registerFunction( "", "poly",       LUA_CurrentToPoly );
+   //=====================
+    registerFunction( "Win",  "RedrawCanvas",        LUA_RedrawAllCanvas3d   );
+    registerFunction( "Win",  "RedrawAll",           LUA_RedrawAll   );
+    registerFunction( "",  "redraw",           LUA_RedrawAll   );
     //=====================
-    registerFunction( "Oxyz",  "RedrawCanvas",        LUA_RedrawAllCanvas3d   );
-    registerFunction( "Oxyz",  "RedrawAll",           LUA_RedrawAll   );
-    registerFunction( "",  "save",            LUA_saveAll  );
+    registerFunction( "",      "save",                LUA_saveAll  );
+    registerFunction( "",      "read",                LUA_read  );
+    registerFunction( "",      "export",              LUA_exportAll  );
     //=====================
   }	
   //****************************************

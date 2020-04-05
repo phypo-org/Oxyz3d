@@ -67,12 +67,12 @@ namespace PLua {
   public:
     const char* doCode( const char* pCode, std::ostream* iStream = nullptr);  // run lua code
     const char* doFile( const char* pFile, std::ostream* iStream = nullptr);  // run lua file code
-		std::ostream*  setCurrentStream( std::ostream* pStream )
-		{
-			std::ostream*  lTmp = cCurrentStream;
-			cCurrentStream = pStream;
-			return lTmp;
-		}
+    std::ostream*  setCurrentStream( std::ostream* pStream )
+    {
+      std::ostream*  lTmp = cCurrentStream;
+      cCurrentStream = pStream;
+      return lTmp;
+    }
 
     virtual void  registerInternals();
     virtual void  registerExternals();

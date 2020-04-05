@@ -27,6 +27,7 @@ extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 Fl_Double_Window* CallConsolePython();
 Fl_Double_Window* CallConsoleSystem();
 Fl_Double_Window* CallConsoleLua();
+void AppendConsoleLua( const char* iTxt );
 
 #endif
 

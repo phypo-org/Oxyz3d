@@ -6,6 +6,11 @@
 
 #include "Application.h"
 
+
+#include <sstream>
+
+
+
 using namespace std;
 using namespace PLua;
 
@@ -34,6 +39,11 @@ class ConsoleLua : public Fl_Text_Editor {
   
   
 	M3d::ShapeLua* cLua=nullptr;
+
+public:
+  static ConsoleLua* sConsolLua;
+  
+  std::stringstream cOutStream;
   
 public:
   ConsoleLua( int X,int Y,int W,int H,const char* L=0) : Fl_Text_Editor(X,Y,W,H,L)
@@ -43,16 +53,20 @@ public:
     textfont(FL_COURIER);
     textsize(12);
     cmd[0] = 0;
-
-    cLua=  &M3d::Application::Instance().getLua();
-		
-		cLua->doCode( "PPrintln(\"Hello it's C++\" )");
-		cLua->doCode( "PListLib()");
-		cLua->doCode( "PListLibFtn()" );
-		
+    
+    cLua=  &M3d::Application::Instance().getLua();	
+    
+    cLua->doCode( "PPrintln(\"Hello it's C++\" )");
+    cLua->doCode( "PListLib()");
+    cLua->doCode( "PListLibFtn()" );
+    
+    
     cLua->doCode( "print(\"Hello it's Lua\")" );
-		cLua->doCode("ShapeAddCurrentPoint(3,2,1)");
-		cLua->doCode("ShapeAddCurrentPoint(3,4,2)");
+    
+    cLua->doCode("ShapeAddCurrentPoint(3,2,1)");
+    cLua->doCode("ShapeAddCurrentPoint(3,4,2)");		
+
+    cLua->setCurrentStream( & cOutStream );
   }
   //---------------------------------------------------
   ~ConsoleLua()
@@ -76,7 +90,12 @@ public:
     fprintf(stderr, "RunCommand: '%s'\n", command);
 
     cLua->doCode( command );
-		
+
+    if( cOutStream.str().size() )
+      {
+	append( cOutStream.str().c_str() );
+	cOutStream.clear();
+      }
   }
   //---------------------------------------------------
   // Handle events in the Fl_Text_Editor
@@ -96,7 +115,7 @@ public:
 	strcat(cmd, "");                // stderr + stdout
 	RunCommand(cmd);
 	cmd[0] = 0;
-	append("\n$ ");
+	append("\n>");
 	return(1);                          // hide 'Enter' from text widget
       }
       if ( key == FL_BackSpace ) {
@@ -121,6 +140,9 @@ public:
 //--------------------------------------------------
 //--------------------------------------------------
 //--------------------------------------------------
+ConsoleLua* ConsoleLua::sConsolLua=nullptr;
+
+
 extern Fl_Double_Window* CallConsoleLua()
 {	
   static Fl_Double_Window* lWin = nullptr;
@@ -128,8 +150,8 @@ extern Fl_Double_Window* CallConsoleLua()
   if( lWin == nullptr )
     {
       lWin =new Fl_Double_Window(600, 400, "Lua");
-      ConsoleLua* lConsol  = new  ConsoleLua(10,10, lWin->w()-20, lWin->h()-20);
-      lConsol->append(">");
+      ConsoleLua::sConsolLua  = new  ConsoleLua(10,10, lWin->w()-20, lWin->h()-20);
+      ConsoleLua::sConsolLua->append(">");
       lWin->end();
 			
       lWin->resizable(*lWin);
@@ -138,4 +160,12 @@ extern Fl_Double_Window* CallConsoleLua()
   lWin->show();
 
   return lWin;
+}
+//--------------------------------------------------
+extern void AppendConsoleLua( const char* iTxt )
+{
+  if( ConsoleLua::sConsolLua != nullptr )
+    {
+      ConsoleLua::sConsolLua->append( iTxt );
+    }
 }

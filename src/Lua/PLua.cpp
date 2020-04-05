@@ -302,30 +302,39 @@ namespace PLua{
   const char*
   PLuaSession::doCode( const char* pCode, std::ostream* iStream )
   {
-		std::ostream* lSavStream=nullptr ;
-		if( iStream != nullptr )
-			{
-				lSavStream = setCurrentStream( iStream );
-			}
-		
-		std::cout <<"docode <" << pCode << ">" << std::endl;
+    std::ostream* lSavStream=nullptr ;
+    if( iStream != nullptr )
+      {
+	lSavStream = setCurrentStream( iStream );
+      }
+    
+    std::cout <<"docode <" << pCode << ">" << std::endl;
+    
     //	if (luaL_dofile( cLuaState, pCode)!=0)
-		int lRet =luaL_dostring( cLuaState, pCode);
+    int lRet =luaL_dostring( cLuaState, pCode);
     if (lRet!=0)
       {
-				std::cerr << "ERROR Lua::doCode - luaL_dostring "
-									<< lRet << std::endl;
-				std::cerr << "ERROR Lua::doCode - luaL_dostring "
-									<< lua_tostring( cLuaState ,-1) << std::endl;
+	std::cerr << "ERROR Lua::doCode - luaL_dostring "
+		  << lRet << std::endl;
+	std::cerr << "ERROR Lua::doCode - luaL_dostring "
+		  << lua_tostring( cLuaState ,-1) << std::endl;
 
+	
+
+	if( cCurrentStream )
+	  {
+	    *cCurrentStream << "ERROR Lua::doCode - luaL_dostring "
+		  << lua_tostring( cLuaState ,-1) << std::endl;
+	  }
+	
 	// il y a eu une erreur dans le script
-				return lua_tostring( cLuaState ,-1);
+	return lua_tostring( cLuaState ,-1);
       }
-		
-		if( iStream != nullptr )
-			{
-				 setCurrentStream( lSavStream  );
-			}
+    
+    if( iStream != nullptr )
+      {
+	setCurrentStream( lSavStream  );
+      }
 		
     return nullptr;
   }
