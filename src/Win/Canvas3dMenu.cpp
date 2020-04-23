@@ -81,20 +81,30 @@ namespace M3d {
 #define StrMenu_ExtrudeZ    StrMenu_Extrude  "  move Z"
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  "  move normal"
 
-  
+#define  StrMenu_Cut "Cut"
+#define  StrMenu_Cut2 "  2"
+#define  StrMenu_Cut3 "  3"
+#define  StrMenu_Cut4 "  4"
+#define  StrMenu_Cut5 "  5"
+#define  StrMenu_Cut6 "  6"
+#define  StrMenu_Cut7 "  7"
+#define  StrMenu_Cut8 "  8"
+#define  StrMenu_Cut9 "  9"
+#define  StrMenu_Cut10 " 10"
+#define  StrMenu_CutN "-----  N"
   
   //-------------------------------------------
-   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
-   {
-     if( PP3d::Selection::Instance().getNbSelected() > 0 )
-       {										
-	 makeMenuSelect(  *cPopup);
-       }
-     else
-       {
-	 makeMenuPrimitiv( *cPopup );
-       }
-   }
+  void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
+  {
+    if( PP3d::Selection::Instance().getNbSelected() > 0 )
+      {										
+	makeMenuSelect(  *cPopup);
+      }
+    else
+      {
+	makeMenuPrimitiv( *cPopup );
+      }
+  }
   //-------------------------------------------
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
@@ -115,9 +125,26 @@ namespace M3d {
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);
 
+    
+
+    if(  PP3d::Selection::Instance().getSelectType() == PP3d::SelectType::Line )
+      {
+	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
+  	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut4, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut5, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut6, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut7, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut8, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut9, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut10, "", MyMenuCallbackCutLine, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_CutN, "", MyMenuCallbackCutLine, this);
+      }
+
+    
     switch( PP3d::Selection::Instance().getSelectType() )
       {
-      case PP3d::SelectType::Point :
+      case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
       case PP3d::SelectType::Facet :	
 	{
@@ -128,12 +155,13 @@ namespace M3d {
 	}
 	break;
       case PP3d::SelectType::Poly :
-	    pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
-	    break;
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
+	break;
       case PP3d::SelectType::Object :
       case PP3d::SelectType::All :
       default:;
       }
+
   }
   //-------------------------------------------
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
@@ -157,48 +185,51 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
+  #define BEGINCALL \
+   static bool slFlagDialog=false; \
+		\
+    Fl_Menu_* mw = (Fl_Menu_*)w;\
+    const Fl_Menu_Item* m = mw->mvalue();		\
+    if (!m)\
+      {\
+	printf("NULL\n");\
+			\
+	return ;\
+      }\
+\
+    printf("%s\n", m->label());\
+    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);\
+  
+
+  //-------------------------------------------
+
   void Canvas3d::MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData)
-  {
-		
-    static bool slFlagDialogPrimitiv=false; // C'est moche !!!!
-
-		
-    Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
-    if (!m)
-      {
-	printf("NULL\n");
-				
-	return ;
-      }
-
-
-    printf("%s\n", m->label());
-    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
+  {		
+    BEGINCALL  
 				
     if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::CUBE  );
+	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::CUBE  );
       }
     else if( strcmp( m->label(), StrMenu_CreateTetra ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::TETRA  );
+	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::TETRA  );
       }
     else if( strcmp( m->label(), StrMenu_CreatePyramid ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::PYRAMID  );
+	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::PYRAMID  );
       }
     else if( strcmp( m->label(), StrMenu_CreateOcto ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv,lCanvas, PP3d::PrimitivFactory::Type::OCTO  );
+	CallDialogPrimitiv( slFlagDialog,lCanvas, PP3d::PrimitivFactory::Type::OCTO  );
       }
     else if( strcmp( m->label(), StrMenu_CreateDodec ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::DODEC  );
+	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::DODEC  );
       }
     else if( strcmp( m->label(), StrMenu_CreateIcosahe ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialogPrimitiv, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
+	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
       }
     else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
       {
@@ -239,17 +270,7 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
   {	  		
-    Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
-    if (!m)
-      {
-	printf("NULL\n");
-				
-	return ;
-      }
-
-
-    printf("%s\n", m->label());
+    BEGINCALL
     //    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
 
 		
@@ -262,18 +283,7 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
   {	  		
-    Fl_Menu_* mw = (Fl_Menu_*)w;
-    const Fl_Menu_Item* m = mw->mvalue();		
-    if (!m)
-      {
-	printf("NULL\n");
-				
-	return ;
-      }
-
-
-    printf("%s\n", m->label());
-    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
+     BEGINCALL  
 
 		
     //============== TRANSFORMATION ====================
@@ -312,8 +322,65 @@ namespace M3d {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
       }
-  }
 
+    
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)
+  {
+    BEGINCALL  ;
+
+    int lNbCut=0;
+    //============== CUT  ====================
+    if( strcmp( m->label(), StrMenu_Cut2 ) == 0)
+      {
+	lNbCut =2;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut3 ) == 0)
+      {
+ 	lNbCut = 3;
+     }
+    else  if( strcmp( m->label(), StrMenu_Cut4 ) == 0)
+      {
+ 	lNbCut = 4;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut5 ) == 0)
+      {
+ 	lNbCut = 5;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut6 ) == 0)
+      {
+  	lNbCut =6 ;
+     }
+    else  if( strcmp( m->label(), StrMenu_Cut7 ) == 0)
+      {
+ 	lNbCut = 7;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut8 ) == 0)
+      {
+ 	lNbCut = 8;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut9 ) == 0)
+      {
+ 	lNbCut = 9;
+      }
+    else  if( strcmp( m->label(), StrMenu_Cut10 ) == 0)
+      {
+ 	lNbCut = 10;
+      }
+    else  if( strcmp( m->label(), StrMenu_CutN ) == 0)
+      {
+	int lVal = 20;
+	if( CallDialogInputInt( slFlagDialog, lCanvas, "Cut line", lVal ) )
+	  lNbCut = lVal;
+      }
+
+    if( lNbCut > 1 )
+      {
+	//	getDataBase().cutSelectLine( lNbCut );
+      } 
+  }
+  
   //***************************************
 
 

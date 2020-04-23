@@ -55,7 +55,7 @@ public:
     cmd[0] = 0;
     
     cLua=  &M3d::Application::Instance().getLua();	
-    
+    /*
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");
     cLua->doCode( "PListLib()");
     cLua->doCode( "PListLibFtn()" );
@@ -65,7 +65,7 @@ public:
     
     cLua->doCode("ShapeAddCurrentPoint(3,2,1)");
     cLua->doCode("ShapeAddCurrentPoint(3,4,2)");		
-
+    */
     cLua->setCurrentStream( & cOutStream );
   }
   //---------------------------------------------------

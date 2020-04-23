@@ -131,7 +131,7 @@ namespace PP3d {
 			return nullptr;																							 				
 		}
 		//================================
-		template <class CLASSPTR, auto ENUM>
+		template <class CLASSPTR,  auto ENUM>
 		CLASSPTR  Tfind( EntityId pId )
 		{
 			EntityPtr lPt = findEntity( pId );

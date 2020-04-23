@@ -18,9 +18,9 @@ ifdef TARGET_LIB
 OTARGET_LIB=$(OBJDIR)$(TARGET_LIB)
 endif
 
-WLIB=Win
-SLIB=Shape
-LLIB=Lua
+WLIB=$(ROOT_POS)Win
+SLIB=$(ROOT_POS)Shape
+LLIB=$(ROOT_POS)Lua
 
 WLIB_HDRS=$(wildcard $(WLIB)/*.h)
 WLIB_SRCS=$(wildcard $(WLIB)/*.cpp)

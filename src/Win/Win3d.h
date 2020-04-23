@@ -36,6 +36,7 @@ namespace M3d {
     MyFloatInput*           cYinput;
     MyFloatInput*           cZinput;
 
+    MyFloatInput*           cCurrentInput1;
 
     Fl_Output*              cInfoOutput;
 
@@ -49,6 +50,8 @@ namespace M3d {
     Win3d( const char*pName, int pW, int pH, PP3d::DataBase & pDatabase);
     void canvasRedraw() { cuCanvas3d->redraw(); }
     void setCursorPosition( PP3d::Point3d& pPos);
+    void setCurrentVal( const char* iLabel, double iVal);
+    double getCurrentVal();
     PP3d::Kamera& getKamera() { return cuCanvas3d->cKamera;}
     int getId()  { return cWinId; }
   private:

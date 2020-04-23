@@ -57,21 +57,19 @@ CC=$(USE_CC)bin/g++ -g
 else
 CC=g++ -g
 
-INCLUDE_CC=-I(USE_CC)include
+INCLUDE_CC=-I$(USE_CC)include
 LIB_CC=-L$(USE_CC)/lib64
 
 endif
 
 
-
-# Les libs externes
+# Les libs externes (NE PAS ENLEVER !!!!)
 #-------------------
 
-EXTERNAL_PATH=$(ROOT_POS)../../srcv1_1/External
-#EXTERNAL_PATH=$(ROOT_POS)../../sesame-src/External
+EXTERNAL_PATH=$(ROOT_POS)../..
 
 
-PATH_YARA=$(EXTERNAL_PATH)/yara-3.11.0/libyara
+
 
 # Options de compilation
 #------------------------
@@ -87,11 +85,11 @@ ifdef USE_GDB
 endif
 
 
-CCFLAGS=-std=c++17 -m64 -Wall  -Wextra -Wformat=2 \
+CCFLAGS=-std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
 		-Wl,-z,relro,-z,now$(STRIP_LINK) -Wconversion -fPIE -Wno-unused-parameter \
-		-Wshadow -Wpedantic -Wstack-protector -fstack-protector-all \
+		 -Wno-unused-variable -Wno-cast-function-type -Wno-error=cast-function-type -Wno-conversion -Wno-shadow -Wpedantic -Wstack-protector -fstack-protector-all \
 		-D_REENTRANT $(OPTIM) \
-		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE\
+		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \
 		$(FLAGS_COMPIL_EXT)
 
 # CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6

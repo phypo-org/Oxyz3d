@@ -76,7 +76,8 @@ namespace M3d {
   CLUA_OPEN_CODE( LUA_saveAll, 1);
   
   if( lua_isstring(pLua, 1) )
-    {     
+    {
+      /*
       std::ofstream lFilSav;						
       lFilSav.open( lua_tostring(pLua, 1));
       if( lFilSav.good() )
@@ -88,6 +89,13 @@ namespace M3d {
 	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "Save ok");
 	  //	  Application::Instance().getLua().append("OK");
+	}
+      */
+      if( PP3d::MySav::Save( lua_tostring(pLua, 1),
+			     *Application::Instance().getDatabase() ))
+	{
+	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "Save ok");	  
 	}
       else
 	{
@@ -103,11 +111,12 @@ namespace M3d {
    
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
-  CLUA_OPEN_CODE( LUA_read, 1);
+  CLUA_OPEN_CODE( LUA_load, 1);
   
   if( lua_isstring(pLua, 1) )
-    {     
-      std::ifstream lFileIn;						
+    {
+      /*
+	std::ifstream lFileIn;						
       lFileIn.open(  lua_tostring(pLua, 1));
       
       if( lFileIn.good() )
@@ -118,7 +127,14 @@ namespace M3d {
 	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "read ok");
 	  //	  Application::Instance().getLua().append("OK");
+	  */
+      
+      if( PP3d::MyRead::Read( lua_tostring(pLua, 1),
+			*Application::Instance().getDatabase() ))
+	{
 	  Application::Instance().redrawAll();
+	  lOut << "OK"<< std::endl;
+	  AppendConsoleLua( "read ok");
 	}
       else
 	{
@@ -216,15 +232,15 @@ namespace M3d {
     registerFunction( "Shape", "CurrentToFacet",      LUA_CurrentToFacet  );
     registerFunction( "", "facet",      LUA_CurrentToFacet  );
     
-    registerFunction( "Shape", "CurrentToPoly",       LUA_CurrentToPoly );
-     registerFunction( "", "poly",       LUA_CurrentToPoly );
+    registerFunction( "Shape", "CurrentToPolyline",       LUA_CurrentToPoly );
+     registerFunction( "", "lines",       LUA_CurrentToPoly );
    //=====================
     registerFunction( "Win",  "RedrawCanvas",        LUA_RedrawAllCanvas3d   );
     registerFunction( "Win",  "RedrawAll",           LUA_RedrawAll   );
     registerFunction( "",  "redraw",           LUA_RedrawAll   );
     //=====================
     registerFunction( "",      "save",                LUA_saveAll  );
-    registerFunction( "",      "read",                LUA_read  );
+    registerFunction( "",      "load",                LUA_load  );
     registerFunction( "",      "export",              LUA_exportAll  );
     //=====================
   }	

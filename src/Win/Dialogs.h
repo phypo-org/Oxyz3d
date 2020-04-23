@@ -14,14 +14,18 @@
 void CallDialogPerspectiv( M3d::Canvas3d* pCanvas, PP3d::Kamera &pKamera );
 void CallDialogPrimitiv( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, PP3d::PrimitivFactory::Type );
 
+void CallDialogKeepFloatInit( M3d::Canvas3d* pCanvas );
+bool CallDialogKeepFloat( double & ioVal);
+bool CallDialogInt( double & ioVal);
+
 
 
 enum class TypeRevol{ RevolX, RevolY, RevolZ };
 
 void CallDialogRevol( bool &cFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pTypeRevol);
 
-
-extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
+extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
+extern bool CallDialogInputInt( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas,  const char* iLabel, int & ioVal);
 
 
 Fl_Double_Window* CallConsolePython();

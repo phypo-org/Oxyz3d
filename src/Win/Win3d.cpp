@@ -41,6 +41,7 @@
 #include <memory>
 
 #include <fstream>
+#include <stdlib.h>
 
 
 namespace M3d {
@@ -69,7 +70,7 @@ namespace M3d {
 #define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
 
 	
-#define StrMenu_CallDialoDiagSub     "New Subdivide"
+#define StrMenu_CallDialoDiagSub     "------------ New Subdivide"
 
 #define StrMenu_Revol     "New Revol "
 #define StrMenu_RevolX    StrMenu_Revol "X"
@@ -224,10 +225,13 @@ namespace M3d {
     int lY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
     int lW = 70;
-											
+
+ 
+ 											
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
-    cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
+    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
+     cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
     lX += cYinput->w() + 2;
     cZinput = new MyFloatInput( lX, lY, lW,  lH, "Z" );
     lX += cZinput->w() + 2;
@@ -668,7 +672,7 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), StrMenu_CallDialoDiagSub ) == 0)
 	    {
-	      CallDialogSubDiv( slFlagDialog, lCanvas );
+	      ///////	      CallDialogSubDiv( slFlagDialog, lCanvas );
 	    }
 	  else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
 	    {
@@ -770,16 +774,17 @@ namespace M3d {
 	      //			cFlagDialogPerspectiv = false;
 	    }
     //================= WINDOWS ===================
+	  else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
+	    {
+	      Application::Instance().createObjectTree( );
+	    }
 	  else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
 	    {
 				lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
 	
 				//	      Application::Instance().createNewWin3d( 1000, 800 );
 	    }
-	  else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
-	    {
-	      Application::Instance().createObjectTree( );
-	    }
+
     //				else if( strcmp( m->label(), StrMenu_ConsolPython ) == 0)
     //					{
     //						CallConsolePython( );
@@ -824,6 +829,18 @@ namespace M3d {
     cXinput->setFloatValue( pPos.cX );
     cYinput->setFloatValue( pPos.cY );
     cZinput->setFloatValue( pPos.cZ );
+  }
+  //-------------------------------------------
+  void Win3d::setCurrentVal( const char* iLabel, double iVal)
+  {
+    cCurrentInput1->copy_label( iLabel );
+
+    cCurrentInput1->setFloatValue( iVal );
+  }
+  //-------------------------------------------
+  double  Win3d::getCurrentVal()
+  {
+    return strtod(cCurrentInput1->value(), nullptr);
   }
   //****************************************
 }

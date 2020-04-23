@@ -34,6 +34,7 @@
 #include "MyFlWidget.h"
 
 #include "Dialogs.h"
+#include "Win3d.h"
 
 using namespace std;
 
@@ -81,7 +82,7 @@ namespace M3d {
     ,cScale(1.0)
     ,cMode( ModeUser::MODE_BASE )
     ,cAxisFlag( true )
-    ,cFlagLightColor( true)
+    ,cFlagLightColor( false)
      //	 cGridMode( ModeGrid::GRID_3D )
     ,cGridMode( ModeGrid::GRID_2D )
     ,cDebug(false)
@@ -489,13 +490,15 @@ namespace M3d {
       case Transform::MoveX:
 	{
 	  Application::Instance().currentTransform().position().x() += lDx/10;
+	  cMyWin3d.setCurrentVal(  "move x" , Application::Instance().currentTransform().position().x() );
 	  lMatTran.initMove( Application::Instance().currentTransform().position().x(), 0, 0 );
 	}
 	break;
 				
       case Transform::MoveY:
 	{
-	  Application::Instance().currentTransform().position().y() += lDy/10;			
+	  Application::Instance().currentTransform().position().y() += lDy/10;
+	  cMyWin3d.setCurrentVal( "move y" ,  Application::Instance().currentTransform().position().y() );
 	  lMatTran.initMove( 0, Application::Instance().currentTransform().position().y(), 0 );
 	}
 	break;
@@ -503,6 +506,7 @@ namespace M3d {
       case Transform::MoveZ:
 	{
 	  Application::Instance().currentTransform().position().z() += lDx/10;
+	  cMyWin3d.setCurrentVal(  "move z" , Application::Instance().currentTransform().position().z() );
 	  lMatTran.initMove( 0, 0, Application::Instance().currentTransform().position().z() );
 	}
 	break;
@@ -527,16 +531,22 @@ namespace M3d {
 	  switch( Application::Instance().getCurrentTransformType() )
 	    {
 	    case Transform::CenterRotX :
-	      Application::Instance().currentTransform().angle().x() += lDx/360;	
+	      Application::Instance().currentTransform().angle().x() += lDx/360;
+	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().x());
+	      
 	      lMatRot.initRotX( Application::Instance().currentTransform().angle().x() );
 	      break;
 							
 	    case Transform::CenterRotY :
-	      Application::Instance().currentTransform().angle().y() += lDy/360;	
+	      Application::Instance().currentTransform().angle().y() += lDy/360;
+	      
+	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().y());
+	      
 	      lMatRot.initRotY( Application::Instance().currentTransform().angle().y() );
 	      break;
 	    case Transform::CenterRotZ :
 	      Application::Instance().currentTransform().angle().z() += lDx/360;	
+	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().z());
 	      lMatRot.initRotZ( Application::Instance().currentTransform().angle().z() );
 	      break;
 	    default:;
@@ -899,7 +909,8 @@ namespace M3d {
       case FL_UNFOCUS:
 	cout << " UNFOCUS " ;
 	break;
-				
+	
+			
       case FL_KEYDOWN:
 	{
 	  cout << " CTRL :" << Fl::event_ctrl() << " " ;
@@ -914,6 +925,10 @@ namespace M3d {
 		  break;
 		case	FL_Tab:
 		  cout << " TAB";
+		  if( cMode == ModeUser::MODE_TRANSFORM )
+		    {
+		      userTransformSelection(pEvent);			
+		    }		  
 		  break;
 		case FL_BackSpace:
 		case FL_Delete:
@@ -1076,7 +1091,7 @@ namespace M3d {
 						
 	    cKamera.scaleTo(cScale);
 	    redraw();
-	  }
+	  } 
 	break;
       }
     return 1;
@@ -1084,5 +1099,5 @@ namespace M3d {
   //***************************************
 
 
-} //namespace PP3d
+} //namespace 
 
