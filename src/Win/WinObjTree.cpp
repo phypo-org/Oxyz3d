@@ -6,20 +6,141 @@
 #include <FL/Fl_Widget.H>
 
 
+#include "Shape/Entity.h"
 #include "Shape/Selection.h"
+#include "Shape/EntityVisitor.h"
+
 #include "Application.h"
 
 
 #include "MyFlWidget.h"
 
 
+#include <string.h>
 
+using namespace PP3d;
 
 namespace M3d {
 
+  //****************************************************
+  class TreeVisitor : public EntityVisitor {
+		
+    Fl_Tree   & cTree;
+    std::string cStrRoot;
+    
+    std::string cStrPoly;
+    std::string cStrFacet;
+    //   std::string cStrLine;
+
+  public:
+    TreeVisitor(  Fl_Tree   & iTree, const char* iRootStr )
+      :cTree(iTree)
+      ,cStrRoot(iRootStr)  {;}
+    
+    virtual void execPoint( Point* pPoint )
+    {
+      //     std::ostringstream lOstr;      
+      //  lOstr << cStrLine << "/" <<  pPoint->get();
+      // Fl_Tree_Item* lINode = cTree.add( lOstr.str().c_str() );
+    }   
+    //-------------------------------------        
+    virtual void execBeginLine ( Line* pLine) {
+      
+      std::ostringstream lOstr;      
+      lOstr << cStrFacet << "/Line " << pLine->getId() << " [ "
+	    << pLine->first()->getId();
+      if( pLine->first()->isSelect() )
+	{
+	  lOstr << 's';
+	}
+
+      if( pLine->isPoint() == false )
+	{
+	  lOstr << ", " <<  pLine->second()->getId() ;
+	  if( pLine->second()->isSelect() )
+	    {
+	      lOstr << 's';
+	    }
+	}
+      lOstr << "]   ";
+      
+      lOstr << pLine->first()->get();
+      if( pLine->isPoint() == false )
+      	lOstr << " --- " <<  pLine->second()->get() ;
+
+      //      cStrLine =  lOstr.str();
+      Fl_Tree_Item* lNode = cTree.add( lOstr.str().c_str() );
+      if( pLine->isTreeOpen() )
+	cTree.open( lNode , 0 );
+      else
+	cTree.close( lNode , 0 );
+      
+      lNode->user_data( pLine );	    
+    }    
+    //-------------------------------------    
+    virtual void execBeginFacet( Facet* pFacet )
+    {      
+      std::ostringstream lOstr;
+      lOstr << cStrPoly << "/Facet " << pFacet->getId() <<  " : " << pFacet->getNbLines() << "[ " ;
+      
+      for( Line* lLine: pFacet->getLines() )
+	{
+	  lOstr << lLine->getId() ;
+	  if( lLine->isSelect() )
+	    {
+	      lOstr << 's';
+	    }
+	  lOstr << "  ";
+	}
+      lOstr << "]";
+      
+      cStrFacet = lOstr.str();
+      Fl_Tree_Item* lNode = cTree.add( cStrFacet.c_str() );
+      lNode->user_data( pFacet );
+      if( pFacet->isTreeOpen() )
+	cTree.open( lNode , 0 );
+      else
+	cTree.close( lNode , 0 );
+    }    
+    //-------------------------------------
+    virtual void execBeginPoly ( Poly* pPoly )
+    {
+      std::ostringstream lOstr;
+      lOstr << cStrRoot << "/Poly " <<  pPoly->getId() << " : " << pPoly->getFacets().size() << "[ ";
+      
+ 	
+      for( Facet* lFac: pPoly->getFacets() )
+	{
+	  lOstr << lFac->getId() ;
+	  if( lFac->isSelect() )
+	    {
+	      lOstr << 's';
+	    }
+	  lOstr << ", ";
+	}
+      lOstr << "]";
+ 
+      cStrPoly =lOstr.str();
+      Fl_Tree_Item* lNode = cTree.add( cStrPoly.c_str() );
+      
+      //      cSav =cStrRoot;      
+
+      //	lInput->value( lOstr.tr().c_str() );
+      std::cout << "TreeVisitor " << "Facet " << lOstr.str().c_str() << std::endl;
+      lNode->user_data( pPoly );
+      
+      if( pPoly->isTreeOpen() )
+	cTree.open( lNode , 0 );
+      else
+	cTree.close( lNode , 0 );
+    }
+
+  };
+  //****************************************************
+	
+
   WinObjTree* WinObjTree::sTheWinObjTree =nullptr;
 
-	
   //****************************************************
   WinObjTree::WinObjTree( )
   {
@@ -85,26 +206,45 @@ namespace M3d {
   {
     std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
     cTree->clear();
+    int lH = 18;
+  
+    cTree->begin();
+ 
     for( PP3d::Object* lObj : Application::Instance().getDatabase()->getAllObject() )
       {
-	cTree->begin();
 	std::ostringstream lOstr;
 				
-	lOstr << "type:" << lObj->getStrType() << '/' << lObj->getName() << '_' << lObj->getId();
-	Fl_Tree_Item* lINode = cTree->add( lOstr.str().c_str() );
-	cTree->end();				
-	cTree->begin();
-						
+	lOstr  << lObj->getStrType() << "/" << lObj->getId()  ;   ///  << '/' << lObj->getName() << '_';
+	Fl_Tree_Item* lNode = cTree->add( lOstr.str().c_str() );
+	lNode->user_data( lObj );
+		
+	//      std::cout << " Add tree ******************************** >" <<  lOstr.str() << std::endl;
+	
+	if( lObj->isTreeOpen() )
+	  cTree->open( lNode , 0 );
+	else
+	  cTree->close( lNode , 0 );
+
+   
+	TreeVisitor lTreeVisitor( *cTree, lOstr.str().c_str() );
+	lObj->execVisitor( lTreeVisitor );
+      
+			
 	Fl_Group* lGroup = new Fl_Group(100,100,140,18);
 	lGroup->color( FL_WHITE );
 	lGroup->begin();
+
+      
 	std::ostringstream lOstrId;
-
 	lOstrId  << lObj->getId();
-
+      
 	int lX = lGroup->x();
 	int lY = lGroup->y()+2;
+	MyLabel *lLabel = new MyLabel( lX, lY, 60, lH , lOstrId.str() );
 
+	lX += lLabel->w()+4;
+
+   
 	//------------				
 	MyCheckbutton *lCheckSel = new MyCheckbutton( lX, lY, 30,15, "S", SelectOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
 	lCheckSel->value( PP3d::Selection::Instance().isSelected( lObj->getShape() ));
@@ -119,13 +259,7 @@ namespace M3d {
 
 	//------------
 				
-	MyInput* lInputId = new MyInput( lX, lY, 60, 15, "", nullptr, this, lObj );
-	lInputId->value( lOstrId.str().c_str() );	
-	lX += lInputId->w()+4;
-	
-	//------------
-				
-	MyInput* lInput = new MyInput( lX, lY, 100, 15, "", RenameObject, this, lObj );
+	MyInput* lInput = new MyInput( lX, lY, 100, lH, "", RenameObject, this, lObj );
 	lInput->value( lObj->getName().c_str() );
 			
 	//------------
@@ -133,22 +267,42 @@ namespace M3d {
 				
 	lGroup->end();
 	lGroup->resizable(lGroup);
-	cTree->end();
-        
-	lGroup->show();
-	lINode->widget(lGroup);
 
-	A DEFINIR !!!!
-	TreeVisitor lTreeVisitor( lOstr.str() );
-	execVisitor( lTreeVisitor );
+               
+	lGroup->show();
+	lNode->widget(lGroup);
+
       }
-    std::cout << "------- REBUILD TREE ---------" << std::endl;
+    cTree->end();
+ 
+    std::cout << "------- END REBUILD TREE ---------" << std::endl;
 
     cTree->redraw();
   }
+
   //--------------------------------------------
   void WinObjTree::CallBackTree( Fl_Widget* pWidget, void* pUserData )
   {
+    Fl_Tree*    lTree = dynamic_cast<Fl_Tree*>( pWidget );
+    WinObjTree* lWoT  = (WinObjTree*)pUserData;
+  
+    Fl_Tree_Item *lItem = lTree->callback_item();
+    if( lItem != nullptr )
+      {
+	Entity* lEntity = (Entity*)lItem->user_data();
+	if( lEntity != nullptr )
+	  {
+	    switch( lTree->callback_reason() )
+	      {
+	      case FL_TREE_REASON_OPENED: lEntity->setTreeOpen(true); break;
+	      case FL_TREE_REASON_CLOSED:  lEntity->setTreeOpen(false); break;
+	      case FL_TREE_REASON_SELECTED: ;
+	      case FL_TREE_REASON_DRAGGED: ;
+	      case FL_TREE_REASON_DESELECTED: ;
+	      case FL_TREE_REASON_NONE:;
+	      }
+	  }
+      }
     //		WinObjTree* lWinTree = reinterpret_cast<WinObjTree*>( pUserData );
   }
   //****************************************************
