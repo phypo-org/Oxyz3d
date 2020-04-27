@@ -5,6 +5,11 @@
 
 #include <FL/Fl_Widget.H>
 
+#include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Choice.H>
+
 
 #include "Shape/Entity.h"
 #include "Shape/Selection.h"
@@ -22,6 +27,9 @@ using namespace PP3d;
 
 namespace M3d {
 
+#define StrMenu_FoldAll   "Fold all"
+#define StrMenu_UnfoldAll "Unfold all"
+  
   //****************************************************
   class TreeVisitor : public EntityVisitor {
 		
@@ -35,7 +43,9 @@ namespace M3d {
   public:
     TreeVisitor(  Fl_Tree   & iTree, const char* iRootStr )
       :cTree(iTree)
-      ,cStrRoot(iRootStr)  {;}
+      ,cStrRoot(iRootStr)
+    {
+    }
     
     virtual void execPoint( Point* pPoint )
     {
@@ -47,7 +57,13 @@ namespace M3d {
     virtual void execBeginLine ( Line* pLine) {
       
       std::ostringstream lOstr;      
-      lOstr << cStrFacet << "/Line " << pLine->getId() << " [ "
+      lOstr << cStrFacet << "/Line " << pLine->getId();
+      if( pLine->isSelect() )
+	{
+	  lOstr << 's';
+	} 
+
+      lOstr << " [ "
 	    << pLine->first()->getId();
       if( pLine->first()->isSelect() )
 	{
@@ -62,9 +78,12 @@ namespace M3d {
 	      lOstr << 's';
 	    }
 	}
-      lOstr << "]   ";
+      lOstr << "]  ";
+      
+      //      lOstr << " o" << pLine->getOwners().size() ;
       
       lOstr << pLine->first()->get();
+      
       if( pLine->isPoint() == false )
       	lOstr << " --- " <<  pLine->second()->get() ;
 
@@ -81,7 +100,13 @@ namespace M3d {
     virtual void execBeginFacet( Facet* pFacet )
     {      
       std::ostringstream lOstr;
-      lOstr << cStrPoly << "/Facet " << pFacet->getId() <<  " : " << pFacet->getNbLines() << "[ " ;
+      lOstr << cStrPoly << "/Facet " << pFacet->getId();
+      if( pFacet->isSelect() )
+	{
+	  lOstr << 's';
+	}
+      
+      lOstr  <<  " : " << pFacet->getNbLines() << "[ " ;
       
       for( Line* lLine: pFacet->getLines() )
 	{
@@ -143,10 +168,18 @@ namespace M3d {
 
   //****************************************************
   WinObjTree::WinObjTree( )
-  {
-    cWin  = new Fl_Double_Window(400, 580, "tree");
-		
-    cTree = new Fl_Tree( 1, 1, 390, 570, "Tree");
+  {      
+    cWin     = new Fl_Double_Window(400, 580, "Oxyd3d : Entity Tree");
+    cMenubar = new Fl_Menu_Bar ( 0, 0, 10000, 30);
+    int lX = 15;
+    int lY = cMenubar->h();
+    int lH = (int)(((float)cMenubar->h())*0.6f);
+    int lW = 70;
+    
+    cMenubar->add( "&Fold/"    StrMenu_FoldAll,       "", MyMenuCallback, this);
+    cMenubar->add( "&Fold/"    StrMenu_UnfoldAll,     "", MyMenuCallback, this);
+    
+    cTree    = new Fl_Tree( 0, lY, 390, 570, "");
 		
     cTree->callback((Fl_Callback*)CallBackTree, (void*)(this));
     cWin->end();
@@ -305,6 +338,34 @@ namespace M3d {
       }
     //		WinObjTree* lWinTree = reinterpret_cast<WinObjTree*>( pUserData );
   }
+  //-------------------------------------------
+  void WinObjTree::MyMenuCallback(Fl_Widget* w, void* pUserData)
+  {
+    static bool slFlagDialog=false; // C'est moche !!!
+    
+    Fl_Menu_* mw = (Fl_Menu_*)w;
+    const Fl_Menu_Item* m = mw->mvalue();		
+    if (!m)
+      {
+	printf("NULL\n");
+	return ;
+      } 
+
+    printf("%s\n", m->label());
+    WinObjTree* lWTree = reinterpret_cast<WinObjTree*>(pUserData);
+   
+    if( strcmp( m->label(),StrMenu_FoldAll) == 0)
+      {
+	
+      }
+    else
+      if( strcmp( m->label(),StrMenu_UnfoldAll) == 0)
+	{
+	  
+	}
+   
+  }
+
   //****************************************************
 	
 }

@@ -119,6 +119,17 @@ namespace PP3d {
   using EntityPtrSet  = std::set<Entity*>;
   using EntityPtrHash = std::unordered_set<Entity*>;
 
+  static inline void ExecVisitor( std::set<Entity*> & ioSet, EntityVisitor & pVisit )    
+  {
+    for( Entity * lEntity : ioSet )
+      lEntity->execVisitor( pVisit );
+  }
+  static inline void ExecVisitor( std::set<Entity*> & ioSet, EntityVisitorNode & pVisit )    
+  {
+    for( Entity * lEntity : ioSet )
+      lEntity->execVisitor( pVisit );
+  }
+  
   //*********************************************
   class Point :  public Entity {
 		
@@ -161,8 +172,10 @@ namespace PP3d {
     for( auto lIter = pSet.begin(); lIter != pSet.end(); ++lIter) 
       (*lIter)->cPt *= pMat;
   }
+  inline static PointPtrPair Reverse(const PointPtrPair& iPair ) {  return PointPtrPair( iPair.second, iPair.first ); }
 
   //*********************************************
+
   class Line  :  public Entity {
 
     PointPtrPair cPoints={nullptr,nullptr};
@@ -182,6 +195,7 @@ namespace PP3d {
     ShapeType   getType() const override { return ShapeType::Line;}
 		
     PointPtrPair& getPoints() { return cPoints; }
+    //    PointPtrPair  getInversedPoints(){ cPoints.PointPtrPair lPair( second(), first(); }
     PointPtr      getFirst()  const { return cPoints.first;}
     PointPtr      getSecond() const { return cPoints.second;}
     PointPtr      first()  const { return cPoints.first;}
@@ -199,14 +213,62 @@ namespace PP3d {
       cPoints.first = cPoints.second;
       cPoints.second = lTmp;
     }
-
-				
+    
+    Line* getReverseLine();
+    
     friend class Facet;
     friend class Maker;
   };
 	
   using LinePtr     = Line*;
   using LinePtrVect = std::vector<Line*>;
+
+  //--------------------------------
+
+  struct FindPointPairVisitor : public EntityVisitor{
+    const PointPtrPair & cPtPair;
+    std::set<LinePtr>    cInternalSet;
+    std::set<LinePtr>  & cSet;  // le set elimine les doublons
+    
+	  
+    virtual void execBeginLine ( LinePtr pLine )
+    {
+      //  std::cout << "FindPointPairVisitor::execBeginLine "
+      //	<<  cPtPair.first << ":" <<  pLine->first()
+      //	<< "   =========== " 
+      //	<<  cPtPair.second << ":" <<  pLine->second()
+      //	<< std::endl;
+      
+      if( cPtPair.first == pLine->first()
+	  && cPtPair.second == pLine->second() )
+	{
+	  //	  std::cout << "FindPointPairVisitor::execBeginLine OK OK OK OK OK OK "
+	  //		    <<  pLine->getId()<< std::endl;
+  
+	  cSet.insert( pLine );
+	}
+    }
+  public:
+    std::set<LinePtr> &getLines() { return cSet;}
+	  
+    FindPointPairVisitor(const PointPtrPair & iPtPair , std::set<LinePtr> & ioSet )
+      :cPtPair( iPtPair )
+      ,cSet( ioSet ) {
+      //    std::cout << "FindPointPairVisitor::execBeginLine 1111111111111111111111111111111111111111111 "
+      //	<< iPtPair.first << "  :  " << iPtPair.second
+      //	<< cPtPair.first << "  :  " << cPtPair.second
+      //	<<  std::endl
+      ;}
+	  
+    FindPointPairVisitor(const PointPtrPair & iPtPair )
+      :cPtPair( iPtPair )
+      ,cSet( cInternalSet ) {
+      //   std::cout << "FindPointPairVisitor::execBeginLine 2222222222222222222222222222222222222222222 "
+      //		<< iPtPair.first << "  :  " << iPtPair.second
+      //		<< cPtPair.first << "  :  " << cPtPair.second
+      //		<<  std::endl
+      ;}
+  };								 
 
   //*********************************************
   class  Facet :  public Entity{
@@ -268,6 +330,7 @@ namespace PP3d {
   };
   using PolyPtr     = Poly*;
   using PolyPtrVect = std::vector<Poly*>;
+
   //*********************************************
 	
 }

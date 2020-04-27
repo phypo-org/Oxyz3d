@@ -7,6 +7,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Tree_Item.H>
+#include <FL/Fl_Sys_Menu_Bar.H>
 
 
 
@@ -22,40 +23,43 @@
 
 namespace M3d {
 	
-	//****************************************
-	class WinObjTree 
+  //****************************************
+  class WinObjTree 
+  {
+	  
+  protected:
+		
+    Fl_Double_Window *cWin;
+    Fl_Tree          *cTree;
+    Fl_Menu_Bar      *cMenubar;
+    //	Fl_Tree_Item     cRoot;
+    WinObjTree();
+		
+  public:
+    void rebuild();
+    void show();
+
+    static void CallBackTree(  Fl_Widget* pWidget, void* pUserData );
+    static void NodeButton_CB( Fl_Widget* pWidget, void* pUserData );
+
+  private:
+    static WinObjTree* sTheWinObjTree;
+    static void MyMenuCallback(Fl_Widget* w, void* pUserData );
+
+  public:
+    static WinObjTree& Instance()
+    {
+      if( sTheWinObjTree == nullptr )
 	{
-	protected:
+	  sTheWinObjTree = new WinObjTree();
+	}
+      return *sTheWinObjTree ; 
+    }
 		
-		Fl_Double_Window *cWin;
-		Fl_Tree          *cTree;
-		//	Fl_Tree_Item     cRoot;
-		WinObjTree();
-		
-	public:
-		void rebuild();
-		void show();
-
-		static void CallBackTree( Fl_Widget* pWidget, void* pUserData );
-		static void NodeButton_CB( Fl_Widget* pWidget, void* pUserData );
-
-	private:
-		static WinObjTree* sTheWinObjTree;
-
-	public:
-		static WinObjTree& Instance()
-		{
-			if( sTheWinObjTree == nullptr )
-				{
-					sTheWinObjTree = new WinObjTree();
-				}
-			return *sTheWinObjTree ; 
-		}
-		
-		void redraw() { cWin->redraw(); }
-		void draw();
-	};
-//******************************************
+    void redraw() { cWin->redraw(); }
+    void draw();
+  };
+  //******************************************
 }
 
 

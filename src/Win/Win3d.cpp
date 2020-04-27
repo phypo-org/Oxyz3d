@@ -17,7 +17,6 @@
 
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_JPEG_Image.H>
-#include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Output.H>
 
 
@@ -207,9 +206,9 @@ namespace M3d {
   //****************************************
 
   Win3d::Win3d(const char*pName, int pW, int pH, PP3d::DataBase & pDatabase )
-    :Fl_Window( pW, pH)
+    :Fl_Window( pW, pH, "Oxyd3d : 3d view" )
     ,cDatabase( pDatabase )
-    ,cMenubar(0,0, 700,30)
+    ,cMenubar(0,0,10000, 30)
   {
     static int slWinId=1;
     cWinId=slWinId++;

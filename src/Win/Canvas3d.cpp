@@ -234,7 +234,6 @@ namespace M3d {
 	    GLuint lName = *ptr; ptr++;
 						
 	    //					cout << lName  << " Z:" << lZ1 << " -> " << lZ2 << endl;
-																															
 	    if( lName != 0)
 	      {
 		//								PP3d::PickingHit* lHit = new PP3d::PickingHit( lName, lZ1, lZ2 );
@@ -316,7 +315,7 @@ namespace M3d {
       }
     userTerminateAction(pEvent);
   }									 
- //------------------------------
+  //------------------------------
   void Canvas3d::userTerminateAction(	int	pEvent )
   {
     std::cout << "TERMINATE" << std::endl;
@@ -1078,7 +1077,7 @@ namespace M3d {
 	    if( Fl::event_dy() != 0)
 	      {
 	  
-	    //	    cScale += Fl::event_dy()/10.0;
+		//	    cScale += Fl::event_dy()/10.0;
 		cScale *= 1.0+Fl::event_dy()/15.0;
 	      }
 			
