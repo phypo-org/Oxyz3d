@@ -150,7 +150,7 @@ namespace M3d {
 		
     PP3d::Poly* lShape = lParam.finish();
 		
-    cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Subdivide", lShape ) );  
+    Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Subdivide", lShape ) );  
 				
     lShape->move(lCenter );
 		
@@ -393,7 +393,7 @@ namespace M3d {
   void DialogSubDiv::CancelCB( Fl_Widget*, void* pUserData ) {
  
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
-    lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
+    Application::Instance().getDatabase()->cancelCurrentCreation();
 
     Application::Instance().redrawAllCanvas3d();
 
@@ -419,7 +419,7 @@ namespace M3d {
 			default:
 				{
 					std::cout << "PICKED: " << fnfc.filename() << std::endl;
-					PP3d::Object* lObject =  lDialog->cMyCanvas->getDataBase().getCurrentCreation();
+					PP3d::Object* lObject =  Application::Instance().getDatabase()->getCurrentCreation();
 					if( lObject != nullptr )
 						{
 							std::ofstream lOut;						
@@ -453,7 +453,7 @@ namespace M3d {
   {
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     lDialog->maj();
-    PP3d::Object* lObj = lDialog->cMyCanvas->getDataBase().validCurrentCreation();
+    PP3d::Object* lObj = Application::Instance().getDatabase()->validCurrentCreation();
     if( lObj != nullptr )
       {
 	lObj->rename(  "Polyedre : Division"  );

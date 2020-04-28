@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include "Shape/SavRead.h"
+#include "Shape/UndoHistory.h"
 
 #include "Dialogs.h"
 
@@ -68,6 +69,10 @@ int main(int argc, char **argv)
     {
       CallConsoleLua();     
     }
+  
+  PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
+
+ 
   return Fl::run();
 }
 

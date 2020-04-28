@@ -24,6 +24,8 @@
 #include "Application.h"
 
 #include "Shape/Object.h"
+#include "Shape/UndoHistory.h"
+
 
 //Tout mettre dans le Dialogue
 
@@ -92,7 +94,7 @@ namespace M3d {
     // la modification sur les points (on est dans un modeleur, pas un jeu !)
 
     PP3d::Poly* lShape = PP3d::PrimitivFactory::Create( cMyType, (float)lSz );
-    cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
+    Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
 
     lShape->move(lPos );
   
@@ -105,6 +107,7 @@ namespace M3d {
   DialogPrimitiv::DialogPrimitiv( Canvas3d* pCanvas,  PP3d::PrimitivFactory::Type pType )
     :cMyCanvas( pCanvas )
   {
+ 
     cMyType = pType;
 
     int lX = 20;
@@ -202,9 +205,10 @@ namespace M3d {
   //----------------------------------------
 
   void DialogPrimitiv::CancelCB( Fl_Widget*, void* pUserData ) {
-  
+    
+
     DialogPrimitiv* lDialog = reinterpret_cast<DialogPrimitiv*>(pUserData);
-    lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
+    Application::Instance().getDatabase()->cancelCurrentCreation();
 
     Application::Instance().redrawAllCanvas3d();
 
@@ -237,12 +241,13 @@ namespace M3d {
   {
     DialogPrimitiv* lDialog = reinterpret_cast<DialogPrimitiv*>(pUserData);
     lDialog->maj();
-    PP3d::Object* lObj = lDialog->cMyCanvas->getDataBase().validCurrentCreation();
+    PP3d::Object* lObj = Application::Instance().getDatabase()->validCurrentCreation();
     if( lObj != nullptr )
       {
 	lObj->rename( PP3d::PrimitivFactory::GetTypeName( lDialog->cMyType) );
       }
-
+    
+    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
 
     Application::Instance().redrawAllCanvas3d();
     Application::Instance().redrawObjectTree();

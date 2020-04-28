@@ -37,7 +37,10 @@ namespace M3d {
     MyFloatInput*           cZinput;
 
     MyFloatInput*           cCurrentInput1;
-
+  public:
+    MyIntInput*                cCurrentUndo;
+    MyIntInput*                cCurrentUndoMax;
+  private:
     Fl_Output*              cInfoOutput;
 
     Fl_Native_File_Chooser  *cFileChooser = nullptr;

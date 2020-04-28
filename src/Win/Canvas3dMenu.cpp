@@ -173,13 +173,13 @@ namespace M3d {
     pMenu.add( StrMenu_CreateDodec,   "^t", MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateIcosahe, "^t", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
 
-    if( getDataBase().isCurrentPoints()&& getDataBase().getNbCurrentPoints() == 2 )
+    if( Application::Instance().getDatabase()->isCurrentPoints()&& Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
       pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
 		
-    if( getDataBase().isCurrentPoints() && getDataBase().getNbCurrentPoints()  >= 3 )
+    if( Application::Instance().getDatabase()->isCurrentPoints() && Application::Instance().getDatabase()->getNbCurrentPoints()  >= 3 )
       pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
 
-    if( getDataBase().isCurrentPoints()&& getDataBase().getNbCurrentPoints() >= 2 )
+    if( Application::Instance().getDatabase()->isCurrentPoints()&& Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
       pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this);
   }
   //-------------------------------------------
@@ -237,28 +237,28 @@ namespace M3d {
 						
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() >= 3 )
+	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
 	      {
-		lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
+		lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 	      }
 	  }
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() >= 2 )
+	    if( Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
 	      {
-		lShape = lCanvas->getDataBase().convertCurrentLineToPolylines();
+		lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
 	      }
 	  } 
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
-	    if(  lCanvas->getDataBase().getNbCurrentPoints() == 2 )
+	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
 	      {
-		lShape = lCanvas->getDataBase().convertCurrentLineToLine();
+		lShape = Application::Instance().getDatabase()->convertCurrentLineToLine();
 	      }
 	  } 
 	if( lShape != nullptr )
 	  {
-	    //						lCanvas->getDataBase().addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
+	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 								
 	    Application::Instance().redrawAllCanvas3d();
 	    Application::Instance().redrawObjectTree();
@@ -377,7 +377,7 @@ namespace M3d {
 
     if( lNbCut > 1 )
       {
-	//	getDataBase().cutSelectLine( lNbCut );
+	//	Application::Instance().getDatabase()_>cutSelectLine( lNbCut );
       } 
   }
   

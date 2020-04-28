@@ -26,7 +26,7 @@
 
 #include "Shape/Object.h"
 #include "Shape/Maker.h"
-
+#include "Shape/UndoHistory.h"
 
 //Tout mettre dans le Dialogue
 
@@ -177,11 +177,11 @@ namespace M3d {
 			
       PP3d::Mat4 lMatTran = lMatRecenter * lMatRot *  lMatZero;					
 
-      PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( cMyCanvas->getDataBase().getCurrentLine(), lNbPas, lMatTran, lFlagClose,
+      PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( Application::Instance().getDatabase()->getCurrentLine(), lNbPas, lMatTran, lFlagClose,
 								 lFlagCloseSeg, lFlagCloseSegEnd, lFlagCloseHight, lFlagCloseLow );
       if( lShape != nullptr )
 	{
-	  cMyCanvas->getDataBase().swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
+	  Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
 	}
     }
 	
@@ -284,7 +284,7 @@ namespace M3d {
   void DialogRevol::CancelCB( Fl_Widget*, void* pUserData ) {
  
     DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-    lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
+    Application::Instance().getDatabase()->cancelCurrentCreation();
 
     Application::Instance().redrawAllCanvas3d();
 
@@ -329,11 +329,13 @@ namespace M3d {
   {
     DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
     lDialog->maj();
-    PP3d::Object* lObj = lDialog->cMyCanvas->getDataBase().validCurrentCreation();
+    PP3d::Object* lObj = Application::Instance().getDatabase()->validCurrentCreation();
     if( lObj != nullptr )
       {
 	lObj->rename(  "Revol"  );
       }
+    
+    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
 
 
     Application::Instance().redrawAllCanvas3d();

@@ -31,7 +31,6 @@ namespace M3d {
   //===========================================
   CLUA_OPEN_CODE( LUA_AddCurrentPointXYZ, 3);
 	
-  PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
 		
   double lX = lua_tonumber( pLua, 1) ;
   double lY = lua_tonumber( pLua, 2) ;
@@ -39,23 +38,21 @@ namespace M3d {
 	
   //  std::cout << "************ lX:" << lX <<  " lY:" << lY << " lZ:" << lZ << std::endl;
   
-	 lDatabase->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
+  Application::Instance().getDatabase()->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
   //lua_pushinteger( pLua, lWin.getId() );
 	
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToFacet, 0);
-  PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
   
-  PP3d::ObjectFacet* lObj = lDatabase->convertCurrentLineToFacet();
+  PP3d::ObjectFacet* lObj = Application::Instance().getDatabase()->convertCurrentLineToFacet();
   lua_pushinteger( pLua, lObj->getId() );
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
-  PP3d::DataBase* lDatabase = ((M3d::ShapeLua&)lLuaSession).cDatabase;
   
-  PP3d::ObjectPolylines* lObj= lDatabase->convertCurrentLineToPolylines();
+  PP3d::ObjectPolylines* lObj= Application::Instance().getDatabase()->convertCurrentLineToPolylines();
   lua_pushinteger( pLua, lObj->getId() );
 
   CLUA_CLOSE_CODE(0)

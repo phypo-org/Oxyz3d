@@ -23,6 +23,7 @@
 #include "Shape/DataBase.h"
 #include "Shape/ObjectFacet.h"
 #include "Shape/ObjectLine.h"
+#include "Shape/UndoHistory.h"
 
 #include "Win3d.h"
 #include "Canvas3d.h"
@@ -105,6 +106,43 @@ namespace M3d {
   using namespace std;
 
   //-------------------------------------------
+  static void  UndoCB(Fl_Widget*w, void*pData)
+  {
+    MyButton* lButton = reinterpret_cast<MyButton*>( pData);
+    Win3d*    lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
+	
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+    if( PP3d::UndoHistory::Instance().readCurrent( *luBase ) )
+      {
+	Application::Instance().setDatabase( luBase );
+      }
+    std::cout << "<<<<<<<<<<<<<<<UndoCB>>>>>>>>>>>>" << std::endl;
+    lWin3d->cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
+    lWin3d->cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
+
+	
+    lWin3d->canvasRedraw();
+  }
+  //-------------------------------------------
+  static void	RedoCB(Fl_Widget*w, void*pData)
+  {
+    MyButton* lButton = reinterpret_cast<MyButton*>( pData);
+    Win3d* lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
+    
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+    if( PP3d::UndoHistory::Instance().readNext( *luBase ) )
+      {
+	Application::Instance().setDatabase( luBase );
+      }
+ 	
+    std::cout << "<<<<<<<<<<<<<<<UndoCB>>>>>>>>>>>>" << std::endl;
+    lWin3d->cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
+    lWin3d->cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
+
+	
+    lWin3d->canvasRedraw();
+  }
+   //-------------------------------------------
   static void	BasculeSelModeCB(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
@@ -213,7 +251,7 @@ namespace M3d {
     static int slWinId=1;
     cWinId=slWinId++;
 
-    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , cDatabase, "1" );
+    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , "1" );
 		
     // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
     //sw.mode(FL_RGB);
@@ -224,9 +262,7 @@ namespace M3d {
     int lY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
     int lW = 70;
-
- 
- 											
+											
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
     cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
@@ -241,20 +277,27 @@ namespace M3d {
 		
     lX += lW;
 
+
     //========================		
-    Fl_Image* lPixSel = MyImage::LoadImage("Icons/skelet.png", Application::sIconSize);
+    Fl_Image* lPixUndo = MyImage::LoadImage("Icons/undo.png", Application::sIconSize);
 
-
-    MyToggleButton*
-      lBut1 = new MyToggleButton( lX, lY, lW, lH, nullptr,
-				  BasculeViewModeCB, this,   (void*)1);
-    lBut1->value(false );
-    lBut1->image( lPixSel );
+    MyButton*
+      lButUndo = new MyButton( lX, lY, lW, lH, nullptr,
+			    UndoCB, this, nullptr);
+    lButUndo->image( lPixUndo );
     lX += lW;
-    //========================		
 	
+    Fl_Image* lPixRedo = MyImage::LoadImage("Icons/redo.png", Application::sIconSize);
 
-    lBut1->setUserData( this, lBut1);
+    
+    MyButton*
+      lButRedo = new MyButton( lX, lY, lW, lH, nullptr,
+			    RedoCB, this, nullptr);
+    lButRedo->image( lPixRedo );
+    lX += lW;
+	
+    cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
+    cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
 
 
     //========================		
@@ -264,7 +307,7 @@ namespace M3d {
 
     lX += lW*2;
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/all.png", Application::sIconSize);
+    Fl_Image* lPixSel = MyImage::LoadImage("Icons/all.png", Application::sIconSize);
 
     MyToggleButton*
       lButSel00 = new MyToggleButton( lX, lY, lW, lH, nullptr,
@@ -319,6 +362,21 @@ namespace M3d {
     //=================================================================
     lX += lW*2;
 
+    //========================		
+    lPixSel = MyImage::LoadImage("Icons/skelet.png", Application::sIconSize);
+
+
+    MyToggleButton*
+      lBut1 = new MyToggleButton( lX, lY, lW, lH, nullptr,
+				  BasculeViewModeCB, this,   (void*)1);
+    lBut1->value(false );
+    lBut1->image( lPixSel );
+    lX += lW;
+    //========================		
+	
+
+    lBut1->setUserData( this, lBut1);
+
     //========================
     MyToggleButton*			lBut = nullptr;
 
@@ -349,6 +407,9 @@ namespace M3d {
     lX += lW*2;
     //========================
     lBut = nullptr;
+
+
+    
 		
     Fl_Image* lPixPersp = MyImage::LoadImage("Icons/perspective.png", Application::sIconSize);
 		
@@ -513,8 +574,7 @@ namespace M3d {
 	      {
 				
 		PP3d::MySav lSav( lOut );
-				
-		lSav.save( lCanvas->getDataBase());
+		lSav.save( *Application::Instance().getDatabase() );
 
 		lOut.close();
 	      }	   
@@ -545,7 +605,7 @@ namespace M3d {
 				
 		  PP3d::MyExportObj lExpObj( lOut );
 				
-		  lExpObj.save( lCanvas->getDataBase());
+		  lExpObj.save( *Application::Instance().getDatabase() );
 
 		  lOut.close();
 		}
@@ -577,7 +637,7 @@ namespace M3d {
 		if( lFileIn.good() )
 		  {								
 		    PP3d::MyRead lRead( lFileIn );
-		    lRead.read( lCanvas->getDataBase() );
+		    lRead.read( *Application::Instance().getDatabase() );
 		    lFileIn.close();								
 		  }
 	      }
@@ -613,7 +673,7 @@ namespace M3d {
 		  if( lFileIn.good() )
 		    {								
 		      PP3d::MyImportObj lRead( lFileIn );
-		      lRead.read( lCanvas->getDataBase() );
+		      lRead.read( * Application::Instance().getDatabase() );
 		      lFileIn.close();								
 		    }
 		}
@@ -634,14 +694,14 @@ namespace M3d {
 	  else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_DeleteSelect << endl;
-	      PP3d::Selection::Instance().deleteAllFromDatabase(lCanvas->getDataBase());
+	      PP3d::Selection::Instance().deleteAllFromDatabase( *Application::Instance().getDatabase());
 	      Application::Instance().redrawAllCanvas3d();
 	      Application::Instance().redrawObjectTree();
 	    }
 	  else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 	    {
 	      cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
-	      PP3d::Selection::Instance().addSelectionToInput(lCanvas->getDataBase(), false);				
+	      PP3d::Selection::Instance().addSelectionToInput( *Application::Instance().getDatabase(), false);				
 	      Application::Instance().redrawAllCanvas3d();
 	      Application::Instance().redrawObjectTree();
 	    }
@@ -679,9 +739,9 @@ namespace M3d {
 				
 	      if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		{
-		  if(  lCanvas->getDataBase().getNbCurrentPoints() >= 3 )
+		  if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
 		    {
-		      lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
+		      lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		    }
 		  else {
 		    SINFO ( lWin3d, "Error : Almost 3 points is requiered to create facet" );
@@ -689,17 +749,17 @@ namespace M3d {
 		}
 	      else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 		{
-		  if(  lCanvas->getDataBase().getNbCurrentPoints() >= 2 )
+		  if(   Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
 		    {
-		      lShape = lCanvas->getDataBase().convertCurrentLineToPolylines();
+		      lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
 		    }
 		  else {				
-		    if(  lCanvas->getDataBase().getNbCurrentPoints() < 2 )
+		    if(  Application::Instance().getDatabase()->getNbCurrentPoints() < 2 )
 		      return;
 							
 		    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		      {						
-			lShape = lCanvas->getDataBase().convertCurrentLineToFacet();
+			lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 		      }
 						
 		    SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
@@ -798,13 +858,13 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 	    {
-	      lCanvas->getDataBase().demo1();
+	      Application::Instance().getDatabase()->demo1();
 	      Application::Instance().redrawAllCanvas3d();
 	      Application::Instance().redrawObjectTree();
 	    }
 	  else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 	    {
-	      lCanvas->getDataBase().demo2();
+	      Application::Instance().getDatabase()->demo2();
 	      Application::Instance().redrawAllCanvas3d();
 	      Application::Instance().redrawObjectTree();
 	    }
@@ -828,6 +888,9 @@ namespace M3d {
     cXinput->setFloatValue( pPos.cX );
     cYinput->setFloatValue( pPos.cY );
     cZinput->setFloatValue( pPos.cZ );
+    
+    cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
+    cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
   }
   //-------------------------------------------
   void Win3d::setCurrentVal( const char* iLabel, double iVal)

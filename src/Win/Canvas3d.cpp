@@ -29,6 +29,7 @@
 
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
+#include "Shape/UndoHistory.h"
 
 #include "Application.h"
 #include "MyFlWidget.h"
@@ -76,7 +77,7 @@ namespace M3d {
   const char * const UNSELECT_ALL=" ";
 
   //***************************************
-  Canvas3d::Canvas3d(  Win3d& pW3d, int pX, int pY, int pW, int  pH, PP3d::DataBase& pDatabase,  const char *l )
+  Canvas3d::Canvas3d(  Win3d& pW3d, int pX, int pY, int pW, int  pH, const char *l )
     :Fl_Gl_Window( pX, pY, pW, pH, l )
     ,cMyWin3d(pW3d)
     ,cScale(1.0)
@@ -85,9 +86,7 @@ namespace M3d {
     ,cFlagLightColor( false)
      //	 cGridMode( ModeGrid::GRID_3D )
     ,cGridMode( ModeGrid::GRID_2D )
-    ,cDebug(false)
-    ,cDataBase( pDatabase )
-	
+    ,cDebug(false)	
     ,cFlagCursor3d(false)
   { 
     gl_font( FL_HELVETICA_BOLD, 24);
@@ -182,14 +181,15 @@ namespace M3d {
 		
 		
     if( cFlagCursor3d )
-      PP3d::GLUtility::DrawCursorCruz( cDataBase.getCursorPosition(), 50);
-		
+      {
+	PP3d::GLUtility::DrawCursorCruz( Application::Instance().getDatabase()->getCursorPosition(), 50);
+      }
 
 		
     cViewProps.cDebug = cDebug;
 		
-    cDataBase.recomputeAll();
-    cDataBase.drawGL( cViewProps, PP3d::GLMode::Draw );
+     Application::Instance().getDatabase()->recomputeAll();
+     Application::Instance().getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw );
 		
     if( cMode == ModeUser::MODE_SELECT_RECT )
       {
@@ -200,7 +200,7 @@ namespace M3d {
 				
 	glColor4f(0.3f, 0.1f, 0.1f, 0.3f);
 
-	cDataBase.getSelectionRectanglePosition().drawGL();
+	 Application::Instance().getDatabase()->getSelectionRectanglePosition().drawGL();
 
 	glDepthMask( GL_TRUE );
 	glDisable( GL_BLEND );
@@ -246,7 +246,9 @@ namespace M3d {
     if( lVectHits.size() )
       {										////				std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
 				
-	if( PP3d::Selection::Instance().selectPickingHit( lVectHits, cDataBase, cSelectMode, pFlagMove ))
+	if( PP3d::Selection::Instance().selectPickingHit( lVectHits,
+							  *Application::Instance().getDatabase(),
+							  cSelectMode, pFlagMove ))
 	  {
 	    Application::Instance().redrawAllCanvas3d();
 	    Application::Instance().redrawObjectTree();			
@@ -285,7 +287,7 @@ namespace M3d {
 	
     glMatrixMode(GL_MODELVIEW);
 
-    cDataBase.drawGL( cViewProps, PP3d::GLMode::Select );
+     Application::Instance().getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select );
  
     glPopMatrix();
     glFlush();
@@ -328,7 +330,7 @@ namespace M3d {
     Application::Instance().currentTransform().raz();
 
     PP3d::Point3d lVoid;
-    cDataBase.setSelectionRectanglePosition( lVoid, lVoid );
+     Application::Instance().getDatabase()->setSelectionRectanglePosition( lVoid, lVoid );
     cMode = ModeUser::MODE_BASE;
     cancelDragSelect();					
     cSelectMode = PP3d::SelectMode::Undefine;
@@ -388,12 +390,17 @@ namespace M3d {
     if( cDragPoints.size() == 0
 	&& PP3d::Selection::Instance().getNbSelected() >0 )
       {
+
+	
 	// We keep all the adress of points of selected entities
 	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>( PP3d::Selection::Instance().getSelection(),
 								  cDragPoints );
 
 
 	// Save the original coordinates of points
+
+	
+	  
 	cDragSavPoints.resize( cDragPoints.size() );
 	int lP=0;
 	for( PP3d::PointPtr lPoint : cDragPoints )
@@ -422,6 +429,7 @@ namespace M3d {
     dragSelect( pMat ); // Inutile ? 
     cDragPoints.clear();
     cDragSavPoints.clear();
+    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
   }
   //---------------------------
   void Canvas3d::cancelDragSelect()
@@ -515,7 +523,7 @@ namespace M3d {
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
 	{
-	  PP3d::Point3d lCenter =    PP3d::Selection::Instance().getCenter( cDataBase );					
+	  PP3d::Point3d lCenter =    PP3d::Selection::Instance().getCenter( *Application::Instance().getDatabase() );					
 	  std::cout << "Center:" << lCenter ;
 	  PP3d::Mat4 lMatRecenter;
 	  lMatRecenter.initMove( lCenter ); //on revient au centre;
@@ -615,7 +623,7 @@ namespace M3d {
     std::cout << "==========================================================================" << std::endl;
 			 
 	
-    cDataBase.setCursorPosition(	pResult );
+     Application::Instance().getDatabase()->setCursorPosition(	pResult );
     Application::Instance().setCursorPosition( pResult );
     {
       std::ostringstream lOsLuaCode;
@@ -627,7 +635,7 @@ namespace M3d {
 	{
 	}
     }
-    //		cDataBase.addPointToCurrentLine( pResult );
+    //		 Application::Instance().getDatabase()->addPointToCurrentLine( pResult );
 		
 		
     Application::Instance().redrawAllCanvas3d();
@@ -649,7 +657,7 @@ namespace M3d {
   void Canvas3d::setCursor3dPosition( int pX, int pY, int pZ )
   {
     PP3d::Point3d pResult = tranform2Dto3D( pX, pY, pZ );
-    cDataBase.setCursorPosition(	pResult );
+     Application::Instance().getDatabase()->setCursorPosition(	pResult );
     Application::Instance().setCursorPosition( pResult );
   }
   //---------------------------
@@ -665,10 +673,10 @@ namespace M3d {
     PP3d::Point3d lCurrent = tranform2Dto3D( Fl::event_x(),  Fl::event_y() );
     PP3d::Point3d lBegin   = tranform2Dto3D( cRectBeginX, cRectBeginY);
 			
-    cDataBase.setSelectionRectanglePosition( lBegin, lCurrent );
+     Application::Instance().getDatabase()->setSelectionRectanglePosition( lBegin, lCurrent );
     if( pFlagFinalize )
       {
-	//			PP3d::Selection::Instance().selectRect( cDataBase.getSelectionRectanglePosition() );
+	//			PP3d::Selection::Instance().selectRect(  Application::Instance().getDatabase()->getSelectionRectanglePosition() );
       }
   }
   //---------------------------------------------------------
@@ -684,7 +692,7 @@ namespace M3d {
 	cKamera.projectObjectToWin( lPt0, lResult0, true);
 		
 
-	cDataBase.selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
+	 Application::Instance().getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
 		
     picking( Fl::event_x(),  Fl::event_y(), pFlagMove )	;
   }
@@ -931,7 +939,7 @@ namespace M3d {
 		  break;
 		case FL_BackSpace:
 		case FL_Delete:
-		  cDataBase.delPointToCurrentLine();
+		   Application::Instance().getDatabase()->delPointToCurrentLine();
 		  break;
 
 		case FL_Up:

@@ -13,7 +13,6 @@
 
 namespace M3d{
 
-  Application* Application::sTheAppli = nullptr;
 
   //************************************
   Application::Application()	
@@ -25,8 +24,7 @@ namespace M3d{
 		
     M3d::ShapeLua::SetPrototype();
 		
-    cLua=  (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
-    cLua->setDatabase( *cuDatabase.get() );
+    cLua = (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
 	
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");
     cLua->doCode( "PListLib()");

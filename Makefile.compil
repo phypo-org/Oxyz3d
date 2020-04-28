@@ -21,6 +21,7 @@ endif
 WLIB=$(ROOT_POS)Win
 SLIB=$(ROOT_POS)Shape
 LLIB=$(ROOT_POS)Lua
+ULIB=$(ROOT_POS)Utils
 
 WLIB_HDRS=$(wildcard $(WLIB)/*.h)
 WLIB_SRCS=$(wildcard $(WLIB)/*.cpp)
@@ -34,13 +35,17 @@ LLIB_HDRS=$(wildcard $(LLIB)/*.h)
 LLIB_SRCS=$(wildcard $(LLIB)/*.cpp)
 LLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(LLIB_SRCS) ) )
 
+ULIB_HDRS=$(wildcard $(ULIB)/*.h)
+ULIB_SRCS=$(wildcard $(ULIB)/*.cpp)
+ULIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(ULIB_SRCS) ) )
+
 # L'ensemble des .o pour le repertoires objs
-OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS))
+OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS))
 
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
-vpath %.cpp $(WLIB) $(SLIB) $(LLIB) 
+vpath %.cpp $(WLIB) $(SLIB) $(LLIB) $(ULIB) 
 
 
 

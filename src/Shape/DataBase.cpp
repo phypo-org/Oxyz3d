@@ -435,7 +435,12 @@ namespace PP3d {
 	//------------------------------------------
 	EntityId DataBase::validOneEntityLevel(  Entity* pEntity )
 	{
+		std::cout << "DataBase::validOneEntityLevel 1 "  << cEntities.size()  << "  - "<< *pEntity << std::endl;
 		pEntity->cId =  sUniqueId.getNewId();
+
+		std::cout << "DataBase::validOneEntityLevel 2 " << cEntities.size() << "  - " << *pEntity << std::endl;
+
+		
 		cEntities.insert( { pEntity->cId, pEntity } ); 
 		return pEntity->cId;
 	}
