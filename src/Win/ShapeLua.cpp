@@ -91,12 +91,13 @@ namespace M3d {
       if( PP3d::MySav::Save( lua_tostring(pLua, 1),
 			     *Application::Instance().getDatabase() ))
 	{
-	  lOut << "OK"<< std::endl;
+	  //	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "Save ok");	  
 	}
       else
 	{
-	  lOut<<"Bad file" << std::endl;
+	  //	  lOut<<"Bad file" << std::endl;
+	  AppendConsoleLua( "save failed");	  
 	}
     }
   else
