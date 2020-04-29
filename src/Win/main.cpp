@@ -70,7 +70,7 @@ int main(int argc, char **argv)
       CallConsoleLua();     
     }
   
-  //  PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
+  PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
 
  
   return Fl::run();

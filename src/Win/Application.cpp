@@ -74,6 +74,7 @@ namespace M3d{
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
 	lWin->canvasRedraw();
+	lWin->setUndoRedoState();
       }
   }
   //-----------------------------------	

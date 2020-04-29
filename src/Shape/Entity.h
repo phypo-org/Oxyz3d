@@ -56,6 +56,9 @@ namespace PP3d {
 
 
     bool              cTreeOpen=false;  // for interface
+    
+  private:
+    void     setId(EntityId iId) { cId = iId; }
 	         
   public:
     virtual ShapeType getType() const=0;
@@ -109,8 +112,10 @@ namespace PP3d {
     static Object* FindMyObject();
 
     friend class DataBase;
+    friend class MyRead;
     friend class Line;
     friend class Facet;
+    friend class Poly;
     friend class Poly;
   };
 	

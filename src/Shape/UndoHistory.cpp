@@ -17,19 +17,23 @@ namespace PP3d {
     std::ostringstream lOs;
     MySav lSav( lOs );
     if( lSav.save( iDb ) == true )
-      {
-	if( cHistoSav.size() > cMaxHisto )
+      {	  
+	if( cCurrent > 0 && cCurrent != getLast() )
+	  {
+	    cHistoSav.erase( cHistoSav.begin()+cCurrent+1, cHistoSav.end());
+	  }
+	  
+	if( cHistoSav.size() >= cMaxHisto )
 	  {
 	    cHistoSav.erase(cHistoSav.begin());
 	  }
-	  
-	if( cCurrent != getLast() )
-	  {
-	    cHistoSav.erase( cHistoSav.begin()+cCurrent, cHistoSav.end() );
-	  }
-	  
+
 	cHistoSav.push_back( lOs.str() );
-	cCurrent = cHistoSav.size()-1;
+	cCurrent = getLast();
+	
+	//   std::cout << "###################################################" << std::endl;
+	//std::cout <<  "UndoHistory::sav "<< cCurrent << "<<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
+	// std::cout << "###################################################" << std::endl;
 
 	//	std::cout <<  "UndoHistory::sav <<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
 	 
@@ -37,67 +41,49 @@ namespace PP3d {
       }
     return false;
   }
-  //------------------------------
-  bool UndoHistory::read( DataBase & oDb, int iPos ) //-1 the last !
-  {
-    if( iPos == -1 || iPos >= (int)cHistoSav.size() )
-      {
-	iPos = getLast();
-      }
-      
-    if( iPos == -1 )
-      {
-	return false;
-      }
-
-    std::istringstream lIs( cHistoSav[iPos] );
-      
-    cCurrent = iPos;
-      
-    MyRead lRead( lIs );
-    return  lRead.read( oDb, false ); 
-  }
   //------------------------------ 
-  bool  UndoHistory::readCurrent( DataBase & oDb )
-  {      
-    if( cCurrent <= -1  )
+  bool UndoHistory::readPrev( DataBase & oDb )
+  {
+
+    if( cCurrent <= 0 )
       {
 	cCurrent = 0;
- 	return false;
-     }
- 
+	return false;
+      }
     
-    //   std::cout <<  "UndoHistory::readCurrent "<< cCurrent << "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
+    cCurrent--;
+
+    // std::cout << "###################################################" << std::endl;
+    //  std::cout <<  "UndoHistory::readPrev "<< cCurrent << "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
+    //  std::cout << "###################################################" << std::endl;
 
     std::istringstream lIs( cHistoSav[cCurrent] );
       
-    cCurrent--;
-      
+         
     MyRead lRead( lIs );
-    return  lRead.read( oDb, false ); 
+    return  lRead.read( oDb, true );
   }   
   //------------------------------ 
   bool  UndoHistory::readNext( DataBase & oDb )
   {    
     cCurrent++;
-    if( cCurrent == 0 )
+    if( cCurrent <= 0 )
       cCurrent = 1;
     
     if( cCurrent >=  (int)cHistoSav.size() )
-      cCurrent = getLast();
-   
-    if( cCurrent <= -1  )
       {
 	cCurrent = getLast();
- 	return false;
-     }
- 
-    //    std::cout <<  "UndoHistory:readNext "<< cCurrent << " <<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
+	return false;
+      }
+   
+    // std::cout << "###################################################" << std::endl;
+    // std::cout <<  "UndoHistory:readNext "<< cCurrent << " <<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
+    //  std::cout << "###################################################" << std::endl;
 
     std::istringstream lIs( cHistoSav[cCurrent] );
       
     MyRead lRead( lIs );
-    return  lRead.read( oDb, false ); 
+    return  lRead.read( oDb, true ); 
   }   
   //------------------------------ 
   void UndoHistory::cancelLastSav()

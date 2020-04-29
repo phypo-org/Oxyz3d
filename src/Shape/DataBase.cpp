@@ -126,7 +126,17 @@ namespace PP3d {
   //------------------------------------------
   DataBase::~DataBase()
   {
+    for( auto  lPair : cEntities )
+      {
+	delete lPair.second;       
+      }
 
+    while( cCurrentLine != nullptr )
+      {
+	delPointToCurrentLine();
+      }
+    
+    //    delete cCurrentCreation;  // normalement a nullptr qd on detruit !
   }
   //------------------------------------------
   //	void DataBase::add( O3dObj* pObj )
@@ -434,14 +444,19 @@ namespace PP3d {
   //------------------------------------------
   EntityId DataBase::validOneEntityLevel(  Entity* pEntity )
   {
-    std::cout << "DataBase::validOneEntityLevel 1 "  << cEntities.size()  << "  - "<< *pEntity << std::endl;
+    //    std::cout << "DataBase::validOneEntityLevel 1 "  << cEntities.size()  << "  - "<< *pEntity << std::endl;
     pEntity->cId =  sUniqueId.getNewId();
 
-    std::cout << "DataBase::validOneEntityLevel 2 " << cEntities.size() << "  - " << *pEntity << std::endl;
+    //    std::cout << "DataBase::validOneEntityLevel 2 " << cEntities.size() << "  - " << *pEntity << std::endl;
 
 		
     cEntities.insert( { pEntity->cId, pEntity } ); 
     return pEntity->cId;
+  }
+  //------------------------------------------
+  void DataBase::addValidEntityForUndo(  Entity* pEntity )
+  {   	
+    cEntities.insert( { pEntity->cId, pEntity } ); 
   }
   //******************************************
   class VisitValid : public EntityVisitorNode
@@ -453,8 +468,12 @@ namespace PP3d {
     //------------------------------------------		
     void execNode( Entity *pEntity, Entity *pOwner )
     {
+      //      std::cout << "execNode:" << pEntity->getId() << std::endl;
+      
       if( pEntity->isIdVoid() == false )
 	return ; // deja fait !
+      
+      //      std::cout << "execNode isVoidId" << std::endl;
 			
       cBase.validOneEntityLevel( pEntity  );
     }
@@ -511,7 +530,19 @@ namespace PP3d {
     //			{
     //			}
   }
-
+  //---------------------------------------------------------
+  void DataBase::resetIdFromMax()
+  {
+    EntityId lMaxId = 0;
+    
+    for( auto lPair : cEntities )
+      {
+	if( lPair.second->getId() > lMaxId )
+	  lMaxId =  lPair.second->getId();
+      }
+ 
+    resetUniqueId( lMaxId + 1 );
+  }
 
   //************************************
 

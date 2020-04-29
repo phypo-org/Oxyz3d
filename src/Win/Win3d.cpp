@@ -112,16 +112,21 @@ namespace M3d {
     Win3d*    lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
 	
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-    if( PP3d::UndoHistory::Instance().readCurrent( *luBase ) )
+    if( PP3d::UndoHistory::Instance().readPrev( *luBase ) )
       {
-	Application::Instance().setDatabase( luBase );
+	luBase->resetIdFromMax();
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+ 	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
+ 	Application::Instance().setDatabase( luBase );
       }
-    std::cout << "<<<<<<<<<<<<<<<UndoCB>>>>>>>>>>>>" << std::endl;
-    lWin3d->cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
-    lWin3d->cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
-
-	
-    lWin3d->canvasRedraw();
+    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawObjectTree();
   }
   //-------------------------------------------
   static void	RedoCB(Fl_Widget*w, void*pData)
@@ -132,17 +137,20 @@ namespace M3d {
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
     if( PP3d::UndoHistory::Instance().readNext( *luBase ) )
       {
+	luBase->resetIdFromMax();
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
+	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
 	Application::Instance().setDatabase( luBase );
       }
  	
-    std::cout << "<<<<<<<<<<<<<<<UndoCB>>>>>>>>>>>>" << std::endl;
-    lWin3d->cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
-    lWin3d->cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
-
-	
-    lWin3d->canvasRedraw();
+    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawObjectTree();
   }
-   //-------------------------------------------
+  //-------------------------------------------
   static void	BasculeSelModeCB(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
@@ -266,7 +274,7 @@ namespace M3d {
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
     cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
-     cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
+    cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
     lX += cYinput->w() + 2;
     cZinput = new MyFloatInput( lX, lY, lW,  lH, "Z" );
     lX += cZinput->w() + 2;
@@ -281,19 +289,17 @@ namespace M3d {
     //========================		
     Fl_Image* lPixUndo = MyImage::LoadImage("Icons/undo.png", Application::sIconSize);
 
-    MyButton*
-      lButUndo = new MyButton( lX, lY, lW, lH, nullptr,
-			    UndoCB, this, nullptr);
-    lButUndo->image( lPixUndo );
+    cButUndo = new MyButton( lX, lY, lW, lH, nullptr,
+			     UndoCB, this, nullptr);
+    cButUndo->image( lPixUndo );
     lX += lW;
 	
     Fl_Image* lPixRedo = MyImage::LoadImage("Icons/redo.png", Application::sIconSize);
 
     
-    MyButton*
-      lButRedo = new MyButton( lX, lY, lW, lH, nullptr,
-			    RedoCB, this, nullptr);
-    lButRedo->image( lPixRedo );
+    cButRedo = new MyButton( lX, lY, lW, lH, nullptr,
+			     RedoCB, this, nullptr);
+    cButRedo->image( lPixRedo );
     lX += lW;
 	
     cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
@@ -529,8 +535,8 @@ namespace M3d {
   void Win3d::MyMenuCallback(Fl_Widget* w, void* pUserData) {
 		
     static bool slFlagDialog=false; // C'est moche !!!!
-		std::ostringstream lOsLuaCode;
-		std::ostringstream lOsLuaOut;
+    std::ostringstream lOsLuaCode;
+    std::ostringstream lOsLuaOut;
 	
 							
 		
@@ -588,7 +594,7 @@ namespace M3d {
 	  lWin3d->cFileChooser->title("Pick a file for export (.obj)");
 	  lWin3d->cFileChooser->type(Fl_Native_File_Chooser::BROWSE_FILE);
 	  lWin3d->cFileChooser->filter("3D obj\t*.obj\n"
-		      "3D obj Files\t*.{obj}");
+				       "3D obj Files\t*.{obj}");
 	  lWin3d->cFileChooser->directory(".");           // default directory to use
 	  // Show native chooser
 	  switch ( lWin3d->cFileChooser->show() ) {
@@ -619,7 +625,7 @@ namespace M3d {
 	    lWin3d->cFileChooser->title("Pick a file for read");
 	    lWin3d->cFileChooser->type(Fl_Native_File_Chooser::BROWSE_FILE);
 	    lWin3d->cFileChooser->filter("3D\t*.oxyz\n"
-			"3D Files\t*.{oxyz}");
+					 "3D Files\t*.{oxyz}");
 	    lWin3d->cFileChooser->directory(".");           // default directory to use
 	    // Show native chooser
 	    switch ( lWin3d->cFileChooser->show() ) {
@@ -655,7 +661,7 @@ namespace M3d {
 	      lWin3d->cFileChooser->title("Pick a file for read");
 	      lWin3d->cFileChooser->type(Fl_Native_File_Chooser::BROWSE_FILE);
 	      lWin3d->cFileChooser->filter("3D\t*.obj\n"
-			  "3D Files\t*.{obj}");
+					   "3D Files\t*.{obj}");
 	      lWin3d->cFileChooser->directory(".");           // default directory to use
 	      // Show native chooser
 	      switch ( lWin3d->cFileChooser->show() ) {
@@ -742,6 +748,7 @@ namespace M3d {
 		  if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
 		    {
 		      lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
+		      PushHistory();
 		    }
 		  else {
 		    SINFO ( lWin3d, "Error : Almost 3 points is requiered to create facet" );
@@ -752,6 +759,7 @@ namespace M3d {
 		  if(   Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
 		    {
 		      lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
+		      PushHistory();
 		    }
 		  else {				
 		    if(  Application::Instance().getDatabase()->getNbCurrentPoints() < 2 )
@@ -760,6 +768,7 @@ namespace M3d {
 		    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 		      {						
 			lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
+			PushHistory();
 		      }
 						
 		    SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
@@ -839,9 +848,9 @@ namespace M3d {
 	    }
 	  else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
 	    {
-				lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
+	      lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
 	
-				//	      Application::Instance().createNewWin3d( 1000, 800 );
+	      //	      Application::Instance().createNewWin3d( 1000, 800 );
 	    }
 
     //				else if( strcmp( m->label(), StrMenu_ConsolPython ) == 0)
@@ -870,14 +879,14 @@ namespace M3d {
 	    }
 
 				 
-		if( lOsLuaCode.str().size() > 0 )
-			{
-				// Ily a du lua a executer
-				if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) != nullptr)
-					{
-						// ERREUR
-					}
-			}
+    if( lOsLuaCode.str().size() > 0 )
+      {
+	// Ily a du lua a executer
+	if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) != nullptr)
+	  {
+	    // ERREUR
+	  }
+      }
   }
   //-------------------------------------------
   void Win3d::QuitCallback(Fl_Widget*, void*) {exit(0);}
@@ -888,7 +897,20 @@ namespace M3d {
     cXinput->setFloatValue( pPos.cX );
     cYinput->setFloatValue( pPos.cY );
     cZinput->setFloatValue( pPos.cZ );
-    
+  }
+  //-------------------------------------------
+  void Win3d::setUndoRedoState()
+  {
+    if(PP3d::UndoHistory::Instance().isMin())      
+      cButUndo->deactivate();
+    else
+      cButUndo->activate();
+
+    if(PP3d::UndoHistory::Instance().isMax())      
+      cButRedo->deactivate();
+    else
+      cButRedo->activate();
+
     cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
     cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
   }

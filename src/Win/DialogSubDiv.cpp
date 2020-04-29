@@ -458,6 +458,8 @@ namespace M3d {
       {
 	lObj->rename(  "Polyedre : Division"  );
       }
+    
+    PushHistory();
 
 
     Application::Instance().redrawAllCanvas3d();

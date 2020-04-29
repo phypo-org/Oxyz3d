@@ -29,7 +29,6 @@
 
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
-#include "Shape/UndoHistory.h"
 
 #include "Application.h"
 #include "MyFlWidget.h"
@@ -429,7 +428,7 @@ namespace M3d {
     dragSelect( pMat ); // Inutile ? 
     cDragPoints.clear();
     cDragSavPoints.clear();
-    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
+    PushHistory();
   }
   //---------------------------
   void Canvas3d::cancelDragSelect()

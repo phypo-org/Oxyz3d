@@ -9,8 +9,9 @@ namespace PP3d {
     // Normalement les liens entre Entity lors de la destruction
     // seront gérés par un Visiteur, 
     // l'entité n'est detruite que quand sont elle n'a plus d'owner
-    if( howManyOwner() != 0 )
-      std::cout << "*** ERROR : Entity destroy when they are owner" << std::endl;
+
+    //    if( howManyOwner() != 0 )
+    //      std::cout << "*** ERROR : Entity destroy when they are owner" << std::endl;
   }	
   //---------------------------
   void Entity::move ( Point3d p )

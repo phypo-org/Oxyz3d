@@ -24,7 +24,6 @@
 #include "Application.h"
 
 #include "Shape/Object.h"
-#include "Shape/UndoHistory.h"
 
 
 //Tout mettre dans le Dialogue
@@ -247,11 +246,11 @@ namespace M3d {
 	lObj->rename( PP3d::PrimitivFactory::GetTypeName( lDialog->cMyType) );
       }
     
-    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
-
     Application::Instance().redrawAllCanvas3d();
     Application::Instance().redrawObjectTree();
-
+    
+    PushHistory();
+    
     Fl::delete_widget(lDialog->myWindow);  // Normly if I am understand the documentation, it will destroy all the children
     lDialog->cContinue = false;
   }

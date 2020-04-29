@@ -14,7 +14,12 @@ const char* TokFacet="Facet:";
 const char* TokPoly="Poly:";
 const char* TokObject="Object:";
 
+const char* TokSaisiePt="SaisiePt:";
 
+
+bool sDebugSav = false;
+
+#define SAVCOUT if( sDebugSav ) std::cout
 
 namespace PP3d {
   //*************************************
@@ -24,7 +29,7 @@ namespace PP3d {
 
     //	for( auto lPairEntity :  lEntities )
     //		{
-    //			std::cout << " - " <<  lPairEntity.first << " " << lPairEntity.second->getId() << " " << lPairEntity.second->getType() << std::endl;
+    //			SAVCOUT<< " - " <<  lPairEntity.first << " " << lPairEntity.second->getId() << " " << lPairEntity.second->getType() << std::endl;
     //	}		
     //=======================
     //	cOut << TokPoint << std::endl;
@@ -124,6 +129,35 @@ namespace PP3d {
 
       }
     cOut << std::endl;
+
+    
+    FacetPtr lSaiseFacet = pData.getCurrentLine();
+    
+    if( lSaiseFacet != nullptr )
+      {
+	size_t lNbLine = lSaiseFacet->getLines().size();
+	cOut << TokSaisiePt << ' ' << lNbLine;
+		
+	for( size_t l=0; l< lNbLine; l++ )
+	  {
+	    LinePtr lLine = lSaiseFacet->getLines()[l];
+	    
+	    cOut << ' ' << lLine->first()->get().cX
+		 << ' ' << lLine->first()->get().cY
+		 << ' ' << lLine->first()->get().cZ;
+	    if( l == lNbLine-1
+		&& lLine->isPoint() == false )
+	      {
+		cOut << ' ' << lLine->second()->get().cX
+		     << ' ' << lLine->second()->get().cY
+		     << ' ' << lLine->second()->get().cZ;
+	      }
+	      
+	  }	    
+	cOut << std::endl;	    
+      }
+    
+    
     return true;
   }
 	
@@ -145,7 +179,7 @@ namespace PP3d {
 	  cIn >> lToken;
 	  //				std::getline( cIn, lToken, ' ' );
 				
-	  std::cout << "Token: <<" << lToken << ">> ";
+	  SAVCOUT<< "Token: <<" << lToken << ">> ";
 						
 	  EntityId lId;
 	  if( lToken == TokPoint )
@@ -154,9 +188,15 @@ namespace PP3d {
 						
 	      cIn >> lId >> lX >> lY >> lZ;
 					 
-	      std::cout << " - Read Point<<" << lId <<" : " << lX << " : " << lY << " : " << lZ <<  std::endl;
+	      SAVCOUT<< " - Read Point<<" << lId <<" : " << lX << " : " << lY << " : " << lZ <<  std::endl;
 						
 	      Point* lPoint = new Point( Point3d( lX, lY, lZ ) );
+	      
+	      if( pConserveOldId )
+		{
+		  lPoint->setId( lId );
+		  pData.addValidEntityForUndo(lPoint);
+		}
 
 	      lLocalDico.insert( { lId, lPoint } );
 								
@@ -168,10 +208,17 @@ namespace PP3d {
 		EntityId lFirstId, lSecondId;
 									
 		cIn >> lId >> lFirstId >> lSecondId ;	
-		std::cout << " - Read Line <<" << lId <<" : " << lFirstId<< " : " << lSecondId <<  std::endl;
+		SAVCOUT<< " - Read Line <<" << lId <<" : " << lFirstId<< " : " << lSecondId <<  std::endl;
 							
 		Line* lLine = new Line( static_cast<PointPtr>(lLocalDico.at(lFirstId)),
 					static_cast<PointPtr>(lLocalDico.at(lSecondId)) );
+		
+		if( pConserveOldId )
+		  {
+		    lLine->setId( lId );
+		    pData.addValidEntityForUndo(lLine);
+		  }
+		
 		lLocalDico.insert( { lId, lLine } ); 
 
 		ReadEndLine;
@@ -183,7 +230,7 @@ namespace PP3d {
 		  EntityId lLineId;
 												
 		  cIn >> lId >> lNb  ;
-		  std::cout << " - Read Facet <<" << lId <<" : " << lNb <<  std::endl;
+		  SAVCOUT<< " - Read Facet <<" << lId <<" : " << lNb <<  std::endl;
 		  Facet *lFacet = new Facet();
 												
 		  for( size_t i=0; i< lNb; i++)
@@ -191,8 +238,14 @@ namespace PP3d {
 		      cIn >> lLineId ;
 		      lFacet->addLine( static_cast<LinePtr>(lLocalDico.at(lLineId)) );
 														
-		      std::cout << "    "  << i << ":" << lLineId <<  std::endl;														
+		      SAVCOUT<< "    "  << i << ":" << lLineId <<  std::endl;														
 		    }
+		  if( pConserveOldId )
+		    {
+		      lFacet->setId( lId );
+		      pData.addValidEntityForUndo( lFacet );
+		    }
+		  
 		  lLocalDico.insert( { lId, lFacet } );
 												
 		  ReadEndLine;
@@ -204,39 +257,58 @@ namespace PP3d {
 		    EntityId lFacetId;
 													
 		    cIn >> lId >> lNb  ;
-		    std::cout << " - Read Poly <<" << lId <<" : " << lNb <<  std::endl;
+		    SAVCOUT<< " - Read Poly <<" << lId <<" : " << lNb <<  std::endl;
 													
 		    Poly* lPoly = new Poly();
 													
 		    for( size_t i=0; i< lNb; i++)
 		      {
 			cIn >> lFacetId;
-															
-			std::cout << "   " <<  i << ":" << lFacetId <<  std::endl;
+
+			SAVCOUT<< "   " <<  i << ":" << lFacetId <<  std::endl;
 			lPoly->addFacet( static_cast<FacetPtr>(lLocalDico.at(lFacetId)));
-															
-															
+
+			if( pConserveOldId )
+			  {
+			    lPoly->setId( lId );
+			    pData.addValidEntityForUndo(lPoly);
+			  }
+			
 			lLocalDico.insert( { lId, lPoly } );
 		      }
 		    ReadEndLine;
 		  }
-															
+	      else
+		if( lToken == TokSaisiePt )
+		  {
+		    size_t lNb;
+		    cIn >> lNb;
+		    
+		    for( size_t i=0; i< lNb; i++)
+		      {
+			PDouble  lX,lY,lZ;						
+			cIn >> lX >> lY >> lZ;
+			pData.addPointToCurrentLine( Point3d( lX, lY, lZ ) );
+		      }
+		  }
 		else
 		  if( lToken == TokObject )
 		    {
 		      std::string lSubType;
 		      EntityId    lSubId;
 		      std::string lName;
-														
-														
+
 		      cIn >> lId  >> lSubType >> lSubId  ;
 		      std::getline(	cIn,  lName, '@' ); // pour eviter de recuperer l'espace devant le nom
 		      std::getline(	cIn,  lName, '\n' );
-														
-		      std::cout << " - Read object <<" << lId <<" : " << lSubType << " : " <<  lSubId  << " <<" << lName << ">>" <<  std::endl;
-														
+
+		      
+		      SAVCOUT<< " - Read object <<" << lId <<" : " << lSubType << " : " <<  lSubId  << " <<" << lName << ">>" <<  std::endl;
+
+		      
 		      Object* lObj=nullptr;
-														
+
+		      
 		      switch( GetObjectTypeFromStr( lSubType.c_str() ))
 			{
 			case ObjectType::ObjPoint: break;
@@ -252,16 +324,25 @@ namespace PP3d {
 			case ObjectType::ObjPolyline:;
 			  lObj = new ObjectPolylines( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
 			  break;
-			case ObjectType::ObjNull: break;																		
+			case ObjectType::ObjNull: break;								
 			}
 		      if( lObj != nullptr )
 			{
-			  std::cout << "pData.addObject" << std::endl;
+			  if( pConserveOldId )
+			    {
+			      lObj->setId( lId );
+			      pData.addValidEntityForUndo(lObj);
+			    }
+			  
+			  SAVCOUT<< "************** pData.addObject *******************" << std::endl;
 			  pData.addObject( lObj );
+			  SAVCOUT<< "************** pData.addObject 22222 *******************" << std::endl;
 			}
 		    }
 		  else
-		    break;
+		    {
+		      SAVCOUT<< " Unknown Token :" << lToken << std::endl;
+		    }
 	}
     }	catch( const std::exception & lEx ) {				
       std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;

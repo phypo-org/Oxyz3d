@@ -151,7 +151,7 @@ namespace M3d {
       //      cSav =cStrRoot;      
 
       //	lInput->value( lOstr.tr().c_str() );
-      std::cout << "TreeVisitor " << "Facet " << lOstr.str().c_str() << std::endl;
+      //      std::cout << "TreeVisitor " << "Facet " << lOstr.str().c_str() << std::endl;
       lNode->user_data( pPoly );
       
       if( pPoly->isTreeOpen() )
@@ -168,8 +168,10 @@ namespace M3d {
 
   //****************************************************
   WinObjTree::WinObjTree( )
-  {      
-    cWin     = new Fl_Double_Window(400, 580, "Oxyd3d : Entity Tree");
+  {
+    int lSzX=400;
+    int lSzY =580;
+    cWin     = new Fl_Double_Window( lSzX, lSzY, "Oxyd3d : Entity Tree");
     cMenubar = new Fl_Menu_Bar ( 0, 0, 10000, 30);
     int lX = 15;
     int lY = cMenubar->h();
@@ -179,7 +181,7 @@ namespace M3d {
     cMenubar->add( "&Fold/"    StrMenu_FoldAll,       "", MyMenuCallback, this);
     cMenubar->add( "&Fold/"    StrMenu_UnfoldAll,     "", MyMenuCallback, this);
     
-    cTree    = new Fl_Tree( 0, lY, 390, 570, "");
+    cTree    = new Fl_Tree( 0, lY, lSzX-10, lSzY-30, "");
 		
     cTree->callback((Fl_Callback*)CallBackTree, (void*)(this));
     cWin->end();
@@ -242,12 +244,20 @@ namespace M3d {
     int lH = 18;
   
     cTree->begin();
+    
+    std::ostringstream lOs;
+    lOs  << "Base" << " objets:" <<  Application::Instance().getDatabase()->getAllObject().size()
+	 << " entities:" <<  Application::Instance().getDatabase()->getEntities().size() ;
+    
+    Fl_Tree_Item* lNode = cTree->add( lOs.str().c_str() );
+
+    
  
     for( PP3d::Object* lObj : Application::Instance().getDatabase()->getAllObject() )
       {
 	std::ostringstream lOstr;
 				
-	lOstr  << lObj->getStrType() << "/" << lObj->getId()  ;   ///  << '/' << lObj->getName() << '_';
+	lOstr  << lObj->getStrType() << "/" << lObj->getId()  ;  
 	Fl_Tree_Item* lNode = cTree->add( lOstr.str().c_str() );
 	lNode->user_data( lObj );
 		
@@ -259,8 +269,8 @@ namespace M3d {
 	  cTree->close( lNode , 0 );
 
    
-	TreeVisitor lTreeVisitor( *cTree, lOstr.str().c_str() );
-	lObj->execVisitor( lTreeVisitor );
+	//	TreeVisitor lTreeVisitor( *cTree, lOstr.str().c_str() );
+	//	lObj->execVisitor( lTreeVisitor );
       
 			
 	Fl_Group* lGroup = new Fl_Group(100,100,140,18);

@@ -20,8 +20,9 @@ namespace PP3d {
   
   class  UndoHistory : public PPSingletonCrtp<UndoHistory>{
 
+    
     std::vector<std::string> cHistoSav;
-    size_t                   cMaxHisto = 5; // 32 ;    
+    size_t                   cMaxHisto = 32 ;    
     int                      cCurrent =0;
   public:
 
@@ -33,13 +34,15 @@ namespace PP3d {
     int getLast() { return ((int)cHistoSav.size())-1; }
     
     bool sav(  DataBase & iDb );
-    bool read( DataBase & oDb, int iPos=-1 ); //-1 the last !
-    bool readCurrent( DataBase & oDb );
+    bool readPrev( DataBase & oDb );
     bool readNext( DataBase & oDb );
     void cancelLastSav();
 
     int    getCurrent() { return cCurrent; }
     size_t getSize()    { return cHistoSav.size(); }
+
+    bool isMax() { return cCurrent >= getLast(); }
+    bool isMin() { return cCurrent <= 0; }
   };	
   //*************************************
 

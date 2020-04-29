@@ -26,7 +26,6 @@
 
 #include "Shape/Object.h"
 #include "Shape/Maker.h"
-#include "Shape/UndoHistory.h"
 
 //Tout mettre dans le Dialogue
 
@@ -335,7 +334,7 @@ namespace M3d {
 	lObj->rename(  "Revol"  );
       }
     
-    PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
+    PushHistory();
 
 
     Application::Instance().redrawAllCanvas3d();

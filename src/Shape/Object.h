@@ -13,7 +13,7 @@
 
 #include "Entity.h"
 
-// Cet objet a pour role de chapauter les Shape
+// Cet objet a pour role de chapeauter les Shape
 // il va s'occuper de tout ce qui n'est pas vraiment du graphique 3D
 // nom, id, couleur, texture ...
 // il peut contenir une matrice pour l"utilisation dans une scene,

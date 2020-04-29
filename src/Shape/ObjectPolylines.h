@@ -7,75 +7,75 @@
 
 namespace PP3d {
 
-//******************************
+  //******************************
 
-	class ObjectPolylines  : public ObjectFacet
-	{
+  class ObjectPolylines  : public ObjectFacet
+  {
 
-	public:
-		ObjectPolylines(  const char*pName, Facet* pFacet)
-			: ObjectFacet( pName, pFacet )
-		{;}
-		ObjectPolylines(  const std::string &pName, Facet* pFacet)
-			: ObjectFacet( pName, pFacet )
-		{;}
+  public:
+    ObjectPolylines(  const char*pName, Facet* pFacet)
+      : ObjectFacet( pName, pFacet )
+    {;}
+    ObjectPolylines(  const std::string &pName, Facet* pFacet)
+      : ObjectFacet( pName, pFacet )
+    {;}
 		
-		ObjectType getObjType() const override { return ObjectType::ObjPolyline; }
+    ObjectType getObjType() const override { return ObjectType::ObjPolyline; }
 
 
-		//---------------------------		
-		void drawGL( ViewProps& pViewProps ) override
-		{
-			switch( pViewProps.cSelectType )
-			{
-			case SelectType::All:
-			case SelectType::Point:
-				{
-					drawLineGL( pViewProps );					
-					drawPointGL( pViewProps);					
-				}
-				break;
+    //---------------------------		
+    void drawGL( ViewProps& pViewProps ) override
+    {
+      switch( pViewProps.cSelectType )
+	{
+	case SelectType::All:
+	case SelectType::Point:
+	  {
+	    drawLineGL( pViewProps );					
+	    drawPointGL( pViewProps);					
+	  }
+	  break;
 				
-			case SelectType::Line:
-					drawLineGL( pViewProps );					
-					break;
+	case SelectType::Line:
+	  drawLineGL( pViewProps );					
+	  break;
 				
-			default:
-				{
-					std::cout << ">>>>>>>>>>>>Polyline" << std::endl;
-					VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
-					execVisitor( lVisitL );			
-				}
-			}
-		}
-		//---------------------------		
-		void selectGL( ViewProps& pViewProps ) override
-		{
-			switch( pViewProps.cSelectType )
-			{
-			case SelectType::All:
-					drawSelectLineGL( pViewProps );					
-					drawSelectPointGL( pViewProps);
-					break;
-			case SelectType::Point:
-				{
-					drawLineGL( pViewProps );					
-					drawSelectPointGL( pViewProps);					
-				}
-				break;
-			case SelectType::Line:
-					drawSelectLineGL( pViewProps );					
-					break;
+	default:
+	  {
+	    std::cout << ">>>>>>>>>>>>Polyline" << std::endl;
+	    VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
+	    execVisitor( lVisitL );			
+	  }
+	}
+    }
+    //---------------------------		
+    void selectGL( ViewProps& pViewProps ) override
+    {
+      switch( pViewProps.cSelectType )
+	{
+	case SelectType::All:
+	  drawSelectLineGL( pViewProps );					
+	  drawSelectPointGL( pViewProps);
+	  break;
+	case SelectType::Point:
+	  {
+	    drawLineGL( pViewProps );					
+	    drawSelectPointGL( pViewProps);					
+	  }
+	  break;
+	case SelectType::Line:
+	  drawSelectLineGL( pViewProps );					
+	  break;
 				
-			default:
-				{
-					std::cout << ">>>>>>>>>>>>SelectPolyline" << std::endl;
-					VisitorDrawSelectPolyline	lVisitL( pViewProps, cMyProps);
-					execVisitor( lVisitL );			
-				}
-			}
-		}		 
-	};
+	default:
+	  {
+	    std::cout << ">>>>>>>>>>>>SelectPolyline" << std::endl;
+	    VisitorDrawSelectPolyline	lVisitL( pViewProps, cMyProps);
+	    execVisitor( lVisitL );			
+	  }
+	}
+    }		 
+  };
   //******************************
 
 }

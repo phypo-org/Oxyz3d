@@ -5,28 +5,44 @@
 	Selection des objets temporaire ?
 
 - BUG :  avec le focus
-- BUG :  la case selection dans WinObjTree ne marche pas
-
-
+- BUG :  rename WinObjTree ne marche plus
+-----------------------------------------------
+Dialogues fixes ? 
+-----------------------------------------------
+-----------------------------------------------
 - Creation de surface avec plusieurs line ou polyline
+-----------------------------------------------
 
 - Primitive pour : cylindre, cone, sphere, tore 
 
 
-- Sauvegarde
+-----------------------------------------------
+o Sauvegarde (bug avec le dialogue sur linux)
+o Sauvegarde de la saisie des points
+o Sauvegarde de l'historique
+-----------------------------------------------
 
-- Export
+- Export ...
 
+-----------------------------------------------
 
 - pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
   intersections de la grille)
 
+-----------------------------------------------
 
 - creation d'objet plans ( couleur speciale et grille pour la
   representé)
-
+-----------------------------------------------
 
 
 - Trinangulation
 
 - Subdivision avec lissage des facettes
+-----------------------------------------------
+
+- division (Cut) des lignes par N
+-----------------------------------------------
+
+o limites des up. Sauvegarder aussi l'historique ?
+o historiser  aussi la saisie des points

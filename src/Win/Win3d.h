@@ -37,9 +37,12 @@ namespace M3d {
     MyFloatInput*           cZinput;
 
     MyFloatInput*           cCurrentInput1;
+    
   public:
-    MyIntInput*                cCurrentUndo;
-    MyIntInput*                cCurrentUndoMax;
+    MyIntInput*             cCurrentUndo;
+    MyIntInput*             cCurrentUndoMax;
+    MyButton*               cButUndo;
+    MyButton*               cButRedo;
   private:
     Fl_Output*              cInfoOutput;
 
@@ -54,6 +57,7 @@ namespace M3d {
     void canvasRedraw() { cuCanvas3d->redraw(); }
     void setCursorPosition( PP3d::Point3d& pPos);
     void setCurrentVal( const char* iLabel, double iVal);
+    void setUndoRedoState();
     double getCurrentVal();
     PP3d::Kamera& getKamera() { return cuCanvas3d->cKamera;}
     int getId()  { return cWinId; }

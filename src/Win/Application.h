@@ -11,6 +11,7 @@
 #include "Shape/PP3dType.h"
 #include "Lua/PLua.h"
 #include "ShapeLua.h"
+#include "Shape/UndoHistory.h"
 
 #include "Utils/PPSingletonCrtp.h"
 
@@ -94,6 +95,8 @@ namespace M3d{
 	
     void setCursorPosition( PP3d::Point3d& pPos);
 
+#define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() )
+    
   };
   //************************************
 

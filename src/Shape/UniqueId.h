@@ -5,16 +5,19 @@
 
 
 namespace PP3d {
-	//*********************************************
-	template <typename TYPE, long VALUE=0>
-	class TUniqueId {
+  //*********************************************
+  template <typename TYPE, long VALUE=0>
+  class TUniqueId {
 	
-		TYPE   cId=VALUE;
-	public:
+    TYPE   cId=VALUE;
+    
+  public:
 
-		TYPE getNewId() { return cId++; }	
-	};
-	//*********************************************	
+    TYPE getNewId()     { return cId++; }
+    TYPE getCurrentId() { return cId; }
+    void reset( TYPE iResetVal) { cId=iResetVal; }
+  };
+  //*********************************************	
 }
 
 
