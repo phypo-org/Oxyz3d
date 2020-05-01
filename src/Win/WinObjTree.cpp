@@ -19,6 +19,7 @@
 
 
 #include "MyFlWidget.h"
+#include "MyImage.h"
 
 
 #include <string.h>
@@ -29,7 +30,18 @@ namespace M3d {
 
 #define StrMenu_FoldAll   "Fold all"
 #define StrMenu_UnfoldAll "Unfold all"
-  
+
+
+  //****************************************************
+  static void DeployGraphCB( Fl_Widget *w, void*pData )
+  {
+    MyToggleButton * lToggle = reinterpret_cast<MyToggleButton*>( pData);
+    WinObjTree     * lWin  = reinterpret_cast<WinObjTree*>( lToggle->cUserData1);
+
+    lWin->cDeployDetail = ! lWin->cDeployDetail;
+    Application::Instance().redrawObjectTree();
+  }
+
   //****************************************************
   class TreeVisitor : public EntityVisitor {
 		
@@ -172,14 +184,30 @@ namespace M3d {
     int lSzX=400;
     int lSzY =580;
     cWin     = new Fl_Double_Window( lSzX, lSzY, "Oxyd3d : Entity Tree");
-    cMenubar = new Fl_Menu_Bar ( 0, 0, 10000, 30);
+    cMenubar = new Fl_Menu_Bar ( 0, 0, 200, 32);
     int lX = 15;
     int lY = cMenubar->h();
     int lH = (int)(((float)cMenubar->h())*0.6f);
-    int lW = 70;
+    int lW = 32;
     
     cMenubar->add( "&Fold/"    StrMenu_FoldAll,       "", MyMenuCallback, this);
     cMenubar->add( "&Fold/"    StrMenu_UnfoldAll,     "", MyMenuCallback, this);
+
+    lX = 200;
+    //========================		
+    Fl_Image* lPixDeploy = MyImage::LoadImage("Icons/deploy_graph.png", Application::sIconSmallSize);
+
+    MyToggleButton*
+      lButDeploy = new MyToggleButton( lX, 0, Application::sIconSmallSize,
+				       Application::sIconSmallSize,  nullptr,
+				       DeployGraphCB, this, (void*)0 );
+    lButDeploy->value(cDeployDetail);
+    lButDeploy->image( lPixDeploy );
+    lX += lW;
+
+    //========================		
+ 
+    
     
     cTree    = new Fl_Tree( 0, lY, lSzX-10, lSzY-30, "");
 		
@@ -268,10 +296,11 @@ namespace M3d {
 	else
 	  cTree->close( lNode , 0 );
 
-   
-	//	TreeVisitor lTreeVisitor( *cTree, lOstr.str().c_str() );
-	//	lObj->execVisitor( lTreeVisitor );
-      
+	if( cDeployDetail )
+	  {
+	    TreeVisitor lTreeVisitor( *cTree, lOstr.str().c_str() );
+	    lObj->execVisitor( lTreeVisitor );
+	  }
 			
 	Fl_Group* lGroup = new Fl_Group(100,100,140,18);
 	lGroup->color( FL_WHITE );

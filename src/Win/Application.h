@@ -42,7 +42,9 @@ namespace M3d{
     PP3d::Transf3d  cCurrentTransf;
 
   public:
+    static const int sIconBigSize = 64;
     static const int sIconSize = 32;
+    static const int sIconSmallSize = 16;
 
     void setCurrentTransformType( Transform lTrans)
     {	

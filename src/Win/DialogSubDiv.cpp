@@ -92,19 +92,19 @@ namespace M3d {
   void DialogSubDiv::maj()
   {
     /*
-    std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
-    std::cout << "DialogSubDiv::maj " << this << std::endl;
+      std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
+      std::cout << "DialogSubDiv::maj " << this << std::endl;
     */
     
     PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 
     /*		
-    std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
-    std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
+		std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
+		std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
 
-    std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
-    std::cout << " Size     :" << cSliderSize->value()   << std::endl;
-    std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
+		std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
+		std::cout << " Size     :" << cSliderSize->value()   << std::endl;
+		std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
     */
 
     
@@ -122,19 +122,19 @@ namespace M3d {
     int   lHoleDepth  =  cChoiceHoleDepth->value() -1;
 
     /*	
-    std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
-    std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
+	std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
+	std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
 
-    std::cout << "2 Depth    :"  << lDepth << std::endl;
-    std::cout << "2 Size     :"  << lSize  << std::endl;
+	std::cout << "2 Depth    :"  << lDepth << std::endl;
+	std::cout << "2 Size     :"  << lSize  << std::endl;
     
-    std::cout << "2 Central  :"  << (int)(lCentralPoint) << std::endl;
+	std::cout << "2 Central  :"  << (int)(lCentralPoint) << std::endl;
     
-    std::cout << "2 GrowFactor  :" <<  lDepthGrowFactor<< std::endl;
-    std::cout << "2 InitGrowFactor  :" << lInitGrowFactor<< std::endl;
+	std::cout << "2 GrowFactor  :" <<  lDepthGrowFactor<< std::endl;
+	std::cout << "2 InitGrowFactor  :" << lInitGrowFactor<< std::endl;
 
-    std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
-    std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
+	std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
+	std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
     */
 
     PP3d::SubDiv::SubParam lParam( lDepth, lSize, lCentralPoint, lNormType);
@@ -313,27 +313,27 @@ namespace M3d {
     lY += lYStep;
 			
 
-		{ Fl_Group* o3 = new Fl_Group(lX-5, lY, lW+130, lH*6, "");
+    { Fl_Group* o3 = new Fl_Group(lX-5, lY, lW+130, lH*6, "");
       o3->box(FL_ENGRAVED_FRAME);
-			lY += lYStep/3;
+      lY += lYStep/3;
 
       { Fl_Button* o = new Fl_Button(lX, lY, 75, 25, "OK");
-				o->callback((Fl_Callback*)OkCB, this );
+	o->callback((Fl_Callback*)OkCB, this );
       } // Fl_Button* o
 			
       { Fl_Button* o = new Fl_Button(lX+100, lY, 75, 25, "Cancel");
-				o->callback((Fl_Callback*)CancelCB, this );
+	o->callback((Fl_Callback*)CancelCB, this );
       } // Fl_Button* o
 			
       { Fl_Button* o = new Fl_Button(lX+250, lY, 75, 25, "Reset");
-				o->callback((Fl_Callback*)ResetCB, this );
+	o->callback((Fl_Callback*)ResetCB, this );
       } // Fl_Button* o
 			
       { Fl_Button* o = new Fl_Button(lX+350, lY, 100, 25, "Direct export");
-				o->callback((Fl_Callback*)DirectExpCB, this );
+	o->callback((Fl_Callback*)DirectExpCB, this );
       } // Fl_Button* o
       o3->end();
-		}
+    }
     
 
     myWindow->end();
@@ -405,39 +405,39 @@ namespace M3d {
   {
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
 
-		Fl_Native_File_Chooser fnfc;
-		fnfc.title("Pick a file for export");
-		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-		fnfc.filter("3D obj\t*.obj\n"
-								"3D obj Files\t*.{obj}");
-		fnfc.directory(".");           // default directory to use
-		// Show native chooser
-		switch ( fnfc.show() )
-			{
-			case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
-			case  1: printf("CANCEL\n");                      break;  // CANCEL
-			default:
-				{
-					std::cout << "PICKED: " << fnfc.filename() << std::endl;
-					PP3d::Object* lObject =  Application::Instance().getDatabase()->getCurrentCreation();
-					if( lObject != nullptr )
-						{
-							std::ofstream lOut;						
-							lOut.open( fnfc.filename());
-							if( lOut.good() )
-								{
+    Fl_Native_File_Chooser fnfc;
+    fnfc.title("Pick a file for export");
+    fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+    fnfc.filter("3D obj\t*.obj\n"
+		"3D obj Files\t*.{obj}");
+    fnfc.directory(".");           // default directory to use
+    // Show native chooser
+    switch ( fnfc.show() )
+      {
+      case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+      case  1: printf("CANCEL\n");                      break;  // CANCEL
+      default:
+	{
+	  std::cout << "PICKED: " << fnfc.filename() << std::endl;
+	  PP3d::Object* lObject =  Application::Instance().getDatabase()->getCurrentCreation();
+	  if( lObject != nullptr )
+	    {
+	      std::ofstream lOut;						
+	      lOut.open( fnfc.filename());
+	      if( lOut.good() )
+		{
 									
-									PP3d::MyExportObj lExpObj( lOut );
-									{
-										lExpObj.save(  lObject );
-									}
+		  PP3d::MyExportObj lExpObj( lOut );
+		  {
+		    lExpObj.save(  lObject );
+		  }
 									
-									lOut.close();
-								}
-						}
-				}
-				break;						
-			}				 
+		  lOut.close();
+		}
+	    }
+	}
+	break;						
+      }				 
   }
   //----------------------------------------
   void DialogSubDiv::ResetCB( Fl_Widget*, void* pUserData )

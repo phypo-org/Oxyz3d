@@ -36,6 +36,8 @@
 #include "Dialogs.h"
 #include "Win3d.h"
 
+#include "Preference.h"
+
 using namespace std;
 
 
@@ -99,23 +101,26 @@ namespace M3d {
   //---------------------------
   void Canvas3d::traceMode() const
   {
-    switch( cMode )
+    if( MyPref.cDbgEvt )
       {
-      case ModeUser::MODE_BASE:
-	std::cout << "MODE_BASE  ";
-	break;
-      case ModeUser::MODE_SELECT:
-	std::cout << "MODE_SELECT  ";
-	break;
-      case ModeUser::MODE_SELECT_RECT:
-	std::cout << "MODE_SELECT_RECT  ";
-	break;
-      case ModeUser::MODE_MOVE_CAMERA:
-	std::cout << "MODE_MOVE_CAMERA  ";
-	break;
-      case ModeUser::MODE_TRANSFORM :
-	std::cout << "MODE_TRANSFORM  " ;
-	break;
+	switch( cMode )
+	  {
+	  case ModeUser::MODE_BASE:
+	    std::cout << "MODE_BASE  ";
+	    break;
+	  case ModeUser::MODE_SELECT:
+	    std::cout << "MODE_SELECT  ";
+	    break;
+	  case ModeUser::MODE_SELECT_RECT:
+	    std::cout << "MODE_SELECT_RECT  ";
+	    break;
+	  case ModeUser::MODE_MOVE_CAMERA:
+	    std::cout << "MODE_MOVE_CAMERA  ";
+	    break;
+	  case ModeUser::MODE_TRANSFORM :
+	    std::cout << "MODE_TRANSFORM  " ;
+	    break;
+	  }
       }
   }
   //---------------------------
@@ -209,8 +214,9 @@ namespace M3d {
   }
   //---------------------------
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
-  {		
-    cout << " processHits=" <<  pNbHits <<  endl;		
+  {
+    
+    DBG_SEL( " processHits=" <<  pNbHits );
 		
     GLuint*	ptr = (GLuint *) pSelectBuf;
 		
@@ -223,7 +229,7 @@ namespace M3d {
 	GLuint lNbNames = *ptr;
 	ptr++;
 				
-	cout << "Nb names :" << lNbNames << " >>> "  ;
+	DBG_SEL_NL( "Nb names :" << lNbNames << " >>> ") ;
 																						
 	float lZ1 = (float) (*ptr/0x7fffffff);		ptr++;
 	float lZ2 = (float) (*ptr/0x7fffffff);		ptr++;
@@ -257,7 +263,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::picking( int pX, int pY, bool pFlagMove )
   {
-    std::cout << "=== picking:" << pX << " " << pY << " SM:" << cSelectMode <<  std::endl;
+    DBG_SEL( "=== picking:" << pX << " " << pY << " SM:" << cSelectMode );
 
     GLint lViewport[4];
     glGetIntegerv(GL_VIEWPORT, lViewport);
@@ -291,13 +297,7 @@ namespace M3d {
     glPopMatrix();
     glFlush();
     GLuint lNbHits = glRenderMode(GL_RENDER);
-    processHits( lNbHits, lSelectBuf, pFlagMove  );
- 
-    //glPopMatrix();
-    //glMatrixMode(GL_MODELVIEW);
-    //GLuint lNbHits = glRenderMode(GL_RENDER);
-    //glFlush();
-    //processHits( lNbHits, lSelectBuf );	
+    processHits( lNbHits, lSelectBuf, pFlagMove  ); 	
   }
   //---------------------------
   void Canvas3d::userPrepareAction( int	pEvent )
@@ -700,11 +700,11 @@ namespace M3d {
   {
     //		cout << endl;
     if( pEvent == FL_NO_EVENT ) return 1;
-		
+
     traceMode();
-		
-		
-    std::cout << " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> " ;
+    
+    DBG_EVT( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> " );
+      
 		
 
     switch( pEvent )
@@ -712,7 +712,7 @@ namespace M3d {
 	//===========================
 				
       case FL_PUSH :
-	cout << " Button Push"  << std::endl;
+	DBG_EVT( " Button Push"  );
 	Fl::focus(this);
 
 					
@@ -722,7 +722,7 @@ namespace M3d {
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_ctrl() &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    std::cout << " **************** cUserActionSaisie " << endl;
+	    DBG_ACT(" **************** cUserActionSaisie " );
 
 	    userInputPoint( pEvent );
 						
@@ -733,7 +733,7 @@ namespace M3d {
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    std::cout << " cUserActionRectangle " << endl;
+	    DBG_ACT( " cUserActionRectangle " );
 	    cMode = ModeUser::MODE_SELECT_RECT;
 
 	    userPrepareAction( pEvent );
@@ -803,7 +803,7 @@ namespace M3d {
 	//==============================
 
       case FL_RELEASE:
-	cout << "******** Button Release ";
+	DBG_EVT( "******** Button Release ");
 					
 	switch(  Fl::event_button() )
 	  {
@@ -813,13 +813,13 @@ namespace M3d {
 		userTerminateAction( pEvent );
 	      }
 
-	    std::cout << "LEFT "<< std::endl;
+	    DBG_EVT(  "LEFT ");
 	    break;
 	  case FL_MIDDLE_MOUSE :
-	    std::cout << "MIDDLE "<< std::endl;
+	    DBG_EVT( "MIDDLE ");
 	    break;
 	  case FL_RIGHT_MOUSE :
-	    std::cout << "RIGHT "<< std::endl;
+	    DBG_EVT(  "RIGHT ");
 							
 	    break;
 	  }
@@ -844,7 +844,7 @@ namespace M3d {
 
       case FL_DRAG:
 	Fl::focus(this);
-	cout << " <DRAG> " << cMouseLastPosX;
+	DBG_EVT( " <DRAG> " << cMouseLastPosX );
 	if( cMouseLastPosX != -1 )
 	  {
 	    if( cMode == ModeUser::MODE_TRANSFORM )
@@ -870,7 +870,8 @@ namespace M3d {
 				
       case FL_MOVE:
 	{
-	  cout << " <MOVE> " << cMouseLastPosX <<  std::endl;
+	  DBG_EVT( " <MOVE> " << cMouseLastPosX );
+	  
 	  if( cMouseLastPosX != -1 )
 	    {					 	
 	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
@@ -878,7 +879,7 @@ namespace M3d {
 		  userChangeKameraView( pEvent );
 		  Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}
-	      else if( cMode == ModeUser::MODE_SELECT_RECT )
+	      else if( cMode == ModeUser::MODE_SELECT_RECT)
 		{
 		  userSelectionRectangle(pEvent);			
 		  Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
@@ -888,7 +889,8 @@ namespace M3d {
 	  else
 	    if( cMode == ModeUser::MODE_BASE )
 	      {
-		userSelectionPoint( pEvent, true );
+		if( MyPref.cSelectPassOverLighting ) 
+		  userSelectionPoint( pEvent, true );
 	      }
 					
 	  setCursor3dPosition( Fl::event_x(), Fl::event_y());
@@ -902,25 +904,25 @@ namespace M3d {
 	//==============================
 			
       case FL_ENTER:
-	cout << " ENTER " << Fl::belowmouse();
+	DBG_EVT( " ENTER " << Fl::belowmouse());
 	//			Fl::focus(Fl::belowmouse()); 
 	break;
       case FL_LEAVE:
-	cout << " LEAVE " << Fl::belowmouse();
+	DBG_EVT( " LEAVE " << Fl::belowmouse());
 	break;
 
       case FL_FOCUS:
-	cout << " FOCUS " ;
+	DBG_EVT(  " FOCUS " );
 	break;
       case FL_UNFOCUS:
-	cout << " UNFOCUS " ;
+	DBG_EVT( " UNFOCUS " );
 	break;
 	
 			
       case FL_KEYDOWN:
 	{
-	  cout << " CTRL :" << Fl::event_ctrl() << " " ;
-	  cout << " KEYDOW " <<  Fl::event_key()  ;
+	  DBG_EVT_NL( " CTRL :" << Fl::event_ctrl() << " " );
+	  DBG_EVT_NL( " KEYDOW " <<  Fl::event_key()  );
 
 	  if(  Fl::event_key() >= 256 )
 	    {
@@ -930,7 +932,7 @@ namespace M3d {
 		  userCancelAction( pEvent );								
 		  break;
 		case	FL_Tab:
-		  cout << " TAB";
+		  DBG_EVT_NL( " TAB" );
 		  if( cMode == ModeUser::MODE_TRANSFORM )
 		    {
 		      userTransformSelection(pEvent);			

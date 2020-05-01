@@ -33,7 +33,11 @@ namespace M3d {
     Fl_Tree          *cTree;
     Fl_Menu_Bar      *cMenubar;
     //	Fl_Tree_Item     cRoot;
+    
     WinObjTree();
+
+  public:    bool cDeployDetail = true;
+
 		
   public:
     void rebuild();

@@ -7,7 +7,7 @@
 #include "Canvas3d.h"
 
 #include <FL/Fl_Double_Window.H>
-
+ 
 #include <memory>
  
 
@@ -26,7 +26,10 @@ void CallDialogRevol( bool &cFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol
 
 extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
 extern bool CallDialogInputInt( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas,  const char* iLabel, int & ioVal);
+extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 
+extern void CallDialogPref();
+extern void CallDialogFile( const std::string & iTitle);
 
 Fl_Double_Window* CallConsolePython();
 Fl_Double_Window* CallConsoleSystem();

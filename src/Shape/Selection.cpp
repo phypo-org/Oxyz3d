@@ -8,6 +8,7 @@
 
 #include "Object.h"
 
+#include "DebugVars.h"
 
 using namespace std;
 
@@ -78,19 +79,19 @@ namespace PP3d {
   //--------------------------------
   bool Selection::addToSelection( EntityPtr lEntity)
   {
-    std::cout << "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect() << " " ;
+    DBG_SEL_NL( "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect() << " " );
     if( lEntity->isSelect() )
       {
-	std::cout << " removeEntity " << std::endl;
+	DBG_SEL_NN( " removeEntity " );
 	removeEntity( lEntity );
       }
     else
       {
-	std::cout << " addEntity " << std::endl;
+	DBG_SEL_NN( " addEntity " );
 	addEntity( lEntity );
       }
 		
-    std::cout << " --> " << isSelected(lEntity) << " " << lEntity->isSelect() << " " ;
+    DBG_SEL_LN( " --> " << isSelected(lEntity) << " " << lEntity->isSelect() << " " );
 	
     return true;
   }
@@ -140,7 +141,7 @@ namespace PP3d {
 	PP3d::PickingHit key = pVect[i];
 				
 	j = i-1;  
-	cout << "i:" << i << " j:" << j << " size:" << size << endl;
+	DBG_SEL( "i:" << i << " j:" << j << " size:" << size );
 	while (j >= 0 && MyCmp( pVect[j], key )  )
 	  {
 	    pVect[j+1] = pVect[j]; 
@@ -155,7 +156,7 @@ namespace PP3d {
   //--------------------------------
   bool Selection::selectPickingHit( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
   {
-    cout << " <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " ;
+    DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
 		
 		
     for( PP3d::PickingHit& pHit : pHits )
@@ -163,7 +164,7 @@ namespace PP3d {
 	EntityPtr lEntity = cBase.findEntity( pHit.cName );				
 	if( lEntity == nullptr )
 	  {
-	    cout<<"***************** Selection "<<pHit.cName<<" not found ! **********************"<< endl;
+	    DBG_SEL( "***************** Selection "<<pHit.cName<<" not found ! **********************");
 	    return false;
 	  }				
 				
@@ -180,7 +181,7 @@ namespace PP3d {
 
     for( PP3d::PickingHit& pHit : pHits )
       {
-	cout << "Hit :" << pHit << endl;
+	DBG_SEL( "Hit :" << pHit );
 			
       }
     //    cout<<"**************** 333 ***********************"<< endl;
@@ -219,7 +220,7 @@ namespace PP3d {
 		removeEntity(lEntity);
 		break;
 	      case SelectMode::Select:
-		cout <<  " NO " << endl;
+		DBG_SEL( " NO " );
 		//		return false;
 	      }
 	    //	    cout <<  " R ->SM:" << pSelectMode << endl;
