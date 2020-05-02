@@ -19,11 +19,15 @@
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_File_Chooser.H>
+#include <FL/fl_ask.H>
+
 
 #include "Shape/DataBase.h"
 #include "Shape/ObjectFacet.h"
 #include "Shape/ObjectLine.h"
 #include "Shape/UndoHistory.h"
+
+#include "Utils/PPFile.h"
 
 #include "Win3d.h"
 #include "Canvas3d.h"
@@ -178,12 +182,13 @@ namespace M3d {
   //------------------------------------------------------
   static void SaveBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
 			  void            *cData )	// I - Data
-  {    
+  {
     printf(" SaveAsCB filename = \"%s\"\n",  cFc->value() ?  cFc->value() : "(null)");        
     
     if( cFc->value()  )
       {
 	std::string lFilename = cFc->value();
+
 	if( SaveBase( Application::Instance().getDatabase(), lFilename ) )
 	  {
 	    MyPref.cLastSave = lFilename;
@@ -256,6 +261,8 @@ namespace M3d {
     if( cFc->value()  )
       {
 	std::string lFilename = cFc->value();
+
+	
 	if( ExportD3dObj( Application::Instance().getDatabase(), lFilename ) )
 	  {
 	  }
@@ -309,7 +316,7 @@ namespace M3d {
     Application::Instance().redrawObjectTree();
   }
   //-------------------------------------------
-  static void	RedoCB(Fl_Widget*w, void*pData)
+  static void RedoCB(Fl_Widget*w, void*pData)
   {
     MyButton* lButton = reinterpret_cast<MyButton*>( pData);
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
@@ -751,12 +758,15 @@ namespace M3d {
     //========================================
     if( strcmp( m->label(), StrMenu_NewBase )== 0 )
       {
-	PushHistory(); // on sauve l'ancienne base dans l'historique
-	// Une Nlle base
-	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-	luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	Application::Instance().setDatabase( luBase ); // on prend la nlle base
-	Application::Instance().redrawAll();
+	if( fl_choice("Clear current work", "Yes", "No", 0)  == 0)
+	  {
+	    PushHistory(); // on sauve l'ancienne base dans l'historique
+	    // Une Nlle base
+	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
+	    Application::Instance().setDatabase( luBase ); // on prend la nlle base
+	    Application::Instance().redrawAll();
+	  }
       }
     else    //========================================
     if( strcmp( m->label(), StrMenu_OpenBase )== 0 )
