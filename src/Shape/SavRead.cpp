@@ -23,7 +23,7 @@ bool sDebugSav = false;
 
 namespace PP3d {
   //*************************************
-  bool MySav::save( DataBase& pData )
+  bool MySav::save( DataBase& pData, std::set<Entity*> * iFilter)
   {
     auto lEntities = pData.getEntities();
 
@@ -35,8 +35,11 @@ namespace PP3d {
     //	cOut << TokPoint << std::endl;
 
     for( auto lPairEntity :  lEntities )
-      {		
+      {	
 	if( lPairEntity.second->getType() != ShapeType::Point )
+	  continue;
+	
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
 	  continue;
 
 	auto lEntity = dynamic_cast<PointPtr>(lPairEntity.second);
@@ -57,6 +60,9 @@ namespace PP3d {
       {				
 	if( lPairEntity.second->getType() != ShapeType::Line )
 	  continue;
+	
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
+	  continue;
 
 	auto lEntity = dynamic_cast<LinePtr>(lPairEntity.second);
 	cOut << TokLine 
@@ -75,6 +81,9 @@ namespace PP3d {
 	if( lPairEntity.second->getType() != ShapeType::Facet )
 	  continue;
 
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
+	  continue;
+	
 	auto lEntity = dynamic_cast<FacetPtr>(lPairEntity.second);
 	cOut << TokFacet
 	     << ' ' << lEntity->getId()
@@ -94,6 +103,9 @@ namespace PP3d {
     for( auto lPairEntity :  lEntities )
       {				
 	if( lPairEntity.second->getType() != ShapeType::Poly )
+	  continue;
+	
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
 	  continue;
 
 	auto lEntity = dynamic_cast<PolyPtr>(lPairEntity.second);
@@ -117,6 +129,9 @@ namespace PP3d {
     for( auto lPairEntity :  lEntities )
       {				
 	if( lPairEntity.second->getType() != ShapeType::Object )
+	  continue;
+
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
 	  continue;
 
 	auto lEntity = dynamic_cast<ObjectPtr>(lPairEntity.second);

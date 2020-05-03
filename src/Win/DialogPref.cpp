@@ -59,6 +59,7 @@ namespace M3d {
     MyIntInput* cDbgBaz;
     MyIntInput* cDbgSel;
     MyIntInput* cDbgLua;
+    MyIntInput* cDbgTree;
 
 
     
@@ -91,6 +92,7 @@ namespace M3d {
       INT_VALUE(cDbgBaz);
       INT_VALUE(cDbgSel);
       INT_VALUE(cDbgLua);
+      INT_VALUE(cDbgTree);
 
 	
 
@@ -168,6 +170,7 @@ namespace M3d {
 	  INTPUT_INT( cDbgBaz, "Debug Base" );
 	  INTPUT_INT( cDbgSel, "Debug Sel" );	  
 	  INTPUT_INT( cDbgLua, "Debug Lua" );
+	  INTPUT_INT( cDbgTree, "Debug Tree" );
 	  /*
 
 	  

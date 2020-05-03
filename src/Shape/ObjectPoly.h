@@ -21,11 +21,13 @@ namespace PP3d {
 		 :Object( pName )
 		,cShape( pPoly )
 	{
+	  pPoly->addOwner( this );
 	}	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		ObjectPoly( const std::string& pName, Poly* pPoly)
 		 :Object( pName )
 		,cShape( pPoly )
 	{
+	  pPoly->addOwner( this );
 	}	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		
 		EntityPtr getShape() override { return cShape; }

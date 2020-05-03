@@ -15,6 +15,8 @@
 
 #include "Entity.h"
 
+#include "Utils/PPSingletonCrtp.h"
+
 
 namespace PP3d {
 
@@ -61,8 +63,10 @@ namespace PP3d {
   };
 	
   //****************************************
-  class Selection 
+  class Selection :  public PPSingletonCrtp<Selection>
   {
+    friend PPSingletonCrtp;
+    
   public:
 
     //===========================
@@ -70,12 +74,12 @@ namespace PP3d {
   private:
     Selection();
 		
-    static Selection * sTheSelection;
-
+    //#define Selection::sTheSelection &Selection::
+#define TheSelection PP3d::Selection::Instance()
 		
   protected:
 		
-    SelectType     cSelectType = SelectType::Poly;
+    SelectType     cSelectType = SelectType::Object;
 
     std::unordered_set<EntityPtr> cSelectObj;
 
@@ -92,15 +96,6 @@ namespace PP3d {
     }
     const std::unordered_set<EntityPtr>& getSelection() { return cSelectObj;}
 		
-	
-
-    static Selection& Instance()
-    {
-      if( sTheSelection == nullptr )
-	sTheSelection = new Selection;
-
-      return *sTheSelection;
-    }
 
     size_t getNbSelected() { return cSelectObj.size();  }
 									
@@ -128,6 +123,24 @@ namespace PP3d {
 	  pOs << "  " << (*lIter) << std::endl;
 	}
       return pOs;
+    }
+    void execVisitor(  EntityVisitor& pVisit )
+    {
+      for(  EntityPtr lEntity : cSelectObj )
+	lEntity->execVisitor( pVisit );
+    }
+    void execVisitorObjects(  EntityVisitor& pVisit )
+    {
+      for(  EntityPtr lEntity : cSelectObj )
+	{
+	  std::cout << " exec " <<  lEntity->getType() << " ? " << ShapeType::Object << std::endl;
+	  if( lEntity->getType() == ShapeType::Object )
+	    //	  if( lEntity->getType() == ShapeType::Object )
+	    {
+	      std::cout << " Exec " << std::endl;
+	      lEntity->execVisitor( pVisit );
+	    }
+	}
     }
   };
   //******************************************

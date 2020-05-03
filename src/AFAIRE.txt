@@ -1,4 +1,27 @@
 
+- Ajouter PushHistory
+  - Pour les rotations
+  - Pour le delete d'objets
+
+- Remettre la Selection a 0 sir Undo ou Redo
+
+- Faire la duplication :
+  Selection le(s) objets :
+  - faire une sauvegarde dans un string de la seletion
+  - les creer dans une base temporaire, recuperer les points de cette
+  base
+  - afficher la base en en modifiant les point comme pour le move et
+  rot classique
+  - a la fin, fusionnner la base temporaire avec l'ancienne (repassé
+  par une sauvegarde mémoire ?), ( recopier les Entité dans
+  l'ancienne)
+  ATTENTION AU ID, ET A L'UNIQUE ID DE LA BASE
+
+On pourrait faire la meme chose pour les nouveau objets habituel les
+mettre dans une base temporaire .
+IL faut ajouter le tracer de la nouvelle base dans Canvas3d::draw .
+
+----------------------------------------------
 
 - Selection de la saisie ? base separé, id dans un interval donné ?
   constituant avec de vrai id et destruction s'il y a lieu?
@@ -17,8 +40,6 @@ Dialogues fixes ?
 
 
 -----------------------------------------------
-o Sauvegarde (bug avec le dialogue sur linux)
-o Sauvegarde de la saisie des points
 o Sauvegarde de l'historique
 -----------------------------------------------
 

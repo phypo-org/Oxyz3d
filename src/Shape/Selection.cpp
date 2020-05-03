@@ -15,8 +15,8 @@ using namespace std;
 namespace PP3d {
 
   //******************************************
-  Selection * Selection::sTheSelection=nullptr;
-	
+
+  
   Selection::Selection()
   {
   }
@@ -42,6 +42,9 @@ namespace PP3d {
   //--------------------------------
   void Selection::addEntity( EntityPtr ioEntity, bool iSelectAll)
   {
+    //    std::cout << "Selection::addEntity " << ioEntity->getId() << ":" << ioEntity->getType() << std::endl;
+
+
     cSelectObj.emplace( ioEntity );
     ioEntity->setSelect( true );
 
@@ -158,6 +161,7 @@ namespace PP3d {
   {
     DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
 		
+    std::cout << " <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " << std::endl;
 		
     for( PP3d::PickingHit& pHit : pHits )
       {
@@ -235,7 +239,21 @@ namespace PP3d {
 		pSelectMode = SelectMode::Select;
 	      case SelectMode::Inverse:
 	      case SelectMode::Select:
-		addEntity( lEntity );								
+		/*
+		std::cout << " **** selectPickingHit:" << cSelectType << ":" << lEntity->getType() << ":" <<  lEntity->getOwners().size()  << std::endl;
+		if(  cSelectType == SelectType::Poly
+		     && lEntity->getType() != ShapeType::Object
+		     && lEntity->getOwners().size() > 0 )
+		  { // il faut recuperer l'object a partir de owners
+		    for( Entity * lTmp : lEntity->getOwners() )
+		      { 
+			std::cout << "selectPickingHit add owner :"    << lTmp->getType()   << std::endl;
+			addEntity( lTmp );
+		      }
+		  }
+		else
+		*/
+		  addEntity( lEntity );								
 		break;
 	      case SelectMode::Unselect:
 		//		cout <<  " NO " << endl;
@@ -284,6 +302,7 @@ namespace PP3d {
     for( EntityPtr lEntity : lDelList )
       {
 	cSelectObj.erase( lEntity );
+	pDatabase.deleteEntity( lEntity );
       }
   }
   //--------------------------------

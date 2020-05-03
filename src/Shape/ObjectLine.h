@@ -11,82 +11,82 @@
 namespace PP3d {
 
 	
-	class Line;
+  class Line;
   //******************************
 	
   class ObjectLine  : public Object {
 
-		Line*      cShape;
+    Line*      cShape;
 
   public:
     ObjectLine( const char*pName, Line* pLine )
-			: Object( pName )
-			,cShape( pLine)
-		{;}
+      : Object( pName )
+      ,cShape( pLine)
+    {;}
     ObjectLine( const std::string& pName, Line* pLine )
-			: Object( pName )
-			,cShape( pLine)
-		{;}
-		EntityPtr  getShape() override { return cShape; }
-		LinePtr  	 getLine()           { return cShape; }
-	  ObjectType getObjType() const override { return ObjectType::ObjLine; }
+      : Object( pName )
+      ,cShape( pLine)
+    {;}
+    EntityPtr  getShape() override { return cShape; }
+    LinePtr  	 getLine()           { return cShape; }
+    ObjectType getObjType() const override { return ObjectType::ObjLine; }
 		
-		ShapeType getSubType() const override { return ShapeType::Line; }
+    ShapeType getSubType() const override { return ShapeType::Line; }
 
 		
-		//---------------------------		
-		void drawGL( ViewProps& pViewProps ) override
-		{
-			switch( pViewProps.cSelectType )
-			{
-			case SelectType::All:
-			case SelectType::Point:
-				{
-					drawLineGL( pViewProps );					
-					drawPointGL( pViewProps);					
-				}
-				break;
+    //---------------------------		
+    void drawGL( ViewProps& pViewProps ) override
+    {
+      switch( pViewProps.cSelectType )
+	{
+	case SelectType::All:
+	case SelectType::Point:
+	  {
+	    drawLineGL( pViewProps );					
+	    drawPointGL( pViewProps);					
+	  }
+	  break;
 				
-			case SelectType::Line:
-					drawLineGL( pViewProps );					
-					break;
+	case SelectType::Line:
+	  drawLineGL( pViewProps );					
+	  break;
 				
-			default:
-				{
-					VisitorDrawObjectLine	lVisitL( pViewProps, cMyProps);
-					execVisitor( lVisitL );			
+	default:
+	  {
+	    VisitorDrawObjectLine	lVisitL( pViewProps, cMyProps);
+	    execVisitor( lVisitL );			
 						
-				}
-			}
-		}
-		//---------------------------		
-		void selectGL( ViewProps& pViewProps ) override
-		{
-			switch( pViewProps.cSelectType )
-			{
-			case SelectType::All:
-					drawSelectLineGL( pViewProps );					
-					drawSelectPointGL( pViewProps);
-					break;
-			case SelectType::Point:
-				{
-					drawLineGL( pViewProps );					
-					drawSelectPointGL( pViewProps);					
-				}
-				break;
-			case SelectType::Line:
-					drawSelectLineGL( pViewProps );					
-					break;
+	  }
+	}
+    }
+    //---------------------------		
+    void selectGL( ViewProps& pViewProps ) override
+    {
+      switch( pViewProps.cSelectType )
+	{
+	case SelectType::All:
+	  drawSelectLineGL( pViewProps );					
+	  drawSelectPointGL( pViewProps);
+	  break;
+	case SelectType::Point:
+	  {
+	    drawLineGL( pViewProps );					
+	    drawSelectPointGL( pViewProps);					
+	  }
+	  break;
+	case SelectType::Line:
+	  drawSelectLineGL( pViewProps );					
+	  break;
 				
-			default:
-				{
-					VisitorDrawSelectObjectLine	lVisitL( pViewProps, cMyProps);
-					execVisitor( lVisitL );			
+	default:
+	  {
+	    VisitorDrawSelectObjectLine	lVisitL( pViewProps, cMyProps);
+	    execVisitor( lVisitL );			
 					
-				}
-			}
-		}
-	};
+	  }
+	}
+    }
+  };
   //******************************
 
 }

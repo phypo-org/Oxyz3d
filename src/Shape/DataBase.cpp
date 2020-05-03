@@ -14,6 +14,7 @@
 #include "Selection.h"
 #include "EntityVisitor.h"
 #include "SubDiv.h"
+#include "DebugVars.h"
 
 
 namespace PP3d {
@@ -144,20 +145,25 @@ namespace PP3d {
   //		cLiveObj.push_back( pObj );
   //	}
   //------------------------------------------
-  bool DataBase::removeEntityIfNoOwner( EntityId pId )
+
+  bool DataBase::removeEntityIfNoOwner(  EntityId pId )
   {
     auto lIter = cEntities.find( pId );
     if( lIter == cEntities.end() )
       {
-	std::cout << "DataBase::removeEntityIfNoOwner not found" << std::endl;
+	DBG_BAZ( "DataBase::removeEntityIfNoOwner not found" );
 	return true;
       }
 		
     if( lIter->second->howManyOwner() == 0 )
-      {				std::cout << "DataBase::removeEntityIfNoOwner erase " << std::endl;
+      {
+	DBG_BAZ( "DataBase::removeEntityIfNoOwner erase ");
 	cEntities.erase( lIter);
 	return true;
       }
+    else{
+      DBG_BAZ( " removeEntityIfNoOwner failed : too many owner" );
+    }
     return false;
   }
   //------------------------------------------
@@ -497,13 +503,18 @@ namespace PP3d {
   //------------------------------------------
   bool DataBase::deleteEntity( EntityPtr pEntity)
   {
-    std::cout << "DataBase::deleteEntity" << pEntity->getStrType()<<  std::endl;
+    DBG_BAZ( "DataBase::deleteEntity " << pEntity->getStrType() )
+    
     if( pEntity->getType() == ShapeType::Object)
       {
-	std::cout << "DataBase::deleteEntity Object "
-		  << pEntity->howManyOwner() << std::endl;
-		
-	return removeEntityIfNoOwner( pEntity );
+	DBG_BAZ(  "DataBase::deleteEntity Object "
+		  << pEntity->howManyOwner() );
+	if( removeEntityIfNoOwner( pEntity ) == true )
+	  {
+	    cContainerObject.erase( dynamic_cast<Object*>(pEntity ));
+	    return true;
+	  }
+	return false;
       }
     // FAIRE TOUT LES AUTRES CAS !!!!
 		
@@ -524,11 +535,6 @@ namespace PP3d {
 	std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
 	addPointToCurrentLine( lPt->get() );					
       }
-
-		
-    //		switch( pEntity->getType() )
-    //			{
-    //			}
   }
   //---------------------------------------------------------
   void DataBase::resetIdFromMax()

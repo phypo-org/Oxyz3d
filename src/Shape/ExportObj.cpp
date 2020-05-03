@@ -94,10 +94,9 @@ namespace PP3d {
   }
   //--------------------------------------
 
-  bool MyExportObj::save( DataBase& pData )
+  bool MyExportObj::save( DataBase& pData, std::set<Entity*> * iFilter )
   {
     std::cout << "ExportObj::save" << std::endl;
-
 					    
     auto lEntities = pData.getEntities();
 		
@@ -105,7 +104,10 @@ namespace PP3d {
       {				
 	if( lPairEntity.second->getType() != ShapeType::Object )
 	  continue;
-					
+
+	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
+	  continue;
+	
 	auto lEntity = dynamic_cast<Object*>(lPairEntity.second);
 	save( lEntity );
       }

@@ -28,8 +28,7 @@ namespace PP3d {
   class MyRead;
   
   //************************************
-  class  DataBase{
-	 
+  class  DataBase{	 
     static TUniqueId<EntityId, 1>         sUniqueId;
     std::unordered_map<EntityId, Entity*> cEntities;        // contient tout sauf cCurrentLine et cCurrentCreation !
     std::set<Object*>                     cContainerObject; // ne contient que les object
@@ -123,6 +122,7 @@ namespace PP3d {
     //		EntityId   addEntity( Entity* pEntity );		
     bool       removeEntityIfNoOwner( EntityId pId );
     bool       removeEntityIfNoOwner( Entity * pEntity  ) { return removeEntityIfNoOwner( pEntity->getId()); }
+    
     EntityPtr  findEntity( EntityId pId )
     {
       auto lIter = cEntities.find( pId );
@@ -162,6 +162,18 @@ namespace PP3d {
 
     friend class UndoHistory;
     friend class MyRead;
+
+    void execVisitorOnObject( EntityVisitor& pVisit )
+    {
+      for( Object* lObj : cContainerObject )
+	lObj->execVisitor( pVisit );
+    }
+    
+    void execVisitorOnEntity( EntityVisitor& pVisit )
+    {
+     for( auto  lPair : cEntities )
+	lPair.second->execVisitor( pVisit );
+    } 
   };
   //************************************
 }

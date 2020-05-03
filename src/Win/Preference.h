@@ -20,6 +20,7 @@ namespace M3d {
     int cDbgEvt = 0;
     int cDbgAct = 0;
     int cDbgLua = 0;
+    int cDbgTree = 0;
       
     int & cDbgDrw;
     int & cDbgBaz;
@@ -51,5 +52,9 @@ namespace M3d {
 #define DBG_LUA( A )    if( MyPref.cDbgLua > 0 ) std::cout << "DbgLua1> "<< A << std::endl;
 #define DBG_LUA1( A )   if( MyPref.cDbgLua > 1 ) std::cout << "DbgLua2> "<< A << std::endl;
 #define DBG_LUA2( A )   if( MyPref.cDbgLua > 2 ) std::cout << "DbgLua3> "<< A << std::endl;
+
+#define DBG_TREE( A )    if( MyPref.cDbgTree > 0 ) std::cout << "DbgTree1> "<< A << std::endl;
+#define DBG_TREE1( A )   if( MyPref.cDbgTree > 1 ) std::cout << "DbgTree2> "<< A << std::endl;
+#define DBG_TREE2( A )   if( MyPref.cDbgTree > 2 ) std::cout << "DbgTree3> "<< A << std::endl;
   
 #endif

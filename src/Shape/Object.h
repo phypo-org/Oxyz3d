@@ -22,124 +22,124 @@
 
 namespace PP3d {
 
-	class ViewProps;
-	class SubSelect;
+  class ViewProps;
+  class SubSelect;
 
 		
-	enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjNull};
-	inline static const char* GetStrObjectType( ObjectType pType )
-	{
-		switch( pType )
-			{
-			case ObjectType::ObjPoint:  return "ObjPoint";
-			case ObjectType::ObjLine:   return "ObjLine";
-			case ObjectType::ObjFacet:  return "ObjFacet";
-			case ObjectType::ObjPoly:   return "ObjPoly";
-			case ObjectType::ObjPolyline: return "ObjPolyline";
-			case ObjectType::ObjNull: return "Unknown";
-		}
-		return "ObjectType::unknown";
-	}
+  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjNull};
+  inline static const char* GetStrObjectType( ObjectType pType )
+  {
+    switch( pType )
+      {
+      case ObjectType::ObjPoint:  return "ObjPoint";
+      case ObjectType::ObjLine:   return "ObjLine";
+      case ObjectType::ObjFacet:  return "ObjFacet";
+      case ObjectType::ObjPoly:   return "ObjPoly";
+      case ObjectType::ObjPolyline: return "ObjPolyline";
+      case ObjectType::ObjNull: return "Unknown";
+      }
+    return "ObjectType::unknown";
+  }
 	
-	inline static ObjectType GetObjectTypeFromStr( const char* pStr )
-	{
-		if( strcmp( pStr, "ObjPoint" ) == 0 )
-			return ObjectType::ObjPoint;
-		else		if( strcmp( pStr, "ObjLine" ) == 0 )
-			return ObjectType::ObjLine;
-		else		if( strcmp( pStr, "ObjFacet" ) == 0 )
-			return ObjectType::ObjFacet;
-		else		if( strcmp( pStr, "ObjPoly" ) == 0 )
-			return ObjectType::ObjPoly;
-		else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
-			return ObjectType::ObjPolyline;
-		return ObjectType::ObjNull;
-	}
+  inline static ObjectType GetObjectTypeFromStr( const char* pStr )
+  {
+    if( strcmp( pStr, "ObjPoint" ) == 0 )
+      return ObjectType::ObjPoint;
+    else		if( strcmp( pStr, "ObjLine" ) == 0 )
+      return ObjectType::ObjLine;
+    else		if( strcmp( pStr, "ObjFacet" ) == 0 )
+      return ObjectType::ObjFacet;
+    else		if( strcmp( pStr, "ObjPoly" ) == 0 )
+      return ObjectType::ObjPoly;
+    else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
+      return ObjectType::ObjPolyline;
+    return ObjectType::ObjNull;
+  }
 	
-	inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
-	{
-		pOs <<   GetStrObjectType( pType );
-		return pOs;
-	}
+  inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
+  {
+    pOs <<   GetStrObjectType( pType );
+    return pOs;
+  }
 
-	//*********************************
-	class Object : public Entity {
+  //*********************************
+  class Object : public Entity {
 
-	protected:
-		ObjProps                     cMyProps;
-		std::string                  cName;
+  protected:
+    ObjProps                     cMyProps;
+    std::string                  cName;
 	
-	public:
+  public:
 
-		Object(  const char*pName );
-		Object(  const std::string & pName );
-		virtual ~Object();
+    Object(  const char*pName );
+    Object(  const std::string & pName );
+    virtual ~Object();
 		
-		virtual ObjectType getObjType() const =0;
-		ShapeType getType() const override { return ShapeType::Object;}
-		virtual ShapeType getSubType() const =0;
+    virtual ObjectType getObjType() const =0;
+    ShapeType getType() const override { return ShapeType::Object;}
+    virtual ShapeType getSubType() const =0;
 
-		virtual void execVisitor( EntityVisitor& pVisit ) override;
-		virtual void execVisitor( EntityVisitorNode& pVisit ) override;
+    virtual void execVisitor( EntityVisitor& pVisit ) override;
+    virtual void execVisitor( EntityVisitorNode& pVisit ) override;
 
-		//		virtual Entity& getMyEntity();
-		//		virtual const Entity& getMyEntity() const; 
+    //		virtual Entity& getMyEntity();
+    //		virtual const Entity& getMyEntity() const; 
 
-		//		PP3dId  getId() { return getMyEntity().getId(); }
-		virtual EntityPtr getShape()=0;
+    //		PP3dId  getId() { return getMyEntity().getId(); }
+    virtual EntityPtr getShape()=0;
 		
-		PointPtrHash getPoints();
+    PointPtrHash getPoints();
 
-		virtual void recomputeAll(ObjProps&pProps);
+    virtual void recomputeAll(ObjProps&pProps);
 
 
     virtual void drawGL( ViewProps& pViewProps );
     virtual void selectGL( ViewProps& pViewProps );
 
-		virtual void drawPointGL( ViewProps& pViewProps );
-		virtual void drawLineGL( ViewProps& pViewProps );
-		virtual void drawFacetGL( ViewProps& pViewProps );
-		virtual void drawPolyGL( ViewProps& pViewProps );
-		virtual void drawObjectGL( ViewProps& pViewProps );
+    virtual void drawPointGL( ViewProps& pViewProps );
+    virtual void drawLineGL( ViewProps& pViewProps );
+    virtual void drawFacetGL( ViewProps& pViewProps );
+    virtual void drawPolyGL( ViewProps& pViewProps );
+    virtual void drawObjectGL( ViewProps& pViewProps );
 		
-		virtual void drawSelectPointGL( ViewProps& pViewProps );
-		virtual void drawSelectLineGL( ViewProps& pViewProps );
-		virtual void drawSelectFacetGL( ViewProps& pViewProps );
-		virtual void drawSelectPolyGL( ViewProps& pViewProps );
-		virtual void drawSelectObjectGL( ViewProps& pViewProps );
+    virtual void drawSelectPointGL( ViewProps& pViewProps );
+    virtual void drawSelectLineGL( ViewProps& pViewProps );
+    virtual void drawSelectFacetGL( ViewProps& pViewProps );
+    virtual void drawSelectPolyGL( ViewProps& pViewProps );
+    virtual void drawSelectObjectGL( ViewProps& pViewProps );
 
 
-		//		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ); 
+    //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ); 
 
 		
     //virtual void drawSelectionGL( ViewProps& pViewProps );
-		const std::string&   getName()      const     { return cName; }
-		void                 rename( const char* pName) { cName = pName; }
+    const std::string&   getName()      const     { return cName; }
+    void                 rename( const char* pName) { cName = pName; }
 
 	
 		
-		void   setVisible( bool pVisible=true ) { cMyProps.cVisible = pVisible; } 
-		bool   isVisible( bool pVisible=true ) { return cMyProps.cVisible;}
+    void   setVisible( bool pVisible=true ) { cMyProps.cVisible = pVisible; } 
+    bool   isVisible( bool pVisible=true ) { return cMyProps.cVisible;}
 
-		Point3d getCenter() const { return cMyProps.cCenter; }
+    Point3d getCenter() const { return cMyProps.cCenter; }
 
-		friend class DataBase;
+    friend class DataBase;
 	
-	};
-	using ObjectPtr = Object*;
+  };
+  using ObjectPtr = Object*;
 	
-	//*********************************************
-	//	class  ShapeLines : public Object {
+  //*********************************************
+  //	class  ShapeLines : public Object {
 		
-	//	};
-	//*********************************************
-//	class  ShapeFacet : public Object {
+  //	};
+  //*********************************************
+  //	class  ShapeFacet : public Object {
 		
-//	};
-	//*********************************************
-//	class  ShapePoly : public  Object {
-// };	
-	//*********************************************
+  //	};
+  //*********************************************
+  //	class  ShapePoly : public  Object {
+  // };	
+  //*********************************************
 	
 }
 

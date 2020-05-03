@@ -24,6 +24,8 @@
 
 #include <string.h>
 
+#include "Preference.h"
+
 using namespace PP3d;
 
 namespace M3d {
@@ -144,8 +146,7 @@ namespace M3d {
     {
       std::ostringstream lOstr;
       lOstr << cStrRoot << "/Poly " <<  pPoly->getId() << " : " << pPoly->getFacets().size() << "[ ";
-      
- 	
+       	
       for( Facet* lFac: pPoly->getFacets() )
 	{
 	  lOstr << lFac->getId() ;
@@ -173,8 +174,7 @@ namespace M3d {
     }
 
   };
-  //****************************************************
-	
+  //****************************************************	
 
   WinObjTree* WinObjTree::sTheWinObjTree =nullptr;
 
@@ -255,7 +255,7 @@ namespace M3d {
 		
     PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lInput->cUserData2);
 		
-    std::cout << "Rename " << lInput->value() << std::endl;
+    DBG_TREE( "Rename " << lInput->value() );
     lObj->rename( (lInput->value()) );
     Application::Instance().redrawAllCanvas3d();
   }
@@ -267,7 +267,7 @@ namespace M3d {
   //--------------------------------------------
   void WinObjTree::rebuild()
   {
-    std::cout << "+++++++ REBUILD TREE ++++++++++" << std::endl;
+    DBG_TREE( "+++++++ REBUILD TREE ++++++++++" );
     cTree->clear();
     int lH = 18;
   
@@ -347,7 +347,7 @@ namespace M3d {
       }
     cTree->end();
  
-    std::cout << "------- END REBUILD TREE ---------" << std::endl;
+    DBG_TREE( "------- END REBUILD TREE ---------" );
 
     cTree->redraw();
   }

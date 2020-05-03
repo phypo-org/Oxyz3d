@@ -26,6 +26,7 @@
 #include "Shape/ObjectFacet.h"
 #include "Shape/ObjectLine.h"
 #include "Shape/UndoHistory.h"
+#include "Shape/SortVisitor.h"
 
 #include "Utils/PPFile.h"
 
@@ -57,9 +58,11 @@ namespace M3d {
 #define StrMenu_OpenBase         "Open ..."
 #define StrMenu_SaveBase         "Save"
 #define StrMenu_SaveBaseAs       "Save as ..."
-#define StrMenu_ImportBase       "Import ..."
+#define StrMenu_SaveBaseSelect   "Save Selected ..."
+#define StrMenu_MergeBase        "Merge ..."
   
 #define StrMenu_ExportD3dObj     "Export d3d file (.obj) ..."
+#define StrMenu_ExportSelectD3dObj "Export selection d3d file (.obj) ..."
 #define StrMenu_ImportD3dObj     "Import d3d file (.obj) ..."
 
 #define StrMenu_Preferences     "Preferences ..."
@@ -72,7 +75,7 @@ namespace M3d {
 #define StrMenu_ConsolLua       "Console lua"
 
 #define StrMenu_UnselectAll     "Unselect all"
-#define StrMenu_DeleteSelect    "Delete selection"
+#define StrMenu_DeleteSelect    "Delete object selection"
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
 
 #define StrMenu_CreateShape          "New Shape "
@@ -115,15 +118,26 @@ namespace M3d {
   using namespace std;
   
   //-------------------------------------------
-  static bool SaveBase( PP3d::DataBase * ioDatabase, const std::string & iName )
+  static bool SaveBase( PP3d::DataBase * ioDatabase, const std::string & iName, void* iUseSelect )
   {
     // FAIRE FICHIER .backup
     std::ofstream lOut;						
     lOut.open( iName );
     if( lOut.good() )
-      {		
-	PP3d::MySav lSav( lOut );
-	bool lRet = lSav.save( *ioDatabase );
+      {
+	bool lRet;
+	PP3d::MySav lSav( lOut );				
+
+	if( iUseSelect )
+	  {
+	    PP3d::SortEntityVisitor  lVisit;
+	    TheSelection.execVisitorObjects( lVisit );	    	    
+	    lRet = lSav.save( *ioDatabase, &lVisit.cSetAllEntity);
+	  }
+	else
+	  {
+	    lRet = lSav.save( *ioDatabase, nullptr);
+	  }
 	
 	lOut.close();
 	return lRet;
@@ -148,14 +162,25 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
-  static bool ExportD3dObj( PP3d::DataBase * ioDatabase, const std::string & iName )
+  static bool ExportD3dObj( PP3d::DataBase * ioDatabase, const std::string & iName, void* iUseSelect )
   {
     std::ofstream lOut;						
     lOut.open( iName );
     if( lOut.good() )
-      {			
+      {
+	bool lRet;
 	PP3d::MyExportObj lExpObj( lOut );				
-	bool lRet = lExpObj.save( *ioDatabase);
+	
+	if( iUseSelect )
+	  {
+	    PP3d::SortEntityVisitor  lVisit;
+	    TheSelection.execVisitorObjects( lVisit );	    
+	    lRet = lExpObj.save( *ioDatabase, &lVisit.cSetAllEntity);
+	  }
+	else
+	  {
+	   lRet = lExpObj.save( *ioDatabase, nullptr);
+	  }
 	lOut.close();
 	
 	return lRet;
@@ -180,16 +205,17 @@ namespace M3d {
   //------------------------------------------------------
   //------------------------------------------------------
   //------------------------------------------------------
+  
   static void SaveBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
 			  void            *cData )	// I - Data
   {
     printf(" SaveAsCB filename = \"%s\"\n",  cFc->value() ?  cFc->value() : "(null)");        
     
-    if( cFc->value()  )
+    if( cFc->value() )
       {
 	std::string lFilename = cFc->value();
 
-	if( SaveBase( Application::Instance().getDatabase(), lFilename ) )
+	if( SaveBase( Application::Instance().getDatabase(), lFilename, cData) )
 	  {
 	    MyPref.cLastSave = lFilename;
 	  }
@@ -230,7 +256,7 @@ namespace M3d {
   //-------------------------------------------
   // on ajoute a la base courante la nlle base
   
-  static void ImportBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
+  static void MergeBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
 			    void            *cData)	// I - Data
   {    
     printf(" ReadCB filename = \"%s\"\n",  cFc->value() ?  cFc->value() : "(null)");        
@@ -263,7 +289,7 @@ namespace M3d {
 	std::string lFilename = cFc->value();
 
 	
-	if( ExportD3dObj( Application::Instance().getDatabase(), lFilename ) )
+	if( ExportD3dObj( Application::Instance().getDatabase(), lFilename, cData ))
 	  {
 	  }
 	else
@@ -640,15 +666,18 @@ namespace M3d {
 
     
     //================================
-    cMenubar.add("&File/"         StrMenu_NewBase,    "^n", MyMenuCallback, this, FL_MENU_DIVIDER);
-    
+    cMenubar.add("&File/"         StrMenu_NewBase,    "^n", MyMenuCallback, this); 
     cMenubar.add("&File/"         StrMenu_OpenBase,    "^o", MyMenuCallback, this);
+    cMenubar.add("&File/"         StrMenu_MergeBase,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    
     cMenubar.add("&File/"         StrMenu_SaveBase,    "^s", MyMenuCallback, this);
     cMenubar.add("&File/"         StrMenu_SaveBaseAs,  "", MyMenuCallback, this);
-    cMenubar.add("&File/"         StrMenu_ImportBase,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add("&File/"         StrMenu_SaveBaseSelect,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
     
-    cMenubar.add("&File/"         StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this);
-    cMenubar.add("&File/"         StrMenu_ImportD3dObj,  "^i", MyMenuCallback, this, FL_MENU_DIVIDER);
+   
+    cMenubar.add("&File/Export/"         StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this);
+    cMenubar.add("&File/Export/"         StrMenu_ExportSelectD3dObj,"", MyMenuCallback, this);
+    cMenubar.add("&File/Import/"         StrMenu_ImportD3dObj,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
     cMenubar.add("&File/"         StrMenu_Preferences,  "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
     cMenubar.add("&File/&Quit",                     "^q", QuitCallback,   this);
@@ -682,7 +711,8 @@ namespace M3d {
     //================================
     cMenubar.add("&Transform/" StrMenu_TransformMoveX, "", MyMenuCallback, this);
     cMenubar.add("&Transform/" StrMenu_TransformMoveY, "", MyMenuCallback, this);
-    cMenubar.add("&Transform/" StrMenu_TransformMoveZ, "", MyMenuCallback, this);
+    cMenubar.add("&Transform/" StrMenu_TransformMoveZ, "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    
     cMenubar.add("&Transform/" StrMenu_TransformRotX, "", MyMenuCallback, this);
     cMenubar.add("&Transform/" StrMenu_TransformRotY, "", MyMenuCallback, this);
     cMenubar.add("&Transform/" StrMenu_TransformRotZ, "", MyMenuCallback, this);
@@ -782,7 +812,7 @@ namespace M3d {
 	{
 	  if( MyPref.cLastSave.size() )
 	    {
-	      if( SaveBase( Application::Instance().getDatabase(), MyPref.cLastSave ) == false )
+	      if( SaveBase( Application::Instance().getDatabase(), MyPref.cLastSave, 0 ) == false )
 		{
 		  fl_alert( "Saving database in <%s> failed",  MyPref.cLastSave.c_str());
 		}
@@ -794,16 +824,26 @@ namespace M3d {
 	    Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
 						       Fl_File_Chooser::CREATE,
 						       "Save base as");
-	    lFc->callback( SaveBaseCB );			 
+	   
+	    lFc->callback( SaveBaseCB, 0 );			 
 	    lFc->show();
 	  }
 	else //========================================
-	  if( strcmp( m->label(), StrMenu_ImportBase)== 0 )
+	  if( strcmp( m->label(), StrMenu_SaveBaseSelect ) == 0)
+	  {
+	    Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
+						       Fl_File_Chooser::CREATE,
+						       "Save base as");
+	    lFc->callback( SaveBaseCB, (void*)1 );			 
+	    lFc->show();
+	  }
+	else //========================================
+	  if( strcmp( m->label(), StrMenu_MergeBase)== 0 )
 	    {
 	      Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
 							 Fl_File_Chooser::SINGLE,
 							 "Import Oxyz3d database");	      
-	      lFc->callback( ImportBaseCB );
+	      lFc->callback( MergeBaseCB );
 	      lFc->show();
 	    }
 	  else //========================================
@@ -813,7 +853,17 @@ namespace M3d {
 							   Fl_File_Chooser::CREATE,
 							   "Export for d3d");
 	    	    
-		lFc->callback( ExportD3dObjCB );
+		lFc->callback( ExportD3dObjCB, 0 );
+		lFc->show();
+	      }
+	  else //========================================
+	    if( strcmp( m->label(),StrMenu_ExportSelectD3dObj ) == 0)
+	      {	    
+		Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.d3d",
+							   Fl_File_Chooser::CREATE,
+							   "Export for d3d");
+	    	    
+		lFc->callback( ExportD3dObjCB, (void*)1 );
 		lFc->show();
 	      }
 	    else //========================================

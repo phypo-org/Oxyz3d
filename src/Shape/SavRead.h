@@ -4,6 +4,9 @@
 #include <ostream>
 #include <istream>
 #include <fstream>
+#include <set>
+
+#include "Entity.h"
 
 namespace PP3d {
 
@@ -19,7 +22,7 @@ namespace PP3d {
       :cOut( pOut )
     {;}
 
-    bool save( DataBase& pData );
+    bool save( DataBase& pData, std::set<Entity*> * iFilter = nullptr );
 
     static bool Save( const char* iFileIn, PP3d::DataBase& iDatabase )
     {

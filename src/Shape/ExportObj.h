@@ -4,6 +4,7 @@
 #include <ostream>
 #include <istream>
 #include <unordered_map>
+#include <set>
 
 
 #include "Entity.h"
@@ -30,7 +31,7 @@ namespace PP3d {
 		{;}
 
 		bool save( Object* lObject );
-		bool save( DataBase& pData );		
+		bool save( DataBase& pData, std::set<Entity*> * iFilter = nullptr );		
 	};
 	//*************************************
 	class MyImportObj{

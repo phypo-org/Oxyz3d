@@ -112,15 +112,15 @@ namespace M3d {
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this);
+    //    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 	
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 		
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);
@@ -168,10 +168,10 @@ namespace M3d {
   {
     pMenu.add( StrMenu_CreateCube , "^c",   MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateTetra, "^t",   MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_CreatePyramid, "^t", MyMenuCallbackPrimitiv, this);
-    pMenu.add( StrMenu_CreateOcto,   "^t",  MyMenuCallbackPrimitiv,    this);
-    pMenu.add( StrMenu_CreateDodec,   "^t", MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_CreateIcosahe, "^t", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_CreatePyramid, "^p", MyMenuCallbackPrimitiv, this);
+    pMenu.add( StrMenu_CreateOcto,   "^o",  MyMenuCallbackPrimitiv,    this);
+    pMenu.add( StrMenu_CreateDodec,   "^d", MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateIcosahe, "^i", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
 
     if( Application::Instance().getDatabase()->isCurrentPoints()&& Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
       pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
@@ -184,7 +184,7 @@ namespace M3d {
   }
   //-------------------------------------------
   //-------------------------------------------
-  //-------------------------------------------
+ //-------------------------------------------
   #define BEGINCALL \
    static bool slFlagDialog=false; \
 		\
