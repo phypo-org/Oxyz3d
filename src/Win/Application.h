@@ -14,6 +14,7 @@
 #include "Shape/UndoHistory.h"
 
 #include "Utils/PPSingletonCrtp.h"
+#include "Utils/PPConfig.h"
 
 namespace M3d{
 
@@ -32,6 +33,7 @@ namespace M3d{
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
     M3d::ShapeLua*                        cLua=nullptr;
 
+    PPu::PPConfig  cMyConfig;
 	
   private:			
     Application();
@@ -46,6 +48,8 @@ namespace M3d{
     static const int sIconSize = 32;
     static const int sIconSmallSize = 16;
 
+    PPu::PPConfig & getConfig() { return cMyConfig; }
+    
     void setCurrentTransformType( Transform lTrans)
     {	
       cCurrentTransf.raz();
@@ -98,6 +102,7 @@ namespace M3d{
     void setCursorPosition( PP3d::Point3d& pPos);
 
 #define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() )
+#define TheAppli M3d::Application::Instance()
     
   };
   //************************************

@@ -48,7 +48,12 @@ int main(int argc, char **argv)
       lVectParam.push_back( argv[i]);
     }
   
-
+  
+  if( TheAppli.getConfig().readFile( argc, argv) == false )
+    {
+      WARN_LOG( "Config file not found : " <<  TheAppli.getConfig().getFilename() );
+    }
+  
   
   Fl::use_high_res_GL(1);
 
