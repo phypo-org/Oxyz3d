@@ -2,12 +2,17 @@
 #define H__PREF__H
 
 #include "Utils/PPSingletonCrtp.h"
+#include "Utils/PPConfig.h"
+#include "Utils/PPArgs.h"
 
 #include "Shape/DebugVars.h"
+
+#include <string>
 
 
 namespace M3d {
   //*********************************
+
   class Preference : public virtual PPSingletonCrtp<Preference>{
       
   public:
@@ -26,12 +31,19 @@ namespace M3d {
     int & cDbgBaz;
     int & cDbgSel;
 
+    
+    int & cDbgFil;
+    int & cDbgIni;
+
     //Select
     bool cSelectPassOverLighting = true ; // inlight entity when passing on
       
     friend class PPSingletonCrtp;
       
     Preference();
+    
+    void initFromIni( PPu::PPConfig & iConfig );    
+    void initFromArg( PPu::PPArgs   & iArgs );
   };
   //*********************************
 
@@ -43,7 +55,6 @@ namespace M3d {
 #define DBG_EVT1( A )   if( MyPref.cDbgEvt > 1 ) std::cout << "DbgSel1> " << A << std::endl;
 #define DBG_EVT2( A )   if( MyPref.cDbgEvt > 2 ) std::cout << "DbgSel0> " << A << std::endl;
 #define DBG_EVT_NL( A ) if( MyPref.cDbgEvt > 0 ) std::cout << "DbgSel> " << A ;
-
   
 #define DBG_ACT( A )    if( MyPref.cDbgAct > 0 ) std::cout << "DbgAct0> " << A << std::endl;
 #define DBG_ACT1( A )   if( MyPref.cDbgAct > 1 ) std::cout << "DbgAct1> "<< A << std::endl;

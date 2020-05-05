@@ -214,8 +214,7 @@ namespace M3d {
   }
   //---------------------------
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
-  {
-    
+  {    
     DBG_SEL( " processHits=" <<  pNbHits );
 		
     GLuint*	ptr = (GLuint *) pSelectBuf;

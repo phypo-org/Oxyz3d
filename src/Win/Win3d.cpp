@@ -362,6 +362,8 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
+  // Change selection mode
+  
   static void	BasculeSelModeCB(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
@@ -399,6 +401,8 @@ namespace M3d {
     lWin3d->canvasRedraw();
   }
   //-------------------------------------------
+  // Change view mode
+  
   static void	BasculeViewModeCB(Fl_Widget*w, void*pData)
   {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);

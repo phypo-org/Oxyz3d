@@ -63,6 +63,7 @@ namespace PPu {
 
     public:    
       bool get ( const char* iSection, const char* iVariable, std::string &oValue );
+      
       bool get ( const char* iSection, const char* iVariable, int & oValue );
       bool get ( const char* iSection, const char* iVariable, long & oValue );
       bool get ( const char* iSection, const char* iVariable, long long & oValue );

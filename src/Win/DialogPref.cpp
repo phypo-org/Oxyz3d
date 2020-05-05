@@ -60,7 +60,8 @@ namespace M3d {
     MyIntInput* cDbgSel;
     MyIntInput* cDbgLua;
     MyIntInput* cDbgTree;
-
+    MyIntInput* cDbgFil;
+    MyIntInput* cDbgIni;
 
     
     //----------------------------------------
@@ -93,6 +94,8 @@ namespace M3d {
       INT_VALUE(cDbgSel);
       INT_VALUE(cDbgLua);
       INT_VALUE(cDbgTree);
+      INT_VALUE(cDbgFil);
+      INT_VALUE(cDbgIni);
 
 	
 
@@ -165,12 +168,14 @@ namespace M3d {
 	  cDbgEvt = new MyIntInput( lX, lY, 200, lH, "Debug Event", MyPref.cDbgEvt );
 	  lY += cDbgEvt->h() + lMarge;
 	  
-	  INTPUT_INT( cDbgAct, "Debug Action" );
+	  INTPUT_INT( cDbgAct, "Debug Action (windows events)" );
 	  INTPUT_INT( cDbgDrw, "Debug Draw" );
-	  INTPUT_INT( cDbgBaz, "Debug Base" );
-	  INTPUT_INT( cDbgSel, "Debug Sel" );	  
+	  INTPUT_INT( cDbgBaz, "Debug Database" );
+	  INTPUT_INT( cDbgSel, "Debug Selection " );	  
+	  INTPUT_INT( cDbgTree,"Debug Tree" );
+	  INTPUT_INT( cDbgFil, "Debug File (read write ...)" );
+	  INTPUT_INT( cDbgIni, "Debug configuration (config.ini)" );
 	  INTPUT_INT( cDbgLua, "Debug Lua" );
-	  INTPUT_INT( cDbgTree, "Debug Tree" );
 	  /*
 
 	  
