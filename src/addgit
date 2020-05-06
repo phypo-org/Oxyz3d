@@ -1,0 +1,4 @@
+
+#!/bin/bash
+
+git add Shape/*.cpp Shape/*.h Shape/Makefile  Win/*.cpp  Win/*.h Win/Makefile  Utils/*.cpp  Utils/*.h Utils/Makefile

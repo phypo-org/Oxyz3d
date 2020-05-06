@@ -121,7 +121,7 @@ namespace PP3d {
 #define ReadEndLine		std::getline(	cIn,  lEndOfLine, '\n' )
 
   //--------------------------------
-  bool MyImportObj::read( DataBase& pData, bool pConserveOldId  )
+  bool MyImportObj::read( DataBase& pData, bool pConserveOldId )
   {
     std::unordered_map<EntityId,EntityId>  lHashId;
     try {				
@@ -250,12 +250,17 @@ namespace PP3d {
 	    {
 	      ReadEndLine;
 	      std::cerr << "unknown command : " << lToken	<< ":" << lEndOfLine << std::endl;
-	    }	
+	    }
 	}
-    }	catch( const std::exception & lEx ) {				
-      std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;
+ 	  
+      Object* lObj = new ObjectPoly( cName.c_str(), lPoly );
+      pData.addObject( lObj );
     }
-			
+    catch( const std::exception & lEx ) {				
+      std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;
+      return false;
+    }
+    
     return true;
   }
   //*************************************

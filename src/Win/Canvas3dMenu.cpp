@@ -41,18 +41,30 @@ using namespace std;
 namespace M3d {
 
 	
-#define StrMenu_CreateCube      "Cube"
-#define StrMenu_CreateTetra     "Tetraede"
-#define StrMenu_CreatePyramid   "Pyramide"
-#define StrMenu_CreateOcto      "Octoedre"
-#define StrMenu_CreateDodec     "Dodecaedre"
-#define StrMenu_CreateIcosahe   "Icosaedre"
+#define StrMenu_CreateCube      "Cube       ..."
+#define StrMenu_CreateTetra     "Tetraede   ..."
+#define StrMenu_CreatePyramid   "Pyramide   ..."
+#define StrMenu_CreateOcto      "Octoedre   ..."
+#define StrMenu_CreateDodec     "Dodecaedre ..."
+#define StrMenu_CreateIcosahe   "Icosaedre  ..."
 	
 #define StrMenu_CreateShape          "New Shape "
-#define StrMenu_CreateShapeLine      StrMenu_CreateShape  "Line"
-#define StrMenu_CreateShapePolyline  StrMenu_CreateShape  "Polyline"
+#define StrMenu_CreateShapeLine      StrMenu_CreateShape "Line"
+#define StrMenu_CreateShapePolyline  StrMenu_CreateShape "Polyline"
 #define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
 
+
+#define StrMenu_Revol     "New Revol "
+#define StrMenu_RevolX    StrMenu_Revol "X ..."
+#define StrMenu_RevolY    StrMenu_Revol "Y ..."
+#define StrMenu_RevolZ    StrMenu_Revol "Z ..."
+  	
+#define StrMenu_CallDialoDiagSub     "New Subdivide ..."
+
+#define StrMenu_Demo1            "Demo 1"
+#define StrMenu_Demo2            "Demo 2"
+
+  
 #define StrMenu_Move     "Move"
 #define StrMenu_MoveX    "Move X"
 #define StrMenu_MoveY    "Move Y"
@@ -106,9 +118,10 @@ namespace M3d {
       }
   }
   //-------------------------------------------
+  //
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
-
+    
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this);
@@ -161,26 +174,50 @@ namespace M3d {
       case PP3d::SelectType::All :
       default:;
       }
-
   }
   //-------------------------------------------
+  // If no entity is selected
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
   {
-    pMenu.add( StrMenu_CreateCube , "^c",   MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_CreateTetra, "^t",   MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_CreatePyramid, "^p", MyMenuCallbackPrimitiv, this);
-    pMenu.add( StrMenu_CreateOcto,   "^o",  MyMenuCallbackPrimitiv,    this);
-    pMenu.add( StrMenu_CreateDodec,   "^d", MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_CreateIcosahe, "^i", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_CreateCube ,    "^c",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateTetra,    "^t",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreatePyramid,  "^p",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateOcto,     "^o",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateDodec,    "^d",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateIcosahe,  "^i",  MyMenuCallbackPrimitiv,   this, FL_MENU_DIVIDER);
 
-    if( Application::Instance().getDatabase()->isCurrentPoints()&& Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
-      pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
-		
-    if( Application::Instance().getDatabase()->isCurrentPoints() && Application::Instance().getDatabase()->getNbCurrentPoints()  >= 3 )
-      pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
+    // Ajouter sphere (2 types differents)
+    // Ajouter cone
+    // Ajouter cylindre (revolution) (disque,  anneau si troue)
+    // Ajouter nappe
+    // Ajout anneau
+    // Ajout helice 
+    // ... Ajout script lua !!! plugin
+    
+    if( Application::Instance().getDatabase()->isCurrentPoints()
+	&& Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
+      {
+	pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
+      }
+    
+    if( Application::Instance().getDatabase()->isCurrentPoints()
+	&& Application::Instance().getDatabase()->getNbCurrentPoints()  >= 3 )
+      {
+	pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
+      }
+    
+    if( Application::Instance().getDatabase()->isCurrentPoints()
+	&& Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
+      {
+	pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this, FL_MENU_DIVIDER);
+      }
 
-    if( Application::Instance().getDatabase()->isCurrentPoints()&& Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
-      pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this);
+    pMenu.add( StrMenu_RevolX, "^x", MyMenuCallbackPrimitiv, this);
+    pMenu.add( StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this);
+    pMenu.add( StrMenu_RevolZ, "^z", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+
+    pMenu.add( StrMenu_CallDialoDiagSub, "^b",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+
   }
   //-------------------------------------------
   //-------------------------------------------
@@ -231,10 +268,11 @@ namespace M3d {
       {
 	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
       }
+    //===================== Shape ==============
     else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
       {
 	PP3d::Object* lShape=nullptr;
-						
+	//-----------------
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
 	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
@@ -242,6 +280,7 @@ namespace M3d {
 		lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
 	      }
 	  }
+	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
 	    if( Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
@@ -249,24 +288,47 @@ namespace M3d {
 		lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
 	      }
 	  } 
+	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
 	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
 	      {
 		lShape = Application::Instance().getDatabase()->convertCurrentLineToLine();
 	      }
-	  } 
+	  }
+	
 	if( lShape != nullptr )
 	  {
 	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
-								
+	    PushHistory();
+	    
 	    Application::Instance().redrawAllCanvas3d();
-	    Application::Instance().redrawObjectTree();
+	    Application::Instance().redrawObjectTree();	     
 	  }
       }
+    //===================== Revolution ==============
+    else if( strncmp( m->label(), StrMenu_Revol, strlen(StrMenu_Revol)  ) == 0)
+      {
+	if( strcmp( m->label(), StrMenu_RevolX )  == 0)
+	  {
+	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolX  );
+	  }
+	else if( strcmp( m->label(), StrMenu_RevolY )  == 0)
+	  {
+	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolY  );
+	  }
+
+	else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
+	  {
+	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolZ  );
+	  }									
+      }
+    //========================================
+    else if( strcmp( m->label(), StrMenu_CallDialoDiagSub ) == 0)
+      {
+	CallDialogSubDiv( slFlagDialog, lCanvas );
+      }    
   }
-
-
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
   {	  		

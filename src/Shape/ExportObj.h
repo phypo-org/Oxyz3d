@@ -13,40 +13,42 @@
 
 namespace PP3d {
 
-	class DataBase;
+  class DataBase;
 	
-	//*************************************
-	class MyExportObj{
+  //*************************************
+  class MyExportObj{
 
 
-	public:
-		std::ostream & cOut;
+  public:
+    std::ostream & cOut;
 
-		std::unordered_map<EntityId,EntityId>  cHashId;
-		EntityId                               cCurrentPointId=1;
+    std::unordered_map<EntityId,EntityId>  cHashId;
+    EntityId                               cCurrentPointId=1;
 											 
 
-		MyExportObj( std::ostream& pOut )
-			:cOut( pOut )
-		{;}
+    MyExportObj( std::ostream& pOut )
+      :cOut( pOut )
+    {;}
 
-		bool save( Object* lObject );
-		bool save( DataBase& pData, std::set<Entity*> * iFilter = nullptr );		
-	};
-	//*************************************
-	class MyImportObj{
+    bool save( Object* lObject );
+    bool save( DataBase& pData, std::set<Entity*> * iFilter = nullptr );		
+  };
+  //*************************************
+  class MyImportObj{
 
-		std::istream& cIn;
+    std::istream& cIn;
+    std::string   cName = "import";
 
-	public:
-		MyImportObj( std::istream& pIn )
-			:cIn( pIn )
-		{
-		}
-		bool read( DataBase& pData, bool lConserverOldId = false );
-	};
+    public:
+    MyImportObj( std::istream& pIn )
+      :cIn( pIn )
+    {
+    }
+    bool read( DataBase& pData, bool lConserverOldId = false );
+    void setName( std::string & iName ) { cName = iName; }
+  };
 	
-	//*************************************
+  //*************************************
 
 	
 }

@@ -84,6 +84,19 @@ namespace PPu {
       
       return "";
     }
+    //----------------------------------------------------  
+    static inline std::string WithoutExtension( const std::string& iFilePath )
+    {
+      size_t lLength =  iFilePath.length();
+      
+      size_t i = iFilePath.rfind( '.', lLength);
+      if (i != std::string::npos)
+	{
+	  return(iFilePath.substr(0, i ));
+	}
+      
+      return iFilePath;
+    }
      //----------------------------------------------------  
     static inline std::string FullExtension( const std::string& iFilePath )
     {           
@@ -98,6 +111,20 @@ namespace PPu {
       
       return "";
     }
+    //----------------------------------------------------  
+    static inline std::string WithoutFullExtension( const std::string& iFilePath )
+    {
+      size_t lLength =  iFilePath.length();
+      
+      size_t i = iFilePath.find( '.' );
+      if (i != std::string::npos)
+	{
+	  return(iFilePath.substr(0, i ));
+	}
+      
+      return iFilePath;
+    }
+
    //----------------------------------------------------  
    static inline std::string JoinPathNames(const std::string& iDirname, const std::string& iName)
     {

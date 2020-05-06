@@ -27,6 +27,9 @@
 #include "Shape/ObjectLine.h"
 #include "Shape/UndoHistory.h"
 #include "Shape/SortVisitor.h"
+#include "Shape/Selection.h"
+#include "Shape/SavRead.h"
+#include "Shape/ExportObj.h"
 
 #include "Utils/PPFile.h"
 
@@ -40,10 +43,6 @@
 #include "Preference.h"
 
 
-#include "Shape/Selection.h"
-
-#include "Shape/SavRead.h"
-#include "Shape/ExportObj.h"
 
 #include <memory>
 
@@ -78,43 +77,14 @@ namespace M3d {
 #define StrMenu_DeleteSelect    "Delete object selection"
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
 
-#define StrMenu_CreateShape          "New Shape "
-#define StrMenu_CreateShapePolyline  StrMenu_CreateShape  "Polyline"
-#define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
-
-	
-#define StrMenu_CallDialoDiagSub     "New Subdivide ..."
-
-#define StrMenu_Revol     "New Revol "
-#define StrMenu_RevolX    StrMenu_Revol "X ..."
-#define StrMenu_RevolY    StrMenu_Revol "Y ..."
-#define StrMenu_RevolZ    StrMenu_Revol "Z ..."
-
 
 	
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings ..."
 
-
-#define StrMenu_TransformMoveX    "Move X"
-#define StrMenu_TransformMoveY    "Move Y"
-#define StrMenu_TransformMoveZ    "Move Z"
-
-#define StrMenu_TransformRotX     "Rotate X"
-#define StrMenu_TransformRotY     "Rotate Y"
-#define StrMenu_TransformRotZ     "Rotate Z"
-
-	
-#define StrMenu_CreateCube      "Cube ..."
-#define StrMenu_CreateTetra     "Tetraede ... "
-#define StrMenu_CreatePyramid   "Pyramide ... "
-#define StrMenu_CreateOcto      "Octoedre ... "
-#define StrMenu_CreateDodec     "Dodecaedre ..."
-#define StrMenu_CreateIcosahe   "Icosaedre ..."
-
 #define StrMenu_Demo1            "Demo 1"
 #define StrMenu_Demo2            "Demo 2"
-	
+  
   using namespace std;
   
   //-------------------------------------------
@@ -196,6 +166,8 @@ namespace M3d {
     if( lIn.good() )
       {									
 	PP3d::MyImportObj lRead( lIn );
+	std::string lTmp = PPu::PPFile::WithoutExtension( PPu::PPFile::LastPath( iName ) );
+	lRead.setName( lTmp );
 	bool lRet = lRead.read( *ioDatabase );
 	lIn.close();
 	return lRet;
@@ -695,33 +667,6 @@ namespace M3d {
     cMenubar.add("&Selection/"  StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
     //================================
 
-			
-    cMenubar.add("&Create/" StrMenu_CreateCube , "^c", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_CreateTetra, "^t", MyMenuCallback, this );
-    cMenubar.add("&Create/" StrMenu_CreatePyramid, "^p", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_CreateOcto, "^o", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_CreateDodec, "^d", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_CreateIcosahe, "^i", MyMenuCallback, this, FL_MENU_DIVIDER);
-		
-    cMenubar.add("&Create/" StrMenu_CreateShapeFacet, "^f", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_CreateShapePolyline, "^l",MyMenuCallback, this, FL_MENU_DIVIDER);
-
-    cMenubar.add("&Create/" StrMenu_RevolX, "", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_RevolY, "", MyMenuCallback, this);
-    cMenubar.add("&Create/" StrMenu_RevolZ, "", MyMenuCallback, this, FL_MENU_DIVIDER);
-
-    cMenubar.add("&Create/" StrMenu_CallDialoDiagSub, "^b",MyMenuCallback, this, FL_MENU_DIVIDER);
-
-    //================================
-    cMenubar.add("&Transform/" StrMenu_TransformMoveX, "", MyMenuCallback, this);
-    cMenubar.add("&Transform/" StrMenu_TransformMoveY, "", MyMenuCallback, this);
-    cMenubar.add("&Transform/" StrMenu_TransformMoveZ, "", MyMenuCallback, this, FL_MENU_DIVIDER);
-    
-    cMenubar.add("&Transform/" StrMenu_TransformRotX, "", MyMenuCallback, this);
-    cMenubar.add("&Transform/" StrMenu_TransformRotY, "", MyMenuCallback, this);
-    cMenubar.add("&Transform/" StrMenu_TransformRotZ, "", MyMenuCallback, this);
-	
-    //================================
 		
     cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p", MyMenuCallback, this);
 
@@ -737,25 +682,8 @@ namespace M3d {
     //================================
 
 		
-    /*
-      menubar.menu(menutable);
-      menubar.callback(test_cb);
-      menus[0] = &menubar;
-      Fl_Menu_Bar menubar2(0,31,window.w(),30); 
-      menubar2.menu(menutable);
-      menubar2.callback(test_cb);
-      menus[1] = &menubar2;
-    */
-		
-		
     cuCanvas3d->cPopup = new	Fl_Menu_Button( 0, 0, 1, 1);
-		
-    //		cuCanvas3d->cPopup->type(Fl_Menu_Button::POPUP3);
-    //	cuCanvas3d->cPopup->add("This|is|a popup|menu");
-		
-    //================
-	
-    //    cFileChooser = new Fl_File_Chooser();
+
     
     end();
     show(0,nullptr);
@@ -853,9 +781,9 @@ namespace M3d {
 	  else //========================================
 	    if( strcmp( m->label(),StrMenu_ExportD3dObj ) == 0)
 	      {	    
-		Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.d3d",
+		Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
 							   Fl_File_Chooser::CREATE,
-							   "Export for d3d");
+							   "Export for d3d (.obj)");
 	    	    
 		lFc->callback( ExportD3dObjCB, 0 );
 		lFc->show();
@@ -863,9 +791,9 @@ namespace M3d {
 	  else //========================================
 	    if( strcmp( m->label(),StrMenu_ExportSelectD3dObj ) == 0)
 	      {	    
-		Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.d3d",
+		Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
 							   Fl_File_Chooser::CREATE,
-							   "Export for d3d");
+							   "Export for d3d (.obj)");
 	    	    
 		lFc->callback( ExportD3dObjCB, (void*)1 );
 		lFc->show();
@@ -873,9 +801,9 @@ namespace M3d {
 	    else //========================================
 	      if( strcmp( m->label(), StrMenu_ImportD3dObj )== 0 )
 		{												
-		  Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.d3d",
+		  Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
 							     Fl_File_Chooser::SINGLE,
-							     "Import d3d file");	      
+							     "Import d3d file (.obj)");	      
 		  lFc->callback( ImportD3dObjCB );					
 		  lFc->show();
 		}
@@ -894,132 +822,17 @@ namespace M3d {
 		  {
 		    cout << "Select menu :" << StrMenu_DeleteSelect << endl;
 		    PP3d::Selection::Instance().deleteAllFromDatabase( *Application::Instance().getDatabase());
+		    PushHistory();			    
 		    Application::Instance().redrawAllCanvas3d();
 		    Application::Instance().redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
-		    PP3d::Selection::Instance().addSelectionToInput( *Application::Instance().getDatabase(), false);				
+		    PP3d::Selection::Instance().addSelectionToInput( *Application::Instance().getDatabase(), false);
+		    PushHistory();
 		    Application::Instance().redrawAllCanvas3d();
 		    Application::Instance().redrawObjectTree();
-		  }
-		else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::CUBE  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CreateTetra ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::TETRA  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CreatePyramid ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::PYRAMID  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CreateOcto ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog,lCanvas, PP3d::PrimitivFactory::Type::OCTO  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CreateDodec ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::DODEC  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CreateIcosahe ) == 0)
-		  {
-		    CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
-		  }
-		else if( strcmp( m->label(), StrMenu_CallDialoDiagSub ) == 0)
-		  {
-		    CallDialogSubDiv( slFlagDialog, lCanvas );
-		  }
-		else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
-		  {
-		    PP3d::Object * lShape=nullptr;
-				
-		    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
-		      {
-			if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
-			  {
-			    lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
-			    PushHistory();
-			  }
-			else {
-			  SINFO ( lWin3d, "Error : Almost 3 points is requiered to create facet" );
-			}
-		      }
-		    else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
-		      {
-			if(   Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
-			  {
-			    lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
-			    PushHistory();
-			  }
-			else {				
-			  if(  Application::Instance().getDatabase()->getNbCurrentPoints() < 2 )
-			    return;
-							
-			  if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
-			    {						
-			      lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
-			      PushHistory();
-			    }
-						
-			  SINFO ( lWin3d, "Error : Almost 2 points is requiered to create facet" );
-			}
-		      }
-			
-		    if( lShape != nullptr )
-		      {
-			Application::Instance().redrawAllCanvas3d();
-			Application::Instance().redrawObjectTree();
-		      }
-		  }
-		else if( strncmp( m->label(), StrMenu_Revol, strlen(StrMenu_Revol)  ) == 0)
-		  {
-		    if( strcmp( m->label(), StrMenu_RevolX )  == 0)
-		      {
-			CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolX  );
-		      }
-		    else if( strcmp( m->label(), StrMenu_RevolY )  == 0)
-		      {
-			CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolY  );
-		      }
-
-		    else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
-		      {
-			CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolZ  );
-		      }									
-		  }
-    //============== TRANSFORMATION ====================
-		else if( strcmp( m->label(), StrMenu_TransformMoveX ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType(Transform::MoveX);
-		  }
-		else if( strcmp( m->label(), StrMenu_TransformMoveY ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType(Transform::MoveY);
-		  }
-		else if( strcmp( m->label(), StrMenu_TransformMoveZ ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType(Transform::MoveZ);
-		  }
-		else if( strcmp( m->label(), StrMenu_TransformRotX ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType(Transform::CenterRotX);
-		  }
-		else if( strcmp( m->label(), StrMenu_TransformRotY ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType( Transform::CenterRotY );
-		  }
-		else if( strcmp( m->label(), StrMenu_TransformRotZ ) == 0)
-		  {
-		    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-		    Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
 		  }
 
 
