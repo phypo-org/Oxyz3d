@@ -79,7 +79,7 @@ namespace PP3d {
     Selection();
 		
     //#define Selection::sTheSelection &Selection::
-#define TheSelection PP3d::Selection::Instance()
+#define TheSelect PP3d::Selection::Instance()
 		
   protected:
 		

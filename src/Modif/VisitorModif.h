@@ -1,4 +1,7 @@
-#include "Selection.h"
+#ifndef H__VISITOR_MODIF__H
+#define H__VISITOR_MODIF__H
+
+#include "Shape/Selection.h"
 
 namespace PP3d {
 
@@ -76,7 +79,7 @@ namespace PP3d {
     double  cCoef=1;
     
     //---------------------------------
-    void addOwner( EntityPtr iEntity )
+    void setOwner( EntityPtr iEntity )
     {
       if( iEntity->getType() >= ShapeType::Facet )
 	{
@@ -93,7 +96,7 @@ namespace PP3d {
     {
       for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	{
-	  addOwner( lEntity );
+	  setOwner( lEntity );
 	}  
     }    
     //---------------------------------
@@ -196,4 +199,6 @@ namespace PP3d {
  
   };
   //*************************************
-}
+} // namespace
+
+#endif

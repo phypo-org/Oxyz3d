@@ -28,7 +28,7 @@ namespace PP3d {
       ,cShape( pLine)
     {;}
     EntityPtr  getShape() override { return cShape; }
-    LinePtr  	 getLine()           { return cShape; }
+    LinePtr    getLine()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjLine; }
 		
     ShapeType getSubType() const override { return ShapeType::Line; }

@@ -19,16 +19,15 @@
 
 #include "Shape/ObjectLine.h"
 #include "Shape/ObjectPoly.h"
-
-
 #include "Shape/GLUtility.h"
-
 #include "Shape/PrimitivFactory.h"
 #include "Shape/Light.h"
-
-
+#include "Shape/SortVisitor.h"
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
+
+#include "Modif/Modif.h"
+
 
 #include "Application.h"
 #include "MyFlWidget.h"
@@ -108,7 +107,7 @@ namespace M3d {
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
   {
-    if( PP3d::Selection::Instance().getNbSelected() > 0 )
+    if( TheSelect.getNbSelected() > 0 )
       {										
 	makeMenuSelect(  *cPopup);
       }
@@ -140,7 +139,7 @@ namespace M3d {
 
     
 
-    if(  PP3d::Selection::Instance().getSelectType() == PP3d::SelectType::Line )
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Line )
       {
 	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
@@ -155,7 +154,7 @@ namespace M3d {
       }
 
     
-    switch( PP3d::Selection::Instance().getSelectType() )
+    switch( TheSelect.getSelectType() )
       {
       case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
@@ -194,20 +193,20 @@ namespace M3d {
     // Ajout helice 
     // ... Ajout script lua !!! plugin
     
-    if( Application::Instance().getDatabase()->isCurrentPoints()
-	&& Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
+    if(TheAppli.getDatabase()->isCurrentPoints()
+	&&TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
       {
 	pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
       }
     
-    if( Application::Instance().getDatabase()->isCurrentPoints()
-	&& Application::Instance().getDatabase()->getNbCurrentPoints()  >= 3 )
+    if(TheAppli.getDatabase()->isCurrentPoints()
+	&&TheAppli.getDatabase()->getNbCurrentPoints()  >= 3 )
       {
 	pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
       }
     
-    if( Application::Instance().getDatabase()->isCurrentPoints()
-	&& Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
+    if(TheAppli.getDatabase()->isCurrentPoints()
+	&&TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
       {
 	pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this, FL_MENU_DIVIDER);
       }
@@ -275,25 +274,25 @@ namespace M3d {
 	//-----------------
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
-	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() >= 3 )
+	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
 	      {
-		lShape = Application::Instance().getDatabase()->convertCurrentLineToFacet();
+		lShape =TheAppli.getDatabase()->convertCurrentLineToFacet();
 	      }
 	  }
 	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
-	    if( Application::Instance().getDatabase()->getNbCurrentPoints() >= 2 )
+	    if(TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
 	      {
-		lShape = Application::Instance().getDatabase()->convertCurrentLineToPolylines();
+		lShape =TheAppli.getDatabase()->convertCurrentLineToPolylines();
 	      }
 	  } 
 	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
-	    if(  Application::Instance().getDatabase()->getNbCurrentPoints() == 2 )
+	    if( TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
 	      {
-		lShape = Application::Instance().getDatabase()->convertCurrentLineToLine();
+		lShape =TheAppli.getDatabase()->convertCurrentLineToLine();
 	      }
 	  }
 	
@@ -302,8 +301,8 @@ namespace M3d {
 	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 	    PushHistory();
 	    
-	    Application::Instance().redrawAllCanvas3d();
-	    Application::Instance().redrawObjectTree();	     
+	   TheAppli.redrawAllCanvas3d();
+	   TheAppli.redrawObjectTree();	     
 	  }
       }
     //===================== Revolution ==============
@@ -439,7 +438,13 @@ namespace M3d {
 
     if( lNbCut > 1 )
       {
-	//	Application::Instance().getDatabase()_>cutSelectLine( lNbCut );
+	// On recupere les objects de la selection
+	PP3d::SortEntityVisitor lVisit;
+	TheSelect.execVisitorOnlyOnObjects( lVisit );
+	// On prend les lignes
+
+	//Attention au lignes inverses doubles des facettes !
+	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, &TheAppli.getDatabase() );	
       } 
   }
   

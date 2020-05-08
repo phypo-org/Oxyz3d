@@ -244,11 +244,7 @@ namespace PP3d {
   {
     if( cCurrentCreation == nullptr )
       return nullptr;
-			
-			
-    //		cCurrentCreation->rename( );
-		
-    //			validEntity( cCurrentCreation->getShape() );
+
     Object* lTmp = cCurrentCreation;
     addObject( lTmp );
 	
@@ -343,11 +339,8 @@ namespace PP3d {
   {
     delete cCurrentCreation;
     cCurrentCreation = nullptr;
-
   }
-	
-  //------------------------------------------
-		
+  //------------------------------------------	
   void DataBase::swapCurrentCreation( Object* pCurrentCreation )
   {
     if( cCurrentCreation != pCurrentCreation )
@@ -510,34 +503,25 @@ namespace PP3d {
       {
 	DBG_BAZ(  "DataBase::deleteEntity Object "
 		  << pEntity->howManyOwner() );
+	
 	if( removeEntityIfNoOwner( pEntity ) == true )
 	  {
 	    cContainerObject.erase( dynamic_cast<Object*>(pEntity ));
 	    return true;
 	  }
-	return false;
+	return false;*
       }
     // FAIRE TOUT LES AUTRES CAS !!!!
 		
     return false;
   }
   //------------------------------------------
+  // Add All the points of the entity to the courant input
+  
   void DataBase::addToInput( EntityPtr pEntity, bool pFlagLink )
   {
-    std::cout << "DataBase::addToInput" << std::endl;
-    // Pour le moment ....
-    /*
-    std::unordered_set<Point*> lVectPoints;
-		
-    VisitorGetPoints lVisit( lVectPoints );
-    pEntity->execVisitor( lVisit );
-
-    for( PointPtr lPt : lVectPoints )
-      {				
-	std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
-	addPointToCurrentLine( lPt->get() );					
-      }
-    */
+    //   std::cout << "DataBase::addToInput" << std::endl;
+   
     PP3d::SortEntityVisitor  lVisit;
     pEntity->execVisitor( lVisit );
     for( PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
@@ -545,8 +529,6 @@ namespace PP3d {
 	std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
 	addPointToCurrentLine( lPt->get() );					
       }
- 
-
   }
   //---------------------------------------------------------
   void DataBase::resetIdFromMax()
@@ -561,7 +543,5 @@ namespace PP3d {
  
     resetUniqueId( lMaxId + 1 );
   }
-
   //************************************
-
-}
+} // end namespace

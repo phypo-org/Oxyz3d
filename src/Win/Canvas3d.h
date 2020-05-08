@@ -20,7 +20,9 @@
 #include "Shape/Point3d.h"
 #include "Shape/Entity.h"
 
-#include "Shape/Modif.h"
+
+#include "Modif/VisitorModif.h"
+#include "Modif/Modif.h"
 
 
 
@@ -60,7 +62,7 @@ namespace M3d {
     PP3d::ViewProps cViewProps;
 		
 	
-    Fl_Menu_Button*          cPopup=nullptr;
+    Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
 
 

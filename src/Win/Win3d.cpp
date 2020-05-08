@@ -109,12 +109,12 @@ namespace M3d {
 	if( iUseSelect )
 	  {
 	    PP3d::SortEntityVisitor  lVisit;
-	    TheSelection.execVisitorOnlyOnObjects( lVisit );	    	    
-	    lRet = lSav.save( *ioDatabase, &lVisit.cSetAllEntity);
+	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    	    
+	    lRet = lSav.save( *ioDatabase, &lVisit.cSetAllEntity );
 	  }
 	else
 	  {
-	    lRet = lSav.save( *ioDatabase, nullptr);
+	    lRet = lSav.save( *ioDatabase, nullptr );
 	  }
 	
 	lOut.close();
@@ -152,7 +152,7 @@ namespace M3d {
 	if( iUseSelect )
 	  {
 	    PP3d::SortEntityVisitor  lVisit;
-	    TheSelection.execVisitorOnlyOnObjects( lVisit );	    
+	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    
 	    lRet = lExpObj.save( *ioDatabase, &lVisit.cSetAllEntity);
 	  }
 	else
@@ -195,7 +195,7 @@ namespace M3d {
       {
 	std::string lFilename = cFc->value();
 
-	if( SaveBase( Application::Instance().getDatabase(), lFilename, cData) )
+	if( SaveBase( TheAppli.getDatabase(), lFilename, cData) )
 	  {
 	    MyPref.cLastSave = lFilename;
 	  }
@@ -222,10 +222,10 @@ namespace M3d {
 	    PushHistory(); // on sauve l'ancienne base dans l'historique
 	    
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	    Application::Instance().setDatabase( luBase ); // on prend la nlle base
+	    TheAppli.setDatabase( luBase ); // on prend la nlle base
 	    
 	    MyPref.cLastSave = lFilename;
-	    Application::Instance().redrawAll();
+	    TheAppli.redrawAll();
 	  }
 	else
 	  {
@@ -246,10 +246,10 @@ namespace M3d {
 	PushHistory(); 
 
 	std::string lFilename = cFc->value();
-	if( OpenBase( Application::Instance().getDatabase(), lFilename, false)) // On change les ID !!!!!!!!!!!!!!!!!!!!!
+	if( OpenBase( TheAppli.getDatabase(), lFilename, false)) // On change les ID !!!!!!!!!!!!!!!!!!!!!
 	  {
 	    MyPref.cLastSave = lFilename;
-	    Application::Instance().redrawAll();
+	    TheAppli.redrawAll();
 	  }
 	else
 	  {
@@ -269,7 +269,7 @@ namespace M3d {
 	std::string lFilename = cFc->value();
 
 	
-	if( ExportD3dObj( Application::Instance().getDatabase(), lFilename, cData ))
+	if( ExportD3dObj( TheAppli.getDatabase(), lFilename, cData ))
 	  {
 	  }
 	else
@@ -291,9 +291,9 @@ namespace M3d {
 	PushHistory(); 
 
 	std::string lFilename = cFc->value();
-	if( ImportD3dObj(  Application::Instance().getDatabase(), lFilename ) ) // On change les ID !!!!!!!!!!!!!!!!!!!!!
+	if( ImportD3dObj(  TheAppli.getDatabase(), lFilename ) ) // On change les ID !!!!!!!!!!!!!!!!!!!!!
 	  {
-	    Application::Instance().redrawAll();
+	    TheAppli.redrawAll();
 	  }
 	else
 	  {
@@ -316,10 +316,10 @@ namespace M3d {
 	luBase->resetIdFromMax();
 	//	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
 
- 	Application::Instance().setDatabase( luBase );
+ 	TheAppli.setDatabase( luBase );
       }
-    Application::Instance().redrawAllCanvas3d();
-    Application::Instance().redrawObjectTree();
+    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawObjectTree();
   }
   //-------------------------------------------
   static void RedoCB(Fl_Widget*w, void*pData)
@@ -333,11 +333,11 @@ namespace M3d {
 	luBase->resetIdFromMax();
 	//	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
 
-	Application::Instance().setDatabase( luBase );
+	TheAppli.setDatabase( luBase );
       }
  	
-    Application::Instance().redrawAllCanvas3d();
-    Application::Instance().redrawObjectTree();
+    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawObjectTree();
   }
   //-------------------------------------------
   //-------------------------------------------
@@ -359,7 +359,7 @@ namespace M3d {
     ConvVoid lVal;
     lVal.cPtr=  lToggle->cUserData2;
 	
-    PP3d::Selection::Instance().changeSelectType( lVal.cSelType );
+    TheSelect.changeSelectType( lVal.cSelType );
     std::cout << "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) << std::endl;
 
 		
@@ -743,8 +743,8 @@ namespace M3d {
 	    // Une Nlle base
 	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	    Application::Instance().setDatabase( luBase ); // on prend la nlle base
-	    Application::Instance().redrawAll();
+	    TheAppli.setDatabase( luBase ); // on prend la nlle base
+	    TheAppli.redrawAll();
 	  }
       }
     else    //========================================
@@ -761,7 +761,7 @@ namespace M3d {
 	{
 	  if( MyPref.cLastSave.size() )
 	    {
-	      if( SaveBase( Application::Instance().getDatabase(), MyPref.cLastSave, 0 ) == false )
+	      if( SaveBase( TheAppli.getDatabase(), MyPref.cLastSave, 0 ) == false )
 		{
 		  fl_alert( "Saving database in <%s> failed",  MyPref.cLastSave.c_str());
 		}
@@ -831,25 +831,25 @@ namespace M3d {
 		  }		
 		else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 		  {
-		    PP3d::Selection::Instance().removeAll();
-		    Application::Instance().redrawAllCanvas3d();
-		    Application::Instance().redrawObjectTree();
+		    TheSelect.removeAll();
+		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_DeleteSelect << endl;
-		    PP3d::Selection::Instance().deleteAllFromDatabase( *Application::Instance().getDatabase());
+		    TheSelect.deleteAllFromDatabase( *TheAppli.getDatabase());
 		    PushHistory();			    
-		    Application::Instance().redrawAllCanvas3d();
-		    Application::Instance().redrawObjectTree();
+		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
-		    PP3d::Selection::Instance().addSelectionToInput( *Application::Instance().getDatabase(), false);
+		    TheSelect.addSelectionToInput( *TheAppli.getDatabase(), false);
 		    PushHistory();
-		    Application::Instance().redrawAllCanvas3d();
-		    Application::Instance().redrawObjectTree();
+		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawObjectTree();
 		  }
 
 
@@ -869,49 +869,49 @@ namespace M3d {
 		    lKamera.reset(); 
 		    lKamera.raz45(); 
 		    lKamera.scaleTo(1.0);
-		    Application::Instance().redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas3d();
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongX ) == 0)
 		  {
 		    lKamera.razX(); 
- 		    Application::Instance().redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas3d();
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongY ) == 0)
 		  {
 		    lKamera.razY(); 
-		    Application::Instance().redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas3d();
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongZ ) == 0)
 		  {
 		    lKamera.razZ(); 
- 		    Application::Instance().redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas3d();
   		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_X ) == 0)
 		  {
 		    lKamera.razXInv(); 
- 		    Application::Instance().redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas3d();
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_Y ) == 0)
 		  {
 		    lKamera.razYInv(); 
-		    Application::Instance().redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas3d();
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_Z ) == 0)
 		  {
 		    lKamera.razZInv(); 
- 		    Application::Instance().redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas3d();
   		  }
 
     //================= WINDOWS ===================
 		else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
 		  {
-		    Application::Instance().createObjectTree( );
+		    TheAppli.createObjectTree( );
 		  }
 		else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
 		  {
 		    lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
 	
-		    //	      Application::Instance().createNewWin3d( 1000, 800 );
+		    //	      TheAppli.createNewWin3d( 1000, 800 );
 		  }
 
     //				else if( strcmp( m->label(), StrMenu_ConsolPython ) == 0)
@@ -928,22 +928,22 @@ namespace M3d {
 		  }
 		else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 		  {
-		    Application::Instance().getDatabase()->demo1();
-		    Application::Instance().redrawAllCanvas3d();
-		    Application::Instance().redrawObjectTree();
+		    TheAppli.getDatabase()->demo1();
+		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 		  {
-		    Application::Instance().getDatabase()->demo2();
-		    Application::Instance().redrawAllCanvas3d();
-		    Application::Instance().redrawObjectTree();
+		    TheAppli.getDatabase()->demo2();
+		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawObjectTree();
 		  }
 
 				 
     if( lOsLuaCode.str().size() > 0 )
       {
 	// Ily a du lua a executer
-	if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) != nullptr)
+	if( TheAppli.execLuaHisto(lOsLuaCode, lOsLuaOut) != nullptr)
 	  {
 	    // ERREUR
 	  }

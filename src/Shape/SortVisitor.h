@@ -1,6 +1,7 @@
 #ifndef H__SORT_VISITOR__H
 #define H__SORT_VISITOR__H
 
+#include "Object.h"
 
 namespace PP3d{
 

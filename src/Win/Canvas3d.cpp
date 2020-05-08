@@ -193,8 +193,8 @@ namespace M3d {
 		
     cViewProps.cDebug = cDebug;
 		
-     Application::Instance().getDatabase()->recomputeAll();
-     Application::Instance().getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw );
+     TheAppli.getDatabase()->recomputeAll();
+     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw );
 		
     if( cMode == ModeUser::MODE_SELECT_RECT )
       {
@@ -205,7 +205,7 @@ namespace M3d {
 				
 	glColor4f(0.3f, 0.1f, 0.1f, 0.3f);
 
-	 Application::Instance().getDatabase()->getSelectionRectanglePosition().drawGL();
+	 TheAppli.getDatabase()->getSelectionRectanglePosition().drawGL();
 
 	glDepthMask( GL_TRUE );
 	glDisable( GL_BLEND );
@@ -251,12 +251,12 @@ namespace M3d {
     if( lVectHits.size() )
       {										////				std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
 				
-	if( PP3d::Selection::Instance().selectPickingHit( lVectHits,
-							  *Application::Instance().getDatabase(),
-							  cSelectMode, pFlagMove ))
+	if( TheSelect.selectPickingHit( lVectHits,
+					   *TheAppli.getDatabase(),
+					   cSelectMode, pFlagMove ))
 	  {
-	    Application::Instance().redrawAllCanvas3d();
-	    Application::Instance().redrawObjectTree();			
+	    TheAppli.redrawAllCanvas3d();
+	    TheAppli.redrawObjectTree();			
 	  }
       }
   }
@@ -292,7 +292,7 @@ namespace M3d {
 	
     glMatrixMode(GL_MODELVIEW);
 
-     Application::Instance().getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select );
+     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select );
  
     glPopMatrix();
     glFlush();
@@ -305,7 +305,7 @@ namespace M3d {
     cMouseInitPosX = cMouseLastPosX = Fl::event_x();
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
 
-    Application::Instance().currentTransform().raz();
+    TheAppli.currentTransform().raz();
   }
   //------------------------------
   void Canvas3d::userCancelAction(	int	pEvent )
@@ -325,11 +325,11 @@ namespace M3d {
     cMouseInitPosY = cMouseLastPosY = -1;
     cRectBeginX = -1;
     cRectBeginY = -1;
-    Application::Instance().setCurrentTransformType( Transform::Nothing );
-    Application::Instance().currentTransform().raz();
+    TheAppli.setCurrentTransformType( Transform::Nothing );
+    TheAppli.currentTransform().raz();
 
     PP3d::Point3d lVoid;
-     Application::Instance().getDatabase()->setSelectionRectanglePosition( lVoid, lVoid );
+     TheAppli.getDatabase()->setSelectionRectanglePosition( lVoid, lVoid );
     cMode = ModeUser::MODE_BASE;
     cancelDragSelect();					
     cSelectMode = PP3d::SelectMode::Undefine;
@@ -387,12 +387,12 @@ namespace M3d {
   bool Canvas3d::initDragSelect()
   {
     if( cDragPoints.size() == 0
-	&& PP3d::Selection::Instance().getNbSelected() >0 )
+	&&TheSelect.getNbSelected() >0 )
       {
 
 	
 	// We keep all the adress of points of selected entities
-	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>( PP3d::Selection::Instance().getSelection(),
+	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>(TheSelect.getSelection(),
 								  cDragPoints );
 
 
@@ -461,7 +461,7 @@ namespace M3d {
     PP3d::Mat4 lMatTran;
     lMatTran.Identity();
   
-    switch( Application::Instance().getCurrentTransformType() )
+    switch( TheAppli.getCurrentTransformType() )
       {
       case Transform::Nothing:
 	std::cout << "Nothing to do !!!" << std::endl;
@@ -495,25 +495,25 @@ namespace M3d {
 			
       case Transform::MoveX:
 	{
-	  Application::Instance().currentTransform().position().x() += lDx/10;
-	  cMyWin3d.setCurrentVal(  "move x" , Application::Instance().currentTransform().position().x() );
-	  lMatTran.initMove( Application::Instance().currentTransform().position().x(), 0, 0 );
+	  TheAppli.currentTransform().position().x() += lDx/10;
+	  cMyWin3d.setCurrentVal(  "move x" , TheAppli.currentTransform().position().x() );
+	  lMatTran.initMove( TheAppli.currentTransform().position().x(), 0, 0 );
 	}
 	break;
 				
       case Transform::MoveY:
 	{
-	  Application::Instance().currentTransform().position().y() += lDy/10;
-	  cMyWin3d.setCurrentVal( "move y" ,  Application::Instance().currentTransform().position().y() );
-	  lMatTran.initMove( 0, Application::Instance().currentTransform().position().y(), 0 );
+	  TheAppli.currentTransform().position().y() += lDy/10;
+	  cMyWin3d.setCurrentVal( "move y" ,  TheAppli.currentTransform().position().y() );
+	  lMatTran.initMove( 0, TheAppli.currentTransform().position().y(), 0 );
 	}
 	break;
 				
       case Transform::MoveZ:
 	{
-	  Application::Instance().currentTransform().position().z() += lDx/10;
-	  cMyWin3d.setCurrentVal(  "move z" , Application::Instance().currentTransform().position().z() );
-	  lMatTran.initMove( 0, 0, Application::Instance().currentTransform().position().z() );
+	  TheAppli.currentTransform().position().z() += lDx/10;
+	  cMyWin3d.setCurrentVal(  "move z" , TheAppli.currentTransform().position().z() );
+	  lMatTran.initMove( 0, 0, TheAppli.currentTransform().position().z() );
 	}
 	break;
 				
@@ -522,7 +522,7 @@ namespace M3d {
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
 	{
-	  PP3d::Point3d lCenter =    PP3d::Selection::Instance().getCenter( *Application::Instance().getDatabase() );					
+	  PP3d::Point3d lCenter =   TheSelect.getCenter( *TheAppli.getDatabase() );					
 	  std::cout << "Center:" << lCenter ;
 	  PP3d::Mat4 lMatRecenter;
 	  lMatRecenter.initMove( lCenter ); //on revient au centre;
@@ -534,26 +534,26 @@ namespace M3d {
 	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
 	  PP3d::Mat4 lMatRot;
-	  switch( Application::Instance().getCurrentTransformType() )
+	  switch( TheAppli.getCurrentTransformType() )
 	    {
 	    case Transform::CenterRotX :
-	      Application::Instance().currentTransform().angle().x() += lDx/360;
-	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().x());
+	      TheAppli.currentTransform().angle().x() += lDx/360;
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 	      
-	      lMatRot.initRotX( Application::Instance().currentTransform().angle().x() );
+	      lMatRot.initRotX( TheAppli.currentTransform().angle().x() );
 	      break;
 							
 	    case Transform::CenterRotY :
-	      Application::Instance().currentTransform().angle().y() += lDy/360;
+	      TheAppli.currentTransform().angle().y() += lDy/360;
 	      
-	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().y());
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());
 	      
-	      lMatRot.initRotY( Application::Instance().currentTransform().angle().y() );
+	      lMatRot.initRotY( TheAppli.currentTransform().angle().y() );
 	      break;
 	    case Transform::CenterRotZ :
-	      Application::Instance().currentTransform().angle().z() += lDx/360;	
-	      CallDialogKeepFloat( Application::Instance().currentTransform().angle().z());
-	      lMatRot.initRotZ( Application::Instance().currentTransform().angle().z() );
+	      TheAppli.currentTransform().angle().z() += lDx/360;	
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().z());
+	      lMatRot.initRotZ( TheAppli.currentTransform().angle().z() );
 	      break;
 	    default:;
 	    }					
@@ -568,10 +568,10 @@ namespace M3d {
       }
 
     //		PP3d::Mat4 lTmp;
-    //		lTmp.set( Application::Instance().getCurrentTransform() );
+    //		lTmp.set( TheAppli.getCurrentTransform() );
     // Faire une sauvegarde de la selection
     // ou alors utiliser des matrice opengl pour chaque objet a modifier (y compris les points !!!!)?
-    std::cout << "pos:" << Application::Instance().currentTransform().position() << std::endl;
+    std::cout << "pos:" << TheAppli.currentTransform().position() << std::endl;
 
 
     if( pFlagFinalize == false )
@@ -622,8 +622,8 @@ namespace M3d {
     std::cout << "==========================================================================" << std::endl;
 			 
 	
-    Application::Instance().getDatabase()->setCursorPosition(	pResult );
-    Application::Instance().setCursorPosition( pResult );
+    TheAppli.getDatabase()->setCursorPosition(	pResult );
+    TheAppli.setCursorPosition( pResult );
     /*
     {
       std::ostringstream lOsLuaCode;
@@ -631,15 +631,15 @@ namespace M3d {
 			
       lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
       lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
-      if( Application::Instance().execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
+      if( TheAppli.execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
 	{
 	}
     }
     */
     
-    Application::Instance().getDatabase()->addPointToCurrentLine( pResult );
+    TheAppli.getDatabase()->addPointToCurrentLine( pResult );
 				
-    Application::Instance().redrawAllCanvas3d();
+    TheAppli.redrawAllCanvas3d();
   }
   //---------------------------
   void Canvas3d::userInputPoint( PP3d::Entity* iEntity )
@@ -661,7 +661,7 @@ namespace M3d {
 	TheAppli.getDatabase()->addPointToCurrentLine( lPt->get() );	
       }
 
-    Application::Instance().redrawAllCanvas3d();
+    TheAppli.redrawAllCanvas3d();
   }
   //---------------------------
   PP3d::Point3d Canvas3d::tranform2Dto3D(  int pX, int pY, int pZ )
@@ -680,8 +680,8 @@ namespace M3d {
   void Canvas3d::setCursor3dPosition( int pX, int pY, int pZ )
   {
     PP3d::Point3d pResult = tranform2Dto3D( pX, pY, pZ );
-     Application::Instance().getDatabase()->setCursorPosition(	pResult );
-    Application::Instance().setCursorPosition( pResult );
+     TheAppli.getDatabase()->setCursorPosition(	pResult );
+    TheAppli.setCursorPosition( pResult );
   }
   //---------------------------
   void Canvas3d::userSelectionRectangle(int	pEvent, bool pFlagFinalize )
@@ -696,10 +696,10 @@ namespace M3d {
     PP3d::Point3d lCurrent = tranform2Dto3D( Fl::event_x(),  Fl::event_y() );
     PP3d::Point3d lBegin   = tranform2Dto3D( cRectBeginX, cRectBeginY);
 			
-     Application::Instance().getDatabase()->setSelectionRectanglePosition( lBegin, lCurrent );
+     TheAppli.getDatabase()->setSelectionRectanglePosition( lBegin, lCurrent );
     if( pFlagFinalize )
       {
-	//			PP3d::Selection::Instance().selectRect(  Application::Instance().getDatabase()->getSelectionRectanglePosition() );
+	//			PP3d::Selection::Instance().selectRect(  TheAppli.getDatabase()->getSelectionRectanglePosition() );
       }
   }
   //---------------------------------------------------------
@@ -715,7 +715,7 @@ namespace M3d {
 	cKamera.projectObjectToWin( lPt0, lResult0, true);
 		
 
-	 Application::Instance().getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
+	 TheAppli.getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
 		
     picking( Fl::event_x(),  Fl::event_y(), pFlagMove )	;
   }
@@ -755,7 +755,7 @@ namespace M3d {
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    PP3d::EntityId lId = PP3d::Selection::Instance().getLastHightLightEntityId();
+	    PP3d::EntityId lId =TheSelect.getLastHightLightEntityId();
 	    
 	    std::cout << " **************** cUserActionSaisie SHIFT " << lId  << std::endl;
 	    DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
@@ -860,11 +860,11 @@ namespace M3d {
 	  }
 				
 	if(  cMode == ModeUser::MODE_TRANSFORM
-	     && Application::Instance().getCurrentTransformType() != Transform::Nothing )
+	     && TheAppli.getCurrentTransformType() != Transform::Nothing )
 	  {
 	    userTransformSelection(pEvent, true );
 	    userTerminateAction( pEvent );
-	    Application::Instance().redrawAllCanvas3d();
+	    TheAppli.redrawAllCanvas3d();
 	  }
 				
 	if( cMode == ModeUser::MODE_SELECT_RECT )
@@ -898,7 +898,7 @@ namespace M3d {
 		  }
 	  }
 	setCursor3dPosition( Fl::event_x(), Fl::event_y());			 					
-	Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou 				break;
+	TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;
 	break;
 				
 	//==============================
@@ -912,12 +912,12 @@ namespace M3d {
 	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
 		{
 		  userChangeKameraView( pEvent );
-		  Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
+		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}
 	      else if( cMode == ModeUser::MODE_SELECT_RECT)
 		{
 		  userSelectionRectangle(pEvent);			
-		  Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
+		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}	
 	
 	    }
@@ -929,7 +929,7 @@ namespace M3d {
 	      }
 					
 	  setCursor3dPosition( Fl::event_x(), Fl::event_y());
-	  Application::Instance().redrawAllCanvas3d(); // a cause du curseur ou 				break;
+	  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;
 		
 	
 	  //			cout << " Move : x="<< lX << " y=" << lY <<  std::endl;
@@ -975,7 +975,7 @@ namespace M3d {
 		  break;
 		case FL_BackSpace:
 		case FL_Delete:
-		   Application::Instance().getDatabase()->delPointToCurrentLine();
+		   TheAppli.getDatabase()->delPointToCurrentLine();
 		  break;
 
 		case FL_Up:
@@ -992,12 +992,12 @@ namespace M3d {
 	      if( strcmp( lStr, ANNULE_ACTION )==0)
 		{
 		  userTerminateAction( pEvent );
-		  Application::Instance().setCurrentTransformType( Transform::Nothing );
+		  TheAppli.setCurrentTransformType( Transform::Nothing );
 		}
 	      else if( strcmp( lStr, UNSELECT_ALL) == 0 )
 		{
 		  if( cMode == ModeUser::MODE_BASE )
-		    PP3d::Selection::Instance().removeAll();
+		   TheSelect.removeAll();
 		}
 	      else if( strcmp( lStr, MOVE_Z_N )==0)
 		{
