@@ -19,16 +19,13 @@
 
 #include "Shape/ObjectLine.h"
 #include "Shape/ObjectPoly.h"
-
-
 #include "Shape/GLUtility.h"
-
 #include "Shape/PrimitivFactory.h"
 #include "Shape/Light.h"
-
-
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
+#include "Shape/SortVisitor.h"
+
 
 #include "Application.h"
 #include "MyFlWidget.h"
@@ -655,30 +652,15 @@ namespace M3d {
       }
     DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getType() );
     std::cout << " **************** userInputPoint Hightlight " << iEntity->getType() << std::endl;
-	
-    switch( iEntity->getType() )
-      {
-      case PP3d::ShapeType::Point :
-	
-	TheAppli.getDatabase()->addPointToCurrentLine( ((PP3d::Point*)iEntity)->get() );
-	break;
-      case PP3d::ShapeType::Line   :
-	{
-	  PP3d::LinePtr lLine = ((PP3d::Line*)iEntity);
-	  TheAppli.getDatabase()->addPointToCurrentLine( lLine->getFirst()->get() );
-	  if( lLine->isPoint() == false )
-	    {
-	      TheAppli.getDatabase()->addPointToCurrentLine( lLine->getSecond()->get()) ;
-	    }
-	}
-	break;
-
-      case PP3d::ShapeType::Facet  :	
-      case PP3d::ShapeType::Poly   :	
-      case PP3d::ShapeType::Object :	
-      case PP3d::ShapeType::Null   : ;	
-      }
     
+    PP3d::SortEntityVisitor  lVisit;
+    iEntity->execVisitor( lVisit );
+
+    for( PP3d::PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
+      {
+	TheAppli.getDatabase()->addPointToCurrentLine( lPt->get() );	
+      }
+
     Application::Instance().redrawAllCanvas3d();
   }
   //---------------------------

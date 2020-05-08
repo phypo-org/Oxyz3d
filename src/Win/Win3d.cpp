@@ -109,7 +109,7 @@ namespace M3d {
 	if( iUseSelect )
 	  {
 	    PP3d::SortEntityVisitor  lVisit;
-	    TheSelection.execVisitorObjects( lVisit );	    	    
+	    TheSelection.execVisitorOnlyOnObjects( lVisit );	    	    
 	    lRet = lSav.save( *ioDatabase, &lVisit.cSetAllEntity);
 	  }
 	else
@@ -152,7 +152,7 @@ namespace M3d {
 	if( iUseSelect )
 	  {
 	    PP3d::SortEntityVisitor  lVisit;
-	    TheSelection.execVisitorObjects( lVisit );	    
+	    TheSelection.execVisitorOnlyOnObjects( lVisit );	    
 	    lRet = lExpObj.save( *ioDatabase, &lVisit.cSetAllEntity);
 	  }
 	else

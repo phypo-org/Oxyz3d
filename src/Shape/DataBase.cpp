@@ -15,6 +15,7 @@
 #include "EntityVisitor.h"
 #include "SubDiv.h"
 #include "DebugVars.h"
+#include "SortVisitor.h"
 
 
 namespace PP3d {
@@ -525,6 +526,7 @@ namespace PP3d {
   {
     std::cout << "DataBase::addToInput" << std::endl;
     // Pour le moment ....
+    /*
     std::unordered_set<Point*> lVectPoints;
 		
     VisitorGetPoints lVisit( lVectPoints );
@@ -535,6 +537,16 @@ namespace PP3d {
 	std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
 	addPointToCurrentLine( lPt->get() );					
       }
+    */
+    PP3d::SortEntityVisitor  lVisit;
+    pEntity->execVisitor( lVisit );
+    for( PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
+      {				
+	std::cout << "DataBase::addToInput addPointToCurrentLine " <<  std::endl;
+	addPointToCurrentLine( lPt->get() );					
+      }
+ 
+
   }
   //---------------------------------------------------------
   void DataBase::resetIdFromMax()

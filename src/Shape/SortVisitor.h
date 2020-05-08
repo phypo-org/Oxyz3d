@@ -5,32 +5,36 @@
 namespace PP3d{
 
   //*****************************************
+  // Visitor qui permet de trier les differentes entity
+  // en fonction de leur type
+  //*****************************************
   class SortEntityVisitor : public EntityVisitor {
 
     bool cAcceptDoublon;
   public:
-    std::vector<Entity*> cVectPoints;
-    std::set<Entity*>   cSetPoints;
+    std::vector<PointPtr>  cVectPoints;
+    std::set<PointPtr>     cSetPoints;
  
-    std::vector<Entity*> cVectLines;
-    std::set<Entity*>    cSetLines;
+    std::vector<LinePtr>   cVectLines;
+    std::set<LinePtr>      cSetLines;
     
-    std::vector<Entity*> cVectFacets;
-    std::set<Entity*>    cSetFacets;
+    std::vector<FacetPtr>  cVectFacets;
+    std::set<FacetPtr>     cSetFacets;
     
-    std::vector<Entity*> cVectPolys;
-    std::set<Entity*>    cSetPolys;
+    std::vector<PolyPtr>   cVectPolys;
+    std::set<PolyPtr>      cSetPolys;
 
-    std::vector<Entity*> cVectObjects;
-    std::set<Entity*>    cSetObjects;
+    std::vector<ObjectPtr> cVectObjects;
+    std::set<ObjectPtr>    cSetObjects;
 
-    std::set<Entity*>    cSetAllEntity; // contient tout
+    std::set<Entity*>      cSetAllEntity; // contient tout
    
+    //--------------------------------
     SortEntityVisitor( bool iAcceptDoublon = false)
       :cAcceptDoublon( iAcceptDoublon )
     {
     }
-
+    //--------------------------------
     virtual void execPoint( Point* pPoint )
     {
       std::cout << '.' << std::flush;
@@ -44,7 +48,7 @@ namespace PP3d{
       cSetPoints.insert( pPoint );
       cSetAllEntity.insert( pPoint );
     }
-
+    //--------------------------------
     virtual void execBeginLine ( Line* pLine)
     {
       std::cout << '-' << std::flush;
@@ -57,8 +61,8 @@ namespace PP3d{
       cVectLines.push_back( pLine );
       cSetLines.insert( pLine );
       cSetAllEntity.insert( pLine );
-    }
-		
+    }		
+    //--------------------------------
     virtual void execBeginFacet( Facet* pFacet )
     {
       std::cout << 'o' << std::flush;
@@ -71,8 +75,8 @@ namespace PP3d{
       cVectFacets.push_back( pFacet );
       cSetFacets.insert( pFacet );
       cSetAllEntity.insert(pFacet  );
-    }
-		
+    }		
+    //--------------------------------
     virtual void execBeginPoly ( Poly* pPoly )
     {
        std::cout << 'p' << std::flush;
@@ -85,8 +89,8 @@ namespace PP3d{
       cVectPolys.push_back( pPoly );
       cSetPolys.insert( pPoly );
       cSetAllEntity.insert(pPoly  );
-    }
-		
+    }		
+    //--------------------------------
     virtual void execBeginObject( Object* pObject)
     {
       std::cout << " -obj- " << std::flush;
@@ -101,7 +105,6 @@ namespace PP3d{
       cSetAllEntity.insert(pObject  );
     }    
   };
-
   //*****************************************
 
 } // namespace

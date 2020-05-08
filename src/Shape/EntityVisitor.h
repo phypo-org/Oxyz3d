@@ -51,7 +51,7 @@ namespace PP3d{
   class VisitorGetPoints : public EntityVisitor	{
 
     SET cInternalSet;
-    SET &cPoints;  // le set elimne les doublons
+    SET &cPoints;  // le set elimne les doublons mais ils ne sont plus dans l'ordre !
 		
   public:
     SET &getPoints() { return cPoints;}

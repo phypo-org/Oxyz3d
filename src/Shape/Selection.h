@@ -119,6 +119,7 @@ namespace PP3d {
 		
     void addSelectionToInput( DataBase& pDatabase, bool pFlagLink );				
 
+    //----------------------------
     friend std::ostream& operator <<( std::ostream& pOs, Selection& pSel )
     {
       pOs << "Type:" << GetStrSelectType( pSel.cSelectType ) << ":" << pSel.cSelectObj.size() << std::endl;
@@ -128,20 +129,22 @@ namespace PP3d {
 	}
       return pOs;
     }
-    void execVisitor(  EntityVisitor& pVisit )
+    //----------------------------
+    void execVisitorOnEntity(  EntityVisitor& pVisit )
     {
       for(  EntityPtr lEntity : cSelectObj )
 	lEntity->execVisitor( pVisit );
     }
-    void execVisitorObjects(  EntityVisitor& pVisit )
+    //----------------------------
+    void execVisitorOnlyOnObjects(  EntityVisitor& pVisit )
     {
       for(  EntityPtr lEntity : cSelectObj )
 	{
-	  std::cout << " exec " <<  lEntity->getType() << " ? " << ShapeType::Object << std::endl;
+	  //	  std::cout << " exec " <<  lEntity->getType() << " ? " << ShapeType::Object << std::endl;
 	  if( lEntity->getType() == ShapeType::Object )
 	    //	  if( lEntity->getType() == ShapeType::Object )
 	    {
-	      std::cout << " Exec " << std::endl;
+	      //	      std::cout << " Exec " << std::endl;
 	      lEntity->execVisitor( pVisit );
 	    }
 	}
