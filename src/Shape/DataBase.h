@@ -125,6 +125,8 @@ namespace PP3d {
     
     EntityPtr  findEntity( EntityId pId )
     {
+      if( pId == 0 ) return nullptr;
+	
       auto lIter = cEntities.find( pId );
       if( lIter == cEntities.end() )
 	return nullptr;
@@ -173,7 +175,18 @@ namespace PP3d {
     {
      for( auto  lPair : cEntities )
 	lPair.second->execVisitor( pVisit );
-    } 
+    }
+
+    
+    Entity * findHightLightEntity()
+    {
+     for( auto  lPair : cEntities )
+	{
+	  if( lPair.second->isHighlight() )
+	    return lPair.second;
+	}
+     return nullptr;
+    }
   };
   //************************************
 }

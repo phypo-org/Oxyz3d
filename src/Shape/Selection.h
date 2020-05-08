@@ -33,7 +33,7 @@ namespace PP3d {
     PDouble cZ2;
 
     Entity* cEntity=nullptr;  // Positionner avant le tri
-
+    
     // Output via SelEncode::Decode
 		
     PickingHit( GLuint pName, PDouble Z1, PDouble Z2 )
@@ -67,7 +67,11 @@ namespace PP3d {
   {
     friend PPSingletonCrtp;
     
+    EntityId cLastHightLightEntityId = 0;
+ 
   public:
+    
+    EntityId getLastHightLightEntityId() { return cLastHightLightEntityId; }
 
     //===========================
 		
@@ -142,6 +146,7 @@ namespace PP3d {
 	    }
 	}
     }
+
   };
   //******************************************
 

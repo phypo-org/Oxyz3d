@@ -201,11 +201,14 @@ namespace PP3d {
 	cout << "Hit:" << pHit << endl;
 	EntityPtr lEntity = pHit.cEntity;
 								
+	cLastHightLightEntityId = 0;
 	if(pFlagOnlyHightlight)
 	  {
 	    lEntity->setHighlight( true );
+	    cLastHightLightEntityId = lEntity->getId();
 	    return true;
 	  }
+	
 
 	if( isSelected( lEntity ) )
 	  {

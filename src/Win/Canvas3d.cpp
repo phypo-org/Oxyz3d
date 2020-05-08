@@ -55,6 +55,9 @@ namespace M3d {
   const char * const RESET_VIEW_TO_X="x";
   const char * const RESET_VIEW_TO_Y="y";
   const char * const RESET_VIEW_TO_Z="z";
+  const char * const RESET_VIEW_TO_X2="X";
+  const char * const RESET_VIEW_TO_Y2="Y";
+  const char * const RESET_VIEW_TO_Z2="Z";
   
 
   const char * const RESET_VIEW_SCALE_ORIGIN="O";
@@ -92,6 +95,7 @@ namespace M3d {
   { 
     gl_font( FL_HELVETICA_BOLD, 24);
     cKamera.initGL();
+    cKamera.raz45();
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
@@ -186,7 +190,7 @@ namespace M3d {
 		
     if( cFlagCursor3d )
       {
-	PP3d::GLUtility::DrawCursorCruz( Application::Instance().getDatabase()->getCursorPosition(), 50);
+	PP3d::GLUtility::DrawCursorCruz( TheAppli.getDatabase()->getCursorPosition(), 50);
       }
 
 		
@@ -621,8 +625,9 @@ namespace M3d {
     std::cout << "==========================================================================" << std::endl;
 			 
 	
-     Application::Instance().getDatabase()->setCursorPosition(	pResult );
+    Application::Instance().getDatabase()->setCursorPosition(	pResult );
     Application::Instance().setCursorPosition( pResult );
+    /*
     {
       std::ostringstream lOsLuaCode;
       std::ostringstream lOsLuaOut;
@@ -633,9 +638,47 @@ namespace M3d {
 	{
 	}
     }
-    //		 Application::Instance().getDatabase()->addPointToCurrentLine( pResult );
-		
-		
+    */
+    
+    Application::Instance().getDatabase()->addPointToCurrentLine( pResult );
+				
+    Application::Instance().redrawAllCanvas3d();
+  }
+  //---------------------------
+  void Canvas3d::userInputPoint( PP3d::Entity* iEntity )
+  {
+    if( iEntity == nullptr)
+      {
+	DBG_ACT(" **************** userInputPoint Hightlight NOT FOUND" );
+	std::cout << " **************** userInputPoint Hightlight NOT FOUND" << std::endl;
+	return;
+      }
+    DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getType() );
+    std::cout << " **************** userInputPoint Hightlight " << iEntity->getType() << std::endl;
+	
+    switch( iEntity->getType() )
+      {
+      case PP3d::ShapeType::Point :
+	
+	TheAppli.getDatabase()->addPointToCurrentLine( ((PP3d::Point*)iEntity)->get() );
+	break;
+      case PP3d::ShapeType::Line   :
+	{
+	  PP3d::LinePtr lLine = ((PP3d::Line*)iEntity);
+	  TheAppli.getDatabase()->addPointToCurrentLine( lLine->getFirst()->get() );
+	  if( lLine->isPoint() == false )
+	    {
+	      TheAppli.getDatabase()->addPointToCurrentLine( lLine->getSecond()->get()) ;
+	    }
+	}
+	break;
+
+      case PP3d::ShapeType::Facet  :	
+      case PP3d::ShapeType::Poly   :	
+      case PP3d::ShapeType::Object :	
+      case PP3d::ShapeType::Null   : ;	
+      }
+    
     Application::Instance().redrawAllCanvas3d();
   }
   //---------------------------
@@ -702,9 +745,10 @@ namespace M3d {
 
     traceMode();
     
-    DBG_EVT( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> " );
-      
-		
+    DBG_EVT( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> "
+	     << " ctrl: " << Fl::event_ctrl()
+	     << " shift:" <<  Fl::event_shift()
+	     << " alt:" <<  Fl::event_alt());	
 
     switch( pEvent )
       {
@@ -714,17 +758,27 @@ namespace M3d {
 	DBG_EVT( " Button Push"  );
 	Fl::focus(this);
 
-					
-	//		std::cout << " ctrl: " << Fl::event_ctrl() << " " ;
+
 
 	// SAISIE DE POINT
 	if( Fl::event_button() == FL_LEFT_MOUSE
 	    &&  Fl::event_ctrl() &&  cMode == ModeUser::MODE_BASE)
 	  {
 	    DBG_ACT(" **************** cUserActionSaisie " );
-
+	    std::cout << " **************** cUserActionSaisie " << std::endl;
 	    userInputPoint( pEvent );
 						
+	    return 1;
+	  }
+	if( Fl::event_button() == FL_LEFT_MOUSE
+	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
+	  {
+	    PP3d::EntityId lId = PP3d::Selection::Instance().getLastHightLightEntityId();
+	    
+	    std::cout << " **************** cUserActionSaisie SHIFT " << lId  << std::endl;
+	    DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
+	    
+	    userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );	    						
 	    return 1;
 	  }
 				
@@ -976,21 +1030,34 @@ namespace M3d {
 		  cKamera.position()[2] += cScale;
 		  cout << " MOVE_Z_P<" << cScale << "> " ;
 		}
-	      else if( strcmp( lStr, RESET_VIEW_TO_X )==0)
+	      else if( strcmp( lStr, RESET_VIEW_TO_X )==0
+		       || strcmp( lStr, RESET_VIEW_TO_X2 )==0)
 		{
-		  cKamera.razX(); 
+		  if( Fl::event_shift() )
+		    cKamera.razXInv();
+		  else
+		    cKamera.razX(); 
 		}
-	      else if( strcmp( lStr, RESET_VIEW_TO_Y )==0)
+	      else if( strcmp( lStr, RESET_VIEW_TO_Y )==0
+		       || strcmp( lStr, RESET_VIEW_TO_Y2 )==0 )
 		{
-		  cKamera.razY(); 
+		  if( Fl::event_shift() )
+		    cKamera.razYInv(); 
+		  else
+		    cKamera.razY(); 
 		}
-	      else if( strcmp( lStr, RESET_VIEW_TO_Z )==0)
+	      else if( strcmp( lStr, RESET_VIEW_TO_Z )==0
+		       || strcmp( lStr, RESET_VIEW_TO_Z2 )==0)
 		{
-		  cKamera.razZ(); 
+		  if( Fl::event_shift() )
+		    cKamera.razZInv(); 
+		  else
+		    cKamera.razZ(); 
 		} 
 	      else if( strcmp( lStr, RESET_VIEW )==0)
 		{
 		  cKamera.reset(); 
+		  cKamera.raz45();
 		  cKamera.scaleTo(1.0);
 		}
 	      else if( strcmp( lStr, RESET_VIEW_SCALE_0 )==0)
@@ -1049,10 +1116,12 @@ namespace M3d {
 		{
 		  cFlagCursor3d = ! cFlagCursor3d;
 		}
+	      /*
 	      else if( strcmp( lStr, STR_EXIT ) ==0)
 		{
 		  ::exit(0);
 		}
+	      */
 	    }
 	}
 	redraw();

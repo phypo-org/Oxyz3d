@@ -105,6 +105,7 @@ namespace M3d {
     void userTerminateAction(	int	pEvent );						 
     void userChangeKameraView(int	pEvent);
     void userInputPoint(int	pEvent);
+    void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     void userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     void userSelectionPoint(int	pEvent, bool cFlagMove);

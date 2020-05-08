@@ -1,4 +1,4 @@
-//#include "config.h"
+#include "config.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -81,6 +81,14 @@ namespace M3d {
 	
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings ..."
+
+#define StrMenu_ViewReset  "Reset View"
+#define StrMenu_ViewAlongX "View along X"
+#define StrMenu_ViewAlongY "View along Y"
+#define StrMenu_ViewAlongZ "View along Z"
+#define StrMenu_ViewAlong_X "View along -X"
+#define StrMenu_ViewAlong_Y "View along -Y"
+#define StrMenu_ViewAlong_Z "View along -Z"
 
 #define StrMenu_Demo1            "Demo 1"
 #define StrMenu_Demo2            "Demo 2"
@@ -668,8 +676,16 @@ namespace M3d {
     //================================
 
 		
-    cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add("&View/" StrMenu_ViewReset,  "o", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add("&View/" StrMenu_ViewAlongX, "x", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewAlongY, "y", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewAlongZ, "z", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewAlong_X, "", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewAlong_Y, "", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewAlong_Z, "", MyMenuCallback, this);
 
+    //================================
     cMenubar.add("&Win/" StrMenu_Create3dView, "^v", MyMenuCallback, this);
     cMenubar.add("&Win/" StrMenu_ObjectTree, "^t", MyMenuCallback, this);
     //		cMenubar.add("&Win/" StrMenu_ConsolPython, nullptr, MyMenuCallback, this);
@@ -713,6 +729,7 @@ namespace M3d {
     printf("%s\n", m->label());
     M3d::Win3d* lWin3d = reinterpret_cast<M3d::Win3d*>(pUserData);
     M3d::Canvas3d* lCanvas =lWin3d->cuCanvas3d.get();
+    PP3d::Kamera & lKamera= lWin3d->getKamera();
 
 		
     Fl::focus(lCanvas);
@@ -847,6 +864,44 @@ namespace M3d {
 		    CallDialogPerspectiv( lCanvas,  lCanvas->getKamera() );
 		    //			cFlagDialogPerspectiv = false;
 		  }
+		else if( strcmp( m->label(), StrMenu_ViewReset ) == 0)
+		  {
+		    lKamera.reset(); 
+		    lKamera.raz45(); 
+		    lKamera.scaleTo(1.0);
+		    Application::Instance().redrawAllCanvas3d();
+   		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlongX ) == 0)
+		  {
+		    lKamera.razX(); 
+ 		    Application::Instance().redrawAllCanvas3d();
+   		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlongY ) == 0)
+		  {
+		    lKamera.razY(); 
+		    Application::Instance().redrawAllCanvas3d();
+   		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlongZ ) == 0)
+		  {
+		    lKamera.razZ(); 
+ 		    Application::Instance().redrawAllCanvas3d();
+  		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlong_X ) == 0)
+		  {
+		    lKamera.razXInv(); 
+ 		    Application::Instance().redrawAllCanvas3d();
+   		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlong_Y ) == 0)
+		  {
+		    lKamera.razYInv(); 
+		    Application::Instance().redrawAllCanvas3d();
+   		  }
+		else if( strcmp( m->label(), StrMenu_ViewAlong_Z ) == 0)
+		  {
+		    lKamera.razZInv(); 
+ 		    Application::Instance().redrawAllCanvas3d();
+  		  }
+
     //================= WINDOWS ===================
 		else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
 		  {

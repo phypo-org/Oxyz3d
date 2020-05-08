@@ -279,9 +279,13 @@ namespace PP3d {
 		Double3& scale()    { return cScale; }
 
 		void raz();
+		void raz45();
 		void razX();
 		void razY();
 		void razZ();
+		void razXInv();
+		void razYInv();
+		void razZInv();
 
 		void centerTo( Rect3d& pBox);
 		void scaleTo( Rect3d & pBox, Double3 & pSz );
