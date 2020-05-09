@@ -139,12 +139,12 @@ namespace PP3d {
       lEntity->execVisitor( pVisit );
   }
   template <class SET=std::set<Entity*>>
-  static inline void ExecVisitor( SET  & ioSet, EntityVisitorNode & pVisit )    
+  static inline void ExecVisitorNode( SET  & ioSet, EntityVisitorNode & pVisit )    
   {
     for( Entity * lEntity : ioSet )
       lEntity->execVisitor( pVisit );
   }
-  
+    
   //*********************************************
   class Point :  public Entity {
 		
@@ -330,6 +330,7 @@ namespace PP3d {
       cLines[iPos] = iLine;
       return lTmp;
     }
+
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint getNbLines()  const { return (GLuint )cLines.size(); }

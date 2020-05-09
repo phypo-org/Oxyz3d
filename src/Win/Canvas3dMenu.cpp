@@ -103,6 +103,9 @@ namespace M3d {
 #define  StrMenu_Cut9 "  9"
 #define  StrMenu_Cut10 " 10"
 #define  StrMenu_CutN "-----  N"
+
+
+#define StrMenuConnectPoint "Connect Points"
   
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
@@ -137,9 +140,14 @@ namespace M3d {
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);
 
-    
 
-      if(  TheSelect.getSelectType() != PP3d::SelectType::Point  )
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Point
+	 && TheSelect.getNbSelected() > 1 )
+      {
+	pMenu.add( StrMenuConnectPoint, "c", MyMenuCallbackConnectPoint, this);	
+      }
+    
+    if(  TheSelect.getSelectType() != PP3d::SelectType::Point  )
       {
 	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
@@ -301,8 +309,7 @@ namespace M3d {
 	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 	    PushHistory();
 	    
-	   TheAppli.redrawAllCanvas3d();
-	   TheAppli.redrawObjectTree();	     
+	    TheAppli.redrawAll();
 	  }
       }
     //===================== Revolution ==============
@@ -382,9 +389,16 @@ namespace M3d {
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
-      }
-
+      }    
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData)
+  {
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
     
+    PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() );	
+    TheAppli.redrawAll();
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)
@@ -448,7 +462,8 @@ namespace M3d {
 	std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
 	//Attention au lignes inverses doubles des facettes !
 	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
-      } 
+	TheAppli.redrawAll();
+    } 
   }
   
   //***************************************
