@@ -9,24 +9,49 @@ namespace PP3d{
   //**************************************************
   bool Modif::CutLines( std::vector<LinePtr>&  iVect, int iNbCut, DataBase * iBase  )
   {
-    std::set<LinePtr> lAlreadyDone;
-  
+    std::cout << "Modif::CutLines : " << iNbCut << " lines : " << iVect.size() << std::endl;
+
     //==========================
     for( LinePtr lLine: iVect )
       {
 	if( lLine->getOwners().size() == 0 )
 	  {
 	    //	    fl_alert( "Fatal Error - Modifs::CutLines - The line %ld have no owner - Abort !", lLine->getId() );
+	    std::cout << "Fatal Error - Modifs::CutLines - The line %ld have no owner - Abort !"
+		      << lLine->getId() << std::endl;
 	    return false;
 	  }
       }
+    //==========================
+
+    // Certain line have reversed line, CutLine treat them,
+    // then we must prevent a re-treat of them if there are in iVect,
+    // this is why we use lAlreadyDone !
+     std::unordered_set<LinePtr> lAlreadyDone;
     
     //==========================
     for( LinePtr lLine: iVect )
-      {
-	CutLine( lLine, iNbCut, iBase );
+      {	
+	if( lAlreadyDone.find( lLine ) != lAlreadyDone.end())
+	  {
+	    continue;
+	  }
+	   
+	   
+	LinePtr lReverseLine = nullptr; // filled by CutLine if it find a reverse line 
+
+	CutLine( lLine, iNbCut, iBase, &lReverseLine );
+
+	
+	lAlreadyDone.emplace( lLine );
+	if( lReverseLine )
+	  {
+	    lAlreadyDone.emplace( lReverseLine );
+	  }
       }
     //==========================
+    iVect.clear(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
     return true;
   }
   //-----------------------------------------------
@@ -51,73 +76,103 @@ namespace PP3d{
     for( size_t i=1; i < iVectLines.size(); i++)
       {
 	iFacet.insertLine( lPos+i, iVectLines[i]);
-      } 
+      }
+    return true;
   }
   //-----------------------------------------------
-  bool Modif::CutLine(  LinePtr iLine, int iNbCut, DataBase * iBase )
+  // If we want to work in reverse line we must provide an pointer for ioReverseLine 
+  bool Modif::CutLine(  LinePtr iLine, int iNbCut, DataBase * iBase, LinePtr * ioReverseLine )
   {
-    if( iLine->getOwners().size() == 0 )
+    std::cout << "Modif::CutLine " << iNbCut << std::endl;
+    
+    EntityPtr lOwner = iLine->firstOwner();
+    
+    if( lOwner == nullptr )
       {
 	return false;
       }
+
     
-    lOwner = lLine->getOwners()[0];
-     
-    if( lLine->isPoint() )
+    if( iLine->isPoint() )
       return true;
 	
  
     if( lOwner->getType() != ShapeType::Facet )
-      return true;
-    
+      {
+	std::cout << "Error - Modif::CutLine - The line %ld owner is not a facet - ignore : "
+		  << iLine->getId() << std::endl;
+	return true;
+      }
+   
     // normaly the only possibility is a facet
     
-    FacetPtr lFacet = (FacetPtr*) lOwner;
+    FacetPtr lFacet = (FacetPtr) lOwner;
  	
-    std::vector<PointPtr> lPts;
     
-    LinePtr lLineRev = lLine->getReverseLine(); //we kept the inverse of the line before change it !!!
-      
-    Point3d& lA = lLine->first()->get();	
-    Point3d& lB = lLine->second()->get();
+    if( ioReverseLine ) // if we 
+      {
+	*ioReverseLine = iLine->getReverseLine(); //we kept the inverse of the line before change it !!!
+      }
+
+    
+    Point3d& lA = iLine->first()->get();	
+    Point3d& lB = iLine->second()->get();
     
     Point3d lDiff = lB - lA ; // the increase betwen the two points
 
     std::vector<PointPtr> lPts; // we put in lPts all the points of the new line (olds and news)
     
-    lPts.Push_back( &lA );  // first
+    lPts.push_back( iLine->first() );  // first
         
     for( int i=1; i< iNbCut; i++ )
       {
+	std::cout << "New point" << std::endl;
+	
 	lPts.push_back( new Point( lA + ((lDiff*i)/iNbCut) ));
       }
     
-    lPts.Push_back( &lB ); // old second
+    lPts.push_back( iLine->second() ); // old second
     
     // there is iNbCut + 1 point
     
     
-    std::vector<lLinePtr> lLines; // All the new lines
+    std::vector<LinePtr> lLines; // All the new lines
     
     // we create iNbCut new lines with points
     for( int i=0; i< iNbCut; i++ )
       {
-	lLines.push_back( new Line( lPts[i], lPts[i+1] ));
+	std::cout << "New line " << i << " " <<  i+1 << std::endl;
+	if( i == 0 )
+	  { // recycle the line
+	    iLine->set( lPts[i], lPts[i+1] );
+	    lLines.push_back( iLine );
+	  }
+	else 
+	  lLines.push_back( new Line( lPts[i], lPts[i+1] ));
       }
 
 
-    std::vector<lLinePtr> lLinesInv; // All the Inv new lines
-  
+    std::vector<LinePtr> lLinesRev; // All the Inv new lines
+ 
     if( RemplaceLineIntoFacet( *lFacet, iLine, lLines ) )
       {
 	// now make the same thing for the inv line
-	if( lLineRev )
+	if( ioReverseLine && *ioReverseLine
+	    && (*ioReverseLine)->firstOwner()
+	    && (*ioReverseLine)->firstOwner()->getType() == ShapeType::Facet)
 	  {
 	    for( int i= iNbCut; i>0; i-- )
 	      {
-		lLinesInv.push_back( new Line( lPts[i], lPts[i-1] )); //in reverse order !
+		std::cout << "New line Rev" << i << " " <<  i-1 << std::endl;
+		if( i == 0 )
+		  { // recycle the line
+		    (*ioReverseLine)->set( lPts[i], lPts[i-1] );
+		    lLinesRev.push_back( *ioReverseLine );
+		  }
+		else 
+		  lLinesRev.push_back( new Line( lPts[i], lPts[i-1] )); //in reverse order !
 	      }
-	    RemplaceLineIntoFacet( *lFacetInv, iLineInv, lLinesInv );
+	    RemplaceLineIntoFacet( *((FacetPtr)(*ioReverseLine)->firstOwner()), *ioReverseLine, lLinesRev );
 	  }
       }
 
@@ -133,17 +188,17 @@ namespace PP3d{
 	
 	for( LinePtr lLine : lLines )
 	  {
-	    iBase->validOneEntityLevel( lLine );	
+	    if( lLine != iLine )
+	      iBase->validOneEntityLevel( lLine );	
 	  }
 	
-	for( LinePtr lLine : lLinesInv )
+	for( LinePtr lLine : lLinesRev )
 	  {
-	    iBase->validOneEntityLevel( lLine );	
+	    if( lLine !=  (*ioReverseLine) )	    
+	      iBase->validOneEntityLevel( lLine );	
 	  }
       }
-    // delete &lA;
-    // delete &lA;
-   
+
     return true;
   }
     

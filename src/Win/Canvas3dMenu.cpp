@@ -139,7 +139,7 @@ namespace M3d {
 
     
 
-    if(  TheSelect.getSelectType() == PP3d::SelectType::Line )
+      if(  TheSelect.getSelectType() != PP3d::SelectType::Point  )
       {
 	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
@@ -436,15 +436,18 @@ namespace M3d {
 	  lNbCut = lVal;
       }
 
+    std::cout << "MyMenuCallbackSelect : " << lNbCut << std::endl;
+    
     if( lNbCut > 1 )
       {
 	// On recupere les objects de la selection
 	PP3d::SortEntityVisitor lVisit;
-	TheSelect.execVisitorOnlyOnObjects( lVisit );
+	TheSelect.execVisitorOnEntity( lVisit );
 	// On prend les lignes
 
+	std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
 	//Attention au lignes inverses doubles des facettes !
-	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, &TheAppli.getDatabase() );	
+	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
       } 
   }
   

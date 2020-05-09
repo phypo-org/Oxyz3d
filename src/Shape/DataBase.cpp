@@ -509,7 +509,7 @@ namespace PP3d {
 	    cContainerObject.erase( dynamic_cast<Object*>(pEntity ));
 	    return true;
 	  }
-	return false;*
+	return false;
       }
     // FAIRE TOUT LES AUTRES CAS !!!!
 		

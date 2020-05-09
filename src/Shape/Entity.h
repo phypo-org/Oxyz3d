@@ -82,10 +82,17 @@ namespace PP3d {
     bool& isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche !
     void setHighlight( bool pFlag ) { cIsHighlight =  pFlag;}
 
-    auto & getOwner() { return  cOwners; }
+    auto & getOwners() { return  cOwners; }
+    Entity * firstOwner()
+    {
+      Entity* lTmp = nullptr;
+      for( Entity* lOwner  :  cOwners ) { lTmp = lOwner;}
+      return lTmp;
+    }
+    
 
     //    void   addOwner     ( Entity* pOwner ) { cOwners.emplace( pOwner); }
-    void   setOwner     ( Entity* pOwner ) { cOwners.emplace( pOwner); }
+    void   addOwner     ( Entity* pOwner ) { cOwners.emplace( pOwner); }
     void   removeOwner  ( Entity* pOwner ) { cOwners.erase( pOwner); }
     size_t howManyOwner ( ) { return cOwners.size(); }
 
@@ -193,10 +200,9 @@ namespace PP3d {
     Line( PointPtr lA, PointPtr lB )
     {		 
       cPoints = { lA, lB };
-      lA->setOwner( this );
+      lA->addOwner( this );
       if( lA != lB )
-	lB->setOwner( this );
-			
+	lB->addOwner( this );			
     }
     bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette
 								 
@@ -210,6 +216,17 @@ namespace PP3d {
     PointPtr      second() const { return cPoints.second;}
     PointPtr&     first() { return cPoints.first;}
     PointPtr&     second(){ return cPoints.second;}
+
+    void set( PointPtr lA, PointPtr lB )
+    {
+      if( getFirst() )  getFirst()->removeOwner(this);
+      if( getSecond() ) getSecond()->removeOwner(this);
+	
+      cPoints = { lA, lB };
+      lA->addOwner( this );
+      if( lA != lB )
+	lB->addOwner( this );			
+    }
 
     void execVisitor( EntityVisitor& pVisit )override;
 
@@ -293,23 +310,23 @@ namespace PP3d {
     void addLine( LinePtr iLine )
     {
       cLines.push_back( iLine );
-      iLine->setOwner( this );
+      iLine->addOwner( this );
     }
     void insertLine( size_t iPos, LinePtr iLine )
     {
       cLines.insert( cLines.begin()+iPos, iLine );
-      iLine->setOwner( this );
+      iLine->addOwner( this );
     }
     void setLine( size_t iPos, LinePtr iLine )
     {
       cLines[iPos] =  iLine ;
-      iLine->setOwner( this );
+      iLine->addOwner( this );
     }
     LinePtr getLine(  size_t iPos ) { return cLines[iPos]; }
     LinePtr swapLine(  size_t iPos,  LinePtr iLine )
     {
       LinePtr lTmp =  cLines[iPos];
-      iLine->setOwner( this );
+      iLine->addOwner( this );
       cLines[iPos] = iLine;
       return lTmp;
     }
@@ -342,7 +359,7 @@ namespace PP3d {
     void addFacet( FacetPtr pFacet)
     {
       cFacets.push_back( pFacet );
-      pFacet->setOwner( this );
+      pFacet->addOwner( this );
     }
 
     FacetPtrVect&  getFacets()  { return cFacets; }

@@ -48,12 +48,14 @@ namespace PP3d {
     cSelectObj.emplace( ioEntity );
     ioEntity->setSelect( true );
 
+    /*
     if( iSelectAll && ioEntity->getType() == ShapeType::Line )
       {
 	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
 	if( lLine )
 	  addEntity( lLine, false );
       }
+    */
   }
 
   //--------------------------------

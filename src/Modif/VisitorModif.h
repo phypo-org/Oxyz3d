@@ -88,7 +88,7 @@ namespace PP3d {
       else
 	for( EntityPtr lEntity : iEntity->getOwners() )
 	  {
-	    addOwner( lEntity );
+	    setOwner( lEntity );
 	  }       
     }
     //---------------------------------
