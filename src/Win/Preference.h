@@ -16,7 +16,9 @@ namespace M3d {
   class Preference : public virtual PPSingletonCrtp<Preference>{
       
   public:
-
+    //Interface
+    float cMouseWheel=15;
+    
     //Save
     const std::string sSaveDefault = "default.oxyz";
     std::string cLastSave = sSaveDefault;

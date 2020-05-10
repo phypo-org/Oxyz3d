@@ -162,20 +162,20 @@ namespace M3d {
 	}
 	//===================================	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Debug");
-	  lX = lMarge+100;
+	  lX = lMarge+200;
 	  lY = lMarge;
 	
 	  cDbgEvt = new MyIntInput( lX, lY, 200, lH, "Debug Event", MyPref.cDbgEvt );
 	  lY += cDbgEvt->h() + lMarge;
 	  
-	  INTPUT_INT( cDbgAct, "Debug Action (windows events)" );
-	  INTPUT_INT( cDbgDrw, "Debug Draw" );
-	  INTPUT_INT( cDbgBaz, "Debug Database" );
-	  INTPUT_INT( cDbgSel, "Debug Selection " );	  
-	  INTPUT_INT( cDbgTree,"Debug Tree" );
-	  INTPUT_INT( cDbgFil, "Debug File (read write ...)" );
+	  INTPUT_INT( cDbgAct, "Debug Action (windows events)   " );
+	  INTPUT_INT( cDbgDrw, "Debug Draw                      " );
+	  INTPUT_INT( cDbgBaz, "Debug Database                  " );
+	  INTPUT_INT( cDbgSel, "Debug Selection                 " );	  
+	  INTPUT_INT( cDbgTree,"Debug Tree                      " );
+	  INTPUT_INT( cDbgFil, "Debug File (read write ...)     " );
 	  INTPUT_INT( cDbgIni, "Debug configuration (config.ini)" );
-	  INTPUT_INT( cDbgLua, "Debug Lua" );
+	  INTPUT_INT( cDbgLua, "Debug Lua                       " );
 	  /*
 
 	  

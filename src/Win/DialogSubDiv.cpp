@@ -97,10 +97,11 @@ namespace M3d {
     */
     
     PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
-
-    /*		
+		
 		std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
-		std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
+
+ /*
+   		std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
 
 		std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
 		std::cout << " Size     :" << cSliderSize->value()   << std::endl;
@@ -121,7 +122,7 @@ namespace M3d {
     int   lHoleFacet  =  cChoiceHoleFacet->value() -1;
     int   lHoleDepth  =  cChoiceHoleDepth->value() -1;
 
-    /*	
+    	
 	std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
 	std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
 
@@ -135,7 +136,7 @@ namespace M3d {
 
 	std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
 	std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
-    */
+    
 
     PP3d::SubDiv::SubParam lParam( lDepth, lSize, lCentralPoint, lNormType);
     
@@ -182,15 +183,14 @@ namespace M3d {
 
       cChoiceGeometry =  std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Initial template", ChoiceCB, this ))  ;
       cChoiceGeometry->callback((Fl_Callback*)ChoiceCB, this );
-      cChoiceGeometry->add("Parallelepiped");
-      cChoiceGeometry->add("Cube");
-      cChoiceGeometry->add("Pyramid4");
-      cChoiceGeometry->add("Octodron");
-      cChoiceGeometry->add("Dodecahedron");
+      cChoiceGeometry->add("Tetrahedron"); // 0
+      cChoiceGeometry->add("Pyramid");    // 1
+      cChoiceGeometry->add("Cube");        // 2
+      cChoiceGeometry->add("Octahedron");  // 3
+      cChoiceGeometry->add("Dodecahedron"); // 4      
       cChoiceGeometry->add("Icosahedron");
-      cChoiceGeometry->add("Tetrahedron");
-      cChoiceGeometry->add("Odron");
-      cChoiceGeometry->value(1);
+      
+      cChoiceGeometry->value(2);
       cChoiceGeometry->tooltip("The original object to be subdivided");
 	
       //	cChoiceGeometry->add("");

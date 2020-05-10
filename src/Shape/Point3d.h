@@ -244,7 +244,7 @@ namespace PP3d {
     //--------------------------------
     static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C, TPoint3d D )
     {
-      return TPoint3d( (A.cX+B.cX+C.cX+D.cX)*0.25,  (A.cY+B.cY+C.cY+D.cY)*0.25,  (A.cZ+B.cZ+C.cZ+D.cY)*0.25 );
+      return TPoint3d( (A.cX+B.cX+C.cX+D.cX)*0.25,  (A.cY+B.cY+C.cY+D.cY)*0.25,  (A.cZ+B.cZ+C.cZ+D.cZ)*0.25 );
     }
     //--------------------------------
     static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C, TPoint3d D, TPoint3d E  )

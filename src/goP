@@ -1,0 +1,9 @@
+#! /bin/bash
+# ./PPD --sync
+DATE=`date +%Y%m%d_%H%M`
+
+export PROFILING="valgrind -v --tool=callgrind "
+
+export LD_LIBRARY_PATH=${MYGCC}lib64
+
+$PROFILING --callgrind-out-file=callgrind-$DATE Debug/Oxyz3d.exe -lua -load "toto.oxyz" --sync $*

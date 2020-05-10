@@ -156,16 +156,36 @@ namespace PP3d{
       }		      
   }
   //------------------------------------------------
-  // A REFAIRE : le probleme c'est que quand on cree decoupe 
-  // on va perdre le classement par facette 
-  
-  bool Modif::ConnectPoints( std::vector<PointPtr> &  iVectPt, DataBase * iBase )
+  std::ostream & operator << ( std::ostream & iOs, FacetsPoints & lFp )
   {
-    std::cout << "Modif::ConnectPoints nb point : " << iVectPt.size() << std::endl;
-    int k=0;
-    while( iVectPt.size() >= 2 && k++ < 100 ) // le k  c'est une securite !
+    for( auto lPair : lFp )
       {
-	std::cout << "Modif::ConnectPoints  nb point : " << iVectPt.size() <<  "  k : " << k <<  std::endl;
+	FacetPtr       lFacet = lPair.first;
+	UniquePoints & lUniq  = lPair.second;
+	
+	iOs << "Facet:" << lFacet->getId()<< " -> ";
+	for( PointPtr lPt : lUniq.cVectPt )
+	  {
+	    iOs <<  lPt->getId() << " " ;
+	  }
+	iOs << std::endl;
+      }
+    return iOs;
+  }
+  //------------------------------------------------
+  // Decoupage recursif des facettes en fonction des points selectionne
+  // les points sont traités deux par deux dans l'odre de saisies
+  
+  bool Modif::ConnectPoints( std::vector<PointPtr> &  iVectPt, DataBase * iBase, int iDepth )
+  {
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "Modif::ConnectPoints nb point : " << iVectPt.size() << " depth :" << iDepth << std::endl;
+
+    if( iVectPt.size() >= 2  && iDepth < 32 )
+      {
+	std::cout << "Modif::ConnectPoints  nb point : " << iVectPt.size() <<   std::endl;
 	
 	FacetsPoints lFacsPts;
 	
@@ -174,10 +194,14 @@ namespace PP3d{
 	  {
 	    GetFacetsOfPoint( lPt, lFacsPts, true );
 	  }
-	
+
+	std::cout << "***************************************"<< std::endl;
+	std::cout << lFacsPts << std::endl;
+	std::cout << "***************************************"<< std::endl;
+
 	for( auto lPair : lFacsPts )
 	  {
-	    std::cout << "Modif::ConnectPoints for( auto lPair  "<<  std::endl;
+	    std::cout << "Modif::ConnectPoints for  auto lPair  "<<  std::endl;
 	    
 	    FacetPtr lFac = lPair.first;
 	    PolyPtr lPoly = (PolyPtr)lFac->firstOwner();
@@ -186,9 +210,6 @@ namespace PP3d{
 		|| lPoly->getType() != ShapeType::Poly )
 	      {
 		std::cerr << "Modif::ConnectPoints owner not a polyedre" << std::endl;
-		for( PointPtr lPtr : lPair.second.cVectPt )
-		  RemovePointFromVect( iVectPt, lPtr );
-		
 		continue;
 	      }
 	    
@@ -202,23 +223,32 @@ namespace PP3d{
 		continue;
 	      }
 
+	    // On traite les deux premiers points
 	    if( lVectPoints.size() >1 )
 	      {
 		// LE TRAITEMENT
 		FacetPtr lNewFacet = CutFacetInTwo( lFac, lVectPoints[0], lVectPoints[1], iBase );
 
-		// Moche !
-		RemovePointFromVect( iVectPt, lVectPoints[1] );	      
+		if( lNewFacet )
+		  {
+		    lPoly->addFacet( lNewFacet );
+		  }
+		lVectPoints.erase( lVectPoints.begin(), lVectPoints.begin()+2 );
+		
+		// S'il reste des points a traiter de l'ancienne facette
+		// il faut refaire le traitement car il y a une nouvelle facette !
+		if( lVectPoints.size() > 1 )
+		  {
+		    ConnectPoints( lVectPoints, iBase, iDepth + 1 );  //RECURSIF !!!
+		  } 
 	      }
-	    RemovePointFromVect( iVectPt, lVectPoints[0] );
-	    // S'il y a plus de deux points il ne sont plus forcement dans la facette courante
-	    // il faudrait reanalyser pour voir si c'est toujours viable et sinon refaire le
-	    // traitement (pour le moment je fais les deux premiers
-	    // et le tour suivant fera le travail pour ces points la (on peut toujours y croire, hein !)
-	    continue;// while  - facette suivante
 	  }
       }
-    
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "**************************************************************************"<< std::endl;
+    std::cout << "Modif::ConnectPoints nb point : " << iVectPt.size() << std::endl;
+  
     return true;
   }
  

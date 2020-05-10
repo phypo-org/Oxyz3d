@@ -5,13 +5,14 @@
 #include "Shape/Entity.h"
 #include "Shape/SortVisitor.h"
 #include "Shape/DataBase.h"
+#include "Shape/SubDiv.h"
 
 
 #include <map>
 
 namespace PP3d{
   //**************************************************
-  
+
   struct UniquePoints{
     
     std::vector<PointPtr> cVectPt; // les points dans le bon ordre
@@ -42,9 +43,11 @@ namespace PP3d{
     static bool CutLine(  LinePtr iLine, int iNbCut, DataBase * iBase,
 			  LinePtr * ioReverseLine = nullptr );
 
-    static bool ConnectPoints( std::vector<PointPtr>&  iVect, DataBase * iBase );
     static bool Connect2Point( PointPtr A, PointPtr B, DataBase * iBase );
+    static bool ConnectPoints( std::vector<PointPtr>&  iVect, DataBase * iBase, int iDepth=0 );
 
+
+    static bool SubdivideFacet(  std::vector<FacetPtr>&  iVect, DataBase * iBase, SubDiv::SubParam * iSubDiv = nullptr );
   };
   //**************************************************
   

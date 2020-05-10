@@ -130,11 +130,11 @@ namespace  PP3d {
 	Float3 v0 = Float3::Middle( v1, v2, v3, v4, v5 );	
 	pParam.normEffectSub( v0, pDepth  );
 			
-	Subdivide( pParam, v1, v2, v0, pDepth );
-	Subdivide( pParam, v2, v3, v0, pDepth );
-	Subdivide( pParam, v3, v4, v0, pDepth );
-	Subdivide( pParam, v4, v5, v0, pDepth );
-	Subdivide( pParam, v5, v1, v0, pDepth );
+	Subdivide3( pParam, v1, v2, v0, pDepth );
+	Subdivide3( pParam, v2, v3, v0, pDepth );
+	Subdivide3( pParam, v3, v4, v0, pDepth );
+	Subdivide3( pParam, v4, v5, v0, pDepth );
+	Subdivide3( pParam, v5, v1, v0, pDepth );
 			
       }
     else
@@ -151,17 +151,17 @@ namespace  PP3d {
 	pParam.normEffectSub( v45, pDepth  );
 	pParam.normEffectSub( v51, pDepth  );
 						
-	Subdivide( pParam, v1, v12, v51, pDepth );
-	Subdivide( pParam, v2, v23, v12, pDepth);
-	Subdivide( pParam, v3, v34, v23, pDepth );
-	Subdivide( pParam, v4, v45, v34, pDepth );
-	Subdivide( pParam, v5, v51, v45, pDepth );
+	Subdivide3( pParam, v1, v12, v51, pDepth );
+	Subdivide3( pParam, v2, v23, v12, pDepth);
+	Subdivide3( pParam, v3, v34, v23, pDepth );
+	Subdivide3( pParam, v4, v45, v34, pDepth );
+	Subdivide3( pParam, v5, v51, v45, pDepth );
 
 	Subdivide5( pParam, v12, v23, v34, v45, v51, pDepth );
       }
   }
   //------------------------------------------------
-  void SubDiv::Subdivide( SubDiv::SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth)
+  void SubDiv::Subdivide4( SubDiv::SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth)
   {
     if( pDepth <= 0  )
       {						 
@@ -181,10 +181,10 @@ namespace  PP3d {
 	Float3 v0 = Float3::Middle( v1, v2, v3, v4 );	
 	pParam.normEffectSub( v0, pDepth  );
 				
-	Subdivide( pParam, v1, v2, v0, pDepth );
-	Subdivide( pParam, v2, v3, v0, pDepth );
-	Subdivide( pParam, v3, v4, v0, pDepth );
-	Subdivide( pParam, v4, v1, v0, pDepth );
+	Subdivide3( pParam, v1, v2, v0, pDepth );
+	Subdivide3( pParam, v2, v3, v0, pDepth );
+	Subdivide3( pParam, v3, v4, v0, pDepth );
+	Subdivide3( pParam, v4, v1, v0, pDepth );
       }
     else
       {
@@ -198,15 +198,16 @@ namespace  PP3d {
 	pParam.normEffectSub( v34, pDepth  );
 	pParam.normEffectSub( v41, pDepth  );
 						
-	Subdivide( pParam, v1, v12, v41, pDepth );
-	Subdivide( pParam, v2, v23, v12, pDepth);
-	Subdivide( pParam, v3, v34, v23, pDepth );
-	Subdivide( pParam, v4, v41, v34, pDepth);
-	Subdivide( pParam, v12, v23, v34, v41, pDepth );
+	Subdivide3( pParam, v1, v12, v41, pDepth );
+	Subdivide3( pParam, v2, v23, v12, pDepth);
+	Subdivide3( pParam, v3, v34, v23, pDepth );
+	Subdivide3( pParam, v4, v41, v34, pDepth);
+	
+	Subdivide4( pParam, v12, v23, v34, v41, pDepth );
       }
   }
   //------------------------------------------------
-  void SubDiv::Subdivide( SubDiv::SubParam& pParam, Float3 v1, Float3 v2, Float3 v3, int  pDepth )
+  void SubDiv::Subdivide3( SubDiv::SubParam& pParam, Float3 v1, Float3 v2, Float3 v3, int  pDepth )
   {
 				
     if( pDepth <= 0 )
@@ -223,9 +224,9 @@ namespace  PP3d {
 
 	pParam.normEffectSub( v0, pDepth  );
 
-	Subdivide( pParam, v1, v2, v0, pDepth );
-	Subdivide( pParam, v2, v3, v0, pDepth );
-	Subdivide( pParam, v3, v1, v0, pDepth );
+	Subdivide3( pParam, v1, v2, v0, pDepth );
+	Subdivide3( pParam, v2, v3, v0, pDepth );
+	Subdivide3( pParam, v3, v1, v0, pDepth );
       }
     else
       { 				 					
@@ -237,10 +238,10 @@ namespace  PP3d {
 	pParam.normEffectSub( v23, pDepth  );
 	pParam.normEffectSub( v31, pDepth  );
 
-	Subdivide( pParam, v1, v12, v31,  pDepth);
-	Subdivide( pParam, v2, v23, v12,  pDepth );
-	Subdivide( pParam, v3, v31, v23,  pDepth);
-	Subdivide( pParam, v12, v23, v31, pDepth );
+	Subdivide3( pParam, v1, v12, v31,  pDepth);
+	Subdivide3( pParam, v2, v23, v12,  pDepth );
+	Subdivide3( pParam, v3, v31, v23,  pDepth);
+	Subdivide3( pParam, v12, v23, v31, pDepth );
       }
   }
   //------------------------------------------------
@@ -248,19 +249,22 @@ namespace  PP3d {
   //------------------------------------------------
   SubDiv::SubParam&  SubDiv::Create(  SubDiv::GeometryType iGtype, SubDiv::SubParam&  pParam )
   {
-    SubParam& lParam = pParam ;
-
+    SubParam & lParam = pParam ;
+    std::cout << " SubDiv::Create" << (int)iGtype << std::endl;
+    
     switch(iGtype )
       {
-      case   GeometryType::CUBE :          return Cube        (  pParam, 1 );
-      case   GeometryType::PYRAMID4 :      return Pyramid4    (  pParam, 0, 0, 0, 1, 1 );
-      case   GeometryType::OCTODRON :      return Octodron    (  pParam );
-      case   GeometryType::DODECAHEDRON :  return Dodecahedron(  pParam );
-      case   GeometryType::OCTAHEDRON :    return Octahedron  (  pParam );
-      case   GeometryType::ICOSAHEDRON :   return Icosahedron (  pParam );
       case   GeometryType::TETRAHEDRON :   return Tetrahedron (  pParam );
-      case   GeometryType::ODRON   :
-      default:
+      case   GeometryType::PYRAMID4 :      return Pyramid4    (  pParam, 0, 0, 0, 1, 1 );
+      case   GeometryType::CUBE :          return Cube        (  pParam, 1 );
+      case   GeometryType::OCTAHEDRON :    return Octahedron  (  pParam );
+      case   GeometryType::DODECAHEDRON :  return Dodecahedron(  pParam );
+      case   GeometryType::ICOSAHEDRON :   return Icosahedron (  pParam );
+
+	
+      case   GeometryType::OCTAHEDRON2:    return Octahedron2    (  pParam );	// ???
+      case   GeometryType::ODRON   :   // ????
+     default:
 	return Odron       (  pParam );
       }
 
@@ -288,12 +292,12 @@ namespace  PP3d {
 
     pParam.normEffectInit( lData, 8 );
 
-    Subdivide( pParam, lA, lB, lC, lD, pParam.cDepth );						
-    Subdivide( pParam, lE, lH, lG, lF, pParam.cDepth );					
-    Subdivide( pParam, lA, lE, lF, lB, pParam.cDepth );						
-    Subdivide( pParam, lD, lC, lG, lH, pParam.cDepth );						
-    Subdivide( pParam, lB, lF, lG, lC, pParam.cDepth );
-    Subdivide( pParam, lA, lD, lH, lE, pParam.cDepth );			
+    Subdivide4( pParam, lA, lB, lC, lD, pParam.cDepth );						
+    Subdivide4( pParam, lE, lH, lG, lF, pParam.cDepth );					
+    Subdivide4( pParam, lA, lE, lF, lB, pParam.cDepth );						
+    Subdivide4( pParam, lD, lC, lG, lH, pParam.cDepth );						
+    Subdivide4( pParam, lB, lF, lG, lC, pParam.cDepth );
+    Subdivide4( pParam, lA, lD, lH, lE, pParam.cDepth );			
 
     return pParam;
   }
@@ -317,11 +321,11 @@ namespace  PP3d {
 
     // MyFacet lPyramid4[5];
 
-    Subdivide( pParam, lTop, lFrontRight, lFrontLeft, pParam.cDepth );
-    Subdivide( pParam, lTop, lFrontLeft, lBackLeft, pParam.cDepth );
-    Subdivide( pParam, lTop, lBackLeft, lBackRight, pParam.cDepth );
-    Subdivide( pParam, lTop, lBackRight, lFrontRight, pParam.cDepth );
-    Subdivide( pParam, lFrontRight, lFrontLeft, lBackLeft, lBackRight, pParam.cDepth );
+    Subdivide3( pParam, lTop, lFrontRight, lFrontLeft, pParam.cDepth );
+    Subdivide3( pParam, lTop, lFrontLeft, lBackLeft, pParam.cDepth );
+    Subdivide3( pParam, lTop, lBackLeft, lBackRight, pParam.cDepth );
+    Subdivide3( pParam, lTop, lBackRight, lFrontRight, pParam.cDepth );
+    Subdivide4( pParam, lFrontRight, lFrontLeft, lBackLeft, lBackRight, pParam.cDepth );
 
     return pParam;
   }
@@ -341,18 +345,19 @@ namespace  PP3d {
     pParam.normEffectInit( lData, 4 );
     
     					
-    Subdivide( pParam, lData[0], lData[1], lData[3], pParam.cDepth );
-    Subdivide( pParam, lData[2], lData[1], lData[0], pParam.cDepth );
-    Subdivide( pParam, lData[3], lData[2], lData[0], pParam.cDepth );
-    Subdivide( pParam, lData[1], lData[2], lData[3], pParam.cDepth );		
+    Subdivide3( pParam, lData[0], lData[1], lData[3], pParam.cDepth );
+    Subdivide3( pParam, lData[2], lData[1], lData[0], pParam.cDepth );
+    Subdivide3( pParam, lData[3], lData[2], lData[0], pParam.cDepth );
+    Subdivide3( pParam, lData[1], lData[2], lData[3], pParam.cDepth );		
     return pParam;
   }
 
   //------------------------------------------------
-  SubDiv::SubParam& SubDiv::Octodron( SubDiv::SubParam& pParam )
+  SubDiv::SubParam& SubDiv::Octahedron2( SubDiv::SubParam& pParam )
   {
     Float3 lData[6];
-				
+
+    
     lData[0] = Float3(  T,  0,  0 );
     lData[1] = Float3( -T,  0,  0 );
     lData[2] = Float3(  0,  T,  0 );
@@ -362,14 +367,14 @@ namespace  PP3d {
 
     pParam.normEffectInit( lData, 6 );
 
-    Subdivide( pParam, lData[0], lData[4], lData[2], pParam.cDepth );
-    Subdivide( pParam, lData[2], lData[4], lData[1], pParam.cDepth );
-    Subdivide( pParam, lData[1], lData[4], lData[3], pParam.cDepth );
-    Subdivide( pParam, lData[3], lData[4], lData[0], pParam.cDepth );
-    Subdivide( pParam, lData[0], lData[2], lData[5], pParam.cDepth );
-    Subdivide( pParam, lData[2], lData[1], lData[5], pParam.cDepth );
-    Subdivide( pParam, lData[1], lData[3], lData[5], pParam.cDepth );
-    Subdivide( pParam, lData[3], lData[0], lData[5], pParam.cDepth );
+    Subdivide3( pParam, lData[0], lData[4], lData[2], pParam.cDepth );
+    Subdivide3( pParam, lData[2], lData[4], lData[1], pParam.cDepth );
+    Subdivide3( pParam, lData[1], lData[4], lData[3], pParam.cDepth );
+    Subdivide3( pParam, lData[3], lData[4], lData[0], pParam.cDepth );
+    Subdivide3( pParam, lData[0], lData[2], lData[5], pParam.cDepth );
+    Subdivide3( pParam, lData[2], lData[1], lData[5], pParam.cDepth );
+    Subdivide3( pParam, lData[1], lData[3], lData[5], pParam.cDepth );
+    Subdivide3( pParam, lData[3], lData[0], lData[5], pParam.cDepth );
 				
     return pParam;
   }
@@ -448,12 +453,12 @@ namespace  PP3d {
     Float3 x1 = data[ ndx[i][1] ];
     Float3 x2 = data[ ndx[i][2] ];
 
-    SubDiv::Subdivide( pParam, x0, x1, x2, pParam.cDepth );	
+    SubDiv::Subdivide3( pParam, x0, x1, x2, pParam.cDepth );	
   }
   //------------------------------------------------
   void SubDiv::Triangle( SubDiv::SubParam& pParam,  Float3 x0, Float3 x1,  Float3 x2 )
   {
-    SubDiv::Subdivide( pParam, x0, x1, x2, pParam.cDepth );	
+    SubDiv::Subdivide3( pParam, x0, x1, x2, pParam.cDepth );	
   }
   //------------------------------------------------
   /* octahedron data: The octahedron produced is centered at the
@@ -574,7 +579,9 @@ namespace  PP3d {
 
     return pParam;
   }
-  //-----------------------
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
   Poly* SubDiv::SubParam::finish( float iScale )
   {
 

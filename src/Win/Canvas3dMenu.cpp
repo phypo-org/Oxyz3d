@@ -25,6 +25,7 @@
 #include "Shape/SortVisitor.h"
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
+#include "Shape/SubDiv.h"
 
 #include "Modif/Modif.h"
 
@@ -105,8 +106,11 @@ namespace M3d {
 #define  StrMenu_CutN "-----  N"
 
 
-#define StrMenuConnectPoint "Connect Points"
+#define StrMenu_ConnectPoint "Connect Points"
   
+#define StrMenu_Subdivide        "Subdivide facets"
+#define StrMenu_SubdivideCentral "Subdivide facets with central facet"
+
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
   {
@@ -144,10 +148,10 @@ namespace M3d {
     if(  TheSelect.getSelectType() == PP3d::SelectType::Point
 	 && TheSelect.getNbSelected() > 1 )
       {
-	pMenu.add( StrMenuConnectPoint, "c", MyMenuCallbackConnectPoint, this);	
+	pMenu.add( StrMenu_ConnectPoint, "c", MyMenuCallbackConnectPoint, this);	
       }
     
-    if(  TheSelect.getSelectType() != PP3d::SelectType::Point  )
+    if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
       {
 	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
@@ -161,7 +165,14 @@ namespace M3d {
    	pMenu.add( StrMenu_Cut "/"  StrMenu_CutN, "", MyMenuCallbackCutLine, this);
       }
 
-    
+    if(  (TheSelect.getSelectType() != PP3d::SelectType::Point
+	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
+	  && TheSelect.getNbSelected() > 0)
+      {
+	pMenu.add( StrMenu_Subdivide, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_SubdivideCentral, "", MyMenuCallbackSubdivide, this);
+      }
+   
     switch( TheSelect.getSelectType() )
       {
       case PP3d::SelectType::Point :	
@@ -394,12 +405,39 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData)
   {
-    PP3d::SortEntityVisitor lVisit;
+     BEGINCALL  ;
+
+     PP3d::SortEntityVisitor lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
     
-    PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() );	
-    TheAppli.redrawAll();
+    if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() ))
+      {
+	PushHistory();
+	TheAppli.redrawAll();
+      }
   }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData)
+  {
+     BEGINCALL  ;
+     
+     PP3d::SortEntityVisitor lVisit;
+     TheSelect.execVisitorOnEntity( lVisit );
+    
+    bool pCentral = false;
+    if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0)
+      {
+	pCentral = true;
+      }
+    
+    PP3d::SubDiv::SubParam lSubDivLocal( 1, 1, pCentral, PP3d::SubDiv::SubNormalizeType::NORMALIZE_NONE );
+    
+    if( PP3d::Modif::SubdivideFacet( lVisit.cVectFacets, TheAppli.getDatabase(), &lSubDivLocal ))
+      {
+	PushHistory();
+	TheAppli.redrawAll();
+      }
+ }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)
   {
@@ -462,6 +500,7 @@ namespace M3d {
 	std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
 	//Attention au lignes inverses doubles des facettes !
 	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
+	PushHistory();
 	TheAppli.redrawAll();
     } 
   }

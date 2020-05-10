@@ -21,15 +21,16 @@ namespace  PP3d {
 
   public:
     enum class GeometryType {
-      PARALLELEPIPED=0,
-	CUBE          ,
-	PYRAMID4      ,
-	OCTODRON     ,
-	DODECAHEDRON  ,
+	TETRAHEDRON  =0,
+	PYRAMID4     ,
+	CUBE         ,
 	OCTAHEDRON   ,
-	ICOSAHEDRON   ,
-	TETRAHEDRON   ,
-	ODRON         
+	DODECAHEDRON ,
+	ICOSAHEDRON  ,
+	  
+	OCTAHEDRON2    ,
+
+	ODRON        
 	};
 
 	
@@ -73,7 +74,7 @@ namespace  PP3d {
       virtual ~SubParam();
       void reset( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize);
 			
- 	
+      
       Poly* finish( float lScale=1 );
 
       void normEffectSub ( Float3& pVal, int  pDepth);
@@ -119,13 +120,13 @@ namespace  PP3d {
 
   public:
     static void      Subdivide5(  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth );
-    static void      Subdivide (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth );
-    static void      Subdivide (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  int  pDepth );
+    static void      Subdivide4 (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth );
+    static void      Subdivide3 (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  int  pDepth );
 		
     static SubParam& Parallelepiped( SubDiv::SubParam&  pParam, float pSzX, float pSzY, float pSzZ );
     static SubParam& Cube          ( SubDiv::SubParam&  pParam, float pSz   );
     static SubParam& Pyramid4      ( SubDiv::SubParam&  pParam, float pX, float pY, float pZ, float  pWidth, float pHeight  );
-    static SubParam& Octodron      ( SubDiv::SubParam&  pParam );
+    static SubParam& Octahedron2   ( SubDiv::SubParam&  pParam );
     static SubParam& Dodecahedron  ( SubDiv::SubParam&  pParam );
     static SubParam& Octahedron    ( SubDiv::SubParam&  pParam );
     static SubParam& Icosahedron   ( SubDiv::SubParam&  pParam );

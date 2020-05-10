@@ -183,18 +183,19 @@ namespace PP3d{
 	// we give an Id to new objets and put them into the base
 	for( PointPtr lPt : lPts )
 	  {
-	    iBase->validOneEntityLevel( lPt );
+	    if( lPt->isIdVoid() )  // car il y aussi les deux anciens point !
+		iBase->validOneEntityLevel( lPt );
 	  }
 	
 	for( LinePtr lLine : lLines )
 	  {
-	    if( lLine != iLine )
+	    if( lLine != iLine ) // attentioin il ne faut pas reenregistrer les anciennes lignes
 	      iBase->validOneEntityLevel( lLine );	
 	  }
 	
 	for( LinePtr lLine : lLinesRev )
 	  {
-	    if( lLine !=  (*ioReverseLine) )	    
+	    if( lLine !=  (*ioReverseLine) )// attentioin il ne faut pas reenregistrer les anciennes lignes	    
 	      iBase->validOneEntityLevel( lLine );	
 	  }
       }

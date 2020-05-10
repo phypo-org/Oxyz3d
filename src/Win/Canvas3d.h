@@ -128,6 +128,7 @@ namespace M3d {
     static void MyMenuCallbackSelect(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );
     //=========== MENUS =================
 

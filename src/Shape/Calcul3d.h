@@ -13,16 +13,24 @@
 namespace PP3d{
 
 
-	//*******************************************
-
-	void Normal( PP3d::Point3d p1,  PP3d::Point3d p2,  PP3d::Point3d p3,  PP3d::Point3d & pNorm ) ;
-	
-	void GetMiddle( const std::vector<PP3d::Point3d>& pPoints,   PP3d::Point3d & pMiddle );
-
-	void GetMiddle( const std::vector<size_t> & pFacet, const std::vector<PP3d::Point3d>& pPoints,   PP3d::Point3d & pMiddle );
-
-	void GetMinMaxAndCenter( PP3d::ObjProps&pProps, const  std::vector<PP3d::Point3d>& pPoints );
-	//*******************************************
+  //*******************************************
+  struct Calcul3d{
+    static void Normal(  const PP3d::Point3d & p1,
+			 const  PP3d::Point3d & p2,
+			 const  PP3d::Point3d & p3, 
+			 PP3d::Point3d & pNorm ) ;
+    
+    static void GetMiddle( const std::vector<PP3d::Point3d>& pPoints,
+			   PP3d::Point3d & pMiddle );
+    
+    static void GetMiddle( const std::vector<size_t> & pFacet,
+			   const std::vector<PP3d::Point3d> & pPoints,
+			   PP3d::Point3d & pMiddle );
+    
+    static void GetMinMaxAndCenter( PP3d::ObjProps&pProps,
+				    const  std::vector<PP3d::Point3d> & pPoints );
+  };
+  //*******************************************
 
 }
 

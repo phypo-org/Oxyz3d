@@ -388,16 +388,13 @@ namespace M3d {
   {
     if( cDragPoints.size() == 0
 	&&TheSelect.getNbSelected() >0 )
-      {
-
-	
+      {	
 	// We keep all the adress of points of selected entities
 	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>(TheSelect.getSelection(),
 								  cDragPoints );
 
 
 	// Save the original coordinates of points
-
 	
 	  
 	cDragSavPoints.resize( cDragPoints.size() );
@@ -1130,14 +1127,14 @@ namespace M3d {
 	Fl::focus(this);
 	if( cMode == ModeUser::MODE_MOVE_CAMERA )
 	  {
-	    cout << " WHEEL:" << Fl::event_dx() << ":" <<  Fl::event_dy() ;
+	    cout << " WHEEL x:" << Fl::event_dx() << " y:" <<  Fl::event_dy() ;
 						
 	    cScale = cKamera.scale().x();
 	    if( Fl::event_dy() != 0)
 	      {
 	  
 		//	    cScale += Fl::event_dy()/10.0;
-		cScale *= 1.0+Fl::event_dy()/15.0;
+		cScale *= 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.01);
 	      }
 			
 	    if(cScale  < 0.0000000001 ) 
@@ -1152,6 +1149,7 @@ namespace M3d {
 	  } 
 	break;
       }
+						
     return 1;
   }
   //***************************************
