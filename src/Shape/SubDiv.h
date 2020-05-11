@@ -21,19 +21,20 @@ namespace  PP3d {
 
   public:
     enum class GeometryType {
-	TETRAHEDRON  =0,
-	PYRAMID4     ,
+      TETRAHEDRON  =0,
+	PYRAMID     ,
 	CUBE         ,
 	OCTAHEDRON   ,
 	DODECAHEDRON ,
 	ICOSAHEDRON  ,
-	  
+	
 	OCTAHEDRON2    ,
-
 	ODRON        
 	};
-
-	
+    
+    static const char * GeometryType2Str( GeometryType iType );
+    static GeometryType Str2GeometryType( const char * iStr );
+    
     //======================================
   public:
     enum  class SubNormalizeType{
@@ -49,6 +50,8 @@ namespace  PP3d {
 	NORMALIZE_INC_SUB, // TRES BON
 	NORMALIZE_MUL_INIT // Structure avec trou ou pic celon cInitGrowFactor
 	};
+    static const char * SubNormalizeType2Str( SubNormalizeType iType );
+    static SubNormalizeType Str2SubNormalizeType( const char * iStr );
     //======================================
   public:
     class SubParam {
@@ -58,7 +61,7 @@ namespace  PP3d {
       int                  cDepth;
       float                cFact;
       SubNormalizeType     cNormalize;
-      bool                 cCentralPoint;
+      bool                 cCentralPoint=false;
       
       std::vector<Float3>   cPoints;
       std::vector<MyFacet*> cFacets;
@@ -73,6 +76,7 @@ namespace  PP3d {
       SubParam( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize );
       virtual ~SubParam();
       void reset( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize);
+      void clear();
 			
       
       Poly* finish( float lScale=1 );
@@ -113,15 +117,27 @@ namespace  PP3d {
       {
 	cFacets.push_back( new MyFacet(  addPoint(p0),  addPoint(p1),  addPoint(p2),  addPoint(p3),  addPoint(p4),  addPoint(p5 ))); 
       }
+      void addFacet( std::vector<Float3> & iVect )
+      {
+	MyFacet * lFacet = new MyFacet();
+	cFacets.push_back( lFacet );
+	
+	for( Float3 lFloat : iVect )
+	  {
+	    lFacet->push_back( addPoint( lFloat ));
+	  }
+      }
     };
 		
 
     //================================================
 
   public:
-    static void      Subdivide5(  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth );
-    static void      Subdivide4 (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth );
-    static void      Subdivide3 (  SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  int  pDepth );
+    static void      SubdivideN( SubParam & pParam, std::vector<PointPtr> & iVect, int  pDepth );
+    static void      SubdivideN( SubParam& pParam, std::vector<Float3>  iVect, int  pDepth );
+    static void      Subdivide5( SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth );
+    static void      Subdivide4 (SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, int  pDepth );
+    static void      Subdivide3 (SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  int  pDepth );
 		
     static SubParam& Parallelepiped( SubDiv::SubParam&  pParam, float pSzX, float pSzY, float pSzZ );
     static SubParam& Cube          ( SubDiv::SubParam&  pParam, float pSz   );

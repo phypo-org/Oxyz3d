@@ -36,15 +36,17 @@
 //Tout mettre dans le Dialogue
 
 namespace M3d {
+  using namespace PP3d;
 
   //************************
   class DialogSubDiv {
 	
     Canvas3d *cMyCanvas;
+    
     PP3d::SubDiv::GeometryType      cGeoType;
     PP3d::SubDiv::SubNormalizeType  cNormType;
 
-    Fl_Double_Window* myWindow;
+    Fl_Double_Window * myWindow;
 
     std::unique_ptr<MyChoiceButton> cChoiceDepth;
     std::unique_ptr<MySlider>       cSliderSize;
@@ -98,15 +100,15 @@ namespace M3d {
     
     PP3d::Point3d lCenter( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
 		
-		std::cout << " Template  :" << cChoiceGeometry->value() << std::endl;
+    std::cout << " Template  :" << SubDiv::GeometryType2Str((SubDiv::GeometryType)cChoiceGeometry->value()) << std::endl;
+    
+    
+    std::cout << " Normalize :" << SubDiv::SubNormalizeType2Str((SubDiv::SubNormalizeType)cChoiceNormalize->value()) << std::endl;
 
- /*
-   		std::cout << " Normalize :" << cChoiceNormalize->value() << std::endl;
-
-		std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
-		std::cout << " Size     :" << cSliderSize->value()   << std::endl;
-		std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
-    */
+    std::cout << " Depth    :" << cChoiceDepth->value() << std::endl;
+    std::cout << " Size     :" << cSliderSize->value()   << std::endl;
+    std::cout << " Central  :" << (int)(cCheckCentralPoint->value()) << std::endl;
+    
 
     
     PP3d::SubDiv::GeometryType     lGeoType  = static_cast<PP3d::SubDiv::GeometryType>( cChoiceGeometry ->value() );
@@ -123,19 +125,19 @@ namespace M3d {
     int   lHoleDepth  =  cChoiceHoleDepth->value() -1;
 
     	
-	std::cout << "2 Template  :" << (int)(lGeoType) << std::endl;
-	std::cout << "2 Normalize :" << (int)(lNormType) << std::endl;
+    std::cout << "2 Template  :" << SubDiv::GeometryType2Str    (lGeoType) << std::endl;
+    std::cout << "2 Normalize :" << SubDiv::SubNormalizeType2Str(lNormType) << std::endl;
 
-	std::cout << "2 Depth    :"  << lDepth << std::endl;
-	std::cout << "2 Size     :"  << lSize  << std::endl;
+    std::cout << "2 Depth    :"  << lDepth << std::endl;
+    std::cout << "2 Size     :"  << lSize  << std::endl;
     
-	std::cout << "2 Central  :"  << (int)(lCentralPoint) << std::endl;
+    std::cout << "2 Central  :"  << (int)(lCentralPoint) << std::endl;
     
-	std::cout << "2 GrowFactor  :" <<  lDepthGrowFactor<< std::endl;
-	std::cout << "2 InitGrowFactor  :" << lInitGrowFactor<< std::endl;
+    std::cout << "2 GrowFactor  :" <<  lDepthGrowFactor<< std::endl;
+    std::cout << "2 InitGrowFactor  :" << lInitGrowFactor<< std::endl;
 
-	std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
-	std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
+    std::cout << "2 lHoleFacet  :" << lHoleFacet<< std::endl;
+    std::cout << "2 lHoleDepth  :" << lHoleDepth<< std::endl;
     
 
     PP3d::SubDiv::SubParam lParam( lDepth, lSize, lCentralPoint, lNormType);
@@ -203,13 +205,14 @@ namespace M3d {
       cChoiceNormalize->add("Only init");
       cChoiceNormalize->add("Inc init");		
       cChoiceNormalize->add("Dec init");
+      cChoiceNormalize->add("Half init");
       cChoiceNormalize->add("Only sub");
       cChoiceNormalize->add("Mul sub");
       cChoiceNormalize->add("Dec sub **");
       cChoiceNormalize->add("Inc sub ***");
       cChoiceNormalize->add("Mul init (trou ou pic (GrowFactor)");
       cChoiceNormalize->tooltip("The normalize method use for resize the subdivision");
-      cChoiceNormalize->value( 8 );
+      cChoiceNormalize->value( 7 );
     					
       lY += lYStep;
 

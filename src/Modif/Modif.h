@@ -35,6 +35,18 @@ namespace PP3d{
    //**************************************************
 
   struct Modif{
+ 
+    static int sDbgModif;
+    
+    
+    static PointPtr FindPointByExactValues( const std::vector<PointPtr> & iPoints, const Point3d & iVal )
+    {
+      for( PointPtr lPt : iPoints ) {
+	if( lPt->get() == iVal ) return lPt;
+      }
+      return nullptr; 
+    }
+    
     static int  GetFacetFirstLineIndex( FacetPtr iFacet, PointPtr lPt);
     static bool RemplaceLineIntoFacet( Facet & iFact, LinePtr lLine,
 				       std::vector<LinePtr> lLines );
@@ -50,6 +62,13 @@ namespace PP3d{
     static bool SubdivideFacet(  std::vector<FacetPtr>&  iVect, DataBase * iBase, SubDiv::SubParam * iSubDiv = nullptr );
   };
   //**************************************************
+
+  
+#define DBG_MODIF( A )    if( Modif::sDbgModif > 0 ) std::cout << "DbgModif0> " << A << std::endl;
+#define DBG_MODIF1( A )   if( Modif::sDbgModif > 1 ) std::cout << "DbgModif1> " << A << std::endl;
+#define DBG_MODIF2( A )   if( Modif::sDbgModif > 2 ) std::cout << "DbgModif0> " << A << std::endl;
+#define DBG_MODIF_NL( A ) if( Modif::sDbgModif > 0 ) std::cout << "DbgModif> " << A ;
+
   
 } // end namespace
 #endif

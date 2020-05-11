@@ -249,7 +249,20 @@ namespace PP3d {
     //--------------------------------
     static TPoint3d Middle( TPoint3d A, TPoint3d B, TPoint3d C, TPoint3d D, TPoint3d E  )
     {
-      return TPoint3d( (A.cX+B.cX+C.cX+D.cX+E.cX)*0.2,  (A.cY+B.cY+C.cY+D.cY+E.cY)*0.2,  (A.cZ+B.cZ+C.cZ+D.cY+E.cZ)*0.2 );
+      return TPoint3d( (A.cX+B.cX+C.cX+D.cX+E.cX)*0.2,  (A.cY+B.cY+C.cY+D.cY+E.cY)*0.2,  (A.cZ+B.cZ+C.cZ+D.cZ+E.cZ)*0.2 );
+    }
+    //--------------------------------
+    static TPoint3d Middle( std::vector<TPoint3d> & iVect )
+    {
+      TPoint3d lSum;
+      
+      for( TPoint3d & lPt : iVect )
+	{
+	  lSum += lPt;
+	}
+      lSum /= iVect.size();
+      
+      return lSum;
     }
     //--------------------------------	
     void normalize( float pVal)

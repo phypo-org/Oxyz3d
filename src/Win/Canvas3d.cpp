@@ -360,8 +360,8 @@ namespace M3d {
       //			if( Fl::event_button1() )
       //	if( Fl::event_button1() )
       {
-	getKamera().angle()[1] += (cMouseLastPosX	-lX)/10.0;
-	getKamera().angle()[0] += (lY-cMouseLastPosY)/10.0;
+	getKamera().angle()[1] += (cMouseLastPosX-lX)/1.0;
+	getKamera().angle()[0] += (lY-cMouseLastPosY)/1.0;
 
 	if( getKamera().angle()[0] < 0 )
 	  getKamera().angle()[0] += 360;
@@ -388,11 +388,13 @@ namespace M3d {
   {
     if( cDragPoints.size() == 0
 	&&TheSelect.getNbSelected() >0 )
-      {	
+      {
+	std::cout << "Canvas3d::initDragSelect " << TheSelect.getNbSelected() << std::endl;
+	std::cout << "Canvas3d::initDragSelect " << TheSelect.getSelection().size() << std::endl;
+
 	// We keep all the adress of points of selected entities
 	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>(TheSelect.getSelection(),
 								  cDragPoints );
-
 
 	// Save the original coordinates of points
 	
@@ -500,7 +502,7 @@ namespace M3d {
 				
       case Transform::MoveY:
 	{
-	  TheAppli.currentTransform().position().y() += lDy/10;
+	  TheAppli.currentTransform().position().y() += lDx/10;
 	  cMyWin3d.setCurrentVal( "move y" ,  TheAppli.currentTransform().position().y() );
 	  lMatTran.initMove( 0, TheAppli.currentTransform().position().y(), 0 );
 	}
@@ -534,21 +536,18 @@ namespace M3d {
 	  switch( TheAppli.getCurrentTransformType() )
 	    {
 	    case Transform::CenterRotX :
-	      TheAppli.currentTransform().angle().x() += lDx/360;
-	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
-	      
+	      TheAppli.currentTransform().angle().x() += lDx/90.0;
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());	      
 	      lMatRot.initRotX( TheAppli.currentTransform().angle().x() );
 	      break;
 							
 	    case Transform::CenterRotY :
-	      TheAppli.currentTransform().angle().y() += lDy/360;
-	      
-	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());
-	      
+	      TheAppli.currentTransform().angle().y() += lDy/90.0;	      
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());	      
 	      lMatRot.initRotY( TheAppli.currentTransform().angle().y() );
 	      break;
 	    case Transform::CenterRotZ :
-	      TheAppli.currentTransform().angle().z() += lDx/360;	
+	      TheAppli.currentTransform().angle().z() += lDx/90.0;	
 	      CallDialogKeepFloat( TheAppli.currentTransform().angle().z());
 	      lMatRot.initRotZ( TheAppli.currentTransform().angle().z() );
 	      break;

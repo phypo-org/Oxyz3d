@@ -7,7 +7,7 @@
 #include "Matrice.h"
 
 #include <vector>
-#include <unordered_set>
+#include <set>
 #include <unordered_map>
 #include <algorithm>
 #include <memory>
@@ -86,13 +86,15 @@ namespace PP3d {
     SelectType     cSelectType = SelectType::Object;
 
     std::unordered_set<EntityPtr> cSelectObj;
-
+    // METTRE AUSI UN VECTEUR POUR GARDER L ORDRE DE SELECTION
 		
   public:
 		
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();
+    void clear() {  cSelectObj.clear(); }
+
     bool addToSelection( EntityPtr lEntity);
     bool isSelected( EntityPtr lEntity )
     {

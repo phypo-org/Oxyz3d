@@ -12,7 +12,7 @@
  
 
 void CallDialogPerspectiv( M3d::Canvas3d* pCanvas, PP3d::Kamera &pKamera );
-void CallDialogPrimitiv( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, PP3d::PrimitivFactory::Type );
+void CallDialogPrimitiv( PP3d::PrimitivFactory::Type );
 
 void CallDialogKeepFloatInit( M3d::Canvas3d* pCanvas );
 bool CallDialogKeepFloat( double & ioVal);

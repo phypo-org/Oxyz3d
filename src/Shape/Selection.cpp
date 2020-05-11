@@ -304,11 +304,11 @@ namespace PP3d {
 	    lDelList.push_back( lEntity );
 	  }
       }
-
+    
+    cSelectObj.clear();
 
     for( EntityPtr lEntity : lDelList )
       {
-	cSelectObj.erase( lEntity );
 	pDatabase.deleteEntity( lEntity );
       }
   }

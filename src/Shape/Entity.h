@@ -95,6 +95,7 @@ namespace PP3d {
     void   addOwner     ( Entity* pOwner ) { cOwners.emplace( pOwner); }
     void   removeOwner  ( Entity* pOwner ) { cOwners.erase( pOwner); }
     size_t howManyOwner ( ) { return cOwners.size(); }
+    void   clearOwner   ( Entity* pOwner ) { cOwners.erase( pOwner); }
 
 		
     const char* getStrType() const { return GetStrShapeType( getType()) ; }
@@ -143,8 +144,7 @@ namespace PP3d {
   {
     for( Entity * lEntity : ioSet )
       lEntity->execVisitor( pVisit );
-  }
-    
+  }    
   //*********************************************
   class Point :  public Entity {
 		

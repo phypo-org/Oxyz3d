@@ -75,7 +75,7 @@ $(OTARGET_LIB): $(OBJECTS)
 	   
 
 clean:
-	@rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR)
+	@rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR) 
 	@rm -rf *.o *.a *.exe core $(OTARGET)
 
 .PHONY: clean

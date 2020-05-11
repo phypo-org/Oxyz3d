@@ -65,7 +65,11 @@ namespace M3d{
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
-    void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase ) {cuDatabase = std::move(iuBase);  }
+    void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase )
+    {
+      TheSelect.clear();
+      cuDatabase = std::move(iuBase);
+    }
 
     M3d::ShapeLua&  getLua() { return *cLua; }
     const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )

@@ -8,7 +8,93 @@
 #include <math.h>
 
 namespace  PP3d {
+
+
+  
   //**************************************
+#define caseStr(A) case GeometryType::A : return #A;
+  
+  const char * SubDiv::GeometryType2Str( GeometryType iType )
+  {
+    switch( iType )
+      {
+	caseStr( TETRAHEDRON)
+	  caseStr( PYRAMID )  
+	  caseStr( CUBE    )
+	  caseStr( OCTAHEDRON) 
+	  caseStr( DODECAHEDRON)
+	  caseStr( ICOSAHEDRON )
+	  
+	  caseStr( OCTAHEDRON2 )
+	  caseStr( ODRON       )
+	  }
+    return "UNKNOWN";
+  }
+  //======================================
+    
+  // #define G
+#undef caseStr
+#define caseStr(A) if( strcmp( #A, iStr ) == 0 ) { return  GeometryType::A; } else
+  
+  SubDiv::GeometryType SubDiv::Str2GeometryType( const char * iStr )
+  {
+    caseStr( TETRAHEDRON)
+      caseStr( PYRAMID )  
+      caseStr( CUBE    )
+      caseStr( OCTAHEDRON)
+      caseStr( DODECAHEDRON)
+      caseStr( ICOSAHEDRON )
+	  
+      caseStr( OCTAHEDRON2 )
+      caseStr( ODRON       )	    
+      return GeometryType::TETRAHEDRON;
+  
+    return GeometryType::TETRAHEDRON;
+  }
+  //======================================
+#undef caseStr
+#define caseStr(A) case SubNormalizeType::A : return #A;
+  
+  const char * SubDiv::SubNormalizeType2Str( SubNormalizeType iType )
+  {
+    switch( iType )
+      {
+        caseStr( NORMALIZE_NONE)  // DEVIENT TROP PETIT 
+	  caseStr( NORMALIZE)
+	  caseStr( NORMALIZE_ONLY_INIT) // BELLE ETOILE QD DEPTH
+	  caseStr( NORMALIZE_INC_INIT)  // FORME IRREGULIERE 
+	  caseStr( NORMALIZE_DEC_INIT) // FORME IRREGULIERE avec trou
+	  caseStr( NORMALIZE_HALF_INIT) //BOF
+	  caseStr( NORMALIZE_ONLY_SUB)
+	  caseStr( NORMALIZE_MUL_SUB)				
+	  caseStr( NORMALIZE_DEC_SUB) //  BON
+	  caseStr( NORMALIZE_INC_SUB) // TRES BON
+	  caseStr( NORMALIZE_MUL_INIT) // Structure avec trou ou pic celon cInitGrowFactor
+	  }
+    return "UNKNOWN";
+  }
+  //======================================
+#undef caseStr
+#define caseStr(A) if( strcmp( #A, iStr ) == 0 ) { return  SubNormalizeType::A; } else
+    
+  SubDiv::SubNormalizeType SubDiv::Str2SubNormalizeType( const char * iStr )
+  {
+    caseStr( NORMALIZE_NONE)  // DE0.665714VIENT TROP PETIT 
+      caseStr( NORMALIZE)
+      caseStr( NORMALIZE_ONLY_INIT) // BELLE ETOILE QD DEPTH
+      caseStr( NORMALIZE_INC_INIT)  // FORME IRREGULIERE 
+      caseStr( NORMALIZE_DEC_INIT) // FORME IRREGULIERE avec trou
+      caseStr( NORMALIZE_HALF_INIT) //BOF
+      caseStr( NORMALIZE_ONLY_SUB)
+      caseStr( NORMALIZE_MUL_SUB)				
+      caseStr( NORMALIZE_DEC_SUB) //  BON
+      caseStr( NORMALIZE_INC_SUB) // TRES BON
+      caseStr( NORMALIZE_MUL_INIT) // Structure avec trou ou pic celon cInitGrowFactor
+      
+      return SubNormalizeType::NORMALIZE_NONE; 
+    return SubNormalizeType::NORMALIZE_NONE; 
+  }
+  //======================================
 
   SubDiv::SubParam::SubParam( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize )
   {
@@ -17,10 +103,7 @@ namespace  PP3d {
   //------------------------------------------------
   SubDiv::SubParam::~SubParam()
   {
-    for( MyFacet* lFacet: cFacets )
-      {
-	delete lFacet;
-      }
+    clear();
   }
   //------------------------------------------------
   void SubDiv::SubParam::reset( int pDepth, float pFact, bool pCentralPoint, SubNormalizeType pNormalize)
@@ -29,6 +112,16 @@ namespace  PP3d {
     cFact  = pFact;
     cCentralPoint = pCentralPoint;
     cNormalize = pNormalize;
+  }
+  //------------------------------------------------
+  void SubDiv::SubParam::clear()
+  {
+    cPoints.clear();
+    for( MyFacet* lFacet: cFacets )
+      {
+	delete lFacet;
+      }
+    cFacets.clear();
   }
   //------------------------------------------------
   void SubDiv::SubParam::normEffectSub( Float3& pVal, int  pDepth)
@@ -104,12 +197,74 @@ namespace  PP3d {
 	    break;
 	  }
       }	 
-  }	
+  }		
+  //------------------------------------------------
+  // ??????????? // C'est expres que l'on ne passe pas le tableau par reference ! ( a voir)
+  
+   void SubDiv::SubdivideN( SubParam & pParam, std::vector<Float3> iVect, int  pDepth )
+  {		
+    if( pDepth <= 0  )
+      {	
+	if( pParam.cHoleFacet <= (int)iVect.size() && pParam.cHoleDepth <= pParam.cDepth 
+	    && pParam.cHoleDepth != -1 && pParam.cDepth != -1 )
+	  return;
 	
+	pParam.addFacet( iVect );	
+	return;
+      }
+	
+    pDepth--;
+	
+    if( pParam.cCentralPoint  == false )
+      {
+	Float3 v0 = Float3::Middle( iVect );	
+	pParam.normEffectSub( v0, pDepth  );
+
+	for( size_t i=0 ; i< iVect.size()-1 ; i++ )
+	  {
+	    Subdivide3( pParam, iVect[i], iVect[i+1], v0, pDepth );
+	  }
+	Subdivide3( pParam, iVect[iVect.size()-1], iVect[0], v0, pDepth );	
+      }
+    else
+      {
+	std::vector<Float3> lMid;
+	for( size_t i =0 ; i < iVect.size()-1; i++ )
+	  {
+	    lMid.push_back( Float3::Middle( iVect[i], iVect[i+1] ));
+	  }
+	lMid.push_back( Float3::Middle( iVect[iVect.size()-1], iVect[0] ));
+
+	
+	for( Float3 & lPt : lMid )
+	  {
+	    pParam.normEffectSub( lPt, pDepth  );
+	  }
+	
+	for( size_t i=1; i <  iVect.size() ; i++ )
+	  {
+	    Subdivide3( pParam, iVect[i], lMid[i] , lMid[i-1], pDepth );
+	  }
+	Subdivide3( pParam, iVect[0], lMid[0] , lMid[iVect.size()-1], pDepth );
+
+	SubdivideN( pParam, lMid, pDepth );
+      }
+  }
+  //------------------------------------------------
+  // Conversion en Float3 
+  void SubDiv::SubdivideN( SubParam & pParam, std::vector<PointPtr> & iVect, int  pDepth )
+  {
+    std::vector<Float3> lFloats;
+    
+    for( PointPtr lPt : iVect )
+      {
+	lFloats.push_back( lPt->get());
+      }
+    SubdivideN( pParam, lFloats, pDepth );
+  }
   //------------------------------------------------
   void SubDiv::Subdivide5( SubParam& pParam, Float3 v1, Float3 v2, Float3 v3,  Float3 v4, Float3 v5, int  pDepth )
   {
-		
     if( pDepth <= 0  )
       {	
 	if( pParam.cHoleFacet <= 5 && pParam.cHoleDepth <= pParam.cDepth 
@@ -125,7 +280,7 @@ namespace  PP3d {
 	
     pDepth--;
 	
-    if( pParam.cCentralPoint )
+    if( pParam.cCentralPoint  == false )
       {
 	Float3 v0 = Float3::Middle( v1, v2, v3, v4, v5 );	
 	pParam.normEffectSub( v0, pDepth  );
@@ -176,7 +331,7 @@ namespace  PP3d {
 
     pDepth--;
 
-    if( pParam.cCentralPoint )
+    if( pParam.cCentralPoint == false )
       {
 	Float3 v0 = Float3::Middle( v1, v2, v3, v4 );	
 	pParam.normEffectSub( v0, pDepth  );
@@ -218,7 +373,7 @@ namespace  PP3d {
 
     pDepth--;
 
-    if( pParam.cCentralPoint )
+    if( pParam.cCentralPoint   == false )
       {
 	Float3 v0 = Float3::Middle( v1, v2, v3 );	
 
@@ -255,7 +410,7 @@ namespace  PP3d {
     switch(iGtype )
       {
       case   GeometryType::TETRAHEDRON :   return Tetrahedron (  pParam );
-      case   GeometryType::PYRAMID4 :      return Pyramid4    (  pParam, 0, 0, 0, 1, 1 );
+      case   GeometryType::PYRAMID :       return Pyramid4    (  pParam, 0, 0, 0, 1, 1 );
       case   GeometryType::CUBE :          return Cube        (  pParam, 1 );
       case   GeometryType::OCTAHEDRON :    return Octahedron  (  pParam );
       case   GeometryType::DODECAHEDRON :  return Dodecahedron(  pParam );
@@ -264,7 +419,7 @@ namespace  PP3d {
 	
       case   GeometryType::OCTAHEDRON2:    return Octahedron2    (  pParam );	// ???
       case   GeometryType::ODRON   :   // ????
-     default:
+      default:
 	return Odron       (  pParam );
       }
 

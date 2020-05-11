@@ -264,27 +264,27 @@ namespace M3d {
 				
     if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::CUBE  );
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
       }
     else if( strcmp( m->label(), StrMenu_CreateTetra ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::TETRA  );
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TETRA  );
       }
     else if( strcmp( m->label(), StrMenu_CreatePyramid ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::PYRAMID  );
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PYRAMID  );
       }
     else if( strcmp( m->label(), StrMenu_CreateOcto ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog,lCanvas, PP3d::PrimitivFactory::Type::OCTO  );
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
       }
     else if( strcmp( m->label(), StrMenu_CreateDodec ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::DODEC  );
+	CallDialogPrimitiv( PP3d::PrimitivFactory::Type::DODEC  );
       }
     else if( strcmp( m->label(), StrMenu_CreateIcosahe ) == 0)
       {
-	CallDialogPrimitiv( slFlagDialog, lCanvas, PP3d::PrimitivFactory::Type::ICOSAHED  );
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
       }
     //===================== Shape ==============
     else if( strncmp( m->label(), StrMenu_CreateShape, strlen(StrMenu_CreateShape)  ) == 0)
@@ -423,12 +423,15 @@ namespace M3d {
      
      PP3d::SortEntityVisitor lVisit;
      TheSelect.execVisitorOnEntity( lVisit );
-    
+     TheSelect.removeAll();
+
     bool pCentral = false;
     if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0)
       {
 	pCentral = true;
       }
+
+    std::cout << "Canvas3d::MyMenuCallbackSubdivide Central:" << pCentral << std::endl;
     
     PP3d::SubDiv::SubParam lSubDivLocal( 1, 1, pCentral, PP3d::SubDiv::SubNormalizeType::NORMALIZE_NONE );
     
@@ -495,6 +498,8 @@ namespace M3d {
 	// On recupere les objects de la selection
 	PP3d::SortEntityVisitor lVisit;
 	TheSelect.execVisitorOnEntity( lVisit );
+	TheSelect.removeAll();
+	
 	// On prend les lignes
 
 	std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
