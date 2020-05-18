@@ -376,8 +376,8 @@ namespace M3d {
 	    getKamera().angle()[1] -= 360;
 
 								
-	cout << "angle X: " <<	getKamera().angle()[0]  
-	     << "angle Y: " <<	getKamera().angle()[1] ;
+	//	cout << "angle X: " <<	getKamera().angle()[0]  
+	//	     << "angle Y: " <<	getKamera().angle()[1] ;
 	redraw();
 	cMouseLastPosX = lX;
 	cMouseLastPosY = lY;

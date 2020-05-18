@@ -1,9 +1,10 @@
 
-- Ajouter PushHistory
-  - Pour les rotations
-  - Pour le delete d'objets
+- Saisie axe / plan par default , par deux , trois points
+- Saisie translation par deux point
+- Saisie de rotation / scale par points
 
-- Remettre la Selection a 0 sir Undo ou Redo
+----------------------------------------------
+
 
 - Faire la duplication :
   Selection le(s) objets :
@@ -38,7 +39,6 @@ Dialogues fixes ?
 
 - Primitive pour : cylindre, cone, sphere, tore 
 
-
 -----------------------------------------------
 o Sauvegarde de l'historique
 -----------------------------------------------
@@ -56,14 +56,7 @@ o Sauvegarde de l'historique
   representé)
 -----------------------------------------------
 
-
-- Trinangulation
-
 - Subdivision avec lissage des facettes
 -----------------------------------------------
 
-- division (Cut) des lignes par N
------------------------------------------------
-
 o limites des up. Sauvegarder aussi l'historique ?
-o historiser  aussi la saisie des points
