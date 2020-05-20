@@ -4,8 +4,6 @@
 - Saisie de rotation / scale par points
 
 ----------------------------------------------
-
-
 - Faire la duplication :
   Selection le(s) objets :
   - faire une sauvegarde dans un string de la seletion
@@ -33,18 +31,31 @@ IL faut ajouter le tracer de la nouvelle base dans Canvas3d::draw .
 -----------------------------------------------
 Dialogues fixes ? 
 -----------------------------------------------
------------------------------------------------
 - Creation de surface avec plusieurs line ou polyline
 -----------------------------------------------
 
-- Primitive pour : cylindre, cone, sphere, tore 
-
+- Primitive pour : cylindre, cone, sphere, tore ...
 -----------------------------------------------
+facetisation des points 
+
+- Subdivision avec lissage des facettes
+-----------------------------------------------
+Connexion entre deux facettes (Trous)
+Connexion entre deux facettes (Ponts)
+-----------------------------------------------
+Extrusion de facettes
+-----------------------------------------------
+Regroupement d'objets en ensemble / posibilités de les selectionner
+-----------------------------------------------
+
 o Sauvegarde de l'historique
 -----------------------------------------------
 
-- Export ...
-
+- Export ... d'autres format ...
+-----------------------------------------------
+- TRanchage !!!!!!!!!!!
+-----------------------------------------------
+Intersectin de surface / de volume 
 -----------------------------------------------
 
 - pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
@@ -54,9 +65,6 @@ o Sauvegarde de l'historique
 
 - creation d'objet plans ( couleur speciale et grille pour la
   representé)
------------------------------------------------
-
-- Subdivision avec lissage des facettes
 -----------------------------------------------
 
 o limites des up. Sauvegarder aussi l'historique ?

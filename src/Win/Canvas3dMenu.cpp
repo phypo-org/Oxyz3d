@@ -41,6 +41,8 @@ using namespace std;
 namespace M3d {
 
 	
+#define StrMenu_CreateFacet     "Facet      ..."
+#define StrMenu_CreateCylinder  "Cylinder   ..."
 #define StrMenu_CreateCube      "Cube       ..."
 #define StrMenu_CreateTetra     "Tetraede   ..."
 #define StrMenu_CreatePyramid   "Pyramide   ..."
@@ -197,6 +199,8 @@ namespace M3d {
   // If no entity is selected
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
   {
+    pMenu.add( StrMenu_CreateFacet,    "^c",  MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateCylinder, "y",   MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateCube ,    "^c",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateTetra,    "^t",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreatePyramid,  "^p",  MyMenuCallbackPrimitiv,   this);
@@ -262,7 +266,15 @@ namespace M3d {
   {		
     BEGINCALL  
 				
-    if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
+    if( strcmp( m->label(), StrMenu_CreateFacet ) == 0)
+      {
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
+      }
+    if( strcmp( m->label(), StrMenu_CreateCylinder ) == 0)
+      {
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER  );
+      }
+    else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
       {
 	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
       }

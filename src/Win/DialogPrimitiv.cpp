@@ -51,21 +51,31 @@ namespace M3d {
     
     PP3d::PrimitivFactory::Type cMyType;
 
-    MySlider* cSliderH;
     
-    MySlider* cSliderSize;
-	
-    MySlider* cSliderPosX;
-    MySlider* cSliderPosY;
-    MySlider* cSliderPosZ;
+    MySlider *      cSliderU          = nullptr;
+    MySlider *      cSliderV          = nullptr;
+    MySlider *      cSliderW          = nullptr;
+    MySlider *      cSliderHeight     = nullptr;
+    MySlider *      cSliderTop        = nullptr;
+    MySlider *      cSliderBottom     = nullptr;
+    MySlider *      cSliderThickness  = nullptr;
+    MyCheckbutton * cCheckInvRotation = nullptr; 
+    MyCheckbutton * cCheckDouble      = nullptr; 
+    MyCheckbutton * cCheckHole        = nullptr; 
 
-    MySlider* cSliderRotX;
-    MySlider* cSliderRotY;
-    MySlider* cSliderRotZ;
+    
+    
+    MySlider * cSliderSize;
+	
+    MySlider * cSliderPosX;
+    MySlider * cSliderPosY;
+    MySlider * cSliderPosZ;
+
+    MySlider * cSliderRotX;
+    MySlider * cSliderRotY;
+    MySlider * cSliderRotZ;
 
     Transform cCurrentTransform;
-
-
     
 
   public:
@@ -75,6 +85,25 @@ namespace M3d {
     //************************
     void maj()
     {
+      PP3d::PrimitivParam lParam;
+
+      if( cSliderU )         lParam.cNbU       = cSliderU->value();
+      if( cSliderV )         lParam.cNbV       = cSliderV->value();
+      if( cSliderW )         lParam.cNbW       = cSliderW->value();
+      if( cSliderHeight )    lParam.cHeight    = cSliderHeight->value();
+      if( cSliderTop )       lParam.cTop       = cSliderTop->value();
+      if( cSliderBottom )    lParam.cBottom    = cSliderBottom->value();
+      if( cSliderThickness ) lParam.cThickness = cSliderThickness->value();
+
+
+      if( cCheckInvRotation) lParam.cCheckInvRot = (cCheckInvRotation->value() != 0 );;
+      if( cCheckDouble)      lParam.cCheckDouble = (cCheckDouble->value() != 0 );
+      if( cCheckHole)        lParam.cHole        = (cCheckHole->value() != 0 );
+
+      
+
+      //======================
+      
       std::cout << " X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
       std::cout << " RX:" << cSliderRotX->value()  << " RY:" << cSliderRotY->value() << " RZ:" << cSliderRotZ->value() << std::endl;
     
@@ -106,10 +135,20 @@ namespace M3d {
       // avec, par contre a la fin il faudrait vraiment faire
       // la modification sur les points (on est dans un modeleur, pas un jeu !)
 
-      PP3d::Poly* lShape = PP3d::PrimitivFactory::Create( cMyType, (float)lSz );
+      PP3d::Poly* lShape = PP3d::PrimitivFactory::Create( cMyType, & lParam);
+
+      if( lShape == nullptr )
+	{
+	  std::cout << "Shape is null" << std::endl;
+	  return;
+	}
       Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
 
       //  lShape->move(lPos );
+      		
+      PP3d::Point3d lScale( lSz, lSz, lSz );
+      lShape->scale( lScale );
+
      
       PP3d::Mat4 lMatRot;
       lMatRot.Identity();
@@ -140,7 +179,7 @@ namespace M3d {
     void init( PP3d::PrimitivFactory::Type pType )
     {
       cMyType = pType;
-
+      
 
       int lW = 300;
       int lH = 20;
@@ -156,23 +195,84 @@ namespace M3d {
       int lX2   = lX + lW+ lX*3;
 
       int lY = 20;
-      
 
-      cMyWindow = new Fl_Double_Window( lW_G0+lX*2, lYStep*14, "Primitive");
+      int lMul = 14;
+      
+      if( pType == PP3d::PrimitivFactory::Type::FACET_N )
+	lMul += 4;
+      else if(  pType == PP3d::PrimitivFactory::Type::Cylinder )
+	lMul += 4;
+
+
+      cMyWindow = new Fl_Double_Window( lW_G0+lX*2, lYStep*lMul, "Primitive");
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
 
       
       // Les reglages de la primitives
-      {  Fl_Group* o = new Fl_Group(lX_G0, lY, lW_G0, lYStep*2.5,  PP3d::PrimitivFactory::GetTypeName(cMyType));
-	  o->box(FL_ENGRAVED_FRAME);
-	  lY += lYStep;	
 
-	  cSliderH = new MySlider( lX_SL, lY, lW, lH, "H", SliderCB, this, -50, 50 );
-	  cSliderH->value( 1 );
-	  lY += lYStep;	
-  	  o->end();
-      }
+	  lY += lYStep;	  
+	  //============================================
+	  if( pType == PP3d::PrimitivFactory::Type::FACET_N )
+	    {
+	      Fl_Group* o = new Fl_Group(lX_G0, lY, lW_G0, lYStep*4,
+					 PP3d::PrimitivFactory::GetTypeName(cMyType));
+	      o->box(FL_ENGRAVED_FRAME);
+	      lY += lYStep;
+	      
+	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Number of point", MajCB, this, 3, 64 );
+	      cSliderU->value( 4 );
+	      lY += lYStep;
+	      /*
+		cSliderV = = new MySlider( lX_SL, lY, lW, lH, "V", MajCB, this, -50, 50 );
+		  cSliderV->value( 1 );
+		  lY += lYStep;
+	      */
+	      
+	      cCheckInvRotation = new MyCheckbutton( lX, lY, 30,15, "Clockwise", MajCB, this, 0 ); 
+	      lY += lYStep;
+	      cCheckDouble = new MyCheckbutton( lX, lY, 30, 15, "Two Faces", MajCB, this, 0 ); 
+	      lY += lYStep;
+	      o->end();	      
+	    }
+	  //============================================
+	  else if(  pType == PP3d::PrimitivFactory::Type::Cylinder )
+	    {
+	      Fl_Group* o = new Fl_Group(lX_G0, lY, lW_G0, lYStep*4,
+					 PP3d::PrimitivFactory::GetTypeName(cMyType));
+	      o->box(FL_ENGRAVED_FRAME);
+	      lY += lYStep;
+	      
+	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Number of point", MajCB, this, 3, 64 );
+	      cSliderU->value( 16 );
+	      lY += lYStep;
 
+	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.0001, 100 );
+	      cSliderHeight->value( 1 );
+	      lY += lYStep;
+
+	      cSliderTop = new MySlider( lX_SL, lY, lW, lH, "Top radius", MajCB, this, 0.0001, 100 );
+	      cSliderTop->value( 1 );
+	      lY += lYStep;
+			    
+	      cSliderBottom = new MySlider( lX_SL, lY, lW, lH, "Bottom radius", MajCB, this, 0.0001, 100 );
+	      cSliderBottom->value( 1 );
+	      lY += lYStep;
+
+	      /*
+		cSliderV = = new MySlider( lX_SL, lY, lW, lH, "V", MajCB, this, -50, 50 );
+		  cSliderV->value( 1 );
+		  lY += lYStep;
+	      */
+	      
+	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Tube", MajCB, this, 0 ); 
+	      lY += lYStep;
+	      cSliderThickness = new MySlider( lX_SL, lY, lW, lH, "Thickness", MajCB, this, 0.0001, 100 );
+	      cSliderThickness->value( 0.1 );
+	      lY += lYStep;
+
+	      o->end();	      	      
+	    }
+	  //============================================
       lY += lYStep;	
    
       // Reglages generaux, position , rotations ... 
@@ -182,7 +282,7 @@ namespace M3d {
 	lY += lYStep;
 	 
       // cSliderSize =  M
-      cSliderSize = new MySlider(lX_SL, lY, lW, lH, "Size", SliderCB, this, -50, 50 );
+      cSliderSize = new MySlider(lX_SL, lY, lW, lH, "Size", MajCB, this, -50, 50 );
       cSliderSize->value( 1 );
       lY += lYStep;
       lY += lYStep;
@@ -194,15 +294,15 @@ namespace M3d {
 
 	  o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	  cSliderPosX = new MySlider(lX + lX_SL, lY, lW, lH, "X", SliderCB, this, -100, 100 );
+	  cSliderPosX = new MySlider(lX + lX_SL, lY, lW, lH, "X", MajCB, this, -100, 100 );
 	  cSliderPosX->value( 0 );
 	  lY += lYStep;
  
-	  cSliderPosY =  new MySlider(lX + lX_SL, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
+	  cSliderPosY =  new MySlider(lX + lX_SL, lY, lW, lH, "Y", MajCB, this, -100, 100 );
 	  cSliderPosY->value( 0 );
 	  lY += lYStep;
  
-	  cSliderPosZ =  new MySlider(lX + lX_SL, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
+	  cSliderPosZ =  new MySlider(lX + lX_SL, lY, lW, lH, "Z", MajCB, this, -100, 100 );
 	  cSliderPosZ->value( 0 );
 	  lY += lYStep;
 
@@ -220,15 +320,15 @@ namespace M3d {
 
 	  o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	  cSliderRotX = new MySlider(lX2+lX_SL, lY, lW, lH, "X", SliderCB, this, -360, 360 );
+	  cSliderRotX = new MySlider(lX2+lX_SL, lY, lW, lH, "X", MajCB, this, -360, 360 );
 	  cSliderPosX->value( 0 );
 	  lY += lYStep;
  
-	  cSliderRotY =  new MySlider(lX2+lX_SL, lY, lW, lH, "Y", SliderCB, this, -360, 360 );
+	  cSliderRotY =  new MySlider(lX2+lX_SL, lY, lW, lH, "Y", MajCB, this, -360, 360 );
 	  cSliderPosY->value( 0 );
 	  lY += lYStep;
  
-	  cSliderRotZ =  new MySlider(lX2+lX_SL, lY, lW, lH, "Z", SliderCB, this, -360, 360 );
+	  cSliderRotZ =  new MySlider(lX2+lX_SL, lY, lW, lH, "Z", MajCB, this, -360, 360 );
 	  cSliderPosZ->value( 0 );
 	  lY += lYStep;
 
@@ -276,6 +376,11 @@ namespace M3d {
 
       //while (Fl::wait() && cContinue );
     }
+   //----------------------------------------
+    static void MajCB( Fl_Widget*, void*pUserData )
+    {
+      Diag.maj();
+    }
     //----------------------------------------
 
     static void CancelCB( Fl_Widget*, void* pUserData ) {
@@ -288,22 +393,6 @@ namespace M3d {
 
       Fl::delete_widget( Diag.cMyWindow );
       Diag.cMyWindow = nullptr;
-    }
-    //----------------------------------------
-    static void SliderCB( Fl_Widget*, void*pUserData )
-    {
-      std::cout << "DialogPrimitiv::SliderCB " << Diag.cSliderSize->value() << std::endl;
-      Diag.maj();
-    }
-    //----------------------------------------
-    static void SizeCB( Fl_Widget*, void*pUserData )
-    {
-      Diag.maj();
-    }
-    //----------------------------------------
-    static void SizeSliderCB( Fl_Widget*, void*pUserData )
-    {
-      Diag.maj(); 
     }
     //----------------------------------------
     static void OkCB( Fl_Widget*, void*pUserData )
