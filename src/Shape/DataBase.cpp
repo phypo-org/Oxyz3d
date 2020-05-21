@@ -58,8 +58,9 @@ namespace PP3d {
       lPyra->move( Point3d( -300, -300, -300 ));
 
     */
+    std::string lName;
     {
-      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::OCTO); 
+      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::OCTO, lName); 
       Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, 5, -5 ));
@@ -67,7 +68,7 @@ namespace PP3d {
     }
 		
     {
-      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::DODEC );			
+      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::DODEC, lName );			
       Object*   lObj = new ObjectPoly( lShape->getStrType(), lShape 	);
       addObject( lObj );
       lObj->move( Point3d( -5, 5, 5 ));
@@ -75,7 +76,7 @@ namespace PP3d {
     }
 		
     {
-      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::ICOSAHED);			
+      Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::ICOSAHED, lName);			
       Object*   lObj = new PP3d::ObjectPoly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, -5, 5 ));

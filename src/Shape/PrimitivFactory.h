@@ -81,6 +81,7 @@ namespace PP3d{
     bool cCheckDouble=false;
     bool cCheckHole=false;
 
+    long double cWidth=0;
     long double cHeight=0;
     long double cTop=0;
     long double cBottom=0;
@@ -101,7 +102,6 @@ namespace PP3d{
     enum class Type{
       FACET_N,
 	CYLINDER,
-	CONE,
 	SPHERE,
 	PLANE,
 	TETRA,
@@ -112,14 +112,19 @@ namespace PP3d{
 	ICOSAHED,
       //			CYLINDER, CONE, DISK, PARTIAL_DISK, SPHERE, TORUS, WIRETORUS
 	};
-    static long double sMinSz =1E-6;
+
+    static constexpr long double M_PIx2 = M_PI*2;
+
+    
+    static long double sMinSz;
     static const char* GetTypeName(PrimitivFactory::Type pType);
 		
-    static Poly * Create( PrimitivFactory::Type pType, PrimitivParam * iParam=nullptr  );
+    static Poly * Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam=nullptr  );
     static Poly * CreatePoly( Point3d * pPoints, size_t pSzPt, PrimFacet * pFacets, size_t pSzFac );
 
     static Poly * CreateFacet(     PrimitivParam * iParam );
-    static Poly * CreateCylinder(  PrimitivParam * iParam );
+    static Poly * CreateCylinder(  PrimitivParam * iParam, std::string & iName );
+    static Poly * CreateSphere(  PrimitivParam * iParam, std::string & iName );
   };
   //************************
 }

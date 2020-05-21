@@ -4,7 +4,12 @@
 namespace PP3d {
 
   //***************************************************
-  PolyPtr Maker::CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat, bool pFlagCloseRevol,  bool pFlagCloseSeg, bool pFlagCloseSegEnd, bool pCloseHight, bool pCloseLow )
+  PolyPtr Maker::CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
+				       bool pFlagCloseRevol,
+				       bool pFlagCloseSeg,
+				       bool pFlagCloseSegEnd,
+				       bool pCloseHight,
+				       bool pCloseLow )
   {
     if( pNbPas <= 0 || pFacet == nullptr  )
       return nullptr;

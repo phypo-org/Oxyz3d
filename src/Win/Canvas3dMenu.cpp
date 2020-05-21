@@ -43,6 +43,8 @@ namespace M3d {
 	
 #define StrMenu_CreateFacet     "Facet      ..."
 #define StrMenu_CreateCylinder  "Cylinder   ..."
+#define StrMenu_CreateSphere    "Sphere     ..."
+#define StrMenu_CreatePlane     "Plane      ..."
 #define StrMenu_CreateCube      "Cube       ..."
 #define StrMenu_CreateTetra     "Tetraede   ..."
 #define StrMenu_CreatePyramid   "Pyramide   ..."
@@ -201,6 +203,8 @@ namespace M3d {
   {
     pMenu.add( StrMenu_CreateFacet,    "^c",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateCylinder, "y",   MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreateSphere,   "s",   MyMenuCallbackPrimitiv,   this);
+    pMenu.add( StrMenu_CreatePlane,    "",   MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateCube ,    "^c",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateTetra,    "^t",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreatePyramid,  "^p",  MyMenuCallbackPrimitiv,   this);
@@ -273,6 +277,14 @@ namespace M3d {
     if( strcmp( m->label(), StrMenu_CreateCylinder ) == 0)
       {
 	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER  );
+      }
+    if( strcmp( m->label(), StrMenu_CreateSphere ) == 0)
+      {
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::SPHERE  );
+      }
+    if( strcmp( m->label(), StrMenu_CreatePlane ) == 0)
+      {
+	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
       }
     else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
       {

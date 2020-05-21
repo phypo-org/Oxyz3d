@@ -7,8 +7,16 @@
 #include <memory>
 #include <cmath>
 
+#include "Maker.h"
+
 
 namespace PP3d{
+
+
+ long double PrimitivFactory::sMinSz =1E-6;
+
+
+  
   //********************* TETRAEDRE ************
 
   static float  sT =  1.73205080756887729f;
@@ -293,7 +301,7 @@ namespace PP3d{
     PrimFacet         lFacets[2];
     std::vector<Point3d> lPoints;
     
-    long double lVal  = 2*M_PI/iParam->cNbU;
+    long double lVal  = M_PIx2/iParam->cNbU;
         
     for( int i=0; i< iParam->cNbU; i++ )
       {
@@ -312,52 +320,21 @@ namespace PP3d{
     
     return  PrimitivFactory::CreatePoly( lPoints.data(), lPoints.size(), &lFacets[0], 1 );
   }    
-  //************************
-  void AddPoint( ObjectPolylines & lLines, Point3d & pPt )
-  {
-    //		std::cout << "======== DataBase::addPointToCurrentLine" << std::endl;
-    // FAIRE QUELQUE CHODE DE PLUS PROPRE !!!
-		
-    Facet* lFacet= iLines.getFacet();
-		
-    PointPtr lPoint= new Point( pPt );
-		
-    LinePtrVect& lLines = lFacet->getLines();
-				
-    //		std::cout << " lLines size: "  << lLines.size()  <<std::endl;	
-    if( lLines.size() == 0 )
-      {
-	//				std::cout << " new line 0 "  << std::endl;	
-	LinePtr lLine = new Line( lPoint, lPoint ); // Un point 
-	lLines.push_back( lLine );
-	//		std::cout << "2 lLines size: "  << lLines.size()  <<std::endl;
-      }
-    else if(lLines.size() == 1 && lLines[0]->isPoint() )  // Un  point !
-      {
-	//	std::cout << " is Point  "  << std::endl;	
-	lLines[0]->getPoints().second = lPoint;  // on change le second point
-      }
-    else
-      {
-	//	std::cout << " new line   "  << std::endl;	
-	LinePtr	lLine = new Line(  lLines[lLines.size()-1]->getPoints().second, lPoint);
-	lLines.push_back( lLine );
-      }		
-  }
+  
   //************************
   void Delete( ObjectPolylines & lLines )
   {
   }
   //************************
 
-  Poly*  PrimitivFactory::CreateCylinder(  PrimitivParam * iParam )
+  Poly*  PrimitivFactory::CreateCylinder(  PrimitivParam * iParam, std::string & iName )
   {
     if( iParam == nullptr
 	|| iParam->cNbU < 3 || iParam->cNbU > 4096
-	|| iParam->cTop < sMinSz
-	|| iParam->cBottom < sMinSz
-	|| iParam->cHeight < sMinSz
-	|| iParam->cTickness < sMinSz
+	|| iParam->cThickness < sMinSz
+	|| (iParam->cBottom ==0 && iParam->cHeight ==0)
+	|| (iParam->cBottom ==0 && iParam->cCheckHole )
+	|| (iParam->cTop ==0 && iParam->cCheckHole )
 	)
       {
 	std::cout << "PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
@@ -366,18 +343,151 @@ namespace PP3d{
     
     std::cout << "PrimitivFactory::CreateCylinder " << std::endl;
 
-    Point3d lTop   ( iParam->cTop,  iParam->cHeight/2, 0);
-    Point3d lBottom( iParam->cTop, -iParam->cHeight/2, 0);
+    Point lTop   ( Point3d( iParam->cTop,    iParam->cHeight/2, 0) );
+    Point lBottom( Point3d( iParam->cBottom, -iParam->cHeight/2, 0) );    
+    Line  lLineTB( &lTop, &lBottom );
+    Facet  lFacet( &lLineTB );
+    
+    if( iParam->cCheckHole )
+      {
+	Point lBottom2( Point3d( iParam->cBottom - iParam->cThickness, -iParam->cHeight/2, 0) );
+	Line  lLineBB2( &lBottom, &lBottom2);
+	lFacet.addLine( &lLineBB2 );
+	  
+	Point lTop2   ( Point3d( iParam->cTop - iParam->cThickness,    iParam->cHeight/2, 0) );
+	Line  lLineB2T2( &lBottom2, &lTop2);
+	lFacet.addLine( &lLineB2T2 );
+	iName = "Tube";
+      }
 
     
-    ObjectPolylines   cPolyLines;
-    AddPoint( cCurrentLine, lTop );
-    AddPoint( cCurrentLine, lBottom );
-    PP3d::Mat4 lMatIdent;
-    Poly* lPoly = Maker::CreatePoly4FromFacet( cPolyLines.getFacets(), iParam->cNbU, lMat, true, false, false, true, true  );
-    DeletePoly();
-    return lPoly;
-  }    
+    
+    
+    PP3d::Mat4 lMatRot;
+    lMatRot.initRotY( -M_PIx2 / iParam->cNbU );
+
+    
+    if( iParam->cBottom == 0 )
+      {
+	iName = "Cone";
+	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					  true, false, false, true, false );       	
+      }
+
+    if( iParam->cTop == 0 )
+      {
+	iName = "Cone";
+	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					  true, false, false, false, true );       	
+      }
+      
+  
+    if( iParam->cCheckHole == false )
+      return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					  true, false, false, true, true );
+
+    return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					true, true, false, false, false );
+  }
+ //************************
+
+  Poly*  PrimitivFactory::CreateSphere(  PrimitivParam * iParam, std::string & iName )
+  {
+    if( iParam == nullptr
+	|| iParam->cNbU < 3 || iParam->cNbU > 4096
+	|| iParam->cNbV < 3 || iParam->cNbV > 4096
+	|| iParam->cThickness < sMinSz
+	|| (iParam->cHeight < sMinSz )
+	|| (iParam->cWidth  < sMinSz )
+	)
+      {
+	std::cout << "PrimitivFactory::CreateSphere - Bad parameter" << std::endl;
+	return nullptr;
+      }
+    
+    std::cout << "PrimitivFactory:::CreateSphere " << std::endl;
+
+      //***********************************
+    //***********************************
+    //***********************************
+  //***********************************
+    iParam->cCheckHole  = false;
+        //***********************************
+    //***********************************
+    //***********************************
+//***********************************
+
+    // On crée la facette
+    Facet  lFacet;
+    std::vector<Point> lPoints;
+    std::vector<Line>  lLines;
+    
+    double lDecalTore = 0;
+    long double lVal = M_PI/iParam->cNbV; // un demi cercle pour la sphere !;
+    
+    if( iParam->cCheckHole )
+      {
+	lVal = M_PIx2 / iParam->cNbV; //  Un cercle pour la tore !
+	
+	// Il faudra doubler iParam->cNbV pour la tore !
+	lDecalTore = iParam->cThickness ;
+      }
+
+
+    
+
+    PointPtr lLastPt = nullptr;
+    for( int i=0 ; i< iParam->cNbV; i++ )
+      {	
+	long double lAngle = lVal*i ;
+	std::cout << "i:" << i <<  "  " << lAngle << std::endl;
+	
+	Point lPt(  Point3d( cos( lAngle )+lDecalTore, sin( lAngle ), 0 ));
+	std::cout << "size:" << lPoints.size() << " Point " << lPt <<  std::endl;
+
+	lPoints.push_back( lPt ); //copy point
+	PointPtr lPtsPtr= lPoints.data();
+	PointPtr lCurrentPt = &lPtsPtr[lPoints.size()-1];   //????
+	std::cout << "Point2 " << *lCurrentPt <<  std::endl;
+	if( lLastPt != nullptr )
+	  {
+	    Line lLine( lLastPt, lCurrentPt );
+	    std::cout << "Line " << lLine <<  std::endl;
+	    lLines.push_back(lLine ); //copy line
+	    LinePtr lLinesPtr = lLines.data();
+	    LinePtr lCurrentLine = &lLinesPtr[lLines.size()-1]; //?????
+	    lFacet.addLine( lCurrentLine );
+	    std::cout << "lines size:" << lLines.size() << " Line2 " << *lCurrentLine <<  std::endl;
+	  }	
+	lLastPt = lCurrentPt;
+      }
+
+    std::cout << "Facet " << lFacet <<  std::endl;
+    
+    if( iParam->cCheckHole )
+      {
+	// il faut fermer le cercle  ou alors un flag pour le Maker ?
+      }
+
+  
+    
+    PP3d::Mat4 lMatRot;
+    lMatRot.initRotY( -M_PIx2 / iParam->cNbU );
+
+
+    
+    if( iParam->cCheckHole )
+      {
+	iName = "Tore";
+	// Ajouter un flag
+	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					  false, false, false, false, false );       	
+       }
+  
+    return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+					  false, false, false, false, false );       	
+  }
+
 	
   //************************
 
@@ -430,7 +540,6 @@ namespace PP3d{
       {
       case PrimitivFactory::Type::FACET_N : return "Facet";
       case PrimitivFactory::Type::CYLINDER: return "Cylinder";
-      case PrimitivFactory::Type::CONE    : return "Cone";
       case PrimitivFactory::Type::SPHERE  : return "Sphere";
       case PrimitivFactory::Type::PLANE  : return "Sphere";
       case PrimitivFactory::Type::CUBE    : return "Cube";
@@ -444,18 +553,20 @@ namespace PP3d{
   }
 
   //************************	
-  Poly* PrimitivFactory::Create( PrimitivFactory::Type pType, PrimitivParam * iParam )
+  Poly* PrimitivFactory::Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam )
   {
     Poly *lPoly= nullptr ;
     
     std::cout << "PrimitivFactory::Create" <<  GetTypeName(pType) << std::endl;
 
+
+    iName = GetTypeName( pType );
+    
     switch( pType )
       {
       case PrimitivFactory::Type::FACET_N : lPoly = CreateFacet( iParam ); break;
-      case PrimitivFactory::Type::CYLINDER: lPoly = CreateCylinder( iParam ); break;
-      case PrimitivFactory::Type::CONE    :
-      case PrimitivFactory::Type::SPHERE  :
+      case PrimitivFactory::Type::CYLINDER: lPoly = CreateCylinder( iParam, iName ); break;
+      case PrimitivFactory::Type::SPHERE  : lPoly = CreateSphere( iParam, iName ); break;
       case PrimitivFactory::Type::PLANE   :  break;
       case PrimitivFactory::Type::CUBE    : lPoly = CreatePoly( sCubePt,  8, sCubeIdx,  6 );	 break;
       case PrimitivFactory::Type::TETRA   : lPoly = CreatePoly( sTetraPt, 4, sTetraIdx, 4 );	 break;	

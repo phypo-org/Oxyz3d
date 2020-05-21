@@ -152,11 +152,10 @@ namespace PP3d {
     Point3d cPt;
 
   public:
-    Point( const Point3d p )
+    Point( const Point3d & p )
       :cPt( p )
     {			
-    }
-		
+    }		
 		
     ShapeType getType() const override { return ShapeType::Point;}
 
@@ -168,6 +167,13 @@ namespace PP3d {
   protected:
     void execVisitor( EntityVisitorNode& pVisit ) override;
     friend class Line;
+
+
+    friend std::ostream & operator << ( std::ostream & pOs, Point& pEntity )
+    {
+      pOs << ((Entity&)pEntity) <<  " " << pEntity.get() ;
+      return pOs;
+    }
   };
 	  
   using PointPtr     = Point*;
@@ -197,6 +203,7 @@ namespace PP3d {
 		
 		
   public:
+    
     Line( PointPtr lA, PointPtr lB )
     {		 
       cPoints = { lA, lB };
@@ -243,6 +250,12 @@ namespace PP3d {
     
     friend class Facet;
     friend class Maker;
+
+    friend std::ostream & operator << ( std::ostream & pOs, Line& pEntity )
+    {
+      pOs << ((Entity&)pEntity) <<  " " << pEntity.first() << " " << pEntity.second() ;
+      return pOs;
+    }
   };
 	
   using LinePtr     = Line*;
@@ -303,6 +316,12 @@ namespace PP3d {
     Point3d cNorm;
 
   public:
+    Facet() {;}
+    Facet(  LinePtr iLine ) { addLine( iLine ); }
+    Facet(  LinePtr iLine1, LinePtr iLine2  ) { addLine( iLine1 ); addLine( iLine2 ); }
+    Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 ); }
+
+      
     ShapeType getType() const  override { return ShapeType::Facet;}
 	
     void closeFacet();
