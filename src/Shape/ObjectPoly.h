@@ -10,30 +10,30 @@ namespace PP3d {
 
 	
   //******************************
-	class Poly;
+  class Poly;
 	
   class ObjectPoly  : public Object {
 
-		Poly* cShape;
+    Poly* cShape;
     
   public:
-		ObjectPoly( const char* pName, Poly* pPoly)
-		 :Object( pName )
-		,cShape( pPoly )
-	{
-	  pPoly->addOwner( this );
-	}	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
-		ObjectPoly( const std::string& pName, Poly* pPoly)
-		 :Object( pName )
-		,cShape( pPoly )
-	{
-	  pPoly->addOwner( this );
-	}	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
+    ObjectPoly( const char* pName, Poly* pPoly)
+      :Object( pName )
+      ,cShape( pPoly )
+    {
+      pPoly->addOwner( this );
+    }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
+    ObjectPoly( const std::string& pName, Poly* pPoly)
+      :Object( pName )
+      ,cShape( pPoly )
+    {
+      pPoly->addOwner( this );
+    }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		
-		EntityPtr getShape() override { return cShape; }
-		Poly*     getPoly()           { return cShape; }
-	  ObjectType getObjType() const override { return ObjectType::ObjPoly; }
-		ShapeType getSubType() const override { return ShapeType::Poly; };
+    EntityPtr getShape() override { return cShape; }
+    Poly*     getPoly()           { return cShape; }
+    ObjectType getObjType() const override { return ObjectType::ObjPoly; }
+    ShapeType getSubType() const override { return ShapeType::Poly; };
 
   };
   //******************************

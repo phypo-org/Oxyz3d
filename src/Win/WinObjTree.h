@@ -36,7 +36,7 @@ namespace M3d {
     
     WinObjTree();
 
-  public:    bool cDeployDetail = true;
+  public:    bool cDeployDetail = false;
 
 		
   public:

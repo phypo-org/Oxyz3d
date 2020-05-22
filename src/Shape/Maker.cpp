@@ -4,12 +4,17 @@
 namespace PP3d {
 
   //***************************************************
+  // Pb de creation de plusieurs point au lieu d'un seul si
+  // le point est sur l'axe de rotation( sommet de cone ou pole de sphere ! )
+  // il faudrait detecter si des points sont sur l'axe et ne les creer qu'une fois !
+  
   PolyPtr Maker::CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
 				       bool pFlagCloseRevol,
 				       bool pFlagCloseSeg,
 				       bool pFlagCloseSegEnd,
 				       bool pCloseHight,
-				       bool pCloseLow )
+				       bool pCloseLow,
+				       long double iEpsilon )
   {
     if( pNbPas <= 0 || pFacet == nullptr  )
       return nullptr;
@@ -31,8 +36,7 @@ namespace PP3d {
 	    lPointsPtr.push_back( new Point(lLine->getSecond()->get() ) );
 	    p++;
 	  }
-      }
-		
+      }		
 	
 
     PIndex  lNbCol  = lPointsPtr.size() ;
@@ -42,15 +46,38 @@ namespace PP3d {
 
     // on creer les points 
 
-    // les autres sont multiplie par la matrice iterativement(pb de precision?)
+    // les autres sont multiplie par la matrice iterativement(pb de precision?) // il faudrait recalculer la matrice a partir de l'angle veritable !!!!!!!!!!!
+    // Il faudrait aussi reperer que certain point sont les memes (sommet de cone par ex :) dans ce cas il faudrait ne creer qu'un seul point
+    
+
+    
     for( PIndex l=1; l< lNbLine; l++ )
       {
 	for( PIndex lCol=0; lCol < lNbCol; lCol++, p++ )
 	  {
 	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
-	    lPointsPtr.push_back( new Point( lPointsPtr[p-lNbCol]->get()*pMat ));
+	    
+	    Point3d lPt3d( lPointsPtr[p-lNbCol]->get()*pMat );
+	    
+	    PointPtr lTmpPt = nullptr;	    
+
+	    // Ou essaye de detecte si le point existe deja !!!
+	    // PAS EFFICACE DU TOUT : A FAIRE 
+	    for( PointPtr lSearch : lPointsPtr )
+	      {
+		if( lSearch->get().sameEpsi( iEpsilon, lPt3d ) )
+		  {
+		    lTmpPt = lSearch;
+		    break;
+		  }
+	      }
+	    if( lTmpPt == nullptr )
+	      lTmpPt = new Point( lPt3d );
+	    
+	    lPointsPtr.push_back(lTmpPt );
 	  }
       }
+
 
     std::cout << "Points:" << lPointsPtr.size() << std::endl;
 
@@ -75,7 +102,8 @@ namespace PP3d {
 	lNbLine++;
       }
     // Attention il y a deux lignes de creer pour chaque facette jointive ( mais en sens contraire )
-				 
+
+   
     // Facettes carrées
     for( PIndex lLine=0; lLine< lNbLine-1; lLine++ )
       {
@@ -121,31 +149,31 @@ namespace PP3d {
 	      }
 						
 					
-	    lFacet->addLine( new Line( A, B ));
-	    lFacet->addLine( new Line( B, C ));
-	    lFacet->addLine( new Line( C, D ));
-	    lFacet->addLine( new Line( D, A ));
+	    lFacet->addTrueLine( new Line( A, B ));
+	    lFacet->addTrueLine( new Line( B, C ));
+	    lFacet->addTrueLine( new Line( C, D ));
+	    lFacet->addTrueLine( new Line( D, A ));
 	    luPoly->addFacet( lFacet );
 
 
 	    if( lFacetHight != nullptr && lCol == 0 )
 	      {
-		lFacetHight->addLine( new Line(A, D ) );
+		lFacetHight->addTrueLine( new Line(A, D ) );
 	      }
 						
 	    if( lFacetLow != nullptr && lCol == lNbCol-2 )
 	      {
-		lFacetLow->addLine( new Line(B, C));
+		lFacetLow->addTrueLine( new Line(B, C));
 	      }						
 	  }
 				
 	if( pFlagCloseSeg && lMemFirstA )
 	  {
 	    FacetPtr lFacet = new Facet();                // nouvelle facette vide sans id
-	    lFacet->addLine( new Line( B, lMemFirstA ));
-	    lFacet->addLine( new Line( lMemFirstA, lMemFirstD ));
-	    lFacet->addLine( new Line( lMemFirstD, C ));
-	    lFacet->addLine( new Line( C, B ));
+	    lFacet->addTrueLine( new Line( B, lMemFirstA ));
+	    lFacet->addTrueLine( new Line( lMemFirstA, lMemFirstD ));
+	    lFacet->addTrueLine( new Line( lMemFirstD, C ));
+	    lFacet->addTrueLine( new Line( C, B ));
 	    luPoly->addFacet( lFacet );					
 	  }
       }
@@ -173,7 +201,7 @@ namespace PP3d {
 		{
 		  lLastPoint = lLine->getFirst();									
 		}
-	      lNewFacet0->addLine( new Line( lLastPoint, lLine->getSecond()) );
+	      lNewFacet0->addTrueLine( new Line( lLastPoint, lLine->getSecond()) );
 	      lLastPoint = lLine->getSecond();
 	    }
 					
@@ -201,7 +229,7 @@ namespace PP3d {
 		{
 		  lLastPoint = lLine->getSecond();
 		}
-	      lNewFacet1->addLine( new Line( lLastPoint, lLine->getFirst()) );
+	      lNewFacet1->addTrueLine( new Line( lLastPoint, lLine->getFirst()) );
 	      lLastPoint = lLine->getFirst();
 	    }
 					
@@ -213,7 +241,7 @@ namespace PP3d {
 	luPoly->addFacet( lNewFacet1 );
       }
 
-		
+    	
 
     if( lFacetHight != nullptr && lFacetHight->getNbLines() > 2  )
       {
@@ -221,20 +249,22 @@ namespace PP3d {
       }
     else
       {
-	delete lFacetHight;
+	std::cout << "Delete facette hight" << std::endl;
+	if( lFacetHight != nullptr )
+	  delete lFacetHight;
       }
 		
     if( lFacetLow != nullptr  && lFacetLow->getNbLines() > 2 )
       {
+	lFacetLow->inverseLines();
 	luPoly->addFacet(lFacetLow);			
       }
     else
-      {
+      {	
 	std::cout << "Delete facette low" << std::endl;
-	delete lFacetLow;
+	if( lFacetLow != nullptr )
+	  delete lFacetLow;
       }
-
-
 		
 
     // Fermer le dernier et le haut et le bas ????
@@ -263,9 +293,9 @@ namespace PP3d {
 	  if( lFac->cLines.size() == 4 )
 	    {
 	      FacetPtr lNewFac = new Facet();
-	      lNewFac->addLine( lFac->cLines[2] );							
-	      lNewFac->addLine( lFac->cLines[3] );
-	      lNewFac->addLine( new Line( lFac->cLines[3]->second(), lFac->cLines[2]->first() ));
+	      lNewFac->addTrueLineEpsi( kEpsilon, lFac->cLines[2] );							
+	      lNewFac->addTrueLineEpsi( kEpsilon, lFac->cLines[3] );
+	      lNewFac->addTrueLineEpsi( kEpsilon, new Line( lFac->cLines[3]->second(), lFac->cLines[2]->first() ));
 
 	      LinePtr lLine = lFac->cLines.back();  // la 3
 	      lFac->cLines.pop_back();
@@ -278,7 +308,7 @@ namespace PP3d {
 	      //		lBase->removeEntityIfNoOwner( lLine );
 
 							
-	      lFac->addLine(  new Line( lFac->cLines[1]->second(), lFac->cLines[0]->first() ));
+	      lFac->addTrueLineEpsi( kEpsilon,  new Line( lFac->cLines[1]->second(), lFac->cLines[0]->first() ));
 							
 	      lVect.push_back( lFac );
 	      lVect.push_back( lNewFac );							

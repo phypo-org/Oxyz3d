@@ -250,7 +250,7 @@ namespace M3d {
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Number of point", MajCB, this, 3, 64 );
+	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
 	      cSliderU->value( 16 );
 	      lY += lYStep;
 
@@ -288,29 +288,27 @@ namespace M3d {
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 1024 );
+	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
 	      cSliderU->value( 16 );
 	      lY += lYStep;
 	      
-	      cSliderV = new MySlider( lX_SL, lY, lW, lH, "Slices", MajCB, this, 3, 1024 );
+	      cSliderV = new MySlider( lX_SL, lY, lW, lH, "Slices", MajCB, this, 3, 128 );
 	      cSliderV->value( 8 );
 	      lY += lYStep;
 
 	      
-	      cSliderWidth = new MySlider( lX_SL, lY, lW, lH, "Width", MajCB, this, 0.00001, 100 );
+	      cSliderWidth = new MySlider( lX_SL, lY, lW, lH, "Width", MajCB, this, 0.00001, 50 );
 	      cSliderWidth->value( 1 );
 	      lY += lYStep;
 	      
 
-	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.00001, 100 );
+	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.00001, 50 );
 	      cSliderHeight->value( 1 );
 	      lY += lYStep;
-	      lY += lYStep;
-
 	 	      
 	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Tore", MajCB, this, 0 ); 
 	   
-	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Size Hole", MajCB, this, 0.0001, 100 );
+	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Size Hole", MajCB, this, 0, 50 );
 	      cSliderThickness->value( 1 );
 	      lY += lYStep;
 	      

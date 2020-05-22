@@ -346,7 +346,11 @@ namespace PP3d {
   {
     if( cCurrentCreation != pCurrentCreation )
       {
-	delete cCurrentCreation;
+	if( cCurrentCreation != nullptr )
+	  {
+	    cCurrentCreation->deleteAllHieracrchy();
+	  }
+	
 	cCurrentCreation = pCurrentCreation;
       }
   }

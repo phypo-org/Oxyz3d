@@ -396,7 +396,6 @@ namespace PP3d{
     if( iParam == nullptr
 	|| iParam->cNbU < 3 || iParam->cNbU > 4096
 	|| iParam->cNbV < 3 || iParam->cNbV > 4096
-	|| iParam->cThickness < sMinSz
 	|| (iParam->cHeight < sMinSz )
 	|| (iParam->cWidth  < sMinSz )
 	)
@@ -407,15 +406,6 @@ namespace PP3d{
     
     std::cout << "PrimitivFactory:::CreateSphere " << std::endl;
 
-      //***********************************
-    //***********************************
-    //***********************************
-  //***********************************
-    iParam->cCheckHole  = false;
-        //***********************************
-    //***********************************
-    //***********************************
-//***********************************
 
     // On crée la facette
     Facet  lFacet;
@@ -430,62 +420,45 @@ namespace PP3d{
 	lVal = M_PIx2 / iParam->cNbV; //  Un cercle pour la tore !
 	
 	// Il faudra doubler iParam->cNbV pour la tore !
-	lDecalTore = iParam->cThickness ;
+	lDecalTore = iParam->cWidth+iParam->cThickness ;
       }
 
 
-    
-
-    PointPtr lLastPt = nullptr;
-    for( int i=0 ; i< iParam->cNbV; i++ )
+    for( int i=0 ; i< iParam->cNbV+1; i++ )
       {	
-	long double lAngle = lVal*i ;
-	std::cout << "i:" << i <<  "  " << lAngle << std::endl;
+	long double lAngle = M_PI_2 + lVal*i ;
+	//	std::cout << "i:" << i <<  "  " << lAngle << std::endl;
 	
-	Point lPt(  Point3d( cos( lAngle )+lDecalTore, sin( lAngle ), 0 ));
-	std::cout << "size:" << lPoints.size() << " Point " << lPt <<  std::endl;
-
-	lPoints.push_back( lPt ); //copy point
-	PointPtr lPtsPtr= lPoints.data();
-	PointPtr lCurrentPt = &lPtsPtr[lPoints.size()-1];   //????
-	std::cout << "Point2 " << *lCurrentPt <<  std::endl;
-	if( lLastPt != nullptr )
-	  {
-	    Line lLine( lLastPt, lCurrentPt );
-	    std::cout << "Line " << lLine <<  std::endl;
-	    lLines.push_back(lLine ); //copy line
-	    LinePtr lLinesPtr = lLines.data();
-	    LinePtr lCurrentLine = &lLinesPtr[lLines.size()-1]; //?????
-	    lFacet.addLine( lCurrentLine );
-	    std::cout << "lines size:" << lLines.size() << " Line2 " << *lCurrentLine <<  std::endl;
-	  }	
-	lLastPt = lCurrentPt;
+	lPoints.push_back(  Point(Point3d( iParam->cWidth*cos( lAngle )+lDecalTore, iParam->cHeight*sin( lAngle ), 0 ) )); //copy point
       }
-
-    std::cout << "Facet " << lFacet <<  std::endl;
     
-    if( iParam->cCheckHole )
+    for( size_t i=0 ; i< lPoints.size()-1; i++ )
       {
-	// il faut fermer le cercle  ou alors un flag pour le Maker ?
+	lLines.push_back( Line( &lPoints[i], &lPoints[i+1] ));	
+      }
+	  
+    for( Line &lLine : lLines )
+      {	
+	lFacet.addLine( &lLine );
       }
 
-  
-    
+ 
     PP3d::Mat4 lMatRot;
     lMatRot.initRotY( -M_PIx2 / iParam->cNbU );
 
-
+ 
     
     if( iParam->cCheckHole )
       {
 	iName = "Tore";
-	// Ajouter un flag
+	lFacet.inverseLines();
+    
 	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  false, false, false, false, false );       	
+					  true, false, false, false, false );       	
        }
   
     return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  false, false, false, false, false );       	
+					  true, false, false, false, false );       	
   }
 
 	

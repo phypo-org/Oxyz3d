@@ -1,4 +1,6 @@
 #include "Entity.h"
+#include "SortVisitor.h"
+
 
 
 
@@ -46,7 +48,15 @@ namespace PP3d {
 	lPt->cPt *= pMat;
       }
   }
+  //---------------------------
+  void Entity::deleteAllHieracrchy()
+  {    
+    SortEntityVisitor lVisit(false);
+    execVisitor( lVisit );
 
+    for( auto lEntity : lVisit.cSetAllEntity )
+      delete lEntity;
+  }
   //---------------------------
   /*
     Object* Entity::FindMyObject( EntityPtr pCurrent )

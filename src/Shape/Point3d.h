@@ -94,6 +94,18 @@ namespace PP3d {
     void addZ( TFLOAT pZ) { cZ += pZ; }
 
     TPoint3d  operator - ()	{	return TPoint3d( -cX, -cY, -cZ );	}
+		
+    //--------------------------------------------
+    bool sameEpsi ( long double iEpsi, const TPoint3d & B )
+    {
+      TPoint3d lDiff( *this-B );
+      if( fabs( lDiff.cX ) <= iEpsi
+	  && fabs( lDiff.cY ) <= iEpsi
+	  && fabs( lDiff.cZ ) <= iEpsi )
+	return true;
+
+      return false;
+    }
     //--------------------------------
   
     const TFLOAT* vectForGL() const
@@ -133,8 +145,8 @@ namespace PP3d {
 	return true;
       return false;
     }
-		
-    //--------------------------------------------
+
+   //--------------------------------------------
     friend bool operator != ( const TPoint3d & A, const TPoint3d &  B )
     {
       return ! operator == (A,B);

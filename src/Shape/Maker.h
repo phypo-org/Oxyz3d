@@ -8,11 +8,23 @@
 
 
 namespace PP3d {
+
+
 	//****************************************
 	class Maker{
 		
 	public:
-		static PolyPtr CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat, bool pFlagClose,  bool pFlagCloseSeg, bool pFlagCloseSegEnd, bool pCloseHight, bool pCloseLow );
+
+	static constexpr long double  kEpsilon=1e-10;
+	  
+	  static PolyPtr CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
+					       bool pFlagClose,
+					       bool pFlagCloseSeg,
+					       bool pFlagCloseSegEnd,
+					       bool pCloseHight,
+					       bool pCloseLow,
+					       long double  iEpsilon = kEpsilon);
+	  
 		static FacetPtrVect Trianguler( DataBase& pBase, FacetPtrVect& pFacet, bool lForce );		
 	};
 		

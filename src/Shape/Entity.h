@@ -68,6 +68,7 @@ namespace PP3d {
     }
     virtual ~Entity();
 
+    void deleteAllHieracrchy();
 		
     EntityId getId() { return cId; }
     bool     isIdVoid() { return cId==0;}
@@ -212,6 +213,8 @@ namespace PP3d {
 	lB->addOwner( this );			
     }
     bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette
+    bool isSamePointXYZ() { return cPoints.first->get() == cPoints.second->get(); } // Meme coordonnes xyz de deux points
+    bool isSamePointEpsi(long double iEpsi ) { return cPoints.first->get().sameEpsi(iEpsi, cPoints.second->get() ); } // Meme coordonnes xyz de deux points
 								 
     ShapeType   getType() const override { return ShapeType::Line;}
 		
@@ -326,6 +329,40 @@ namespace PP3d {
 	
     void closeFacet();
 
+    bool addTrueLine( LinePtr iLine )
+    {
+      if( iLine->isPoint())
+	{
+	  //	  std::cout << "addTrueLine - Line is point : same ID" << std::endl;
+	  return false;
+	}
+      
+      if( iLine->isSamePointXYZ() )
+	{
+	  //	  std::cout << "addTrueLine - Line is point : same XYZ" << std::endl;
+	  return false;
+	}	
+      
+      addLine( iLine );
+      return true;
+    }
+    bool addTrueLineEpsi( long double iEpsi ,  LinePtr iLine)
+    {
+      if( iLine->isPoint())
+	{
+	  //	  std::cout << "addTrueLine - Line is point : same ID" << std::endl;
+	  return false;
+	}
+      
+      if( iLine->isSamePointEpsi( iEpsi) )
+	{
+	  //	  std::cout << "addTrueLine - Line is point : same XYZ" << std::endl;
+	  return false;
+	}	
+      
+      addLine( iLine );
+      return true;
+    }
     void addLine( LinePtr iLine )
     {
       cLines.push_back( iLine );
