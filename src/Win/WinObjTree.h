@@ -49,7 +49,10 @@ namespace M3d {
   private:
     static WinObjTree* sTheWinObjTree;
     static void MyMenuCallback(Fl_Widget* w, void* pUserData );
-
+    
+    void rebuildDatabase( const char* iRootname,
+			  PP3d::DataBase & iDatabase,
+			  bool iFlagAxe );
   public:
     static WinObjTree& Instance()
     {
@@ -59,6 +62,7 @@ namespace M3d {
 	}
       return *sTheWinObjTree ; 
     }
+
 		
     void redraw() { cWin->redraw(); }
     void draw();

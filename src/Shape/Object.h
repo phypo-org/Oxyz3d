@@ -3,6 +3,7 @@
 
 #include "PP3dType.h"
 #include "ObjProps.h"
+#include "Utils/PPDate.h"
 
 
 #include <string>
@@ -12,6 +13,8 @@
 #include "Matrice.h"
 
 #include "Entity.h"
+
+#include "Utils/PPDate.h"
 
 // Cet objet a pour role de chapeauter les Shape
 // il va s'occuper de tout ce qui n'est pas vraiment du graphique 3D
@@ -55,6 +58,7 @@ namespace PP3d {
       return ObjectType::ObjPolyline;
     return ObjectType::ObjNull;
   }
+  
 	
   inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
   {
@@ -68,17 +72,22 @@ namespace PP3d {
   protected:
     ObjProps                     cMyProps;
     std::string                  cName;
-	
+
+    bool                         cIsTransform=false;
+    
+    PPu::PPDateTime70                 cDateCreation;
   public:
 
-    Object(  const char*pName );
-    Object(  const std::string & pName );
+    Object(  const char*pName, bool cTransform=false );
+    Object(  const std::string & pName, bool cTransform=false );
     virtual ~Object();
-		
+
+    
     virtual ObjectType getObjType() const =0;
     ShapeType getType() const override { return ShapeType::Object;}
     virtual ShapeType getSubType() const =0;
-
+    bool    isTransform() { return cIsTransform; }
+    PPu::PPDateTime70 getDateCreation() const { return cDateCreation; }
     virtual void execVisitor( EntityVisitor& pVisit ) override;
     virtual void execVisitor( EntityVisitorNode& pVisit ) override;
 

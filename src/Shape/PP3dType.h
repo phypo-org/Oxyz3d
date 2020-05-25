@@ -25,11 +25,12 @@ namespace PP3d {
 	using   ComponentId = int;
 	
 	
-	enum class SelectType {  Point=1, Line=2, Facet=4, Poly=8, Object=16, All=32};
+  enum class SelectType {  Null=0, Point=1, Line=2, Facet=4, Poly=8, Object=16, All=32};
 	inline static const char* GetStrShapeType( SelectType pType )
 	{
 		switch( pType )
 			{
+			case SelectType::Null:   return "None";
 			case SelectType::Point:  return "Point";
 			case SelectType::Line:   return "Line";
 			case SelectType::Facet:  return "Facet";

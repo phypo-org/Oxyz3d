@@ -63,9 +63,12 @@ namespace PP3d {
   };
 	
   //****************************************
-  class Selection :  public PPSingletonCrtp<Selection>
+  //  class Selection :  public PPSingletonCrtp<Selection>
+  // {
+  //   friend PPSingletonCrtp;
+  //****************************************
+  class Selection 
   {
-    friend PPSingletonCrtp;
     
     EntityId cLastHightLightEntityId = 0;
  
@@ -75,17 +78,16 @@ namespace PP3d {
 
     //===========================
 		
-  private:
+  public:
     Selection();
-		
-    //#define Selection::sTheSelection &Selection::
-#define TheSelect PP3d::Selection::Instance()
+
 		
   protected:
 		
     SelectType     cSelectType = SelectType::Object;
 
     std::unordered_set<EntityPtr> cSelectObj;
+    std::vector<EntityPtr> cSelectObjVect;
     // METTRE AUSI UN VECTEUR POUR GARDER L ORDRE DE SELECTION
 		
   public:
@@ -93,7 +95,7 @@ namespace PP3d {
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();
-    void clear() {  cSelectObj.clear(); }
+    void clear() {  cSelectObj.clear(); cSelectObjVect.clear(); }
 
     bool addToSelection( EntityPtr lEntity);
     bool isSelected( EntityPtr lEntity )
@@ -101,7 +103,7 @@ namespace PP3d {
       return cSelectObj.find(lEntity) != cSelectObj.end() ;
     }
     const std::unordered_set<EntityPtr>& getSelection() { return cSelectObj;}
-		
+
 
     size_t getNbSelected() { return cSelectObj.size();  }
 									
@@ -124,8 +126,8 @@ namespace PP3d {
     //----------------------------
     friend std::ostream& operator <<( std::ostream& pOs, Selection& pSel )
     {
-      pOs << "Type:" << GetStrSelectType( pSel.cSelectType ) << ":" << pSel.cSelectObj.size() << std::endl;
-      for( auto lIter = pSel.cSelectObj.begin(); lIter != pSel.cSelectObj.end(); ++lIter) 
+      pOs << "Type:" << GetStrSelectType( pSel.cSelectType ) << ":" << pSel.cSelectObjVect.size() << std::endl;
+      for( auto lIter = pSel.cSelectObjVect.begin(); lIter != pSel.cSelectObjVect.end(); ++lIter) 
 	{
 	  pOs << "  " << (*lIter) << std::endl;
 	}
@@ -134,13 +136,13 @@ namespace PP3d {
     //----------------------------
     void execVisitorOnEntity(  EntityVisitor& pVisit )
     {
-      for(  EntityPtr lEntity : cSelectObj )
+      for(  EntityPtr lEntity : cSelectObjVect )
 	lEntity->execVisitor( pVisit );
     }
     //----------------------------
     void execVisitorOnlyOnObjects(  EntityVisitor& pVisit )
     {
-      for(  EntityPtr lEntity : cSelectObj )
+      for(  EntityPtr lEntity : cSelectObjVect )
 	{
 	  //	  std::cout << " exec " <<  lEntity->getType() << " ? " << ShapeType::Object << std::endl;
 	  if( lEntity->getType() == ShapeType::Object )
@@ -150,12 +152,11 @@ namespace PP3d {
 	      lEntity->execVisitor( pVisit );
 	    }
 	}
-    }
-
-  };
-  //******************************************
-
+    }   
+  }; 
 }
+
+// #define TheSelect PP3d::Selection::Instance()
 
 
 #endif

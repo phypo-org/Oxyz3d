@@ -360,9 +360,9 @@ namespace PP3d {
     return cCurrentCreation;			
   }
   //-------------------------------------------------------------
-  void DataBase::drawGL(ViewProps& pViewProps, GLMode pSelectOrDrawMode )
+  void DataBase::drawGL(ViewProps& pViewProps, GLMode pSelectOrDrawMode, SelectType iSelectType)
   {
-    pViewProps.cSelectType = Selection::Instance().getSelectType();
+    pViewProps.cSelectType = iSelectType;
     pViewProps.cGLMode     = pSelectOrDrawMode;
 
     //		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType << std::endl;

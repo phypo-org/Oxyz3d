@@ -60,7 +60,8 @@ namespace M3d {
     bool    cFlagCursor3d;
 		
     PP3d::ViewProps cViewProps;
-		
+    PP3d::ViewProps cViewPropsTransform;
+
 	
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;

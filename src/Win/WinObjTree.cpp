@@ -71,8 +71,12 @@ namespace M3d {
     virtual void execBeginLine ( Line* pLine) {
       
       std::ostringstream lOstr;      
+      if( cStrFacet.size() == 0 )
+	lOstr << cStrRoot;
+
       lOstr << cStrFacet << "/Line " << pLine->getId();
-      if( pLine->isSelect() )
+
+       if( pLine->isSelect() )
 	{
 	  lOstr << 's';
 	} 
@@ -114,6 +118,9 @@ namespace M3d {
     virtual void execBeginFacet( Facet* pFacet )
     {      
       std::ostringstream lOstr;
+      if( cStrPoly.size() == 0 )
+	lOstr << cStrRoot;
+      
       lOstr << cStrPoly << "/Facet " << pFacet->getId();
       if( pFacet->isSelect() )
 	{
@@ -224,20 +231,25 @@ namespace M3d {
   }
 
   //--------------------------------------------
-  static void	SelectOneObject(Fl_Widget*w, void*pData)
+  static void	CB_SelectOneObject(Fl_Widget*w, void*pData)
   {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 	
+    if( TheSelect.getSelectType() != PP3d::SelectType::Object )
+      {
+	lCheck->value( false );
+	return ;
+      }
     PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lCheck->cUserData2);
 
     //	std::cout << "Box:"  << (lCheck->value() != 0) << std::endl;
-    if( PP3d::Selection::Instance().addToSelection( lObj->getShape() ) )
+    if( lObj != nullptr && TheSelect.addToSelection( lObj ) )
       {
 	Application::Instance().redrawAllCanvas3d();
       }
   }
   //--------------------------------------------
-  static void	ViewOneObject(Fl_Widget*w, void*pData)
+  static void	CB_ViewOneObject(Fl_Widget*w, void*pData)
   {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 		
@@ -248,7 +260,7 @@ namespace M3d {
     Application::Instance().redrawAllCanvas3d();
   }
   //--------------------------------------------
-  static void	RenameObject(Fl_Widget*w, void*pData)
+  static void	CB_RenameObject(Fl_Widget*w, void*pData)
   {
     MyInput* lInput = reinterpret_cast<MyInput*>(pData);
 
@@ -263,30 +275,46 @@ namespace M3d {
   void WinObjTree::draw()
   {
     rebuild();
-  }		
+  }
   //--------------------------------------------
-  void WinObjTree::rebuild()
+  inline static const char* GetTransformStr( ObjectType pType )
   {
-    DBG_TREE( "+++++++ REBUILD TREE ++++++++++" );
-    cTree->clear();
+    switch( pType )
+      {
+      case ObjectType::ObjLine:   return "Axe";
+      case ObjectType::ObjFacet:  return "Plane";
+      default: ;
+      }
+    return "Unknown";
+  }
+ //--------------------------------------------
+  void WinObjTree::rebuildDatabase( const char* iRootname,
+				    PP3d::DataBase & iDatabase,
+				    bool iFlagAxe)
+  {       
     int lH = 18;
-  
-    cTree->begin();
-    
-    std::ostringstream lOs;
-    lOs  << "Base" << " objets:" <<  Application::Instance().getDatabase()->getAllObject().size()
-	 << " entities:" <<  Application::Instance().getDatabase()->getEntities().size() ;
-    
-    Fl_Tree_Item* lNode = cTree->add( lOs.str().c_str() );
 
     
+    if( iDatabase.getEntities().size() )
+    {
+      std::ostringstream lOs;
+      lOs  << iRootname << " objects:" <<  iDatabase.getAllObject().size()
+	   << " entities:" <<  iDatabase.getEntities().size() ;
+      
+      Fl_Tree_Item* lNode = cTree->add( lOs.str().c_str() );
+    }
  
-    for( PP3d::Object* lObj : Application::Instance().getDatabase()->getAllObject() )
+    for( PP3d::Object* lObj : iDatabase.getAllObject() )
       {
 	std::ostringstream lOstr;
 				
-	lOstr  << lObj->getStrType() << "/" << lObj->getId()  ;  
+	lOstr   << iRootname
+		<< ( iFlagAxe ? GetTransformStr(lObj->getObjType()) : PP3d::GetStrObjectType( lObj->getObjType())) << "/"
+		<< lObj->getId() ;
+	
+	
 	Fl_Tree_Item* lNode = cTree->add( lOstr.str().c_str() );
+	
 	lNode->user_data( lObj );
 		
 	//      std::cout << " Add tree ******************************** >" <<  lOstr.str() << std::endl;
@@ -306,36 +334,39 @@ namespace M3d {
 	lGroup->color( FL_WHITE );
 	lGroup->begin();
 
-      
-	std::ostringstream lOstrId;
-	lOstrId  << lObj->getId();
-      
+            
 	int lX = lGroup->x();
 	int lY = lGroup->y()+2;
-	MyLabel *lLabel = new MyLabel( lX, lY, 60, lH , lOstrId.str() );
-
-	lX += lLabel->w()+4;
-
-   
+	
 	//------------				
-	MyCheckbutton *lCheckSel = new MyCheckbutton( lX, lY, 30,15, "S", SelectOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
-	lCheckSel->value( PP3d::Selection::Instance().isSelected( lObj->getShape() ));
+	MyCheckbutton *lCheckSel  = new MyCheckbutton( lX, lY, 30,15, "S", CB_SelectOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
+	//	lCheckSel->value( TheSelect.isSelected( lObj->getShape() ));
+	lCheckSel->value( lObj->isSelect());
+	if( TheSelect.getSelectType() != PP3d::SelectType::Object )
+	  {
+	    ////////  BUG : Cycle sans fin -   lCheckSel->deactivate();
+	  }
+	
 	lX += lCheckSel->w()+4;
 
-
 	//------------
-	MyCheckbutton *lCheckView = new MyCheckbutton( lX, lY, 30,15, "V", ViewOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
+	MyCheckbutton *lCheckView = new MyCheckbutton( lX, lY, 30,15, "V", CB_ViewOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
 	lCheckView->value( lObj->isVisible());
-	lX += lCheckView->w()+4;
-				
+	lX += lCheckView->w()+4;				
 
+	//------------				
+	MyInput* lInput = new MyInput( lX, lY, 100, lH, "", CB_RenameObject, this, lObj );
+	lInput->value( lObj->getName().c_str() );			
 	//------------
-				
-	MyInput* lInput = new MyInput( lX, lY, 100, lH, "", RenameObject, this, lObj );
-	lInput->value( lObj->getName().c_str() );
-			
-	//------------
+	lX += lInput->w()+4;				
 
+	std::ostringstream lOstrId;
+	lOstrId  << lObj->getId() << " - "
+		 <<  PPu::PPDate::ConvertTimeToStr( lObj->getDateCreation(),  PPu::PPDateUTC::Local, true, true, '-' );
+
+	MyLabel *lLabel = new MyLabel( lX, lY, 150, lH , lOstrId.str() );
+	lX += lLabel->w()+4;
+	
 				
 	lGroup->end();
 	lGroup->resizable(lGroup);
@@ -343,8 +374,19 @@ namespace M3d {
                
 	lGroup->show();
 	lNode->widget(lGroup);
+      }	
+  }
+ //--------------------------------------------
+  void WinObjTree::rebuild()
+  {
+    DBG_TREE( "+++++++ REBUILD TREE ++++++++++" );
+    cTree->clear();
 
-      }
+    cTree->begin();    
+
+    rebuildDatabase( "Transformations/", *Application::Instance().getDatabaseTransform(), true );
+    rebuildDatabase( "Objects/",         *Application::Instance().getDatabase(),          false );
+
     cTree->end();
  
     DBG_TREE( "------- END REBUILD TREE ---------" );

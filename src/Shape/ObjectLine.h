@@ -27,6 +27,7 @@ namespace PP3d {
       : Object( pName )
       ,cShape( pLine)
     {;}
+   
     EntityPtr  getShape() override { return cShape; }
     LinePtr    getLine()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjLine; }
@@ -87,8 +88,11 @@ namespace PP3d {
 	}
     }
   };
-  //******************************
-
+  //******************************  
+  inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB )
+  {
+    return new ObjectLine( pName, MakeLine( iA, iB ));
+  }
 }
 
 #endif

@@ -92,9 +92,9 @@ namespace PP3d {
 	  }       
     }
     //---------------------------------
-    VisitorModifPoints()
+    VisitorModifPoints( PP3d::Selection & iSelect )
     {
-      for( EntityPtr lEntity : Selection::Instance().getSelection() )
+      for( EntityPtr lEntity : iSelect.getSelection() )
 	{
 	  setOwner( lEntity );
 	}  
@@ -140,10 +140,10 @@ namespace PP3d {
     // mode MODIF ensuite avec coef qui varie pour faire bouger
     // si CANCEL -> restore seul
 
-    void modifSelection( Mode iMode)
+    void modifSelection( Mode iMode, PP3d::Selection & iSelect)
     {
       cMode = iMode;
-      std::cout << "========  modifSelection " << Selection::Instance().getSelection().size()  <<std::endl;
+      std::cout << "========  modifSelection " << iSelect.getSelection().size()  <<std::endl;
 
       /*
       for( EntityPtr lEntity : Selection::Instance().getSelection() )
@@ -166,7 +166,8 @@ namespace PP3d {
   struct VisitorMoveNormal : public  VisitorModifPoints
   {
     //---------------------------------			  
-    VisitorMoveNormal()
+    VisitorMoveNormal( PP3d::Selection & iSelect)
+      :VisitorModifPoints( iSelect )
     {
 
     }

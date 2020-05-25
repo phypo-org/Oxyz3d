@@ -237,7 +237,7 @@ namespace PP3d {
       if( lA != lB )
 	lB->addOwner( this );			
     }
-
+ 
     void execVisitor( EntityVisitor& pVisit )override;
 
   public:
@@ -310,6 +310,11 @@ namespace PP3d {
       //		<<  std::endl
       ;}
   };								 
+   
+  inline Line * MakeLine( const Point3d & iA,   const Point3d & iB )
+  {
+    return new Line( new Point( iA ), new Point (iB ));
+  }
 
   //*********************************************
   class  Facet :  public Entity{

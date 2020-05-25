@@ -18,13 +18,17 @@ namespace PP3d{
 
   //********************************
 
-  Object::Object(  const char*pName)
+  Object::Object(  const char*pName, bool iTransform)
     :cName(pName)
+    ,cIsTransform( iTransform )
+    ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
   {
   }
-  Object::Object(  const std::string& pName)
+  Object::Object(  const std::string& pName, bool iTransform)
     :cName(pName)
-  {
+    ,cIsTransform( iTransform )
+    ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
+ {
   }
   //---------------------------
   Object::~Object()
@@ -97,6 +101,8 @@ namespace PP3d{
 
     switch( pViewProps.cSelectType )
       {
+      case SelectType::Null:
+	break;
       case SelectType::All:
       case SelectType::Point:
 	{
@@ -190,6 +196,9 @@ namespace PP3d{
 
     switch( pViewProps.cSelectType )
       {
+      case SelectType::Null:
+	break;
+	
       case SelectType::Point:
 	{
 	  if( pViewProps.cViewMode == 0)						

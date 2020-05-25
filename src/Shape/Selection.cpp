@@ -45,15 +45,22 @@ namespace PP3d {
     //    std::cout << "Selection::addEntity " << ioEntity->getId() << ":" << ioEntity->getType() << std::endl;
 
 
-    cSelectObj.emplace( ioEntity );
+    auto lPair = cSelectObj.emplace( ioEntity );
+    if( lPair.second == false )
+      return ; // already selected
+
+    
     ioEntity->setSelect( true );
+    cSelectObjVect.push_back( ioEntity );
 
     
     if( iSelectAll && ioEntity->getType() == ShapeType::Line )
       {
 	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
 	if( lLine )
-	  addEntity( lLine, false );
+	  {
+	    addEntity( lLine, false );	    
+	  }
       }
     std::cout << "======================================="<< std::endl;
     std::cout << *this << std::endl;
@@ -63,14 +70,26 @@ namespace PP3d {
   //--------------------------------
   void Selection::removeEntity( EntityPtr ioEntity, bool iSelectAll )
   {
-    ioEntity->setSelect( false );
-    cSelectObj.erase( ioEntity );
-
-    if( iSelectAll && ioEntity->getType() == ShapeType::Line )
+    if( ioEntity->isSelect() )
       {
-	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
-	if( lLine )
-	  removeEntity( lLine, false );
+	ioEntity->setSelect( false );
+	cSelectObj.erase( ioEntity );
+	for( size_t i = 0; i< cSelectObjVect.size(); i++ )
+	  {
+	    if( cSelectObjVect[i] == ioEntity )
+	      {
+		cSelectObjVect.erase( cSelectObjVect.begin() + i );
+		break;
+	      }
+
+	  }
+	
+	if( iSelectAll && ioEntity->getType() == ShapeType::Line )
+	  {
+	    LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
+	    if( lLine )
+	      removeEntity( lLine, false );
+	  }
       }
   }
   //--------------------------------
@@ -82,6 +101,7 @@ namespace PP3d {
       }
 		
     cSelectObj.clear();
+    cSelectObjVect.clear();
   }
   //--------------------------------
   bool Selection::addToSelection( EntityPtr lEntity)
@@ -112,7 +132,6 @@ namespace PP3d {
     // comme il ne faut pas compter plusieurs fois un point, on
     // va les recuperer dans un set ( pas trés rapide mais l'autre solution serait de marquer les point comme deja fais qq part : bof )
     GetPoints( cSelectObj, cPoints );
-		
 		
     for( auto lIter = cPoints.begin(); lIter != cPoints.end(); ++lIter )
       {
@@ -283,6 +302,7 @@ namespace PP3d {
   {
     switch( pSelectType )
       {
+      case SelectType::Null:  return "None";
       case SelectType::Point:  return "Point";
       case SelectType::Line:   return "Line";
       case SelectType::Facet:  return "Facet";
@@ -297,7 +317,7 @@ namespace PP3d {
   {
     std::vector<EntityPtr> lDelList;
 		
-    for(  EntityPtr lEntity : cSelectObj )
+    for(  EntityPtr lEntity : cSelectObjVect )
       {
 	if( pDatabase.deleteEntity( lEntity ) )
 	  {
@@ -306,6 +326,7 @@ namespace PP3d {
       }
     
     cSelectObj.clear();
+    cSelectObjVect.clear();
 
     for( EntityPtr lEntity : lDelList )
       {
@@ -315,7 +336,7 @@ namespace PP3d {
   //--------------------------------
   void Selection::addSelectionToInput( DataBase& pDatabase, bool pFlagLink )				
   {
-    for(  EntityPtr lEntity : cSelectObj )
+    for(  EntityPtr lEntity : cSelectObjVect )
       {
 	pDatabase.addToInput( lEntity, pFlagLink );				
       }	
@@ -338,7 +359,7 @@ namespace PP3d {
     //	cCurrentTransform.execGL();
     glLoadMatrixd( cCurrentMatrice.vectForGL() );
 		
-    for( auto lIter = cSelectObj.begin() ; lIter != cSelectObj.end(); ++lIter  )
+    for( auto lIter = cSelectObjVect.begin() ; lIter != cSelectObj.end(); ++lIter  )
     {
     //		std::cout << "        Selection::drawGL " << lSubSel.cObjId << std::endl;
     Entity* lObj =  (*lIter);

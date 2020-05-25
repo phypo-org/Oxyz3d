@@ -93,6 +93,11 @@ namespace M3d {
     gl_font( FL_HELVETICA_BOLD, 24);
     cKamera.initGL();
     cKamera.raz45();
+
+    cViewPropsTransform.cLineWidth = 8;
+    cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
+	 
+    
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
@@ -193,19 +198,47 @@ namespace M3d {
 		
     cViewProps.cDebug = cDebug;
 		
-     TheAppli.getDatabase()->recomputeAll();
-     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw );
-		
+ 
+
+     TheAppli.getDatabase()->recomputeAll();     
+     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw, TheSelect.getSelectType() );
+
+
+     if( TheAppli.viewTransformation() )
+       {
+	 TheAppli.getDatabaseTransform()->recomputeAll();
+	 TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
+       }
+
+     /*
+     if( TheAppli.getCurrentAxe() != nullptr )
+       {
+	 // Faire qq chose de  Mieux  AFAIRE
+	 
+	 int lMemWidth = cViewProps.cLineWidth;
+	 PP3d::ColorRGBA lMemColor( cViewProps.cColorLine );
+	 
+	 cViewProps.cLineWidth = 8;
+	 cViewProps.cColorLine.set(1.0,0.0,0.0);
+	 
+	 TheAppli.getCurrentAxe()->drawGL( cViewProps );
+	 
+	 cViewProps.cLineWidth = lMemWidth;
+	 cViewProps.cColorLine = lMemColor;
+       }
+     */
+
+     
+     
     if( cMode == ModeUser::MODE_SELECT_RECT )
-      {
-				
+      {				
 	glEnable( GL_BLEND );
 	glDepthMask( GL_FALSE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 				
 	glColor4f(0.3f, 0.1f, 0.1f, 0.3f);
 
-	 TheAppli.getDatabase()->getSelectionRectanglePosition().drawGL();
+	TheAppli.getDatabase()->getSelectionRectanglePosition().drawGL();
 
 	glDepthMask( GL_TRUE );
 	glDisable( GL_BLEND );
@@ -292,7 +325,7 @@ namespace M3d {
 	
     glMatrixMode(GL_MODELVIEW);
 
-     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select );
+    TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
  
     glPopMatrix();
     glFlush();
@@ -312,7 +345,7 @@ namespace M3d {
   {  
     if(cVisitModifSelect!= nullptr )
       {
-	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL);
+	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
       }
     userTerminateAction(pEvent);
   }									 
@@ -475,14 +508,14 @@ namespace M3d {
 	  
 	  if(cVisitModifSelect == nullptr )
 	    {
-	      cVisitModifSelect = new PP3d::VisitorMoveNormal();
-	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV);
+	      cVisitModifSelect = new PP3d::VisitorMoveNormal(TheSelect);
+	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
 	    }
 	  
-	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL); // remise a zero des modifs
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
 	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/10 );
 	  std::cout << "======== Grab Normal 1111111111" << std::endl; 
-	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF);
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 
 	  std::cout << "======== Grab Normal 2222222222"
 		    << std::endl; 
