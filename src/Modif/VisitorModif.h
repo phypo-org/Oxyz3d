@@ -177,16 +177,9 @@ namespace PP3d {
  	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
      VisitorModifPoints::execEndFacet(pEntity); 
 	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
 
       if( cMode == Mode::MODIF )
 	{
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
 	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
 	  
 	  Point3d cNorm = pEntity->getNormal();

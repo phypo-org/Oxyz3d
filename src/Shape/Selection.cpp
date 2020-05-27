@@ -5,10 +5,12 @@
 
 #include "Matrice.h"
 
-
 #include "Object.h"
 
 #include "DebugVars.h"
+
+#include "OwnerVisitor.h"
+
 
 using namespace std;
 
@@ -27,17 +29,66 @@ namespace PP3d {
   }
   //--------------------------------
   void Selection::changeSelectType( SelectType pType )
-  {
+  {          
     if( cSelectType == pType )
       { 
 	return;
       }
-    // Quand on passe d un type plus general a un plus bas
-    // il faudra prendre tout les sous-type !
-    // dans le sens contraire ???
-		
-    removeAll(); // en attendant !
-    cSelectType = pType;	
+    
+    
+    OwnerEntityVisitor lVisit;
+    
+    SelectType lOldType = cSelectType;
+    cSelectType = pType;
+    
+    if( pType != SelectType::Null )
+      {
+	if( lOldType > cSelectType )
+	  execVisitorOnEntity( lVisit );
+	else
+	  lVisit.addOwnersOf( cSelectObjVect );
+      }
+	  		
+    removeAll();     
+
+    std::vector<EntityPtr> * lVectEntity = nullptr;
+    switch( pType )
+      {
+      case SelectType::Point:
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectPoints;
+	break;
+	
+      case SelectType::Line:  ;	
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectLines;
+	break;
+	
+      case SelectType::Facet:  ;
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectFacets;
+	break;
+
+      case SelectType::Object:;
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectObjects;
+	break;
+	
+      case SelectType::Poly: ;
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectPolys;
+	break;
+	
+      case SelectType::All: ;
+	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectAllEntity;
+	break;
+
+      case SelectType::Null: ; 	
+  	break;
+    }
+    if( lVectEntity != nullptr )
+      {
+	
+	for( EntityPtr lEntity : *lVectEntity )
+	  {
+	    addEntity( lEntity, true );
+	  }
+      }
   }
   //--------------------------------
   void Selection::addEntity( EntityPtr ioEntity, bool iSelectAll)
@@ -62,9 +113,9 @@ namespace PP3d {
 	    addEntity( lLine, false );	    
 	  }
       }
-    std::cout << "======================================="<< std::endl;
-    std::cout << *this << std::endl;
-    std::cout << "======================================="<< std::endl;
+    //    std::cout << "======================================="<< std::endl;
+    //    std::cout << *this << std::endl;
+    //    std::cout << "======================================="<< std::endl;
   }
 
   //--------------------------------
@@ -316,8 +367,7 @@ namespace PP3d {
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )
   {
     std::vector<EntityPtr> lDelList;
-		
-    for(  EntityPtr lEntity : cSelectObjVect )
+   for(  EntityPtr lEntity : cSelectObjVect )
       {
 	if( pDatabase.deleteEntity( lEntity ) )
 	  {

@@ -102,7 +102,14 @@ namespace PP3d{
     switch( pViewProps.cSelectType )
       {
       case SelectType::Null:
+	{
+	  if( pViewProps.cViewMode == 0)						
+	    drawFacetGL( pViewProps);
+					
+	  drawLineGL( pViewProps	);		
+	}
 	break;
+
       case SelectType::All:
       case SelectType::Point:
 	{

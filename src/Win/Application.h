@@ -29,7 +29,13 @@ namespace M3d{
 
   class Win3d;
 	
-  enum class Transform{ Nothing, MoveX, MoveY, MoveZ, MoveNormal, CenterRotX, CenterRotY, CenterRotZ };
+  enum class Transform{ Nothing, MoveX, MoveY, MoveZ,
+      MoveNormal,
+      CenterRotX,
+      CenterRotY,
+      CenterRotZ,
+      CenterRotAxis
+      };
 
   //************************************
   // Application est un singleton 
@@ -48,8 +54,7 @@ namespace M3d{
     PP3d::Selection                       cSelect;
     PP3d::Selection                       cSelectTransform;
   protected:    
-    PP3d::ObjectLine *                    cCurrentAxe;
-    bool                                  cViewTransformation = true;
+     PP3d::ObjectLine *                    cCurrentAxis;
     
     M3d::ShapeLua*                        cLua=nullptr;
 
@@ -92,11 +97,6 @@ namespace M3d{
       cuDatabase = std::move(iuBase);
     }
     PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }
-    bool viewTransformation() { return cViewTransformation; }
-    void setviewTransformation( bool cVal) {      
-      cViewTransformation = cVal;
-      redrawAllCanvas3d();
-    }
     
     M3d::ShapeLua&  getLua() { return *cLua; }
     const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
@@ -132,30 +132,30 @@ namespace M3d{
 	
     void setCursorPosition( PP3d::Point3d& pPos);
 
-    bool addAxe( PP3d::Point3d & lA, PP3d::Point3d & lB )
+    bool addAxis( PP3d::Point3d & lA, PP3d::Point3d & lB )
     {
       if( lA != lB )
 	{
-	  cCurrentAxe = MakeObjectLine( "Axe", lA, lB );
-	  cuDatabaseTransform->addObject( cCurrentAxe );
+	  cCurrentAxis = MakeObjectLine( "Axis", lA, lB );
+	  cuDatabaseTransform->addObject( cCurrentAxis );
 	  redrawObjectTree();
 	  return true;
 	}
       return false;
     }
-    bool addAxe( PP3d::PointPtr  lA, PP3d::PointPtr lB )
+    bool addAxis( PP3d::PointPtr  lA, PP3d::PointPtr lB )
     {
       if( lA->get() != lB->get() )
 	{
-	  cCurrentAxe = MakeObjectLine( "Axe", lA->get(), lB->get() );
-	  cuDatabaseTransform->addObject( cCurrentAxe );
+	  cCurrentAxis = MakeObjectLine( "Axis", lA->get(), lB->get() );
+	  cuDatabaseTransform->addObject( cCurrentAxis );
 	  redrawObjectTree();
 	  return true;
 	}      
       return false;
     }
 
-     PP3d::ObjectLine * getCurrentAxe() { return cCurrentAxe; }
+     PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
   };
   //************************************
 

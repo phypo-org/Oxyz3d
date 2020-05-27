@@ -3,6 +3,9 @@
 
 #include "Object.h"
 
+#include <vector>
+#include <set>
+
 namespace PP3d{
 
   //*****************************************
@@ -28,6 +31,7 @@ namespace PP3d{
     std::vector<ObjectPtr> cVectObjects;
     std::set<ObjectPtr>    cSetObjects;
 
+    std::vector<Entity*>   cVectAllEntity; // contient tout
     std::set<Entity*>      cSetAllEntity; // contient tout
    
     //--------------------------------
@@ -47,6 +51,7 @@ namespace PP3d{
       //std::cout << ':' << std::flush;
       cVectPoints.push_back( pPoint );
       cSetPoints.insert( pPoint );
+      cVectAllEntity.push_back( pPoint );
       cSetAllEntity.insert( pPoint );
     }
     //--------------------------------
@@ -61,6 +66,7 @@ namespace PP3d{
       //std::cout << '_' << std::flush;
       cVectLines.push_back( pLine );
       cSetLines.insert( pLine );
+      cVectAllEntity.push_back( pLine );
       cSetAllEntity.insert( pLine );
     }		
     //--------------------------------
@@ -75,6 +81,7 @@ namespace PP3d{
       //std::cout << 'O' << std::flush;
       cVectFacets.push_back( pFacet );
       cSetFacets.insert( pFacet );
+      cVectAllEntity.push_back(pFacet  );
       cSetAllEntity.insert(pFacet  );
     }		
     //--------------------------------
@@ -89,6 +96,7 @@ namespace PP3d{
       //std::cout << 'P' << std::flush;
       cVectPolys.push_back( pPoly );
       cSetPolys.insert( pPoly );
+      cVectAllEntity.push_back(pPoly  );
       cSetAllEntity.insert(pPoly  );
     }		
     //--------------------------------
@@ -103,6 +111,7 @@ namespace PP3d{
       //std::cout << " -OBJ- " << std::flush;
       cVectObjects.push_back( pObject );
       cSetObjects.insert( pObject );
+      cVectAllEntity.push_back( pObject  );
       cSetAllEntity.insert(pObject  );
     }    
   };

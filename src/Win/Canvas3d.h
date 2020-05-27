@@ -40,8 +40,6 @@ namespace M3d {
 
   //***************************************
   class Canvas3d : public Fl_Gl_Window{
-  public:
-
 
   protected:
 	
@@ -54,26 +52,34 @@ namespace M3d {
     bool      cFlagLightColor; 
     ModeGrid  cGridMode;
 		
-
-    bool      cDebug;
-
-    bool    cFlagCursor3d;
+ 
+    bool    cFlagViewNormal    = false;
+    bool    cFlagViewTransform = true;
+    bool    cFlagCursor3d      = false;
 		
     PP3d::ViewProps cViewProps;
     PP3d::ViewProps cViewPropsTransform;
 
-	
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
 
+  public:
+    void setViewTransform( bool cVal) { cFlagViewTransform = cVal; }
+    bool getViewTransform()           { return cFlagViewTransform; }
 
+  protected:
+ 
     // Pour le dragging 
-    PP3d::PointPtrSet  cDragPoints;      // les points concernées par la selection
-    PP3d::VectPoint3d cDragSavPoints;    // sauvegarde de leurs coordonnées originales
+    PP3d::PointPtrSet cDragPoints;      // les points concernées par la selection
+    PP3d::VectPoint3d cDragSavPoints;   // sauvegarde de leurs coordonnées originales
+    PP3d::Point3d     cDragCenter;      // Le barycentre des points
+    
     bool initDragSelect();
     void dragSelect( PP3d::Mat4 &pMat );
     void validDragSelect( PP3d::Mat4 &pMat);
     void cancelDragSelect();
+
+    
     // dragging
 
 

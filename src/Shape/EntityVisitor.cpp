@@ -66,7 +66,7 @@ namespace PP3d {
   //*********************************************
   //*********************************************
 
-  void DebugFacet( Facet* pFacet )
+  void DrawNormalFacet( Facet* pFacet )
   {
 
     PointPtrSet lPoints;
@@ -88,7 +88,7 @@ namespace PP3d {
     Point3d lNormMiddle( lMiddle );
     Point3d lNorm10( pFacet->getNormal() );
 		
-    lNorm10 *=  1;
+    //////    lNorm10 *=  10; // facteur de zoom eventuel
 		
     lNormMiddle += lNorm10;
 		
@@ -251,9 +251,9 @@ namespace PP3d {
   {
     //		cViewProps.dragMat( pFacet);
     //==================================
-    if( cViewProps.cDebug == true )
+    if( cViewProps.cFlagViewNormal == true )
       {
-	DebugFacet( pFacet );
+	DrawNormalFacet( pFacet );
       }
     //==================================
 		
@@ -306,9 +306,9 @@ namespace PP3d {
   void VisitorDrawPoly::execBeginFacet( FacetPtr pFacet )
   {
     //==================================
-    if( cViewProps.cDebug == true )
+    if( cViewProps.cFlagViewNormal == true )
       {
-	DebugFacet( pFacet );
+	DrawNormalFacet( pFacet );
       }
     //==================================
 

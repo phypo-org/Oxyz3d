@@ -79,23 +79,26 @@ namespace M3d {
 #define StrMenu_RotX     "Rotate X"
 #define StrMenu_RotY     "Rotate Y"
 #define StrMenu_RotZ     "Rotate Z"
+#define StrMenu_RotAxis  "Rotate around current axis"
 
 	
 #define StrMenu_Dup        "Dup"	
-#define StrMenu_DupMoveX    StrMenu_Dup  " move X"
-#define StrMenu_DupMoveY    StrMenu_Dup  " move Y"
-#define StrMenu_DupMoveZ    StrMenu_Dup  " move Z"
-#define StrMenu_DupNormal   StrMenu_Dup  " move normal"
+#define StrMenu_DupMoveX    StrMenu_Dup  " and move X"
+#define StrMenu_DupMoveY    StrMenu_Dup  " and move Y"
+#define StrMenu_DupMoveZ    StrMenu_Dup  " and move Z"
+#define StrMenu_DupNormal   StrMenu_Dup  " and move normal"
 
-#define StrMenu_DupRotX     StrMenu_Dup  " rotate X"
-#define StrMenu_DupRotY     StrMenu_Dup  " rotate Y"
-#define StrMenu_DupRotZ     StrMenu_Dup  " rotate Z"
+#define StrMenu_DupRotX     StrMenu_Dup  " and rotate X"
+#define StrMenu_DupRotY     StrMenu_Dup  " and rotate Y"
+#define StrMenu_DupRotZ     StrMenu_Dup  " and rotate Z"
+#define StrMenu_DupRotAxis  StrMenu_Dup  " and rotate around current axis"
 
 #define StrMenu_Extrude     "Extrude"
-#define StrMenu_ExtrudeX    StrMenu_Extrude  "  move X"
-#define StrMenu_ExtrudeY    StrMenu_Extrude  "  move Y"
-#define StrMenu_ExtrudeZ    StrMenu_Extrude  "  move Z"
-#define StrMenu_ExtrudeNorm StrMenu_Extrude  "  move normal"
+#define StrMenu_ExtrudeX    StrMenu_Extrude  " X"
+#define StrMenu_ExtrudeY    StrMenu_Extrude  " Y"
+#define StrMenu_ExtrudeZ    StrMenu_Extrude  " Z"
+#define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
+#define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
 
 #define  StrMenu_Cut "Cut"
 #define  StrMenu_Cut2 "  2"
@@ -139,8 +142,12 @@ namespace M3d {
 	
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 		
+
+
+		  
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
@@ -424,6 +431,11 @@ namespace M3d {
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
+      }    
+    else if( strcmp( m->label(), StrMenu_RotAxis ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
       }    
   }
   //-------------------------------------------

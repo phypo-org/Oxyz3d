@@ -235,7 +235,8 @@ namespace M3d {
   {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 	
-    if( TheSelect.getSelectType() != PP3d::SelectType::Object )
+    if( TheSelect.getSelectType() != PP3d::SelectType::Object
+	|| TheSelectTransform.getSelectType() !=PP3d::SelectType::Null )
       {
 	lCheck->value( false );
 	return ;
@@ -341,7 +342,7 @@ namespace M3d {
 	//------------				
 	MyCheckbutton *lCheckSel  = new MyCheckbutton( lX, lY, 30,15, "S", CB_SelectOneObject, this, lObj ); //lInput->x()+lInput->w()+4+40 ,
 	//	lCheckSel->value( TheSelect.isSelected( lObj->getShape() ));
-	lCheckSel->value( lObj->isSelect());
+	lCheckSel->value( lObj->isSelect() || lObj->getShape()->isSelect() );
 	if( TheSelect.getSelectType() != PP3d::SelectType::Object )
 	  {
 	    ////////  BUG : Cycle sans fin -   lCheckSel->deactivate();

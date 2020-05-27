@@ -102,6 +102,7 @@ namespace PP3d {
     void initRotY( PDouble A) { initRotY_3x3( A); initRotFor4x4(); }
     void initRotZ( PDouble A) { initRotZ_3x3( A); initRotFor4x4(); }
     void initRot( PDouble A, PDouble B, PDouble C);
+    void initRotAxis( Point3d  u, PDouble a);
 
 			
     //-----------------------------

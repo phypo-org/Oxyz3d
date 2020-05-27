@@ -119,6 +119,42 @@ namespace PP3d{
     lTmp.initScale( T.scale().x(), T.scale().y(), T.scale().z() );
     *this *= lTmp;
   }
+  //-----------------------------
+  void Mat4::initRotAxis( Point3d  u, PDouble a)
+  {
+    // Mat[ line ][ col ]
+    long double c = ::cos(a);
+    long double s = ::sin(a);
+    long double x = u.cX;
+    long double y = u.cY;
+    long double z = u.cZ;
+    long double cm1 = 1-c;
+    long double xy=x*y;
+    long double xz=x*z;
+    long double yz=y*z;
+    long double x2=x*x;
+    long double y2=y*y;
+    long double z2=z*z;
+    long double xs=x*s;
+    long double ys=y*s;
+    long double zs=z*s;
+    
+
+    
+    cMat[0][0] = x2*cm1 + c;
+    cMat[0][1] = xy*cm1 - zs;			     
+    cMat[0][2] = xz*cm1 + ys;
+
+    cMat[1][0] = xy*cm1+zs;
+    cMat[1][1] = y2*cm1+c;  
+    cMat[1][2] = yz*cm1-xs;
+    
+    cMat[2][0] = xz*cm1-ys;
+    cMat[2][1] = yz*cm1+xs;  
+    cMat[2][2] = z2*cm1+c;
+	
+    initRotFor4x4();
+  }
 
   //**************************************
 

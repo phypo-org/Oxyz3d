@@ -39,3 +39,10 @@
 toto*
 titi*
 tutu*
+memcheck*
+callgrind*
+*.oxyz
+*.tmp
+*.valgrind
+core
+core.*

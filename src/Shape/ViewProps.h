@@ -45,6 +45,7 @@ namespace PP3d {
     float      cLineWidthHighlight=6;
 		
     GLuint     cViewMode=0;
+    GLuint     cFlagViewNormal=0;
 
     bool       cDebug=false;
     GLuint     cDebugView=0;

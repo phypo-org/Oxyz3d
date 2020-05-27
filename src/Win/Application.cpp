@@ -24,7 +24,8 @@ namespace M3d{
     std::cout << "========= Application::Application" << std::endl;
 		
     M3d::ShapeLua::SetPrototype();
-		
+    cSelectTransform.changeSelectType( PP3d::SelectType::Null );
+    
     cLua = (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
 	
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");

@@ -87,14 +87,13 @@ namespace M3d {
     ,cFlagLightColor( false)
      //	 cGridMode( ModeGrid::GRID_3D )
     ,cGridMode( ModeGrid::GRID_2D )
-    ,cDebug(false)	
-    ,cFlagCursor3d(false)
+     //   ,cDebug(false)	
   { 
     gl_font( FL_HELVETICA_BOLD, 24);
     cKamera.initGL();
     cKamera.raz45();
 
-    cViewPropsTransform.cLineWidth = 8;
+    cViewPropsTransform.cLineWidth = 2;
     cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
 	 
     
@@ -196,15 +195,15 @@ namespace M3d {
       }
 
 		
-    cViewProps.cDebug = cDebug;
-		
+    //  cViewProps.cDebug = cDebug;
+    cViewProps.cFlagViewNormal = cFlagViewNormal;
  
 
      TheAppli.getDatabase()->recomputeAll();     
      TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw, TheSelect.getSelectType() );
 
 
-     if( TheAppli.viewTransformation() )
+     if( cFlagViewTransform )
        {
 	 TheAppli.getDatabaseTransform()->recomputeAll();
 	 TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
@@ -283,13 +282,26 @@ namespace M3d {
 		
     if( lVectHits.size() )
       {										////				std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
-				
-	if( TheSelect.selectPickingHit( lVectHits,
-					   *TheAppli.getDatabase(),
-					   cSelectMode, pFlagMove ))
+
+	if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
 	  {
-	    TheAppli.redrawAllCanvas3d();
-	    TheAppli.redrawObjectTree();			
+	    if( TheSelectTransform.selectPickingHit( lVectHits,
+						     *TheAppli.getDatabaseTransform(),
+						     cSelectMode, pFlagMove ))
+	      {
+		TheAppli.redrawAllCanvas3d();
+		//		TheAppli.redrawObjectTree();			
+	      }
+	  }
+	else
+	  {
+	    if( TheSelect.selectPickingHit( lVectHits,
+					    *TheAppli.getDatabase(),
+					    cSelectMode, pFlagMove ))
+	      {
+		TheAppli.redrawAllCanvas3d();
+		//	TheAppli.redrawObjectTree();			
+	      }
 	  }
       }
   }
@@ -324,9 +336,12 @@ namespace M3d {
     cKamera.execGL( true );
 	
     glMatrixMode(GL_MODELVIEW);
+    
+    if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
+      TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() );
+    else
+      TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
 
-    TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
- 
     glPopMatrix();
     glFlush();
     GLuint lNbHits = glRenderMode(GL_RENDER);
@@ -346,7 +361,8 @@ namespace M3d {
     if(cVisitModifSelect!= nullptr )
       {
 	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
-      }
+  	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelectTransform );
+    }
     userTerminateAction(pEvent);
   }									 
   //------------------------------
@@ -422,16 +438,15 @@ namespace M3d {
     if( cDragPoints.size() == 0
 	&&TheSelect.getNbSelected() >0 )
       {
-	std::cout << "Canvas3d::initDragSelect " << TheSelect.getNbSelected() << std::endl;
-	std::cout << "Canvas3d::initDragSelect " << TheSelect.getSelection().size() << std::endl;
+	std::cout << "******************* Canvas3d::initDragSelect " << TheSelect.getNbSelected() << std::endl;
+	std::cout << "******************* Canvas3d::initDragSelect " << TheSelect.getSelection().size() << std::endl;
 
+	cDragCenter =   TheSelect.getCenter( *TheAppli.getDatabase() );			
 	// We keep all the adress of points of selected entities
 	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>(TheSelect.getSelection(),
 								  cDragPoints );
 
-	// Save the original coordinates of points
-	
-	  
+	// Save the original coordinates of points       	  
 	cDragSavPoints.resize( cDragPoints.size() );
 	int lP=0;
 	for( PP3d::PointPtr lPoint : cDragPoints )
@@ -450,7 +465,7 @@ namespace M3d {
 	int lP=0;
 	for( PP3d::PointPtr lPoint : cDragPoints )
 	  {
-	    lPoint->get() = 	cDragSavPoints[lP++] * pMat;
+	    lPoint->get() = cDragSavPoints[lP++] * pMat;  // 
 	  }				
       }
   }
@@ -470,7 +485,7 @@ namespace M3d {
 	int lP=0;
 	for( PP3d::PointPtr lPoint : cDragPoints )
 	  {
-	    lPoint->get() = 	cDragSavPoints[lP++];
+	    lPoint->get() = 	cDragSavPoints[lP++]; // restore original values 
 	  }
 	cDragPoints.clear();
 	cDragSavPoints.clear();
@@ -553,36 +568,77 @@ namespace M3d {
       case Transform::CenterRotX :
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
-	{
-	  PP3d::Point3d lCenter =   TheSelect.getCenter( *TheAppli.getDatabase() );					
-	  std::cout << "Center:" << lCenter ;
+      case Transform::CenterRotAxis :
+	{		
+	  std::cout << "Center:" << cDragCenter  << std::endl;
+	  
 	  PP3d::Mat4 lMatRecenter;
-	  lMatRecenter.initMove( lCenter ); //on revient au centre;
-
+	  lMatRecenter.initMove( cDragCenter ); //on revient au centre;
 					
-	  PP3d::Point3d lNCenter =  -lCenter;					
-	  std::cout << " Neg:" << lNCenter << std::endl;
+	  PP3d::Point3d lNCenter =  -cDragCenter;					
 	  PP3d::Mat4 lMatZero;
 	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
-	  PP3d::Mat4 lMatRot;
+	  
+	  PP3d::Mat4 lMatRot;	  
 	  switch( TheAppli.getCurrentTransformType() )
 	    {
 	    case Transform::CenterRotX :
-	      TheAppli.currentTransform().angle().x() += lDx/90.0;
-	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());	      
+	      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+	      
+	      std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
+			<< " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
+			<< std::endl;	  
+
 	      lMatRot.initRotX( TheAppli.currentTransform().angle().x() );
 	      break;
 							
 	    case Transform::CenterRotY :
-	      TheAppli.currentTransform().angle().y() += lDy/90.0;	      
-	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());	      
+	      TheAppli.currentTransform().angle().y() += M_PI*lDx*0.01;
+	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());
+	      
+	      std::cout << " Angle:" << TheAppli.currentTransform().angle().y()
+			<< " : " << (TheAppli.currentTransform().angle().y()*180)/M_PI
+			<< std::endl;	  
+
 	      lMatRot.initRotY( TheAppli.currentTransform().angle().y() );
 	      break;
+	      
 	    case Transform::CenterRotZ :
-	      TheAppli.currentTransform().angle().z() += lDx/90.0;	
+	      TheAppli.currentTransform().angle().z() += M_PI*lDx*0.01;
 	      CallDialogKeepFloat( TheAppli.currentTransform().angle().z());
+	      
+	      std::cout << " Angle:" << TheAppli.currentTransform().angle().z()
+			<< " : " << (TheAppli.currentTransform().angle().z()*180)/M_PI
+			<< std::endl;	  
+	      
 	      lMatRot.initRotZ( TheAppli.currentTransform().angle().z() );
+	      break;
+	      
+	    case Transform::CenterRotAxis :
+	      {
+		PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
+		if(lObjAxis != nullptr )
+		  {
+		    PP3d::Point3d & lA = lObjAxis->first3d();
+		    PP3d::Point3d & lVector = lObjAxis->second3d();
+		    PP3d::Point3d lAxis = lVector - lA;
+
+		    //	      std::cout << "VERIFICATION VECTEUR NORM:"
+		    //	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
+		    //	      << std::endl;
+		    // On prend x mais on pourrait prendre ce que l'on veut
+		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		    
+		    std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
+			      << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
+			      << std::endl;	  
+
+		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );
+		  }
+	      }
 	      break;
 	    default:;
 	    }					
@@ -596,10 +652,6 @@ namespace M3d {
 	std::cout << "Nothing to do 2!!!" << std::endl;
       }
 
-    //		PP3d::Mat4 lTmp;
-    //		lTmp.set( TheAppli.getCurrentTransform() );
-    // Faire une sauvegarde de la selection
-    // ou alors utiliser des matrice opengl pour chaque objet a modifier (y compris les points !!!!)?
     std::cout << "pos:" << TheAppli.currentTransform().position() << std::endl;
 
 

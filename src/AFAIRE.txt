@@ -34,8 +34,6 @@ Dialogues fixes ?
 - Creation de surface avec plusieurs line ou polyline
 -----------------------------------------------
 
-- Primitive pour : cylindre, cone, sphere, tore ...
------------------------------------------------
 facetisation des points 
 
 - Subdivision avec lissage des facettes
