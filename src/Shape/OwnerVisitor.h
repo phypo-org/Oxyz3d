@@ -55,7 +55,15 @@ namespace PP3d{
     }
   };
   //*****************************************
-  
+  class RemoveOwnerVisitor  : public EntityVisitorNode {
+
+    virtual void execNode    ( Entity* pEntity, Entity* pOwner )
+    {
+      pEntity->removeOwner( pOwner );
+    }
+  };
+   //*****************************************
+
 } // namespace
 
 #endif

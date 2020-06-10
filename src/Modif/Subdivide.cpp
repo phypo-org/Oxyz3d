@@ -36,60 +36,12 @@ namespace PP3d{
 	lFac->execVisitor( lVisit );
 
 	std::vector<PointPtr> & lPts   = lVisit.cVectPoints;
-	/*
-	switch( lPts.size() )
-	  {
-	  case 0:
-	  case 1:
-	  case 2:
-	    break;
-	  case 3:
-	    SubDiv::Subdivide3( *iSubDiv,
-				lPts[0]->get(),
-				lPts[1]->get(),
-				lPts[2]->get(),
-				lDepth);
-	    break;
-	  case 4:
-	    SubDiv::Subdivide4( *iSubDiv,
-				lPts[0]->get(),
-				lPts[1]->get(),
-				lPts[2]->get(),
-				lPts[3]->get(),
-				lDepth);
-	    break;
-	  case 5:
-	    SubDiv::Subdivide5( *iSubDiv,
-				lPts[0]->get(),
-				lPts[1]->get(),
-				lPts[2]->get(),
-				lPts[3]->get(),
-				lPts[4]->get(),
-				lDepth);
- 	    break;
-	    
-	  default:
-	    {
-	      // PROVOQUUE UNE PLANTAGE PLUS TARD - ET TRUC ETRANGE EN DIV 4
-	      SubDiv::SubdivideN( *iSubDiv, lPts, lDepth);
-	    }
- 	    break;
-	  }
-	*/
-	SubDiv::SubdivideN( *iSubDiv, lPts, lDepth);
-	/*
-	std::vector<Float3> lFloats;   // Je le met ici pour qu'il ne soit pas detruit trop tot
 	
-	if( lPts.size() >2 )
-	  {	    
-	    for( PointPtr lPt : lPts )
-	      {
-		lFloats.push_back( lPt->get());
-	      }	    
-	    SubDiv::SubdivideN( *iSubDiv, lFloats, lDepth);
-	    //	    SubDiv::SubdivideN( *iSubDiv, lPts, lDepth);
-	  }
-	*/
+	SubDiv::SubdivideN( *iSubDiv, lPts, lDepth);
+
+
+	
+
 	DBG_MODIF( "Modif::SubdivideFacet New Facet : "
 		   <<  iSubDiv->cFacets.size()
 		   << " Pts :" << iSubDiv->cPoints.size() );
@@ -178,6 +130,8 @@ namespace PP3d{
 	      }
 	    //=========================
 	  }
+	
+	
       }
 
     return true;

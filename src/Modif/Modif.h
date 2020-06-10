@@ -60,6 +60,12 @@ namespace PP3d{
 
 
     static bool SubdivideFacet(  std::vector<FacetPtr>&  iVect, DataBase * iBase, SubDiv::SubParam * iSubDiv = nullptr );
+
+    static void PrepareChangePointToNeighbourLineAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos,  bool iMeToo =false);
+    static void PrepareChangePointToNeighbourFacetAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos,  bool iMeToo =false);
+    static void FinalizeChangePointToNeighbourAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos );
+    
+    static bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase );
   };
   //**************************************************
 

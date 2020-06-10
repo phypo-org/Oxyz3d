@@ -202,7 +202,10 @@ namespace  PP3d {
   // ??????????? // C'est expres que l'on ne passe pas le tableau par reference ! ( a voir)
   
    void SubDiv::SubdivideN( SubParam & pParam, std::vector<Float3> iVect, int  pDepth )
-  {		
+  {
+
+    std::cout << "SubdivideN sz " << iVect.size() << " pDepth" << pDepth << std::endl;
+      
     if( pDepth <= 0  )
       {	
 	if( pParam.cHoleFacet <= (int)iVect.size() && pParam.cHoleDepth <= pParam.cDepth 
@@ -240,14 +243,43 @@ namespace  PP3d {
 	  {
 	    pParam.normEffectSub( lPt, pDepth  );
 	  }
-	
-	for( size_t i=1; i <  iVect.size() ; i++ )
-	  {
-	    Subdivide3( pParam, iVect[i], lMid[i] , lMid[i-1], pDepth );
-	  }
-	Subdivide3( pParam, iVect[0], lMid[0] , lMid[iVect.size()-1], pDepth );
 
-	SubdivideN( pParam, lMid, pDepth );
+	if( pParam.cCentralFacet  == true )
+	  {
+	    for( size_t i=1; i <  iVect.size() ; i++ )
+	      {
+		Subdivide3( pParam, iVect[i], lMid[i] , lMid[i-1], pDepth );
+	      }
+	    Subdivide3( pParam, iVect[0], lMid[0] , lMid[iVect.size()-1], pDepth );	    
+	    SubdivideN( pParam, lMid, pDepth );
+	  }
+	else
+	  {
+	    Float3 lC = Float3::Middle( iVect );
+	    
+	    pParam.normEffectSub( lC, pDepth  );
+	    
+	    size_t lSz = iVect.size();
+	    size_t lN = lSz-1;
+	    
+	    for( size_t i=0; i < lSz ; i++ )
+	      {
+		size_t j = (lN+i)%lSz;
+		std::vector<Float3> lNewVect;
+		std::cout << "i:" << i << "j:" << j << std::endl;
+		
+		std::cout << "sz " << iVect.size() << " " << lMid.size()<< std::endl;
+
+	       
+		lNewVect.push_back( iVect[i] );
+		lNewVect.push_back( lMid[j] );
+		lNewVect.push_back( lC );
+		lNewVect.push_back( lMid[i] );
+		
+		SubdivideN( pParam, lNewVect, pDepth );
+		//		Subdivide4( pParam, iVect[i], lMid[j] , lC, lMid[i], pDepth );
+	      }	    
+	  }	  
       }
   }
   //------------------------------------------------

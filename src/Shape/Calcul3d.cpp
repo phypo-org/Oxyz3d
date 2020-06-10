@@ -52,7 +52,35 @@ namespace PP3d{
     pNorm.cY = cob*absvec ;
     pNorm.cZ = coc*absvec ;
   }
-
+  //------------------------------------------------
+  void Calcul3d::NoNorm(  const PP3d::Point3d & p1,
+			  const  PP3d::Point3d & p2,
+			  const  PP3d::Point3d & p3, 
+			  PP3d::Point3d & pNorm ) 
+  {				
+    double coa, cob, coc ;
+    double px1, py1, pz1 ;
+    double px2, py2, pz2 ;
+    double px3, py3, pz3 ;
+				
+    double absvec ;
+				
+    px1 = p1.cX ;
+    py1 = p1.cY ;
+    pz1 = p1.cZ ;
+				
+    px2 = p2.cX ;
+    py2 = p2.cY ;
+    pz2 = p2.cZ ;
+				
+    px3 = p3.cX ;
+    py3 = p3.cY ;
+    pz3 = p3.cZ ;
+				
+    pNorm.cX = (py1 * (pz2-pz3) + py2*(pz3-pz1) + py3*(pz1-pz2)) ;
+    pNorm.cY = (pz1 * (px2-px3) + pz2*(px3-px1) + pz3*(px1-px2)) ;
+    pNorm.cZ = (px1 * (py2-py3) + px2*(py3-py1) + px3*(py1-py2)) ;    
+  }
   //------------------------------------------------
   void Calcul3d::GetMiddle( const std::vector<PP3d::Point3d>& pPoints,
 			    PP3d::Point3d & pMiddle )

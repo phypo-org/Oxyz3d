@@ -81,13 +81,14 @@ namespace PP3d {
     bool isSelect()                 { return   cIsSelected;}
     void setSelect( bool pFlag )    { cIsSelected  = pFlag;}		
     bool& isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche !
+    
     void setHighlight( bool pFlag ) { cIsHighlight =  pFlag;}
 
     auto & getOwners() { return  cOwners; }
     Entity * firstOwner()
     {
       Entity* lTmp = nullptr;
-      for( Entity* lOwner  :  cOwners ) { lTmp = lOwner;}
+      for( Entity* lOwner  :  cOwners ) { return lOwner;}
       return lTmp;
     }
     
@@ -97,7 +98,9 @@ namespace PP3d {
     void   removeOwner  ( Entity* pOwner ) { cOwners.erase( pOwner); }
     size_t howManyOwner ( ) { return cOwners.size(); }
     void   clearOwner   ( Entity* pOwner ) { cOwners.erase( pOwner); }
+    void   clearAllOwner( ) { cOwners.clear(); }
 
+    virtual bool clear() { clearAllOwner();  return true; }
 		
     const char* getStrType() const { return GetStrShapeType( getType()) ; }
 		
@@ -145,7 +148,9 @@ namespace PP3d {
   {
     for( Entity * lEntity : ioSet )
       lEntity->execVisitor( pVisit );
-  }    
+  }
+
+  
   //*********************************************
   class Point :  public Entity {
 		
@@ -169,6 +174,7 @@ namespace PP3d {
     void execVisitor( EntityVisitorNode& pVisit ) override;
     friend class Line;
 
+    bool clear() override { return Entity::clear(); }
 
     friend std::ostream & operator << ( std::ostream & pOs, Point& pEntity )
     {
@@ -234,12 +240,16 @@ namespace PP3d {
 	
       cPoints = { lA, lB };
       lA->addOwner( this );
-      if( lA != lB )
+      if( lA != lB )-
 	lB->addOwner( this );			
     }
- 
-    void execVisitor( EntityVisitor& pVisit )override;
+    void setSecond( PointPtr lB )
+    {
+      
+    }
 
+    void execVisitor( EntityVisitor& pVisit )override;
+ 
   public:
     void execVisitor( EntityVisitorNode& pVisit )override;
 		
@@ -310,7 +320,7 @@ namespace PP3d {
       //		<<  std::endl
       ;}
   };								 
-   
+
   inline Line * MakeLine( const Point3d & iA,   const Point3d & iB )
   {
     return new Line( new Point( iA ), new Point (iB ));
@@ -322,6 +332,7 @@ namespace PP3d {
     LinePtrVect cLines;
 
     Point3d cNorm;
+    Point3d cNoNorm;
 
   public:
     Facet() {;}
@@ -378,6 +389,19 @@ namespace PP3d {
       cLines.insert( cLines.begin()+iPos, iLine );
       iLine->addOwner( this );
     }
+    void addLineAfter( LinePtr iOriginal, LinePtr iNewLine )
+    {
+      size_t i =0;
+      for( size_t i=0; i< cLines.size(); i++ )
+	{
+	  if( cLines[i] == iOriginal )
+	    break;
+	}
+      if( i < cLines.size() )
+	cLines.setLine( i+1, iNewLine );
+      else
+	cLines.setLine( i, iNewLine );
+    }
     void setLine( size_t iPos, LinePtr iLine )
     {
       cLines[iPos] =  iLine ;
@@ -391,6 +415,7 @@ namespace PP3d {
       cLines[iPos] = iLine;
       return lTmp;
     }
+    bool clear() override { cLines.clear(); return Entity::clear(); }
 
 
     LinePtrVect& getLines()   { return cLines;}
@@ -427,6 +452,7 @@ namespace PP3d {
     FacetPtrVect&  getFacets()  { return cFacets; }
     void execVisitor( EntityVisitor& pVisit )override;
 
+    bool clear() override { cFacets.clear();  return Entity::clear(); }
 
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;
@@ -438,7 +464,31 @@ namespace PP3d {
   using PolyPtrVect = std::vector<Poly*>;
 
   //*********************************************
+
+  template <class MYCLASS>
+  class Alloc{   
+    static std::vector<MYCLASS> EntityHeap;
+    
+  public:
+    void free( MYCLASS * iPtr, bool iFlagClearOwner = false )
+      {
+	if( iPtr == nullptr )
+	  return;
 	
+	if( iFlagClearOwner )
+	  {
+	    iPtr->getOwners().clear();
+	  }
+	else
+	  {
+	  if( iPtr->getOwners().size() )
+	    return ;
+	  }
+
+	
+      }
+  };
+
 }
 
 #endif

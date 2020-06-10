@@ -88,10 +88,16 @@ namespace PP3d{
     {
       std::cout << (void*) pPoint << std::endl;
     }
-  };
+  }; 
   //*********************************************
   // calcule et stocke la normale pour chaque facette
   struct VisitorNormalFacet : public EntityVisitor	{
+	  
+    virtual void execBeginFacet( Facet* pFacet )override;
+  };
+  //*********************************************
+  // calcule et stocke la normale pour chaque facette
+  struct VisitorNoNormFacet : public EntityVisitor	{
 	  
     virtual void execBeginFacet( Facet* pFacet )override;
   };

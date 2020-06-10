@@ -1,8 +1,10 @@
 
-- Saisie axe / plan par default , par deux , trois points
-- Saisie translation par deux point
-- Saisie de rotation / scale par points
-
+Subdivide en 4 avec normale !
+-----------------------------------------------
+Extrusion de facettes
+Extrusion de points ?
+----------------------------------------------
+Pontage
 ----------------------------------------------
 - Faire la duplication :
   Selection le(s) objets :
@@ -27,7 +29,6 @@ IL faut ajouter le tracer de la nouvelle base dans Canvas3d::draw .
 	Selection des objets temporaire ?
 
 - BUG :  avec le focus
-- BUG :  rename WinObjTree ne marche plus
 -----------------------------------------------
 Dialogues fixes ? 
 -----------------------------------------------
@@ -40,8 +41,6 @@ facetisation des points
 -----------------------------------------------
 Connexion entre deux facettes (Trous)
 Connexion entre deux facettes (Ponts)
------------------------------------------------
-Extrusion de facettes
 -----------------------------------------------
 Regroupement d'objets en ensemble / posibilités de les selectionner
 -----------------------------------------------

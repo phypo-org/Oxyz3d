@@ -117,6 +117,8 @@ namespace M3d {
   
 #define StrMenu_Subdivide        "Subdivide facets"
 #define StrMenu_SubdivideCentral "Subdivide facets with central facet"
+#define StrMenu_SubdivideSmooth        "Subdivide facets (Smooth)"
+#define StrMenu_SubdivideCentralSmooth "Subdivide with central facet (Smooth)"
 
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
@@ -182,6 +184,8 @@ namespace M3d {
       {
 	pMenu.add( StrMenu_Subdivide, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_SubdivideCentral, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_SubdivideSmooth, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_SubdivideCentralSmooth, "", MyMenuCallbackSubdivide, this);
       }
    
     switch( TheSelect.getSelectType() )
@@ -462,7 +466,8 @@ namespace M3d {
      TheSelect.removeAll();
 
     bool pCentral = false;
-    if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0)
+    if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0
+	|| strcmp( m->label(), StrMenu_SubdivideCentralSmooth ) == 0 )
       {
 	pCentral = true;
       }
@@ -473,6 +478,17 @@ namespace M3d {
     
     if( PP3d::Modif::SubdivideFacet( lVisit.cVectFacets, TheAppli.getDatabase(), &lSubDivLocal ))
       {
+	if( strcmp( m->label(), StrMenu_SubdivideSmooth ) == 0
+	    || strcmp( m->label(), StrMenu_SubdivideCentralSmooth ) == 0 )
+	  {
+	    std::vector<PP3d::Point3d> lVectNewPt;
+	    //	    PP3d::Modif::PrepareChangePointToNeighbourLineAverage( lVisit.cVectPoints, lVectNewPt );
+
+	     PP3d::Modif::PrepareChangePointToNeighbourFacetAverage( lVisit.cVectPoints, lVectNewPt );
+	    PP3d::Modif::FinalizeChangePointToNeighbourAverage( lVisit.cVectPoints, lVectNewPt );
+  }
+	
+	
 	PushHistory();
 	TheAppli.redrawAll();
       }

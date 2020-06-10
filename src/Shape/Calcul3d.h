@@ -19,6 +19,10 @@ namespace PP3d{
 			 const  PP3d::Point3d & p2,
 			 const  PP3d::Point3d & p3, 
 			 PP3d::Point3d & pNorm ) ;
+    static void NoNorm(  const PP3d::Point3d & p1,
+			 const  PP3d::Point3d & p2,
+			 const  PP3d::Point3d & p3, 
+			 PP3d::Point3d & pNorm ) ;
     
     static void GetMiddle( const std::vector<PP3d::Point3d>& pPoints,
 			   PP3d::Point3d & pMiddle );

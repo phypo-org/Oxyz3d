@@ -62,7 +62,8 @@ namespace  PP3d {
       float                cFact;
       SubNormalizeType     cNormalize;
       bool                 cCentralPoint=false;
-      
+      bool                 cCentralFacet=false;
+
       std::vector<Float3>   cPoints;
       std::vector<MyFacet*> cFacets;
 
