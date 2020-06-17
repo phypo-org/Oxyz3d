@@ -232,7 +232,7 @@ namespace PP3d {
     PointPtr      second() const { return cPoints.second;}
     PointPtr&     first() { return cPoints.first;}
     PointPtr&     second(){ return cPoints.second;}
-
+    /*
     void set( PointPtr lA, PointPtr lB )
     {
       if( getFirst() )  getFirst()->removeOwner(this);
@@ -240,9 +240,10 @@ namespace PP3d {
 	
       cPoints = { lA, lB };
       lA->addOwner( this );
-      if( lA != lB )-
+      if( lA != lB )
 	lB->addOwner( this );			
     }
+    */
     void setSecond( PointPtr lB )
     {
       
@@ -384,6 +385,11 @@ namespace PP3d {
       cLines.push_back( iLine );
       iLine->addOwner( this );
     }
+    void setLine( size_t iPos, LinePtr iLine )
+    {
+      cLines[iPos] =  iLine ;
+      iLine->addOwner( this );
+    }
     void insertLine( size_t iPos, LinePtr iLine )
     {
       cLines.insert( cLines.begin()+iPos, iLine );
@@ -398,15 +404,11 @@ namespace PP3d {
 	    break;
 	}
       if( i < cLines.size() )
-	cLines.setLine( i+1, iNewLine );
+	setLine( i+1, iNewLine );
       else
-	cLines.setLine( i, iNewLine );
+	setLine( i, iNewLine );
     }
-    void setLine( size_t iPos, LinePtr iLine )
-    {
-      cLines[iPos] =  iLine ;
-      iLine->addOwner( this );
-    }
+
     LinePtr getLine(  size_t iPos ) { return cLines[iPos]; }
     LinePtr swapLine(  size_t iPos,  LinePtr iLine )
     {

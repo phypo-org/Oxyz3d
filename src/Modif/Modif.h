@@ -6,7 +6,7 @@
 #include "Shape/SortVisitor.h"
 #include "Shape/DataBase.h"
 #include "Shape/SubDiv.h"
-
+#include "Shape/EntityVisitor.h"
 
 #include <map>
 

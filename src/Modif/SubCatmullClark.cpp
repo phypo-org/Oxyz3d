@@ -1,6 +1,9 @@
 #include "Modif.h"
 
 
+using namespace PP3d;
+
+//-----------------------------------------------
 
 struct CCFacet {
   std::vector<Float3>   cEdgePoints;
@@ -8,7 +11,7 @@ struct CCFacet {
   PP3d::FacetPtr        cOldFacet = nullptr;
   std::vector<Float3>   cPoints;
 };
-
+//-----------------------------------------------
 
 struct CCSubParam{
   
@@ -18,7 +21,8 @@ struct CCSubParam{
 };
 
 //-----------------------------------------------
-class VisitorMiddleFacet : public EntityVisitor	{
+// Calcule les coordonnees du milieu d"une facette
+class VisitorComputeMiddleFacet : public EntityVisitor	{
 
   Point3d  cMiddle;
   size_t   cNbPt=0;
@@ -26,7 +30,7 @@ class VisitorMiddleFacet : public EntityVisitor	{
 public:  
   void execPoint( Point* pPoint ) override
   {
-    cMiddle += pPoint;
+    cMiddle += pPoint->get();
     cNbPt++;
   }
   Point3d getMiddle()
@@ -35,29 +39,30 @@ public:
   }
 };
 //-----------------------------------------------
-bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, std::vector<PointPtr> & iBorderPoints, std::vector<CCFacet> & lNewFacets )
+bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, std::vector<PointPtr> & iBorderPoints, std::vector<CCFacet> & oNewFacets )
 {  
   std::vector<Point3d> lOldPoints;  
-  std::set<Point3d> lOldPointsUniq;  
+  std::set<Point3d>    lOldPointsUniq;
+  
 
   //===== Pour toutes les facettes à traiter ===== 
   for( FacetPtr lOldFacet : iOldFacets )
     {
       CCFacet lFacDummy;
             
-      lFacets.push_back( lFacDummy );
-      CCFacet & lFac = *NewlFacets[lFacets.size()-1];
+      oNewFacets.push_back( lFacDummy );
+      CCFacet & lFac = *oNewFacets[lFacets.size()-1];
 
-      {
-	VisitorMiddleFacet lVidMidFac;
+      { // Calcul du milieu de la facette
+	VisitorComputeMiddleFacet lVidMidFac;
 	lOldFacet.execVisitor( lVidMidFac );
       
-	// On creer le point du milieu pour chaque facette
+	// On creer le point du milieu pour la facette courante
 	lFac.cMiddle   = lVidMidFac.getMiddle();
 	lFac.cOldFacet = lOldFacet;
       }
 
-      // On calcules les points edges pour chaque lignes
+      // Pour chaque lignes de la facette on calcule les points edges pour chaque lignes
       // moyenne des deux middles et des deux points originels
       for( LinePtr lLine : lOldFacet.getLines() )
 	{
@@ -89,7 +94,7 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, std::vector<PointPtr> & 
 	      continue;
 	    }
 
-	  VisitorMiddleFacet lVidMidFac;
+	  VisitorComputeMiddleFacet lVidMidFac;
 	  lEdgeFacet.execVisitor( lVidMidFac );
 	  lEdge += lEdgeFacet.cMiddle;
 	  lEdge /= 4;
@@ -114,7 +119,7 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, std::vector<PointPtr> & 
       // Il faut deplacer les anciens points
       for( PointPtr lPtr : lOldPointsUniq )
 	{
-	  A FAIRE
+	  //	  A FAIRE
 	}
  
       // Les points sont calculées pour la facettes   
