@@ -5,11 +5,11 @@ using namespace PP3d;
 
 //-----------------------------------------------
 
-struct CCFacet {
+struct CCSubDiv {
   std::vector<Float3>   cEdgePoints;
   Float3                cMiddle;
   PP3d::FacetPtr        cOldFacet = nullptr;
-  std::vector<Float3>   cPoints;
+  std::vector<Float3>   cPoints;  
 };
 //-----------------------------------------------
 
@@ -17,9 +17,7 @@ struct CCSubParam{
   
   std::vector<Float3>   cPoints;
   std::vector<MyFacet*> cFacets;
-
 };
-
 //-----------------------------------------------
 // Calcule les coordonnees du milieu d"une facette
 class VisitorComputeMiddleFacet : public EntityVisitor	{
@@ -39,137 +37,195 @@ public:
   }
 };
 //-----------------------------------------------
-bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, std::vector<PointPtr> & iBorderPoints, std::vector<CCFacet> & oNewFacets )
-{  
-  std::vector<Point3d> lOldPoints;  
-  std::set<Point3d>    lOldPointsUniq;
-  
+// Retrouve le point par sa position, ou en cree un nouveau
 
+PointPtr getPoint( DataBase * iBase, std::vector<PointPtr> &ioPts,  Point3d & iPt )
+{
+  PointPtr lSearchPt = Modif::FindPointByEpsilon( ioPts, iPt );
+  
+  if( lSearchPt == nullptr )
+    {
+      lSearchPt = iBase->getNewPoint(iPt);
+      ioPts.push_back( lSearchPt );        // pour un recherche ulterieure
+    }
+  return lSearchPt;
+}
+//-----------------------------------------------
+// Creation des nlles facettes
+
+bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint )
+{
+  std::vector<PointPtr> lNewPoints;
+  std::vector<CCSubDiv> oSubDivs;
+  std::vector<PointPtr> iBorderPoints;
+  
   //===== Pour toutes les facettes à traiter ===== 
   for( FacetPtr lOldFacet : iOldFacets )
     {
-      CCFacet lFacDummy;
-            
-      oNewFacets.push_back( lFacDummy );
-      CCFacet & lFac = *oNewFacets[lFacets.size()-1];
+      std::vector<PointPtr>    lOldFacetPoints;
+      // std::set<Point3d>    lOldPointsUniq;
+      
 
-      { // Calcul du milieu de la facette
+      // Nlle SubDivision
+      CCSubDiv lSubDummy;            
+      oSubDivs.push_back( lSubDummy );
+      CCSubDiv & lNewSubDiv = oSubDivs[ oSubDivs.size()-1 ];
+
+      
+      { // Calcul du milieu de la facette (face point)
 	VisitorComputeMiddleFacet lVidMidFac;
-	lOldFacet.execVisitor( lVidMidFac );
+	lOldFacet->execVisitor( lVidMidFac );
       
 	// On creer le point du milieu pour la facette courante
-	lFac.cMiddle   = lVidMidFac.getMiddle();
-	lFac.cOldFacet = lOldFacet;
+	lNewSubDiv.cMiddle   = lVidMidFac.getMiddle();
+	lNewSubDiv.cOldFacet = lOldFacet;
       }
 
-      // Pour chaque lignes de la facette on calcule les points edges pour chaque lignes
-      // moyenne des deux middles et des deux points originels
-      for( LinePtr lLine : lOldFacet.getLines() )
+      // Pour chaque lignes de la facette on calcule les edge-point  pour chaque lignes
+      // moyenne des deux face-point et des deux points originels
+      for( LinePtr lLine : lOldFacet->getLines() )
 	{
+	  // Nouveau point edge
 	  Point3d lPtDummy;
-	  lFac.cEdgePoints.push_back( lFacDummy );
-	  Point3d & lEdge = *lFac.cEdgePoints[lFac.cEdgePoints.size()-1];
-	  
-	  lOldPoints.push_back( lLine->first().get() );
-	  lOldPointsUniq.insert(  lLine->first().get() );
-	  
-	  lEdge = lLine->first().get();
-	  lEdge += lLine->second().get();
-	  lEdge += lFac.cMiddle;
+	  lNewSubDiv.cEdgePoints.push_back( lPtDummy );
+	  Point3d & lEdge = lNewSubDiv.cEdgePoints[ lNewSubDiv.cEdgePoints.size()-1 ];
 
+	  // On memorise le premiers points de la ligne
+	  lOldFacetPoints.push_back( lLine->first() );
+	  //	  lOldPointsUniq.insert(  lLine->first()->get() );	  
+	  lEdge = lLine->first()->get();
+	  lEdge += lLine->second()->get();
+	  lEdge += lNewSubDiv.cMiddle;
+
+	  // Il reste a trouver le milieu de l'autre facette
 	  Line * lReverse = lLine->getReverseLine();
 	  if( lReverse == nullptr )
 	    {
 	      // si on ne trouve pas de ligne reverse ! (bordure ?)
 	      lEdge /= 3;
-	      lFac.cEdgeOldFacet.push_back( nullptr );
+	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
-	  FacetPtr lEdgeFacet = lReverse->firstOwner();
+	  FacetPtr lEdgeFacet = (FacetPtr)lReverse->firstOwner();
 	  if( lEdgeFacet == nullptr )
 	    {
 	      // si la ligne reverse n'a pas de facette !
 	      lEdge /= 3;
-	      lFac.cEdgeOldFacet.push_back( nullptr );
+	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
-
+	  
+	  // On a trouvé la deuxieme facette du point edge
 	  VisitorComputeMiddleFacet lVidMidFac;
-	  lEdgeFacet.execVisitor( lVidMidFac );
-	  lEdge += lEdgeFacet.cMiddle;
+	  lEdgeFacet->execVisitor( lVidMidFac ); 
+	  lEdge += lVidMidFac.getMiddle();
 	  lEdge /= 4;
+	  lNewSubDiv.cEdgePoints.push_back( lEdge );
 
-	  if( iOldFacets.find( lVidMidFac ) == iOldFacets.end() )
+
+	  if( iOldFacets.find( lEdgeFacet ) == iOldFacets.end() )
 	    {
-	      // La facette ne sera pas transformé !
-	      // il va falloir replacer lReverse par deux lignes !
+	      // La facette reverse n'est pas dans la liste des facette  transformé ! (bordure ?)
+	      // il va falloir replacer la ligne lReverse par deux lignes !
 	      std::cout << " Facette non transformé : division" << std::endl;
 	      
 	      PointPtr lA = lReverse->first();
-	      PointPtr lB = lReverse->end();
+	      PointPtr lB = lReverse->second();
 	      
-	      PointPtr lM = Entity.NewPoint( lEdge ) ;
+	      PointPtr lM = getPoint( iBase, lNewPoints, lEdge ); // en esperant que la fusions des points marche bien !
+	      
 	      lReverse->set( lA, lM );
-	      LinePtr  lNewLine = Entity::NewLine(lM, lB);
+	      LinePtr  lNewLine = iBase->getNewLine(lM, lB);  
 	      lEdgeFacet->addLineAfter( lReverse, lNewLine );
-	      iBorderPoints.push_back( lM ); // en esperant que la fusion marche !
+	      
+	      iBorderPoints.push_back( lM );
+	      
+	      iBase->validEntity( lEdgeFacet ); // VALIDATION
 	    }
-	}
+	  // else : le Edge point reverse sera creer lors du traitement de la facette adjacente
+	  
+	} // end edge-point
 
-      // Il faut deplacer les anciens points
-      for( PointPtr lPtr : lOldPointsUniq )
-	{
-	  //	  A FAIRE
-	}
  
-      // Les points sont calculées pour la facettes   
-
-      
-      size_t lSz = lFac.cEdgePoints;
+      // Les points sont calculées pour les nlles facettes
+      // il y a autant de nlles facettes que de edge-point et elles ont 4 points
+      size_t lSz = lNewSubDiv.cEdgePoints.size();
       size_t lN = lSz-1;
 
-      // On cree les nouveaux points
-      // Il seront normalement dedoublonnées plus tard !
-      for( size_t i=0; i < lSz ; i++ )
+      
+      // On cree les nouveaux points des nlles facettes (fusion possible via getPoint)
+      PolyPtr lPoly = (PolyPtr) lOldFacet->firstOwner();
+      if( lPoly )
 	{
-	  size_t j = (lN+i)%lSz;
-
-	  lFac.cPoints.push_back( lOldPoints[i] );
-	  lFac.cPoints.push_back( lFac.lEdge[j] );
-	  lFac.cPoints.NewVect.push_back( lC );
-	  lFac.cPoints.lNewVect.push_back( lFac.lEdge[i] );
-	}	    
-    }
-
- //  ici toutes les nlles facettes sont crees dans la structure de travail !
+	  for( size_t i=0; i < lSz ; i++ )
+	    {
+	      FacetPtr lFacPtr = iBase->getNewFacet();
+	      
+	      size_t j = (lN+i)%lSz;
+	      
+	      Point* Pt1 = lOldFacetPoints[i];     // sa position va changer
+	      Point* Pt2 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[j] ); 
+	      Point* Pt3 = getPoint( iBase, lNewPoints, lNewSubDiv.cMiddle); 
+	      Point* Pt4 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[i] );
+	      
+	      
+	      lFacPtr->addLine( iBase->getNewLine( Pt1, Pt2)  );
+	      lFacPtr->addLine( iBase->getNewLine( Pt2, Pt3)  );
+	      lFacPtr->addLine( iBase->getNewLine( Pt3, Pt4)  );
+	      lFacPtr->addLine( iBase->getNewLine( Pt4, Pt1)  );
+	      
+	      lPoly->addFacet( lFacPtr );
+	      
+	      iBase->validEntity( lFacPtr );// VALIDATION (a optimiser)	     
+	    }
+  	}
+    } // fin facettes
 
   
+      // Il faut aussi deplacer les anciens points
+  
+  for( PointPtr lPtr : iOldPoint )
+    {
+      // AFAIRE
+    }
+
+  // On elimine les anciennes facettes
+  for( FacetPtr lOldFacet : iOldFacets )
+    {
+      PolyPtr lPoly = (PolyPtr) lOldFacet->firstOwner();
+      if( lPoly )
+	{
+	  lPoly->removeFacet( lOldFacet );
+	}
+      iBase->freeFacet( lOldFacet );
+    }
+  
+ //  ici toutes les nouveaux points des nlles facettes sont crees dans la structure de travail !
+  return true;
 }
 //--------------------------------------------------------
-
-
-bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase )
+/*
+bool SubCatmullClark(  std::set<FacetPtr>&  iFacets, DataBase & iBase )
 {
-  std::vector<CCFacet> lNewFacets;
+	    
+  // On va reutiliser les anciens points et les anciennes lignes des facettes et les facettes
+  PP3d::SortEntityVisitor lVisit;		    
+  PP3d::ExecVisitor<std::set<FacetPtr>>( iFacets , lVisit );
+  
+  std::vector<PointPtr> & lOldPts   = lVisit.cVectPoints;
+  std::vector<LinePtr>  & lOldLines = lVisit.cVectLines;
+
+
+  std::vector<CCSubDiv> lNewSubDiv;
 
   // Il y aura peut etre des points en bordure qui seront crée
   std::vector<PointPtr> lNewPointsBorder;
-
+  std::vector<CCSubDiv> lSubDivs;
   
-  SubCatmullClark( iOldFacets, lNewPointsBorder, iBase );
+  SubCatmullClark( iFacets, lNewPointsBorder, lSubDivs );
 
-  std::vector<PointPtr> & lOldPts   = lVisit.cVectPoints;
-  std::vector<LinePtr>  & lOldLines = lVisit.cVectLines;
   //  ici toutes les nlles facettes sont crees dans la structure de travail !
 
-  
-
-  PP3d::SortEntityVisitor lVisit;
-  for( FacetPtr lOldFacet : iOldFacets )
-    {
-      lOldFacet->execVisitor( lVisit );
-    }	    
-   // On va reutiliser les anciens points et les anciennes lignes des facettes et les facettes 	    
   // On enleve des anciens points les liens vers les vielles lignes
   for( PointPtr lOldPt :  lOldPts)
     {
@@ -188,9 +244,9 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase )
   std::vector<PointPtr> lNewPoints( iSubDiv->cPoints.size() );
   
   //=========================
-  for( size_t f=0; f< lNewFacets.size() ; f++ )
+  for( size_t f=0; f< lNewSubDiv.size() ; f++ )
     {
-      CCFacet & lNewFacet  = *(lNewFacets[f]); // juste pour simplifier le code
+      CCSubDiv & lNewFacet  = *(lNewSubDiv[f]); // juste pour simplifier le code
       for( size_t p =0; p< lNewFacet->cPoints.size(); p++)
 	{
 	  PointPtr lSearchPt = Modif::FindPointByExactValues( lOldPts, lNewFacet->cPoints[p] );
@@ -214,9 +270,9 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase )
   // pointeur si c'est les meme coordonnees du coup
   
 
-  for( size_t f=0; f< lNewFacets.size() ; f++ ) 
+  for( size_t f=0; f< lNewSubDiv.size() ; f++ ) 
     {
-      CCFacet & lNewFacet  = *(lNewFacets[f]); // juste pour simplifier le code
+      CCSubDiv & lNewFacet  = *(lNewSubDiv[f]); // juste pour simplifier le code
 
 
       //FAIRE UN ALLOCATEUR DE FACETTE ET LIGNE ET POLY ... DANS LA BASE
@@ -226,12 +282,13 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase )
       FacettePtr lFacPtr = iBaseNewFacette();
       
       //forcement 4 lignes
-      lFacPtr->addLine( iBaseNewLine( lNewPoints[f*4], lNewPoints[f*4+1] ));
-      lFacPtr->addLine( lLine = iBaseNewLine( lNewPoints[f*4+1], lNewPoints[f*4+1+2] ));
-      lFacPtr->addLine( lLine = iBaseNewLine( lNewPoints[f*4+2], lNewPoints[f*4+1+3] ));
-      lFacPtr->addLine( lLine = iBaseNewLine( lNewPoints[f*4+3], lNewPoints[f*4+1] ));
+      lFacPtr->addLine( iBase->getNewLine( lNewPoints[f*4], lNewPoints[f*4+1] ));
+      lFacPtr->addLine( iBase->getNewLine( lNewPoints[f*4+1], lNewPoints[f*4+1+2] ));
+      lFacPtr->addLine( iBase->getNewLine( lNewPoints[f*4+2], lNewPoints[f*4+1+3] ));
+      lFacPtr->addLine( iBase->getNewLine( lNewPoints[f*4+3], lNewPoints[f*4+1] ));
 
       lPoly->addFacette( lFacPtr );
     }
   // A DEBUGGER
 }
+*/

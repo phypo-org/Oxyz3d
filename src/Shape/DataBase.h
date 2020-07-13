@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <stack>
 
 
 
@@ -187,6 +188,25 @@ namespace PP3d {
 	}
      return nullptr;
     }
+
+
+
+    //---------------------------------
+
+  protected:
+    std::stack<PointPtr> cFreePoints;     
+    std::stack<LinePtr>  cFreeLines;     
+    std::stack<FacetPtr> cFreeFacets;     
+    //    std::stack<PolyPtr>  cFreePolys;     
+
+  public:
+    PointPtr getNewPoint(const Point3d & p);
+    LinePtr  getNewLine(PointPtr lA, PointPtr lB);
+    FacetPtr getNewFacet();
+
+    void freePoint( PointPtr ioPt );
+    void freeLine( LinePtr ioLine );
+    void freeFacet( FacetPtr ioFacet);
   };
   //************************************
 }

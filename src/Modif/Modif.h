@@ -7,6 +7,7 @@
 #include "Shape/DataBase.h"
 #include "Shape/SubDiv.h"
 #include "Shape/EntityVisitor.h"
+#include "Shape/Maker.h"
 
 #include <map>
 
@@ -46,6 +47,14 @@ namespace PP3d{
       }
       return nullptr; 
     }
+    static PointPtr FindPointByEpsilon( const std::vector<PointPtr> & iPoints, const Point3d & iVal, long double iEpsilon = PP3d::Maker::kEpsilon )
+    {
+      for( PointPtr lPt : iPoints ) {
+	if( lPt->get().sameEpsi( iEpsilon, iVal) )
+	  return lPt;
+      }
+      return nullptr; 
+    }
     
     static int  GetFacetFirstLineIndex( FacetPtr iFacet, PointPtr lPt);
     static bool RemplaceLineIntoFacet( Facet & iFact, LinePtr lLine,
@@ -65,7 +74,7 @@ namespace PP3d{
     static void PrepareChangePointToNeighbourFacetAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos,  bool iMeToo =false);
     static void FinalizeChangePointToNeighbourAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos );
     
-    static bool SubCatmullClark(  std::set<FacetPtr>&  iOldFacets, DataBase * iBase );
+    static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint );
   };
   //**************************************************
 

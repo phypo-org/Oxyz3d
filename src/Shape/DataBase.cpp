@@ -543,10 +543,75 @@ namespace PP3d {
     for( auto lPair : cEntities )
       {
 	if( lPair.second->getId() > lMaxId )
-	  lMaxId =  lPair.second->getId();
+	  {
+	    lMaxId =  lPair.second->getId();
+	  }
       }
- 
+    
     resetUniqueId( lMaxId + 1 );
   }
+  //---------------------------------------------------------
+  PointPtr DataBase::getNewPoint(const Point3d & iPt)
+  {
+    if( cFreePoints.empty() )
+      return new Point(iPt);
+
+    PointPtr lTmp = cFreePoints.top();
+    cFreePoints.pop();
+    lTmp->set( iPt);
+    
+    return lTmp;
+  }
+  //---------------------------------------------------------
+  LinePtr  DataBase::getNewLine(PointPtr lA, PointPtr lB)
+  {
+    if( cFreeLines.empty() )
+      return new Line( lA, lB );
+
+    LinePtr lTmp = cFreeLines.top();
+    cFreeLines.pop();
+    lTmp->set( lA, lB );
+    return lTmp;
+  }
+  //---------------------------------------------------------
+  FacetPtr DataBase::getNewFacet()
+  {
+    if( cFreeFacets.empty() )
+      return new Facet();
+
+    FacetPtr lTmp = cFreeFacets.top();
+    cFreeFacets.pop();
+    return lTmp;
+  }  
+  //---------------------------------------------------------
+  void DataBase::freePoint( PointPtr ioPt )
+  {
+    //   clearAllOwner();
+    if( removeEntityIfNoOwner( ioPt ) )
+      {
+	ioPt->razId();
+	cFreePoints.push( ioPt );
+      }
+  }
+  //---------------------------------------------------------
+  void DataBase::freeLine( LinePtr ioLine )
+  {
+    //  clearAllOwner();
+    if( removeEntityIfNoOwner( ioLine ))
+      {
+	ioLine->razId();
+	cFreeLines.push( ioLine );
+      }
+  }
+  //---------------------------------------------------------
+  void DataBase::freeFacet( FacetPtr ioFacet)
+  {
+    //    clearAllOwner();
+    if( removeEntityIfNoOwner( ioFacet ) )
+      {
+	ioFacet->razId();
+	cFreeFacets.push( ioFacet );
+      }
+  }  
   //************************************
 } // end namespace

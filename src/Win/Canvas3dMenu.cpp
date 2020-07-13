@@ -119,6 +119,7 @@ namespace M3d {
 #define StrMenu_SubdivideCentral "Subdivide facets with central facet"
 #define StrMenu_SubdivideSmooth        "Subdivide facets (Smooth)"
 #define StrMenu_SubdivideCentralSmooth "Subdivide with central facet (Smooth)"
+#define StrMenu_SubdivideCatmullClark "Subdivide CatmullClark"
 
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
@@ -186,6 +187,7 @@ namespace M3d {
 	pMenu.add( StrMenu_SubdivideCentral, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_SubdivideSmooth, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_SubdivideCentralSmooth, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
       }
    
     switch( TheSelect.getSelectType() )
@@ -457,13 +459,27 @@ namespace M3d {
       }
   }
   //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData )
+  {
+    BEGINCALL  ;
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+    TheSelect.removeAll();
+    
+    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints ))
+      {	
+	PushHistory();
+	TheAppli.redrawAll();
+      }
+  }
+  //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData)
   {
-     BEGINCALL  ;
+    BEGINCALL  ;
      
-     PP3d::SortEntityVisitor lVisit;
-     TheSelect.execVisitorOnEntity( lVisit );
-     TheSelect.removeAll();
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+    TheSelect.removeAll();
 
     bool pCentral = false;
     if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0
@@ -476,7 +492,7 @@ namespace M3d {
     
     PP3d::SubDiv::SubParam lSubDivLocal( 1, 1, pCentral, PP3d::SubDiv::SubNormalizeType::NORMALIZE_NONE );
     
-    if( PP3d::Modif::SubdivideFacet( lVisit.cVectFacets, TheAppli.getDatabase(), &lSubDivLocal ))
+    if( PP3d::Modif::SubdivideFacet(  lVisit.cVectFacets, TheAppli.getDatabase(), &lSubDivLocal))
       {
 	if( strcmp( m->label(), StrMenu_SubdivideSmooth ) == 0
 	    || strcmp( m->label(), StrMenu_SubdivideCentralSmooth ) == 0 )
@@ -484,15 +500,15 @@ namespace M3d {
 	    std::vector<PP3d::Point3d> lVectNewPt;
 	    //	    PP3d::Modif::PrepareChangePointToNeighbourLineAverage( lVisit.cVectPoints, lVectNewPt );
 
-	     PP3d::Modif::PrepareChangePointToNeighbourFacetAverage( lVisit.cVectPoints, lVectNewPt );
+	    PP3d::Modif::PrepareChangePointToNeighbourFacetAverage( lVisit.cVectPoints, lVectNewPt );
 	    PP3d::Modif::FinalizeChangePointToNeighbourAverage( lVisit.cVectPoints, lVectNewPt );
-  }
+	  }
 	
 	
 	PushHistory();
 	TheAppli.redrawAll();
       }
- }
+  }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)
   {

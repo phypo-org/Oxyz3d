@@ -72,6 +72,7 @@ namespace PP3d {
 		
     EntityId getId() { return cId; }
     bool     isIdVoid() { return cId==0;}
+    void     razId() { cId=0;}
 
     bool isTreeOpen() { return cTreeOpen; }
     void setTreeOpen( bool iVal ) { cTreeOpen=iVal;}
@@ -167,6 +168,7 @@ namespace PP3d {
 
     Point3d  get() const { return cPt; }
     Point3d& get()       { return cPt; }
+    void     set(const Point3d & iPt)  {  cPt = iPt; }
 		
     void execVisitor( EntityVisitor& pVisit ) override;
 
@@ -232,7 +234,7 @@ namespace PP3d {
     PointPtr      second() const { return cPoints.second;}
     PointPtr&     first() { return cPoints.first;}
     PointPtr&     second(){ return cPoints.second;}
-    /*
+    
     void set( PointPtr lA, PointPtr lB )
     {
       if( getFirst() )  getFirst()->removeOwner(this);
@@ -243,7 +245,7 @@ namespace PP3d {
       if( lA != lB )
 	lB->addOwner( this );			
     }
-    */
+    
     void setSecond( PointPtr lB )
     {
       
@@ -435,7 +437,7 @@ namespace PP3d {
   };
 	
   using FacetPtr     = Facet*;
-  using FacetPtrVect = std::vector<Facet*>;
+  using FacetPtrVect = std::vector<FacetPtr>;
 
   //*********************************************
   class  Poly :  public Entity{
@@ -449,6 +451,20 @@ namespace PP3d {
     {
       cFacets.push_back( pFacet );
       pFacet->addOwner( this );
+    }
+
+    
+    void removeFacet(  FacetPtr pFacet)
+    {
+      for( size_t i=0;  cFacets.size(); i++)
+	{
+	  if( cFacets[i] == pFacet )
+	    {
+	      cFacets.erase( cFacets.begin() + i);
+	      pFacet->removeOwner(this);
+	      break;
+	    }
+	}
     }
 
     FacetPtrVect&  getFacets()  { return cFacets; }
