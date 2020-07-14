@@ -172,11 +172,11 @@ namespace PP3d {
 		
     void execVisitor( EntityVisitor& pVisit ) override;
 
-  protected:
+  public:
     void execVisitor( EntityVisitorNode& pVisit ) override;
     friend class Line;
 
-    bool clear() override { return Entity::clear(); }
+    bool clear() override { cPt.zero(); return Entity::clear(); }
 
     friend std::ostream & operator << ( std::ostream & pOs, Point& pEntity )
     {
@@ -246,10 +246,6 @@ namespace PP3d {
 	lB->addOwner( this );			
     }
     
-    void setSecond( PointPtr lB )
-    {
-      
-    }
 
     void execVisitor( EntityVisitor& pVisit )override;
  
@@ -403,12 +399,12 @@ namespace PP3d {
       for( size_t i=0; i< cLines.size(); i++ )
 	{
 	  if( cLines[i] == iOriginal )
-	    break;
+	    {
+	      insertLine( i+1, iNewLine );
+	      return;
+	    }
 	}
-      if( i < cLines.size() )
-	setLine( i+1, iNewLine );
-      else
-	setLine( i, iNewLine );
+      addLine( iNewLine );
     }
 
     LinePtr getLine(  size_t iPos ) { return cLines[iPos]; }

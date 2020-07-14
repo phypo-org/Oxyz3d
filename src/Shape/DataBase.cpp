@@ -450,12 +450,14 @@ namespace PP3d {
   EntityId DataBase::validOneEntityLevel(  Entity* pEntity )
   {
     //    std::cout << "DataBase::validOneEntityLevel 1 "  << cEntities.size()  << "  - "<< *pEntity << std::endl;
-    pEntity->cId =  sUniqueId.getNewId();
+    if( pEntity->isIdVoid())
+      {
+	pEntity->cId =  sUniqueId.getNewId();
 
     //    std::cout << "DataBase::validOneEntityLevel 2 " << cEntities.size() << "  - " << *pEntity << std::endl;
-
 		
-    cEntities.insert( { pEntity->cId, pEntity } ); 
+	cEntities.insert( { pEntity->cId, pEntity } );
+      }
     return pEntity->cId;
   }
   //------------------------------------------
@@ -467,15 +469,18 @@ namespace PP3d {
   class VisitValid : public EntityVisitorNode
   {
     DataBase& cBase;
+    bool cTotalScan;
   public:
-    VisitValid( DataBase& pBase )
-      :cBase( pBase ) {;}
+    VisitValid( DataBase& pBase, bool iTotalScan = false )
+      :cBase( pBase )
+      ,cTotalScan( iTotalScan) {;}
     //------------------------------------------		
     void execNode( Entity *pEntity, Entity *pOwner )
     {
       //      std::cout << "execNode:" << pEntity->getId() << std::endl;
       
-      if( pEntity->isIdVoid() == false )
+      if( pEntity->isIdVoid() == false
+	  && cTotalScan == false )
 	return ; // deja fait !
       
       //      std::cout << "execNode isVoidId" << std::endl;
@@ -485,9 +490,9 @@ namespace PP3d {
   };
   //******************************************
 	
-  EntityId DataBase::validEntity( Entity* lEntity )
+  EntityId DataBase::validEntity( Entity* lEntity, bool iTotalScan )
   {
-    VisitValid lValid( *this );
+    VisitValid lValid( *this, iTotalScan );
 
     lEntity->execVisitor( lValid );
 		
@@ -578,7 +583,7 @@ namespace PP3d {
   {
     if( cFreeFacets.empty() )
       return new Facet();
-
+    
     FacetPtr lTmp = cFreeFacets.top();
     cFreeFacets.pop();
     return lTmp;
@@ -590,6 +595,7 @@ namespace PP3d {
     if( removeEntityIfNoOwner( ioPt ) )
       {
 	ioPt->razId();
+	ioPt->clear();
 	cFreePoints.push( ioPt );
       }
   }
@@ -600,6 +606,7 @@ namespace PP3d {
     if( removeEntityIfNoOwner( ioLine ))
       {
 	ioLine->razId();
+	ioLine->clear();
 	cFreeLines.push( ioLine );
       }
   }
@@ -610,6 +617,7 @@ namespace PP3d {
     if( removeEntityIfNoOwner( ioFacet ) )
       {
 	ioFacet->razId();
+	ioFacet->clear();
 	cFreeFacets.push( ioFacet );
       }
   }  

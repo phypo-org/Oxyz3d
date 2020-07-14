@@ -86,7 +86,7 @@ namespace PP3d {
     void     addValidEntityForUndo(  Entity* pEntity );
   public:
     EntityId validOneEntityLevel(  Entity* pEntity );
-    EntityId validEntity( Entity* lEntitiy );
+    EntityId validEntity( Entity* lEntitiy, bool iTotalScan = false );
 
 		
     void          addPointToCurrentLine( Point3d pPt );

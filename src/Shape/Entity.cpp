@@ -97,10 +97,12 @@ namespace PP3d {
   //-------------------------------------	
   void Line::execVisitor( EntityVisitorNode& pVisit )
   {		
+    pVisit.execNode(  this, nullptr );
     pVisit.execNode(  getPoints().first, this );
     pVisit.execEndNode(  getPoints().first, this );
     pVisit.execNode(  getPoints().second, this );
     pVisit.execEndNode(  getPoints().second, this );
+    pVisit.execEndNode(  this, nullptr );
   }
   //--------------------------------
   LinePtr Line::getReverseLine() {
@@ -159,12 +161,14 @@ namespace PP3d {
   //-------------------------------------
   void Facet::execVisitor( EntityVisitorNode& pVisit )
   {		
+    pVisit.execNode(  this, nullptr );
     for( LinePtr lLine : getLines() )
       {
 	pVisit.execNode( lLine, this );
 	lLine->execVisitor( pVisit );
 	pVisit.execEndNode( lLine, this );
       }		
+    pVisit.execEndNode( this, nullptr );
   }
   //-------------------------------------
   void Facet::closeFacet()
@@ -187,12 +191,14 @@ namespace PP3d {
   //-------------------------------------
   void Poly::execVisitor( EntityVisitorNode& pVisit )
   {
+    pVisit.execNode(  this, nullptr );
     for( FacetPtr lFacet : getFacets() )
       {
 	pVisit.execNode( lFacet, this );
 	lFacet->execVisitor( pVisit );
 	pVisit.execEndNode( lFacet, this );
       }
+    pVisit.execEndNode( this, nullptr );
   }
 	
   //*********************************************

@@ -58,14 +58,90 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
   std::vector<PointPtr> lNewPoints;
   std::vector<CCSubDiv> oSubDivs;
   std::vector<PointPtr> iBorderPoints;
+
+  std::unordered_map<PointPtr, Point3d> lFinalPos;
+
+
+  //==== Il faudra aussi deplacer les anciens points ====
+  // Le calcul est fait içi car ensuite la structure des facettes change
   
+  for( PointPtr lPt : iOldPoint )
+    {
+      Point3d lAvgFacePts;
+      Point3d lAvgMidPts;
+	  
+      int lNbLine=0;
+      int lNbFac=0;
+      for( EntityPtr lEntity : lPt->getOwners() )
+	{
+	  if( lEntity->getType() == ShapeType::Line )
+	    {
+	      // On calcule la moyennes des milieux des lignes
+	      // si il y a une ligne reverse le point sera compté deux fois	
+	      LinePtr lLine = (LinePtr)lEntity;
+ 	      Point3d lMiddle = (lLine->first()->get() +  lLine->second()->get())*0.5;
+	      
+	      lAvgMidPts += lMiddle;
+	      lNbLine++;
+
+	      LinePtr lRevLine = lLine->getReverseLine();
+	      if( lRevLine == nullptr )
+		{ // elle va compter pour deux
+		  lAvgMidPts += lMiddle;
+		  lNbLine++;			      
+		}
+	      
+	      FacetPtr lFac = (FacetPtr)lLine->firstOwner();
+	      if( lFac != nullptr && lFac->getType() == ShapeType::Facet )
+		{
+		  VisitorComputeMiddleFacet lVidMidFac;
+		  lFac->execVisitor( lVidMidFac );
+		  lAvgFacePts += lVidMidFac.getMiddle();
+		  lNbFac++;
+		  if( lRevLine == nullptr )
+		    { // elle va compter pour deux ( mais le resultat n'est pas juste non plus)
+
+		      lAvgFacePts += lVidMidFac.getMiddle();
+		      lNbFac++;		      
+		    }
+		}		 
+	    }	 
+	}
+     if( lNbLine && lNbFac )
+       {	 
+	 lAvgFacePts /=  lNbFac;
+	 lAvgMidPts  /=  lNbLine;   
+	 lAvgMidPts *= 2;
+	 lNbLine /= 2;
+	 
+	 //	 std::cout << "lNbLine:" << lNbLine << " lNbFac:" << lNbFac << std::endl;
+	 
+	 int lN3 = lNbLine-3;
+	 Point3d lPos = lPt->get()*lN3;
+
+	 if( lN3 > 0 )  //?????????
+	   lPos = lPt->get()*lN3;
+	 
+	 Point3d lNewPos = (lAvgFacePts + lAvgMidPts + lPos)/lNbLine;
+	 //	 std::cout << lNewPos << std::endl;
+
+	 lPt->clearAllOwner();  // Il va etre reutilisé !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 lFinalPos.insert( {lPt, lNewPos} );
+       }			    
+    }
+  //=======================================================
+
+
+  
+
+  int lFacet=0;
   //===== Pour toutes les facettes à traiter ===== 
   for( FacetPtr lOldFacet : iOldFacets )
     {
       std::vector<PointPtr>    lOldFacetPoints;
       // std::set<Point3d>    lOldPointsUniq;
-      
-
+      std::cout << "lFacet:" << lFacet++<< std::endl;
+ 
       // Nlle SubDivision
       CCSubDiv lSubDummy;            
       oSubDivs.push_back( lSubDummy );
@@ -81,10 +157,14 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	lNewSubDiv.cOldFacet = lOldFacet;
       }
 
+      int lLineNb=0;
       // Pour chaque lignes de la facette on calcule les edge-point  pour chaque lignes
       // moyenne des deux face-point et des deux points originels
       for( LinePtr lLine : lOldFacet->getLines() )
 	{
+
+	  std::cout << "   lLine:" << lLineNb++ << " first:" << lLine->first() << std::endl;
+	  
 	  // Nouveau point edge
 	  Point3d lPtDummy;
 	  lNewSubDiv.cEdgePoints.push_back( lPtDummy );
@@ -102,16 +182,18 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  if( lReverse == nullptr )
 	    {
 	      // si on ne trouve pas de ligne reverse ! (bordure ?)
+	      std::cout << "Warning Reverse : no reverse " << std::endl;
 	      lEdge /= 3;
-	      lNewSubDiv.cEdgePoints.push_back( lEdge );
+	      //	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
 	  FacetPtr lEdgeFacet = (FacetPtr)lReverse->firstOwner();
 	  if( lEdgeFacet == nullptr )
 	    {
+	      std::cout << "Warning Reverse : no facet" << std::endl;
 	      // si la ligne reverse n'a pas de facette !
 	      lEdge /= 3;
-	      lNewSubDiv.cEdgePoints.push_back( lEdge );
+	      //	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
 	  
@@ -120,14 +202,14 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  lEdgeFacet->execVisitor( lVidMidFac ); 
 	  lEdge += lVidMidFac.getMiddle();
 	  lEdge /= 4;
-	  lNewSubDiv.cEdgePoints.push_back( lEdge );
+	  //	  lNewSubDiv.cEdgePoints.push_back( lEdge );
 
-
+	  
 	  if( iOldFacets.find( lEdgeFacet ) == iOldFacets.end() )
 	    {
 	      // La facette reverse n'est pas dans la liste des facette  transformé ! (bordure ?)
 	      // il va falloir replacer la ligne lReverse par deux lignes !
-	      std::cout << " Facette non transformé : division" << std::endl;
+	      std::cout << "***** Facette non transformé : division de la ligne ****" << std::endl;
 	      
 	      PointPtr lA = lReverse->first();
 	      PointPtr lB = lReverse->second();
@@ -140,7 +222,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      
 	      iBorderPoints.push_back( lM );
 	      
-	      iBase->validEntity( lEdgeFacet ); // VALIDATION
+	      iBase->validEntity( lEdgeFacet, true ); // VALIDATION
 	    }
 	  // else : le Edge point reverse sera creer lors du traitement de la facette adjacente
 	  
@@ -160,13 +242,15 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  for( size_t i=0; i < lSz ; i++ )
 	    {
 	      FacetPtr lFacPtr = iBase->getNewFacet();
-	      
+		
 	      size_t j = (lN+i)%lSz;
-	      
+	      	      
+	      std::cout <<  "       Size:"<< lSz << " i:" << i << " j:" << j << std::endl;
+
 	      Point* Pt1 = lOldFacetPoints[i];     // sa position va changer
-	      Point* Pt2 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[j] ); 
+	      Point* Pt2 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[i] ); 
 	      Point* Pt3 = getPoint( iBase, lNewPoints, lNewSubDiv.cMiddle); 
-	      Point* Pt4 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[i] );
+	      Point* Pt4 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[j] );
 	      
 	      
 	      lFacPtr->addLine( iBase->getNewLine( Pt1, Pt2)  );
@@ -176,19 +260,19 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      
 	      lPoly->addFacet( lFacPtr );
 	      
-	      iBase->validEntity( lFacPtr );// VALIDATION (a optimiser)	     
+	      iBase->validEntity( lFacPtr, true );// VALIDATION (a optimiser)	     
 	    }
   	}
     } // fin facettes
 
-  
-      // Il faut aussi deplacer les anciens points
-  
-  for( PointPtr lPtr : iOldPoint )
-    {
-      // AFAIRE
-    }
 
+  // on repositionne les anciens points avec les valeurs calcules auparavant
+  for( auto lPair : lFinalPos )
+    {
+      lPair.first->get() = lPair.second;
+    }
+  
+  
   // On elimine les anciennes facettes
   for( FacetPtr lOldFacet : iOldFacets )
     {
@@ -196,6 +280,11 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
       if( lPoly )
 	{
 	  lPoly->removeFacet( lOldFacet );
+	}
+      
+      for( LinePtr lLine : lOldFacet->getLines() )
+	{
+	  iBase->freeLine( lLine );	  
 	}
       iBase->freeFacet( lOldFacet );
     }
@@ -273,11 +362,6 @@ bool SubCatmullClark(  std::set<FacetPtr>&  iFacets, DataBase & iBase )
   for( size_t f=0; f< lNewSubDiv.size() ; f++ ) 
     {
       CCSubDiv & lNewFacet  = *(lNewSubDiv[f]); // juste pour simplifier le code
-
-
-      //FAIRE UN ALLOCATEUR DE FACETTE ET LIGNE ET POLY ... DANS LA BASE
-      // ET FAIRE ALLOC FREE  plutot que s'emmerder a chaque fois !
-      // ne pas oublier les remove owner
 
       FacettePtr lFacPtr = iBaseNewFacette();
       

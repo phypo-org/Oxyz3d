@@ -503,8 +503,7 @@ namespace M3d {
 	    PP3d::Modif::PrepareChangePointToNeighbourFacetAverage( lVisit.cVectPoints, lVectNewPt );
 	    PP3d::Modif::FinalizeChangePointToNeighbourAverage( lVisit.cVectPoints, lVectNewPt );
 	  }
-	
-	
+		
 	PushHistory();
 	TheAppli.redrawAll();
       }
