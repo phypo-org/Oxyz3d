@@ -1,4 +1,10 @@
 
+Deplacement etc avec la normale
+-----------------------------------------------
+Changement de taille (barycentre des objets selectionné)
+-----------------------------------------------
+Changer  nom des subdivisions
+-----------------------------------------------
 Subdivide en 4 avec normale !
 -----------------------------------------------
 Extrusion de facettes
@@ -37,7 +43,7 @@ Dialogues fixes ?
 
 facetisation des points 
 
-- Subdivision avec lissage des facettes
+OK - Subdivision avec lissage des facettes
 -----------------------------------------------
 Connexion entre deux facettes (Trous)
 Connexion entre deux facettes (Ponts)

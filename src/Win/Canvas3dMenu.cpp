@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 
 
 #include "Shape/ObjectLine.h"
@@ -26,6 +27,7 @@
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
 #include "Shape/SubDiv.h"
+#include "Shape/SavRead.h"
 
 #include "Modif/Modif.h"
 
@@ -74,6 +76,7 @@ namespace M3d {
 #define StrMenu_MoveY    "Move Y"
 #define StrMenu_MoveZ    "Move Z"
 #define StrMenu_MoveNormal    "Move normal"
+#define StrMenu_MoveAxis    "# Move axis"
 
 #define StrMenu_Rot      "Rotate"
 #define StrMenu_RotX     "Rotate X"
@@ -81,8 +84,19 @@ namespace M3d {
 #define StrMenu_RotZ     "Rotate Z"
 #define StrMenu_RotAxis  "Rotate around current axis"
 
+#define StrMenu_Scale      "# Scale"
+#define StrMenu_ScaleU     "Scale uniform"
+#define StrMenu_ScaleX     "Scale X"
+#define StrMenu_ScaleY     "Scale Y"
+#define StrMenu_ScaleZ     "Scale Z"
+#define StrMenu_ScaleRX    "Scale radial X"
+#define StrMenu_ScaleRY    "Scale radial Y"
+#define StrMenu_ScaleRZ    "Scale radial Z"
+#define StrMenu_ScaleAxis  "Scale around current axis"
+
 	
-#define StrMenu_Dup        "Dup"	
+#define StrMenu_Dup        "Duplication"	
+#define StrMenu_DupInPlace  StrMenu_Dup  " in place"
 #define StrMenu_DupMoveX    StrMenu_Dup  " and move X"
 #define StrMenu_DupMoveY    StrMenu_Dup  " and move Y"
 #define StrMenu_DupMoveZ    StrMenu_Dup  " and move Z"
@@ -115,11 +129,11 @@ namespace M3d {
 
 #define StrMenu_ConnectPoint "Connect Points"
   
-#define StrMenu_Subdivide        "Subdivide facets"
-#define StrMenu_SubdivideCentral "Subdivide facets with central facet"
-#define StrMenu_SubdivideSmooth        "Subdivide facets (Smooth)"
-#define StrMenu_SubdivideCentralSmooth "Subdivide with central facet (Smooth)"
-#define StrMenu_SubdivideCatmullClark "Subdivide CatmullClark"
+#define StrMenu_SubdivideCatmullClark "Subdivide smooth"
+#define StrMenu_Subdivide             "Triangulation"
+#define StrMenu_SubdivideCentral      "Triangulation  with central facet (Bug!)"
+#define StrMenu_SubdivideSpike       "Subdivide Spike"
+#define StrMenu_SubdivideCentralSpike "Subdivide Spike  central facet (Bug!)"
 
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
@@ -134,31 +148,44 @@ namespace M3d {
       }
   }
   //-------------------------------------------
+ 
+  //-------------------------------------------
   //
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
     
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this);
-    //    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-	
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveAxis, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 		
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleU, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleX, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleY, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRX, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRY, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 
-
-		  
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);
-
-
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
+      {
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupInPlace, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",  MyMenuCallbackSelect, this);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);	
+      }
+    
     if(  TheSelect.getSelectType() == PP3d::SelectType::Point
 	 && TheSelect.getNbSelected() > 1 )
       {
@@ -183,11 +210,11 @@ namespace M3d {
 	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
 	  && TheSelect.getNbSelected() > 0)
       {
+	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
 	pMenu.add( StrMenu_Subdivide, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_SubdivideCentral, "", MyMenuCallbackSubdivide, this);
-	pMenu.add( StrMenu_SubdivideSmooth, "", MyMenuCallbackSubdivide, this);
-	pMenu.add( StrMenu_SubdivideCentralSmooth, "", MyMenuCallbackSubdivide, this);
-	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
+	pMenu.add( StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
       }
    
     switch( TheSelect.getSelectType() )
@@ -397,12 +424,41 @@ namespace M3d {
       }
   }
   //-------------------------------------------
+  static bool DuplicateSelection()
+  {    
+    PP3d::SortEntityVisitor  lVisit;    
+    TheSelect.execVisitorOnlyOnObjects( lVisit );
+    
+    std::stringstream lDupStr;
+    PP3d::MySav lSav( lDupStr );				
+    bool lRet = lSav.save( *TheAppli.getDatabase(), &lVisit.cSetAllEntity );
+    
+    if( lRet )
+      {
+	std::vector<PP3d::EntityPtr> lNewObjs;
+  	PP3d::MyRead lRead( lDupStr, &lNewObjs );
+	
+	    		
+	lRet = lRead.read( *TheAppli.getDatabase(), false );
+	if( lRet && lNewObjs.size() )
+	  {	    
+	    TheSelect.removeAll();
+	    for( PP3d::EntityPtr lObj : lNewObjs )
+	      {
+		TheSelect.addEntity( lObj );
+	      }
+	  }
+      }
+    return lRet;
+  }
+  //-------------------------------------------
   void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
   {	  		
      BEGINCALL  
 
 		
     //============== TRANSFORMATION ====================
+    // MOVE
     if( strcmp( m->label(), StrMenu_MoveX ) == 0)
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
@@ -423,6 +479,7 @@ namespace M3d {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::MoveNormal);
       }
+     // ROTATE
     else if( strcmp( m->label(), StrMenu_RotX ) == 0)
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
@@ -442,8 +499,69 @@ namespace M3d {
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
-      }    
-  }
+      }
+     // SCALE
+    else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::ScaleUniform );
+      }
+     // DUP
+    else if( strcmp( m->label(), StrMenu_DupInPlace ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+      }
+     else if( strcmp( m->label(), StrMenu_DupMoveX ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::MoveX);
+      }
+     else if( strcmp( m->label(), StrMenu_DupMoveY ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::MoveY);
+      }
+     else if( strcmp( m->label(), StrMenu_DupMoveZ ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::MoveZ);
+      }
+     else if( strcmp( m->label(), StrMenu_DupRotX ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotX);
+      }
+     else if( strcmp( m->label(), StrMenu_DupRotY ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotY);
+      }
+     else if( strcmp( m->label(), StrMenu_DupRotZ ) == 0)
+      {	
+	DuplicateSelection();
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
+      }
+ }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData)
   {
@@ -483,7 +601,7 @@ namespace M3d {
 
     bool pCentral = false;
     if( strcmp( m->label(), StrMenu_SubdivideCentral ) == 0
-	|| strcmp( m->label(), StrMenu_SubdivideCentralSmooth ) == 0 )
+	|| strcmp( m->label(), StrMenu_SubdivideCentralSpike ) == 0 )
       {
 	pCentral = true;
       }
@@ -494,8 +612,8 @@ namespace M3d {
     
     if( PP3d::Modif::SubdivideFacet(  lVisit.cVectFacets, TheAppli.getDatabase(), &lSubDivLocal))
       {
-	if( strcmp( m->label(), StrMenu_SubdivideSmooth ) == 0
-	    || strcmp( m->label(), StrMenu_SubdivideCentralSmooth ) == 0 )
+	if( strcmp( m->label(), StrMenu_SubdivideSpike ) == 0
+	    || strcmp( m->label(), StrMenu_SubdivideCentralSpike ) == 0 )
 	  {
 	    std::vector<PP3d::Point3d> lVectNewPt;
 	    //	    PP3d::Modif::PrepareChangePointToNeighbourLineAverage( lVisit.cVectPoints, lVectNewPt );

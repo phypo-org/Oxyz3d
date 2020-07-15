@@ -40,10 +40,12 @@ namespace PP3d {
   class MyRead{
 
     std::istream& cIn;
+    std::vector<EntityPtr> *cCreateResult;
 
   public:
-    MyRead( std::istream& pIn )
+    MyRead( std::istream& pIn, std::vector<EntityPtr> *ioCreateResult = nullptr )
       :cIn( pIn )
+      ,cCreateResult(ioCreateResult)
     {
     }	  
     bool read( DataBase& pData, bool lConserverOldId = false );

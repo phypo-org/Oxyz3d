@@ -87,7 +87,7 @@ namespace PP3d {
     SelectType     cSelectType = SelectType::Object;
 
     std::unordered_set<EntityPtr> cSelectObj;
-    std::vector<EntityPtr> cSelectObjVect;
+    std::vector<EntityPtr>        cSelectObjVect;
     // METTRE AUSI UN VECTEUR POUR GARDER L ORDRE DE SELECTION
 		
   public:
@@ -103,6 +103,7 @@ namespace PP3d {
       return cSelectObj.find(lEntity) != cSelectObj.end() ;
     }
     const std::unordered_set<EntityPtr>& getSelection() { return cSelectObj;}
+    const std::vector<EntityPtr> &       getSelectionVect() { return cSelectObjVect; }
 
 
     size_t getNbSelected() { return cSelectObj.size();  }
@@ -152,8 +153,8 @@ namespace PP3d {
 	      lEntity->execVisitor( pVisit );
 	    }
 	}
-    }   
-  }; 
+    }
+    };
 }
 
 // #define TheSelect PP3d::Selection::Instance()

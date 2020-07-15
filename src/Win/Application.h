@@ -29,12 +29,16 @@ namespace M3d{
 
   class Win3d;
 	
-  enum class Transform{ Nothing, MoveX, MoveY, MoveZ,
-      MoveNormal,
+  enum class Transform{
+    Nothing,
+      MoveX, MoveY, MoveZ, MoveNormal,
+      
       CenterRotX,
       CenterRotY,
       CenterRotZ,
-      CenterRotAxis
+      CenterRotAxis,
+      
+      ScaleUniform
       };
 
   //************************************
@@ -153,10 +157,25 @@ namespace M3d{
 	  return true;
 	}      
       return false;
+    
     }
+    bool setCurrentAxis(PP3d::ObjectPtr iObj) {
+      if( iObj->getObjType() == PP3d::ObjectType::ObjLine )
+	{
+	  cCurrentAxis = (PP3d::ObjectLine*) iObj;
+	  return true;
+	}
+      return false;
+    }
+    PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
 
-     PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
-  };
+    bool isSelectAxis() {
+      return (TheSelectTransform.getSelectType() != PP3d::SelectType::Null
+	      && TheSelectTransform.getNbSelected() == 1
+	      && TheSelectTransform.getSelectionVect()[0]->getType() == PP3d::ShapeType::Object
+	      && ((PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0])->getObjType() == PP3d::ObjectType::ObjLine);
+    }
+ };
   //************************************
 
 }

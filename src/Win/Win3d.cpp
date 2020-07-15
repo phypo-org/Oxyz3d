@@ -78,6 +78,10 @@ namespace M3d {
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
 
 
+#define StrMenu_DefDefaultAxe   "Define default axe as default"
+#define StrMenu_DefDefaultPlane "Define default plane as default"
+#define StrMenu_DefDefaultTrans "Define default translation as default"
+
 #define StrMenu_SetAxePoints   "With selection"
   //#define StrMenu_SetAxeLine     "With line"
 #define StrMenu_SetAxeNormal   "With facet normal"
@@ -749,7 +753,11 @@ namespace M3d {
     //================================
 
     
-    cMenubar.add("&Utils/Define axe/" StrMenu_SetAxePoints  , "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_DefDefaultAxe  , "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_DefDefaultPlane, "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_DefDefaultTrans, "", MyMenuCallback, this, FL_MENU_DIVIDER);
+
+    cMenubar.add("&Utils/Create axe/" StrMenu_SetAxePoints  , "", MyMenuCallback, this);
     //    (TheSelect.getSelectType() != PP3d::SelectType::Point
     //     && TheSelect.getNbSelected() < 2
     //   ? FL_MENU_INACTIVE :0));
@@ -759,44 +767,44 @@ namespace M3d {
     //		  && TheSelect.getNbSelected() < 1
     //		  ? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Define axe/" StrMenu_SetAxeNormal  , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create axe/" StrMenu_SetAxeNormal  , "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Facet
   //	       && TheSelect.getNbSelected() < 1
   //	       ? FL_MENU_INACTIVE :0) );
   
-  cMenubar.add("&Utils/Define axe/" StrMenu_SetAxeInput   , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create axe/" StrMenu_SetAxeInput   , "", MyMenuCallback, this);
   //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2
   //	       ? FL_MENU_INACTIVE :0) );
     
-  cMenubar.add("&Utils/Define plane/" StrMenu_SetPlanePoints, "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlanePoints, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Point
   //		&& TheSelect.getNbSelected() < 3
   //		? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Define plane/" StrMenu_SetPlaneLines , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneLines , "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
   //		&& TheSelect.getNbSelected() < 1
   //		? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Define plane/" StrMenu_SetPlaneFacet, "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneFacet, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Facet
   //		&& TheSelect.getNbSelected() < 1
   //		? FL_MENU_INACTIVE :0));
 	       
-  cMenubar.add("&Utils/Define plane/" StrMenu_SetPlaneInput, "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneInput, "", MyMenuCallback, this);
   //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2
   //	       ? FL_MENU_INACTIVE :3) );
 
-  cMenubar.add("&Utils/Define translation/" StrMenu_SetTransPoints, "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransPoints, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Point
   //		&& TheSelect.getNbSelected() < 2
   //		? FL_MENU_INACTIVE :0));
-  cMenubar.add("&Utils/Define translation/" StrMenu_SetTransLine  , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransLine  , "", MyMenuCallback, this);
 	       //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
 	       //		&& TheSelect.getNbSelected() < 1
 	       //		? FL_MENU_INACTIVE :0));
     
-  cMenubar.add("&Utils/Define translation/" StrMenu_SetTransInput  , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransInput  , "", MyMenuCallback, this);
 	       //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2) );
 
     //================================
@@ -955,7 +963,7 @@ namespace M3d {
 		    TheAppli.redrawAllCanvas3d();
 		    TheAppli.redrawObjectTree();
 		  }
-		else if( strcmp( m->label(), StrMenu_DeleteSelect	) == 0)
+		else if( strcmp( m->label(), StrMenu_DeleteSelect) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_DeleteSelect << endl;
 		    TheSelect.deleteAllFromDatabase( *TheAppli.getDatabase());
@@ -963,7 +971,7 @@ namespace M3d {
 		    TheAppli.redrawAllCanvas3d();
 		    TheAppli.redrawObjectTree();
 		  }
-		else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput	) == 0)
+		else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
 		    TheSelect.addSelectionToInput( *TheAppli.getDatabase(), false);
@@ -971,7 +979,18 @@ namespace M3d {
 		    TheAppli.redrawAllCanvas3d();
 		    TheAppli.redrawObjectTree();
 		  }
-    //=================== UTILS ====================
+    //=================== UTILS ====================    
+   
+		else if(  strcmp( m->label(), StrMenu_DefDefaultAxe	) == 0)
+		  {
+		    if( TheAppli.isSelectAxis() )
+		      {
+			TheAppli.setCurrentAxis( (PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0]);
+			TheSelectTransform.removeAll();			
+		      }
+		    else
+		      fl_alert( "An axis must be selectionned !");
+		  }
 		else if(  strcmp( m->label(), StrMenu_SetAxePoints	) == 0)
 		  {
 		    PP3d::SortEntityVisitor lVisit;		    

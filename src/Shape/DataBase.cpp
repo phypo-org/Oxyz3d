@@ -502,7 +502,7 @@ namespace PP3d {
   void DataBase::addObject( Object* pObj )
   {
     validEntity( pObj );
-    cContainerObject.emplace( pObj ); 
+    cContainerObject.emplace( pObj );			
   }
   //------------------------------------------
   bool DataBase::deleteEntity( EntityPtr pEntity)

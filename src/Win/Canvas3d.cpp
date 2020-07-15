@@ -528,7 +528,7 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/10 );
+	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/30 );
 	  std::cout << "======== Grab Normal 1111111111" << std::endl; 
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 
@@ -569,6 +569,7 @@ namespace M3d {
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
       case Transform::CenterRotAxis :
+      case Transform::ScaleUniform :
 	{		
 	  std::cout << "Center:" << cDragCenter  << std::endl;
 	  
@@ -640,6 +641,18 @@ namespace M3d {
 		  }
 	      }
 	      break;
+
+	    case Transform::ScaleUniform :
+	      {
+		long double lScale= 1 + lDx*0.01;
+		TheAppli.currentTransform().scale().x() += lScale;
+		TheAppli.currentTransform().scale().y() += lScale;
+		TheAppli.currentTransform().scale().z() += lScale;
+		CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		lMatRot.set( TheAppli.currentTransform());
+	      }
+	      break;
+
 	    default:;
 	    }					
 					
@@ -935,8 +948,7 @@ namespace M3d {
 	    DBG_EVT( "MIDDLE ");
 	    break;
 	  case FL_RIGHT_MOUSE :
-	    DBG_EVT(  "RIGHT ");
-							
+	    DBG_EVT(  "RIGHT ");							
 	    break;
 	  }
 				
@@ -952,9 +964,7 @@ namespace M3d {
 	  {
 	    userSelectionRectangle(pEvent, true );
 	    userTerminateAction( pEvent );
-	  }
-					
-										
+	  }		
 	break;
 	//==============================
 

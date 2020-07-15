@@ -351,6 +351,10 @@ namespace PP3d {
 			  
 			  SAVCOUT<< "************** pData.addObject *******************" << std::endl;
 			  pData.addObject( lObj );
+			  if( cCreateResult != nullptr )
+			    {
+			      cCreateResult->push_back( lObj );
+			    }
 			  SAVCOUT<< "************** pData.addObject 22222 *******************" << std::endl;
 			}
 		    }
