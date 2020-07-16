@@ -74,7 +74,7 @@ namespace PP3d{
     static void PrepareChangePointToNeighbourFacetAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos,  bool iMeToo =false);
     static void FinalizeChangePointToNeighbourAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos );
     
-    static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint );
+    static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, bool iChgOldPt=true );
   };
   //**************************************************
 

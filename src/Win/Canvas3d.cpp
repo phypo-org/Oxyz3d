@@ -354,6 +354,7 @@ namespace M3d {
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
 
     TheAppli.currentTransform().raz();
+    TheAppli.currentTransform().scaleTo(1);
   }
   //------------------------------
   void Canvas3d::userCancelAction(	int	pEvent )
@@ -490,7 +491,19 @@ namespace M3d {
 	cDragPoints.clear();
 	cDragSavPoints.clear();
       }
-  } 
+  }
+  //---------------------------
+  bool getAxis( PP3d::Point3d & oPtZero, PP3d::Point3d & oAxis  )
+  {
+    PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
+    if(lObjAxis != nullptr )
+      {
+	oPtZero = lObjAxis->first3d();
+	oAxis = lObjAxis->second3d() - oPtZero;
+	return true;
+      }
+    return false;
+  }
   //---------------------------
   void Canvas3d::userTransformSelection(int	pEvent, bool pFlagFinalize)
   {
@@ -501,12 +514,16 @@ namespace M3d {
     float lDy = (float)(cMouseLastPosY - lY);
     cMouseLastPosX = lX;
     cMouseLastPosY = lY;
-
-    std::cout << "***** Canvas3d::userTransformSelection **** " << lDx << " " << lDy << std::endl;
+    
+    long double lScale= lDx*0.01;
+    
+  
+    std::cout << "***** Canvas3d::userTransformSelection **** " << lDx << " " << lDy << " Scale:" <<  lScale << std::endl;
 
 		
     PP3d::Mat4 lMatTran;
     lMatTran.Identity();
+    
   
     switch( TheAppli.getCurrentTransformType() )
       {
@@ -563,13 +580,93 @@ namespace M3d {
 	  lMatTran.initMove( 0, 0, TheAppli.currentTransform().position().z() );
 	}
 	break;
-				
 
+     case Transform::MoveAxis:
+	{
+	  PP3d::Point3d lPtZero;
+	  PP3d::Point3d lAxis;
+	  if( getAxis( lPtZero, lAxis ) )	{
+	    {
+	      TheAppli.currentTransform().position().x() += lAxis.cX*lDx/100;
+	      TheAppli.currentTransform().position().y() += lAxis.cY*lDx/100;
+	      TheAppli.currentTransform().position().z() += lAxis.cZ*lDx/100;
+	      
+	      cMyWin3d.setCurrentVal(  "move z" , TheAppli.currentTransform().position().z() );
+	      lMatTran.initMove( TheAppli.currentTransform().position() );
+	    }
+	  }
+	}
+	break;
+
+	//========== SCALE =========================
+
+	case Transform::ScaleUniform :
+	case Transform::ScaleX :
+	case Transform::ScaleY :
+	case Transform::ScaleZ :
+	case Transform::ScaleRX :
+	case Transform::ScaleRY :
+	case Transform::ScaleRZ :
+	  {
+	    PP3d::Mat4 lMatRecenter;
+	    lMatRecenter.initMove( cDragCenter ); //on revient au centre;
+	    
+	    PP3d::Point3d lNCenter =  -cDragCenter;					
+	    PP3d::Mat4 lMatZero;
+	    lMatZero.initMove( lNCenter ); //on se positionne en zero;
+	    
+	    PP3d::Mat4 lMatScale;	  
+	    switch(  TheAppli.getCurrentTransformType() )
+	      {		
+	      case Transform::ScaleUniform :
+		{
+		  TheAppli.currentTransform().scale().x() += lScale;
+		  TheAppli.currentTransform().scale().y() += lScale;
+		  TheAppli.currentTransform().scale().z() += lScale;
+		  break;
+		}
+	      case Transform::ScaleX :
+		  TheAppli.currentTransform().scale().x() += lScale;
+		  break;
+	      case Transform::ScaleY :
+		  TheAppli.currentTransform().scale().y() += lScale;
+		  break;
+	      case Transform::ScaleZ :
+		  TheAppli.currentTransform().scale().z() += lScale;
+		  break;
+	      case Transform::ScaleRX :
+		  TheAppli.currentTransform().scale().y() += lScale;
+		  TheAppli.currentTransform().scale().z() += lScale;
+		  break;
+	      case Transform::ScaleRY :
+		  TheAppli.currentTransform().scale().x() += lScale;
+		  TheAppli.currentTransform().scale().z() += lScale;
+		  break;
+	      case Transform::ScaleRZ :
+		  TheAppli.currentTransform().scale().x() += lScale;
+		  TheAppli.currentTransform().scale().y() += lScale;
+		  break;
+	      case Transform::ScaleAxis :
+		{
+		  PP3d::Point3d lPtZero;
+		  PP3d::Point3d lAxis;
+		  if( getAxis( lPtZero, lAxis ) )
+		    { ;	} // A FAIRE
+		}
+		break;
+	      default:;
+	      }
+	    
+	    //	  CallDialogKeepFloat( TheAppli.currentTransform().scale.x());
+	    lMatScale.initScale( TheAppli.currentTransform().scale() );
+	    lMatTran = lMatRecenter * lMatScale *  lMatZero;					
+	  }
+	break;
+	//============ ROTATE =======================
       case Transform::CenterRotX :
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
       case Transform::CenterRotAxis :
-      case Transform::ScaleUniform :
 	{		
 	  std::cout << "Center:" << cDragCenter  << std::endl;
 	  
@@ -619,47 +716,35 @@ namespace M3d {
 	      
 	    case Transform::CenterRotAxis :
 	      {
-		PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
-		if(lObjAxis != nullptr )
-		  {
-		    PP3d::Point3d & lA = lObjAxis->first3d();
-		    PP3d::Point3d & lVector = lObjAxis->second3d();
-		    PP3d::Point3d lAxis = lVector - lA;
-
-		    //	      std::cout << "VERIFICATION VECTEUR NORM:"
-		    //	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
-		    //	      << std::endl;
-		    // On prend x mais on pourrait prendre ce que l'on veut
-		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
-		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
-		    
+		  PP3d::Point3d lPtZero;
+		  PP3d::Point3d lAxis;
+		  if( getAxis( lPtZero, lAxis ))
+		    {
+		  //	      std::cout << "VERIFICATION VECTEUR NORM:"
+		  //	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
+		  //	      << std::endl;
+		  // On prend x mais on pourrait prendre ce que l'on veut
+		  TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		  CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		  
 		    std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
 			      << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
 			      << std::endl;	  
-
+		    
+		    // BUG  BUG BUG BUG BUG BUG
+		    
 		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );
-		  }
-	      }
-	      break;
-
-	    case Transform::ScaleUniform :
-	      {
-		long double lScale= 1 + lDx*0.01;
-		TheAppli.currentTransform().scale().x() += lScale;
-		TheAppli.currentTransform().scale().y() += lScale;
-		TheAppli.currentTransform().scale().z() += lScale;
-		CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
-		lMatRot.set( TheAppli.currentTransform());
+		  }		      
 	      }
 	      break;
 
 	    default:;
 	    }					
 					
-	  lMatTran = lMatRecenter * lMatRot *  lMatZero;
-					
+	  lMatTran = lMatRecenter * lMatRot *  lMatZero;					
 	}
 	break;
+	//===================================
 
       default:
 	std::cout << "Nothing to do 2!!!" << std::endl;

@@ -6,6 +6,13 @@ namespace PP3d{
   //**************************************************
   void Modif::PrepareChangePointToNeighbourLineAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos, bool iMeToo )
   {
+    Point3d lMiddle;
+    for(  const PP3d::PointPtr pPoint : iVect )
+      {
+	lMiddle += pPoint->cPt;
+      }
+    lMiddle /= (double)iVect.size();
+
     for( PointPtr lPt : iVect )
       {
 	if( lPt->getOwners().size() )
@@ -17,11 +24,11 @@ namespace PP3d{
 	      {
 		LinePtr lLine = (LinePtr) lEntity;
 		
-		lAverage += lLine->first()->get();	
-		lAverage += lLine->second()->get();
+		lAverage += lLine->first()->get() - lMiddle;	
+		lAverage += lLine->second()->get()- lMiddle;
 	      }
 	    lAverage /= lPt->getOwners().size()*2;
-	    iVectNewPos.push_back( lAverage );
+	    iVectNewPos.push_back( lAverage+lMiddle );
 	  }
 	else
 	  {
@@ -32,14 +39,25 @@ namespace PP3d{
   //**************************************************
    void Modif::PrepareChangePointToNeighbourFacetAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos, bool iMeToo )
   {
+    Point3d lMiddle;
+  
+    for(  const PP3d::PointPtr pPoint : iVect )
+      {
+	lMiddle += pPoint->cPt;
+      }
+    lMiddle /= (double)iVect.size();
+
+    // pour tout les points
     for( PointPtr lPt : iVect )
       {
+	// on recupere les owners pour chaque point
 	PP3d::OwnerEntityVisitor lVisit;
 
 	lVisit.addOwnersOf( lPt );
 
 	for( FacetPtr lFacet : lVisit.cVectFacets )
 	  {
+	    // On recupere tout de ces owners
 	    lFacet->execVisitor( lVisit ) ; // je sais c'est tres limite comme code !
 	  }
 	
@@ -50,9 +68,9 @@ namespace PP3d{
 	  {
 	    for( PointPtr lOtherPt : lVisit.cVectPoints )
 	      {
-		if(  lOtherPt != lPt || iMeToo == false )
+		if(  lOtherPt != lPt  || iMeToo == false )
 		  {
-		    lAverage += (lOtherPt->get()+lPt->get())/2;		   
+		    lAverage += ((lOtherPt->get()-lMiddle)+(lPt->get()-lMiddle))/2;		   
 		  }
 	      }
 	
@@ -64,12 +82,12 @@ namespace PP3d{
 	      {
 		lAverage /= (lVisit.cVectPoints.size()-1)*2;
 	      }
-	    iVectNewPos.push_back( lAverage );
+	    iVectNewPos.push_back( lAverage +lMiddle);
 	    std::cout << iVectNewPos.size() << std::endl;
 	  }
 	else
 	  {
-	    iVectNewPos.push_back( lPt->get() );
+	    iVectNewPos.push_back( lPt->get());
 	  }
       }
   }

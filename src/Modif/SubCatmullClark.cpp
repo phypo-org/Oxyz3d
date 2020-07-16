@@ -53,7 +53,7 @@ PointPtr getPoint( DataBase * iBase, std::vector<PointPtr> &ioPts,  Point3d & iP
 //-----------------------------------------------
 // Creation des nlles facettes
 
-bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint )
+bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, bool iChangeOld )
 {
   std::vector<PointPtr> lNewPoints;
   std::vector<CCSubDiv> oSubDivs;
@@ -64,7 +64,8 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 
   //==== Il faudra aussi deplacer les anciens points ====
   // Le calcul est fait içi car ensuite la structure des facettes change
-  
+
+  if( iChangeOld )
   for( PointPtr lPt : iOldPoint )
     {
       Point3d lAvgFacePts;
@@ -267,6 +268,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 
 
   // on repositionne les anciens points avec les valeurs calcules auparavant
+  if( iChangeOld )
   for( auto lPair : lFinalPos )
     {
       lPair.first->get() = lPair.second;

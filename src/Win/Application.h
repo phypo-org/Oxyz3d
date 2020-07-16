@@ -31,14 +31,25 @@ namespace M3d{
 	
   enum class Transform{
     Nothing,
-      MoveX, MoveY, MoveZ, MoveNormal,
-      
+      MoveX,
+      MoveY,
+      MoveZ,
+      MoveNormal,
+      MoveAxis,
+            
       CenterRotX,
       CenterRotY,
       CenterRotZ,
       CenterRotAxis,
       
-      ScaleUniform
+      ScaleUniform,
+      ScaleX,
+      ScaleY,
+      ScaleZ,
+      ScaleRX,
+      ScaleRY,
+      ScaleRZ,
+      ScaleAxis
       };
 
   //************************************

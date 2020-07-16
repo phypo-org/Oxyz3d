@@ -75,7 +75,8 @@ namespace PP3d {
       cMat[1][3] += pY;
       cMat[2][3] += pZ;
     }
-    void initMove( const  Point3d pPt ) { initMove( pPt.cX, pPt.cY, pPt.cZ); }
+    void initMove( const  Point3d & pPt ) { initMove( pPt.cX, pPt.cY, pPt.cZ); }
+    void initMove( const  Double3 & pPt ) { initMove( pPt.x(), pPt.y(), pPt.z()); }
     //-----------------------------
     void initScale( PDouble pX, PDouble pY, PDouble pZ )
     {
@@ -84,7 +85,8 @@ namespace PP3d {
       cMat[1][1] *= pY;
       cMat[2][2] *= pZ;			
     }
-    void initScale( const  Point3d pPt ) { initScale( pPt.cX, pPt.cY, pPt.cZ); }
+    void initScale( const  Point3d & pPt ) { initScale( pPt.cX, pPt.cY, pPt.cZ); }
+    void initScale( const  Double3 & pPt ) { initScale( pPt.x(), pPt.y(), pPt.z()); }
     //-----------------------------
 
   private:
