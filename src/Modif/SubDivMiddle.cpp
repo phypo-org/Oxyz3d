@@ -3,57 +3,11 @@
 
 using namespace PP3d;
 
-//-----------------------------------------------
 
-struct CCSubDiv {
-  std::vector<Float3>   cEdgePoints;
-  Float3                cMiddle;
-  PP3d::FacetPtr        cOldFacet = nullptr;
-  std::vector<Float3>   cPoints;  
-};
-//-----------------------------------------------
-
-struct CCSubParam{
-  
-  std::vector<Float3>   cPoints;
-  std::vector<MyFacet*> cFacets;
-};
-//-----------------------------------------------
-// Calcule les coordonnees du milieu d"une facette
-class VisitorComputeMiddleFacet : public EntityVisitor	{
-
-  Point3d  cMiddle;
-  size_t   cNbPt=0;
-
-public:  
-  void execPoint( Point* pPoint ) override
-  {
-    cMiddle += pPoint->get();
-    cNbPt++;
-  }
-  Point3d getMiddle()
-  {
-    return cMiddle / cNbPt;
-  }
-};
-//-----------------------------------------------
-// Retrouve le point par sa position, ou en cree un nouveau
-
-PointPtr getPoint( DataBase * iBase, std::vector<PointPtr> &ioPts,  Point3d & iPt )
-{
-  PointPtr lSearchPt = Modif::FindPointByEpsilon( ioPts, iPt );
-  
-  if( lSearchPt == nullptr )
-    {
-      lSearchPt = iBase->getNewPoint(iPt);
-      ioPts.push_back( lSearchPt );        // pour un recherche ulterieure
-    }
-  return lSearchPt;
-}
 //-----------------------------------------------
 // Creation des nlles facettes
 
-bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, bool iChangeOld, bool iFlagFlatMiddle )
+bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, bool iChangeOld, bool iFlagFlatMiddle )
 {
   std::vector<PointPtr> lNewPoints;
   std::vector<CCSubDiv> oSubDivs;
@@ -142,11 +96,12 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
       std::vector<PointPtr>    lOldFacetPoints;
       // std::set<Point3d>    lOldPointsUniq;
       std::cout << "lFacet:" << lFacet++<< std::endl;
- 
-      // Nlle SubDivision
-      CCSubDiv lSubDummy;            
-      oSubDivs.push_back( lSubDummy );
-      CCSubDiv & lNewSubDiv = oSubDivs[ oSubDivs.size()-1 ];
+
+
+      std::vector<Float3>   cEdgePoints;
+      Float3                cMiddle;
+      PP3d::FacetPtr        cOldFacet = nullptr;
+      std::vector<Float3>   cPoints;
 
       
       { // Calcul du milieu de la facette (face point)
@@ -154,8 +109,8 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	lOldFacet->execVisitor( lVidMidFac );
       
 	// On creer le point du milieu pour la facette courante
-	lNewSubDiv.cMiddle   = lVidMidFac.getMiddle();
-	lNewSubDiv.cOldFacet = lOldFacet;
+	cMiddle   = lVidMidFac.getMiddle();
+	cOldFacet = lOldFacet;
       }
 
       int lLineNb=0;
@@ -168,8 +123,8 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  
 	  // Nouveau point edge
 	  Point3d lPtDummy;
-	  lNewSubDiv.cEdgePoints.push_back( lPtDummy );
-	  Point3d & lEdge = lNewSubDiv.cEdgePoints[ lNewSubDiv.cEdgePoints.size()-1 ];
+	  cEdgePoints.push_back( lPtDummy );
+	  Point3d & lEdge = cEdgePoints[ cEdgePoints.size()-1 ];
 
 	  // On memorise le premiers points de la ligne
 	  lOldFacetPoints.push_back( lLine->first() );
@@ -182,7 +137,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      lEdge *= 0.5; 
 	    }
 	  else
-	    lEdge += lNewSubDiv.cMiddle;
+	    lEdge += cMiddle;
 	  
 	  // Il reste a trouver le milieu de l'autre facette
 	  Line * lReverse = lLine->getReverseLine();
@@ -192,7 +147,6 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      std::cout << "Warning Reverse : no reverse " << std::endl;
 	      if( iFlagFlatMiddle == false)
 		lEdge /= 3;
-	      //	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
 	  FacetPtr lEdgeFacet = (FacetPtr)lReverse->firstOwner();
@@ -202,7 +156,6 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      // si la ligne reverse n'a pas de facette !
 	      if( iFlagFlatMiddle == false)
 		lEdge /= 3;
-	      //	      lNewSubDiv.cEdgePoints.push_back( lEdge );
 	      continue;
 	    }
 	  
@@ -242,7 +195,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
  
       // Les points sont calculées pour les nlles facettes
       // il y a autant de nlles facettes que de edge-point et elles ont 4 points
-      size_t lSz = lNewSubDiv.cEdgePoints.size();
+      size_t lSz = cEdgePoints.size();
       size_t lN = lSz-1;
 
       
@@ -259,9 +212,9 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      std::cout <<  "       Size:"<< lSz << " i:" << i << " j:" << j << std::endl;
 
 	      Point* Pt1 = lOldFacetPoints[i];     // sa position va changer
-	      Point* Pt2 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[i] ); 
-	      Point* Pt3 = getPoint( iBase, lNewPoints, lNewSubDiv.cMiddle); 
-	      Point* Pt4 = getPoint( iBase, lNewPoints, lNewSubDiv.cEdgePoints[j] );
+	      Point* Pt2 = getPoint( iBase, lNewPoints, cEdgePoints[i] ); 
+	      Point* Pt3 = getPoint( iBase, lNewPoints, cMiddle); 
+	      Point* Pt4 = getPoint( iBase, lNewPoints, cEdgePoints[j] );
 	      
 	      
 	      lFacPtr->addLine( iBase->getNewLine( Pt1, Pt2)  );

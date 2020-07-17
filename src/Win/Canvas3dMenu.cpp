@@ -95,7 +95,7 @@ namespace M3d {
 #define StrMenu_ScaleAxis  "# Scale around current axis"
 
 	
-#define StrMenu_Dup        "Duplication"	
+#define StrMenu_Dup        "Duplicate"	
 #define StrMenu_DupInPlace  StrMenu_Dup  " in place"
 #define StrMenu_DupMoveX    StrMenu_Dup  " and move X"
 #define StrMenu_DupMoveY    StrMenu_Dup  " and move Y"
@@ -130,12 +130,14 @@ namespace M3d {
 #define StrMenu_ConnectPoint "Connect Points"
   
 #define StrMenu_SubdivideCatmullClark      "Subdivide smooth"
-#define StrMenu_SubdivideCatmullClarkFalse "Subdivide Spike"
 #define StrMenu_Triangulate           "Triangulation"
+#define StrMenu_Triangulate2          "Triangulation 2"
   //#define StrMenu_TriangulateCentral     "Triangulation with central facet (Bug!)"
   
 #define StrMenu_Subdivide             "Subdivide"
 #define StrMenu_SubdivideSpike        "Spike"
+#define StrMenu_SubdivideCatmullClarkFalse "Small spike"
+#define StrMenu_SubdivideCatmullClarkFlatMiddle "Rought"
   //#define StrMenu_SubdivideCentralSpike "Spike  central facet (Bug!)"
 #define StrMenu_SubdivideFold        "Fold"
 //#define StrMenu_SubdivideCentralFold "Fold  central facet (Bug!)"
@@ -219,10 +221,13 @@ namespace M3d {
 	  && TheSelect.getNbSelected() > 0)
       {
 	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_SubdivideCatmullClarkFalse, "", MyMenuCallbackSubdiveCatmullClark, this);
 	pMenu.add( StrMenu_Triangulate, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_Triangulate2, "", MyMenuCallbackSubdiveCatmullClark, this);
 	//	pMenu.add( StrMenu_TriangulateCentral, "", MyMenuCallbackSubdivide, this);
 	
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFalse, "", MyMenuCallbackSubdiveCatmullClark, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFlatMiddle, "", MyMenuCallbackSubdiveCatmullClark, this);
+
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
 	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideFold, "", MyMenuCallbackSubdivide, this);
@@ -630,9 +635,24 @@ namespace M3d {
     TheSelect.execVisitorOnEntity( lVisit );
     TheSelect.removeAll();
 
-
+    bool lModifOldPts = true;
+    bool lFlatMiddle  = false;
     
-    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, strcmp( m->label(), StrMenu_SubdivideCatmullClark )==0))
+    if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFalse )==0 )
+      {
+	lModifOldPts = false;
+      }
+    else if( strcmp( m->label(), StrMenu_Triangulate2 )==0 )
+      {
+	lModifOldPts = false;
+	lFlatMiddle  = true;
+     }
+    else if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFlatMiddle )==0 )
+      {
+	lFlatMiddle  = true;
+     }
+
+    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lModifOldPts, lFlatMiddle ))
       {	
 	PushHistory();
 	TheAppli.redrawAll();
