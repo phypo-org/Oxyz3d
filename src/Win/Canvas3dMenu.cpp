@@ -128,16 +128,16 @@ namespace M3d {
 
 
 #define StrMenu_ConnectPoint "Connect Points"
-  
-#define StrMenu_SubdivideCatmullClark      "Subdivide smooth"
-#define StrMenu_Triangulate           "Triangulation"
-#define StrMenu_Triangulate2          "Triangulation 2"
-  //#define StrMenu_TriangulateCentral     "Triangulation with central facet (Bug!)"
-  
 #define StrMenu_Subdivide             "Subdivide"
+ 
+#define StrMenu_SubdivideCatmullClark      "Smooth"
+#define StrMenu_Triangulate           " 3 facettes"
+#define StrMenu_Triangulate2          " 3 facettes segment"
+#define StrMenu_Triangulate3          " 4 facettes "
+#define StrMenu_Triangulate4          " 4 facettes + marges"
+  
 #define StrMenu_SubdivideSpike        "Spike"
 #define StrMenu_SubdivideCatmullClarkFalse "Small spike"
-#define StrMenu_SubdivideCatmullClarkFlatMiddle "Rought"
   //#define StrMenu_SubdivideCentralSpike "Spike  central facet (Bug!)"
 #define StrMenu_SubdivideFold        "Fold"
 //#define StrMenu_SubdivideCentralFold "Fold  central facet (Bug!)"
@@ -190,10 +190,10 @@ namespace M3d {
         
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this);
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",  MyMenuCallbackSelect, this);
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this);	
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);	
       }
     
     if(  TheSelect.getSelectType() == PP3d::SelectType::Point
@@ -221,13 +221,13 @@ namespace M3d {
 	  && TheSelect.getNbSelected() > 0)
       {
 	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_Triangulate, "", MyMenuCallbackSubdivide, this);
-	pMenu.add( StrMenu_Triangulate2, "", MyMenuCallbackSubdiveCatmullClark, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate2, "", MyMenuCallbackSubdivide2, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate3, "", MyMenuCallbackSubdivide2, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate4, "", MyMenuCallbackSubdivide2, this, FL_MENU_DIVIDER);
 	//	pMenu.add( StrMenu_TriangulateCentral, "", MyMenuCallbackSubdivide, this);
 	
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFalse, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFlatMiddle, "", MyMenuCallbackSubdiveCatmullClark, this);
-
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
 	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideFold, "", MyMenuCallbackSubdivide, this);
@@ -399,8 +399,7 @@ namespace M3d {
 	if( lShape != nullptr )
 	  {
 	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
-	    PushHistory();
-	    
+	    PushHistory();	    
 	    TheAppli.redrawAll();
 	  }
       }
@@ -636,27 +635,48 @@ namespace M3d {
     TheSelect.removeAll();
 
     bool lModifOldPts = true;
-    bool lFlatMiddle  = false;
     
     if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFalse )==0 )
       {
 	lModifOldPts = false;
       }
-    else if( strcmp( m->label(), StrMenu_Triangulate2 )==0 )
-      {
-	lModifOldPts = false;
-	lFlatMiddle  = true;
-     }
-    else if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFlatMiddle )==0 )
-      {
-	lFlatMiddle  = true;
-     }
+ 
 
-    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lModifOldPts, lFlatMiddle ))
+    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lModifOldPts ))
       {	
 	PushHistory();
 	TheAppli.redrawAll();
       }
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData)
+  {
+      BEGINCALL  ;
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+    TheSelect.removeAll();
+
+    PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::CENTRAL_POINT;
+    
+    if( strcmp( m->label(), StrMenu_Triangulate3 )==0 )
+      {
+	lDivType = PP3d::SubDivFacetType::CENTRAL_FACET;	
+      }
+    if( strcmp( m->label(), StrMenu_Triangulate4 )==0 )
+      {
+	lDivType = PP3d::SubDivFacetType::CENTRAL_FACET_MARGE ;	
+      }
+    
+    //2      {
+    //	lFlagFacetMiddle = true;
+    //      }
+ 
+
+    if( PP3d::Modif::SubDivMiddle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lDivType ))
+      {	
+	PushHistory();
+	TheAppli.redrawAll();
+      }  
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData)

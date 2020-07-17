@@ -12,6 +12,10 @@
 #include <map>
 
 namespace PP3d{
+
+    enum class SubDivFacetType{ CENTRAL_POINT, CENTRAL_FACET, CENTRAL_FACET_MARGE };
+
+  
   //**************************************************
 
   struct UniquePoints{
@@ -75,8 +79,41 @@ namespace PP3d{
     static void FinalizeChangePointToNeighbourAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos );
     
     static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, bool iChgOldPt=true );
+
+    static bool SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, SubDivFacetType iSubDivType );
   };
   //**************************************************
+  // Calcule les coordonnees du milieu d"une facette
+  class VisitorComputeMiddleFacet : public EntityVisitor	{
+    
+    Point3d  cMiddle;
+    size_t   cNbPt=0;
+    
+  public:  
+    void execPoint( Point* pPoint ) override
+    {
+      cMiddle += pPoint->get();
+      cNbPt++;
+    }
+    Point3d getMiddle()
+    {
+      return cMiddle / cNbPt;
+    }
+  };
+  //**************************************************
+  // Retrouve le point par sa position, ou en cree un nouveau
+  
+  inline PointPtr getPoint( DataBase * iBase, std::vector<PointPtr> &ioPts,  Point3d & iPt )
+  {
+    PointPtr lSearchPt = Modif::FindPointByEpsilon( ioPts, iPt );
+    
+    if( lSearchPt == nullptr )
+      {
+	lSearchPt = iBase->getNewPoint(iPt);
+	ioPts.push_back( lSearchPt );        // pour un recherche ulterieure
+      }
+    return lSearchPt;
+  }
 
   
 #define DBG_MODIF( A )    if( Modif::sDbgModif > 0 ) std::cout << "DbgModif0> " << A << std::endl;
