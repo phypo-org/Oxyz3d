@@ -33,8 +33,7 @@ namespace PP3d {
     if( cSelectType == pType )
       { 
 	return;
-      }
-    
+      }    
     
     OwnerEntityVisitor lVisit;
     
@@ -49,8 +48,13 @@ namespace PP3d {
 	  lVisit.addOwnersOf( cSelectObjVect );
       }
 	  		
-    removeAll();     
-
+    removeAll();
+    
+    changeSelectType( pType, lVisit );
+  }
+  //--------------------------------
+  void Selection::changeSelectType(  SelectType pType, OwnerEntityVisitor & lVisit )
+  {            
     std::vector<EntityPtr> * lVectEntity = nullptr;
     switch( pType )
       {
@@ -65,7 +69,7 @@ namespace PP3d {
       case SelectType::Facet:  ;
 	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectFacets;
 	break;
-
+	
       case SelectType::Object:;
 	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectObjects;
 	break;
@@ -82,13 +86,23 @@ namespace PP3d {
   	break;
     }
     if( lVectEntity != nullptr )
-      {
-	
+      {	
 	for( EntityPtr lEntity : *lVectEntity )
 	  {
 	    addEntity( lEntity, true );
 	  }
       }
+  }
+  //--------------------------------
+  void Selection::addGoodEntityFor( std::vector<EntityPtr> & iToSelect )
+  {
+   OwnerEntityVisitor lVisit;
+    
+    for( EntityPtr lEntity : iToSelect )
+      {
+	lVisit.addOwnersOf( lEntity );
+      }
+    changeSelectType( cSelectType, lVisit);
   }
   //--------------------------------
   void Selection::addEntity( EntityPtr ioEntity, bool iSelectAll)

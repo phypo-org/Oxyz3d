@@ -13,9 +13,13 @@
 
 namespace PP3d{
 
-    enum class SubDivFacetType{ CENTRAL_POINT, CENTRAL_FACET, CENTRAL_FACET_MARGE };
+  static double sGoldNumber = 1.61803398875;
+  static double sInvGoldNumber = 1.0/1.61803398875;
 
-  
+  enum class SubDivFacetType{ ANGLE_SIMPLE, ANGLE_FACET_MARGE, CENTRAL_POINT, CENTRAL_FACET, CENTRAL_FACET_MARGE };
+
+  enum class SubDivSelectType{ SELECT_NONE=0, SELECT_MARGE=1, SELECT_CENTRAL=2, SELECT_ALL=3, };
+
   //**************************************************
 
   struct UniquePoints{
@@ -78,9 +82,22 @@ namespace PP3d{
     static void PrepareChangePointToNeighbourFacetAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos,  bool iMeToo =false);
     static void FinalizeChangePointToNeighbourAverage(  std::vector<PointPtr> & iVect, std::vector<Point3d> & iVectNewPos );
     
-    static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, bool iChgOldPt=true );
+    static bool SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, std::vector<EntityPtr> & oNewFacet, bool iChgOldPt=true );
 
-    static bool SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iFacets, std::set<PointPtr> &  iOldPoint, SubDivFacetType iSubDivType );
+    static bool SubDivMiddle( DataBase * iBase,
+			      std::set<FacetPtr>&  iFacets,
+			      std::set<PointPtr> &  iOldPoint,
+			      std::vector<EntityPtr> & oNewFacet,
+			      SubDivFacetType iSubDivType,
+			     SubDivSelectType iSubDivSelect = SubDivSelectType::SELECT_ALL,
+			     double iMargeFactor=sInvGoldNumber );
+    static bool SubDivAngle( DataBase * iBase,
+			     std::set<FacetPtr>&  iFacets,
+			     std::set<PointPtr> &  iOldPoint,
+			     std::vector<EntityPtr> & oNewFacet,
+			     SubDivFacetType iSubDivType,
+			     SubDivSelectType iSubDivSelect = SubDivSelectType::SELECT_ALL,
+			     double iMargeFactor=sInvGoldNumber );
   };
   //**************************************************
   // Calcule les coordonnees du milieu d"une facette

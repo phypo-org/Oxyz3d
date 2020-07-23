@@ -168,6 +168,7 @@ namespace PP3d {
 
     Point3d  get() const { return cPt; }
     Point3d& get()       { return cPt; }
+    operator const Point3d&() const { return cPt; }
     void     set(const Point3d & iPt)  {  cPt = iPt; }
 		
     void execVisitor( EntityVisitor& pVisit ) override;

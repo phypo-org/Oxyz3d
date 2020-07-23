@@ -13,9 +13,12 @@
 #include <memory>
 
 
-#include "Entity.h"
+#include "OwnerVisitor.h"
 
 #include "Utils/PPSingletonCrtp.h"
+
+
+#include "Entity.h"
 
 
 namespace PP3d {
@@ -92,6 +95,7 @@ namespace PP3d {
 		
   public:
 		
+    void addEntitys( std::vector<EntityPtr> & iVect,  bool iSelectAll=true );	
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();
@@ -112,6 +116,8 @@ namespace PP3d {
 
 
     void               changeSelectType( SelectType pType );
+    void               changeSelectType( SelectType pType, OwnerEntityVisitor & lVisit  );
+    void               addGoodEntityFor( std::vector<EntityPtr> &iVect);
     SelectType&        getSelectType() { return  cSelectType; }
     static const char* GetStrSelectType(SelectType);
 

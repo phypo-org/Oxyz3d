@@ -136,6 +136,7 @@ namespace M3d {
     static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );

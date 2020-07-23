@@ -7,7 +7,9 @@ using namespace PP3d;
 //-----------------------------------------------
 // Creation des nlles facettes
 
-bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, SubDivFacetType iSubDivType )
+bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, std::vector<EntityPtr> & oNewFacet, SubDivFacetType iSubDivType,
+			     SubDivSelectType iSubDivSelect,
+			     double iMargeFactor)
 {
   std::vector<PointPtr> lNewPoints;
   std::vector<PointPtr> iBorderPoints;
@@ -118,6 +120,8 @@ bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std
 	      for( size_t i=0; i < lSz ; i++ )
 		{
 		  FacetPtr lFacPtr = iBase->getNewFacet();
+		  if( iSubDivSelect != SubDivSelectType::SELECT_NONE )
+		    oNewFacet.push_back( lFacPtr );
 		  
 		  size_t j = (lN+i)%lSz;
 		  
@@ -144,10 +148,14 @@ bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std
 	    if( iSubDivType == SubDivFacetType::CENTRAL_FACET)
 	      {
 		FacetPtr lCentralFacPtr = iBase->getNewFacet();
+		if( ((int)iSubDivSelect) & ((int) SubDivSelectType::SELECT_CENTRAL))
+		  oNewFacet.push_back( lCentralFacPtr );
 		for( size_t i=0; i < lSz ; i++ )
 		  {
 		    FacetPtr lFacPtr = iBase->getNewFacet();
-		  
+		    if( ((int)iSubDivSelect) & ((int)SubDivSelectType::SELECT_MARGE))
+		      oNewFacet.push_back( lFacPtr );
+
 		    size_t j = (lN+i)%lSz;
 		  
 		    //	      std::cout <<  "       Size:"<< lSz << " i:" << i << " j:" << j << std::endl;
@@ -174,33 +182,36 @@ bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std
 	      if( iSubDivType == SubDivFacetType::CENTRAL_FACET_MARGE)
 		{		  
 		  FacetPtr lCentralFacPtr = iBase->getNewFacet();
+		  if( ((int)iSubDivSelect) & ((int) SubDivSelectType::SELECT_CENTRAL))
+		    oNewFacet.push_back( lCentralFacPtr );
 		  for( size_t i=0; i < lSz ; i++ )
 		    {
 		      FacetPtr lFacPtr = iBase->getNewFacet();
-		  
+		      if( ((int)iSubDivSelect) & ((int)SubDivSelectType::SELECT_MARGE))
+			  oNewFacet.push_back( lFacPtr );
+
 		      size_t j = (lN+i)%lSz;
 		  
 		      //	      std::cout <<  "       Size:"<< lSz << " i:" << i << " j:" << j << std::endl;
 
-		      //	1.61803398875	      
 		      Point* Pt1 = lOldFacetPoints[i];     // sa position va changer
 		      Point* Pt2 = getPoint( iBase, lNewPoints, cEdgePoints[i] );
 
 		      
 		      // Point3d l3 = (cEdgePoints[i] + cMiddle) / 2;
-
-		        Point3d Dist3 = cMiddle - cEdgePoints[i];
-		       Point3d l3 = cEdgePoints[i] + (Dist3 /1.61803398875);
+		      
+		      Point3d Dist3 = cMiddle - cEdgePoints[i];
+		      Point3d l3 = cEdgePoints[i] + (Dist3 * iMargeFactor);
 		      
 		      Point* Pt3 =  getPoint( iBase, lNewPoints, l3 );
-		  
-		        Point3d Dist4 = cMiddle - cEdgePoints[j];
-		       Point3d l4 = cEdgePoints[j]+ (Dist4 /1.61803398875);
-
-		       //   Point3d l4 = (cEdgePoints[j] + cMiddle) /  2;
+		      
+		      Point3d Dist4 = cMiddle - cEdgePoints[j];
+		      Point3d l4 = cEdgePoints[j]+ (Dist4 * iMargeFactor);
+		      
+		      //   Point3d l4 = (cEdgePoints[j] + cMiddle) /  2;
 
 		      Point* Pt4 =  getPoint( iBase, lNewPoints, l4 );
-		    
+		      
 		      Point* Pt5 = getPoint( iBase, lNewPoints, cEdgePoints[j] );
 		  
 		  
@@ -215,7 +226,7 @@ bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std
 		  
 		      iBase->validEntity( lFacPtr, true );// VALIDATION (a optimiser)
 
-		      lCentralFacPtr->addLine(  iBase->getNewLine(Pt4, Pt3) );
+		      lCentralFacPtr->addLine( iBase->getNewLine(Pt4, Pt3) );
 		    }
 	      
 		  lPoly->addFacet( lCentralFacPtr );

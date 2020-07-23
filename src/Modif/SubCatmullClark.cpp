@@ -16,7 +16,7 @@ struct CCSubDiv {
 //-----------------------------------------------
 // Creation des nlles facettes
 
-bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, bool iChangeOld )
+bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std::set<PointPtr> &  iOldPoint, std::vector<EntityPtr> & oNewFacet, bool iChangeOld )
 {
   std::vector<PointPtr> lNewPoints;
   std::vector<CCSubDiv> oSubDivs;
@@ -205,7 +205,8 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  for( size_t i=0; i < lSz ; i++ )
 	    {
 	      FacetPtr lFacPtr = iBase->getNewFacet();
-		
+	      oNewFacet.push_back( lFacPtr );
+	      
 	      size_t j = (lN+i)%lSz;
 	      	      
 	      //	      std::cout <<  "       Size:"<< lSz << " i:" << i << " j:" << j << std::endl;

@@ -131,10 +131,11 @@ namespace M3d {
 #define StrMenu_Subdivide             "Subdivide"
  
 #define StrMenu_SubdivideCatmullClark      "Smooth"
-#define StrMenu_Triangulate           " 3 facettes"
-#define StrMenu_Triangulate2          " 3 facettes segment"
-#define StrMenu_Triangulate3          " 4 facettes "
-#define StrMenu_Triangulate4          " 4 facettes + marges"
+#define StrMenu_Triangulate           " angles "
+#define StrMenu_Triangulate1          " angles + central facette+ marges "
+#define StrMenu_Triangulate2          " segments"
+#define StrMenu_Triangulate3          " segments + central facette"
+#define StrMenu_Triangulate4          " segments + central facette + marges"
   
 #define StrMenu_SubdivideSpike        "Spike"
 #define StrMenu_SubdivideCatmullClarkFalse "Small spike"
@@ -221,7 +222,8 @@ namespace M3d {
 	  && TheSelect.getNbSelected() > 0)
       {
 	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate,  "", MyMenuCallbackSubdivide1, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate1, "", MyMenuCallbackSubdivide1, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate2, "", MyMenuCallbackSubdivide2, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate3, "", MyMenuCallbackSubdivide2, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate4, "", MyMenuCallbackSubdivide2, this, FL_MENU_DIVIDER);
@@ -231,25 +233,26 @@ namespace M3d {
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
 	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideFold, "", MyMenuCallbackSubdivide, this);
-	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralFold, "", MyMenuCallbackSubdivide, this);
+	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralFold, "", MyMenuCallbackSubdivide, this); 
       }
    
     switch( TheSelect.getSelectType() )
       {
       case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
+      case PP3d::SelectType::Object :
+      case PP3d::SelectType::Poly :
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
+          [[fallthrough]]; 
       case PP3d::SelectType::Facet :	
 	{
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "", MyMenuCallbackExtrude, this);
 	}
 	break;
-      case PP3d::SelectType::Poly :
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
-	break;
-      case PP3d::SelectType::Object :
       case PP3d::SelectType::All :
       default:;
       }
@@ -429,14 +432,40 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
   {	  		
-    BEGINCALL
-    //    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);
-
-		
-    //============== TRANSFORMATION ====================
-    if( strcmp( m->label(), StrMenu_ExtrudeX ) == 0)
+    BEGINCALL ;
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+    
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.1 ))
       {
-	std::cout << "Extrude X" << std::endl;
+	TheSelect.removeAll();
+	TheSelect.addGoodEntityFor(lNewFacets);  
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	
+	//============== TRANSFORMATION ====================
+	if( strcmp( m->label(), StrMenu_ExtrudeX ) == 0)
+	  {
+	    Application::Instance().setCurrentTransformType(Transform::MoveX);
+	  }
+	else if( strcmp( m->label(), StrMenu_ExtrudeY ) == 0)
+	  {
+	    Application::Instance().setCurrentTransformType(Transform::MoveY);
+	  }
+	else if( strcmp( m->label(), StrMenu_ExtrudeZ ) == 0)
+	  {
+	    Application::Instance().setCurrentTransformType(Transform::MoveZ);
+	  }
+	else if( strcmp( m->label(), StrMenu_ExtrudeNorm) == 0)
+	  {
+	    Application::Instance().setCurrentTransformType(Transform::MoveNormal);
+	  }
+	else if( strcmp( m->label(), StrMenu_ExtrudeTrans ) == 0)
+	  {
+	    Application::Instance().setCurrentTransformType(Transform::MoveAxis);
+	  }
       }
   }
   //-------------------------------------------
@@ -632,7 +661,6 @@ namespace M3d {
     BEGINCALL  ;
     PP3d::SortEntityVisitor lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
-    TheSelect.removeAll();
 
     bool lModifOldPts = true;
     
@@ -641,12 +669,39 @@ namespace M3d {
 	lModifOldPts = false;
       }
  
-
-    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lModifOldPts ))
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    if( PP3d::Modif::SubCatmullClark( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, lModifOldPts ))
       {	
+	TheSelect.removeAll();
+	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
 	TheAppli.redrawAll();
+      }    
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData)
+  {
+      BEGINCALL  ;
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+
+    PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::ANGLE_SIMPLE;
+    
+    if( strcmp( m->label(), StrMenu_Triangulate1 )==0 )
+      {
+	lDivType = PP3d::SubDivFacetType::ANGLE_FACET_MARGE;	
       }
+ 
+
+ 
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, lDivType ))
+      {	
+	TheSelect.removeAll();
+	TheSelect.addGoodEntityFor(lNewFacets);
+	PushHistory();
+	TheAppli.redrawAll();       	    
+      }  
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData)
@@ -654,7 +709,6 @@ namespace M3d {
       BEGINCALL  ;
     PP3d::SortEntityVisitor lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
-    TheSelect.removeAll();
 
     PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::CENTRAL_POINT;
     
@@ -667,15 +721,15 @@ namespace M3d {
 	lDivType = PP3d::SubDivFacetType::CENTRAL_FACET_MARGE ;	
       }
     
-    //2      {
-    //	lFlagFacetMiddle = true;
-    //      }
- 
 
-    if( PP3d::Modif::SubDivMiddle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lDivType ))
+ 
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    if( PP3d::Modif::SubDivMiddle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, lDivType ))
       {	
+	TheSelect.removeAll();
+	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll();       	    
       }  
   }
   //-------------------------------------------
@@ -685,18 +739,7 @@ namespace M3d {
      
     PP3d::SortEntityVisitor lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
-    TheSelect.removeAll();
 
-    /*
-    bool pCentral = false;
-    if( strcmp( m->label(), StrMenu_TriangulateCentral ) == 0
-	|| strcmp( m->label(), StrMenu_SubdivideCentralFold ) == 0
-	|| strcmp( m->label(), StrMenu_SubdivideCentralSpike ) == 0 )
-      {
-	pCentral = true;
-      }
-    */
-    //    std::cout << "Canvas3d::MyMenuCallbackSubdivide Central:" << pCentral << std::endl;
     
     PP3d::SubDiv::SubParam lSubDivLocal( 1, 1, false, PP3d::SubDiv::SubNormalizeType::NORMALIZE_NONE );
     
@@ -717,6 +760,8 @@ namespace M3d {
 	      PP3d::Modif::FinalizeChangePointToNeighbourAverage( lVisit.cVectPoints, lVectNewPt );
 	    }
       }
+    TheSelect.removeAll();
+    //    TheSelect.addGoodEntityFor(lNewFacets);
     PushHistory();
     TheAppli.redrawAll();
   }
