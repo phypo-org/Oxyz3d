@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   if( (lVal = lArgs.getValue(  "-load" )).size() != 0 )
     {
       if( PP3d::MyRead::Read(lVal.c_str(),
-			     *Application::Instance().getDatabase()))
+			     *Application::Instance().getDatabase(), &TheSelect ))
 	{
 	  Application::Instance().redrawAll();
 	}
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
       CallConsoleLua();     
     }
   
-  PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() );
+  PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect );
 
  
   return Fl::run();

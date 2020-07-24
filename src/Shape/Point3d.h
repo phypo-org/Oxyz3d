@@ -26,7 +26,8 @@ namespace PP3d {
     TPoint3d( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	:cX(pX), cY(pY), cZ(pZ) {}
     void set ( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	{ cX = pX;	cY = pY;	cZ = pZ; }
     void zero(){ cX=	cY=	cZ=0;	}
-    TPoint3d(const TPoint3d& iSrc )
+    void raz() { zero();}
+   TPoint3d(const TPoint3d& iSrc )
       :cX(iSrc.cX), cY(iSrc.cY), cZ(iSrc.cZ)
     {
       

@@ -1,6 +1,7 @@
 #include "SavRead.h"
 
 #include "DataBase.h"
+#include "Selection.h"
 
 #include "ObjectLine.h"
 #include "ObjectFacet.h"
@@ -16,6 +17,8 @@ const char* TokObject="Object:";
 
 const char* TokSaisiePt="SaisiePt:";
 
+const char* TokSelection="Selection:";
+
 
 bool sDebugSav = false;
 
@@ -23,7 +26,7 @@ bool sDebugSav = false;
 
 namespace PP3d {
   //*************************************
-  bool MySav::save( DataBase& pData, std::set<Entity*> * iFilter)
+  bool MySav::save( DataBase& pData, Selection * iSel, std::set<Entity*> * iFilter)
   {
     auto lEntities = pData.getEntities();
 
@@ -171,7 +174,19 @@ namespace PP3d {
 	  }	    
 	cOut << std::endl;	    
       }
-    
+
+    if( iSel )
+      {
+	cOut << TokSelection << ' ' 
+	     <<	Selection::GetStrSelectType( iSel->getSelectType() )
+	     << ' ' << iSel->getNbSelected();
+	
+	for( auto lEntity : iSel->getSelectionVect() )
+	  {
+	    cOut << ' ' << lEntity->getId();
+	  }					
+	cOut << std::endl;	    
+      }
     
     return true;
   }
@@ -181,7 +196,7 @@ namespace PP3d {
 #define ReadEndLine		std::getline(	cIn,  lEndOfLine, '\n' )
 
   //--------------------------------
-  bool MyRead::read( DataBase& pData, bool pConserveOldId  )
+  bool MyRead::read( DataBase& pData, Selection * ioSel, bool pConserveOldId  )
   {
     try {
       std::unordered_map<EntityId, Entity*> lLocalDico;
@@ -341,6 +356,8 @@ namespace PP3d {
 			  break;
 			case ObjectType::ObjNull: break;								
 			}
+
+
 		      if( lObj != nullptr )
 			{
 			  if( pConserveOldId )
@@ -358,7 +375,36 @@ namespace PP3d {
 			  SAVCOUT<< "************** pData.addObject 22222 *******************" << std::endl;
 			}
 		    }
-		  else
+		  else		    
+		    if( lToken == TokSelection )
+		      {
+			std::string lStrTypeSelect;
+			cIn >> lStrTypeSelect;
+
+			SelectType lSelType = Selection::GetSelectTypeFromStr( lStrTypeSelect.c_str() );
+		
+			if( ioSel )
+			{
+			  ioSel->changeSelectType( lSelType );
+			}
+
+			size_t lNb;
+			cIn >>  lNb  ;
+
+			for( size_t i=0; i< lNb; i++)
+			  {			    
+			    EntityId lId;
+			    
+			    cIn >> lId ;
+			    if( ioSel )
+			      {
+				EntityPtr lEntity = lLocalDico.at(lId);
+				if( lEntity != nullptr )
+				  ioSel->addEntity( lEntity, true );
+			      }
+			  }		      
+		      }
+		    else
 		    {
 		      SAVCOUT<< " Unknown Token :" << lToken << std::endl;
 		    }

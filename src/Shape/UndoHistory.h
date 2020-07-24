@@ -17,7 +17,8 @@
 // On pourrait avoir un arbre de modification.
 
 namespace PP3d {
-  
+
+  class Selection;
   class  UndoHistory : public PPSingletonCrtp<UndoHistory>{
 
     
@@ -33,9 +34,9 @@ namespace PP3d {
 
     int getLast() { return ((int)cHistoSav.size())-1; }
     
-    bool sav(  DataBase & iDb );
-    bool readPrev( DataBase & oDb );
-    bool readNext( DataBase & oDb );
+    bool sav(  DataBase & iDb, Selection * iSel );
+    bool readPrev( DataBase & oDb, Selection * ioSel );
+    bool readNext( DataBase & oDb, Selection * ioSel );
     void cancelLastSav();
 
     int    getCurrent() { return cCurrent; }

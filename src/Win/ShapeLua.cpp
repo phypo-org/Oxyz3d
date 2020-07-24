@@ -89,7 +89,7 @@ namespace M3d {
 	}
       */
       if( PP3d::MySav::Save( lua_tostring(pLua, 1),
-			     *Application::Instance().getDatabase() ))
+			     *Application::Instance().getDatabase(), &TheSelect  ))
 	{
 	  //	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "Save ok");	  
@@ -128,7 +128,7 @@ namespace M3d {
 	  */
       
       if( PP3d::MyRead::Read( lua_tostring(pLua, 1),
-			*Application::Instance().getDatabase() ))
+			      *Application::Instance().getDatabase(), &TheSelect ))
 	{
 	  Application::Instance().redrawAll();
 	  lOut << "OK"<< std::endl;

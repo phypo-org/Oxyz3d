@@ -120,6 +120,7 @@ namespace PP3d {
     void               addGoodEntityFor( std::vector<EntityPtr> &iVect);
     SelectType&        getSelectType() { return  cSelectType; }
     static const char* GetStrSelectType(SelectType);
+    static SelectType  GetSelectTypeFromStr( const char* pStr );
 
     //	void drawGL( DataBase& pDatabase, ViewProps& pViewProps );
 

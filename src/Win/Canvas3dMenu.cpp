@@ -82,6 +82,7 @@ namespace M3d {
 #define StrMenu_RotX     "Rotate X"
 #define StrMenu_RotY     "Rotate Y"
 #define StrMenu_RotZ     "Rotate Z"
+#define StrMenu_RotNorm  "Rotate normal"
 #define StrMenu_RotAxis  "Rotate around current axis"
 
 #define StrMenu_Scale      "Scale"
@@ -173,7 +174,11 @@ namespace M3d {
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if( TheAppli.getCurrentAxis() )
-      pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+      pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
+    
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Object
+	 || TheSelect.getSelectType() ==  PP3d::SelectType::Facet)
+      pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);    
 		
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleU, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleX, "",  MyMenuCallbackSelect, this);
@@ -241,9 +246,8 @@ namespace M3d {
       case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
       case PP3d::SelectType::Object :
-      case PP3d::SelectType::Poly :
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
-          [[fallthrough]]; 
+	/////       [[fallthrough]];
+	break;
       case PP3d::SelectType::Facet :	
 	{
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", MyMenuCallbackExtrude, this);
@@ -252,6 +256,9 @@ namespace M3d {
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "", MyMenuCallbackExtrude, this);
 	}
+	break;
+      case PP3d::SelectType::Poly :
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
 	break;
       case PP3d::SelectType::All :
       default:;
@@ -438,7 +445,7 @@ namespace M3d {
     
     std::vector<PP3d::EntityPtr> lNewFacets;
     
-    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.1 ))
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
       {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);  
@@ -476,14 +483,17 @@ namespace M3d {
     
     std::stringstream lDupStr;
     PP3d::MySav lSav( lDupStr );				
-    bool lRet = lSav.save( *TheAppli.getDatabase(), &lVisit.cSetAllEntity );
+    bool lRet = lSav.save( *TheAppli.getDatabase(), nullptr, &lVisit.cSetAllEntity );
     
     if( lRet )
       {
 	std::vector<PP3d::EntityPtr> lNewObjs;
   	PP3d::MyRead lRead( lDupStr, &lNewObjs );
 	
-	    		
+	TheSelect.removeAll();	
+	lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false );
+
+	/*
 	lRet = lRead.read( *TheAppli.getDatabase(), false );
 	if( lRet && lNewObjs.size() )
 	  {	    
@@ -493,6 +503,7 @@ namespace M3d {
 		TheSelect.addEntity( lObj );
 	      }
 	  }
+	*/
       }
     return lRet;
   }
@@ -549,6 +560,11 @@ namespace M3d {
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
+      }
+    else if( strcmp( m->label(), StrMenu_RotNorm ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotNorm );
       }
      // SCALE
     else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)

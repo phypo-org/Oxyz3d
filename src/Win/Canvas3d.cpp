@@ -25,6 +25,7 @@
 #include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
 #include "Shape/SortVisitor.h"
+#include "Shape/PP3dUtils.h"
 
 
 #include "Application.h"
@@ -249,6 +250,7 @@ namespace M3d {
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
   {    
     DBG_SEL( " processHits=" <<  pNbHits );
+    //   std::cout <<  "======== processHits=" <<  pNbHits  << std::endl;
 		
     GLuint*	ptr = (GLuint *) pSelectBuf;
 		
@@ -262,18 +264,20 @@ namespace M3d {
 	ptr++;
 				
 	DBG_SEL_NL( "Nb names :" << lNbNames << " >>> ") ;
-																						
-	float lZ1 = (float) (*ptr/0x7fffffff);		ptr++;
-	float lZ2 = (float) (*ptr/0x7fffffff);		ptr++;
+      	
+	//	double lZ1 = ((float)*ptr) /0x7fffffff;		ptr++;	
+	//	double lZ2 = ((float)*ptr)/0x7fffffff;		ptr++;
+													 
+	double lZ1 = ((float)*ptr);		ptr++;	
+	double lZ2 = ((float)*ptr);		ptr++;
 													 
 	for (GLuint j = 0; j < lNbNames; j++) // for each name 
 	  {
 	    GLuint lName = *ptr; ptr++;
 						
-	    //					cout << lName  << " Z:" << lZ1 << " -> " << lZ2 << endl;
+	    //	    cout << "---" <<  lName  << " Z:" << lZ1 << " -> " << lZ2 << endl;
 	    if( lName != 0)
 	      {
-		//								PP3d::PickingHit* lHit = new PP3d::PickingHit( lName, lZ1, lZ2 );
 		PP3d::PickingHit lHit( lName, lZ1, lZ2 );
 		lVectHits.push_back(lHit);
 	      }
@@ -309,6 +313,7 @@ namespace M3d {
   void Canvas3d::picking( int pX, int pY, bool pFlagMove )
   {
     DBG_SEL( "=== picking:" << pX << " " << pY << " SM:" << cSelectMode );
+    //    std::cout <<  "=== picking:" << pX << " " << pY << " SM:" << cSelectMode << std::endl;
 
     GLint lViewport[4];
     glGetIntegerv(GL_VIEWPORT, lViewport);
@@ -666,6 +671,7 @@ namespace M3d {
       case Transform::CenterRotX :
       case Transform::CenterRotY :
       case Transform::CenterRotZ :
+      case Transform::CenterRotNorm :
       case Transform::CenterRotAxis :
 	{		
 	  std::cout << "Center:" << cDragCenter  << std::endl;
@@ -713,6 +719,40 @@ namespace M3d {
 	      
 	      lMatRot.initRotZ( TheAppli.currentTransform().angle().z() );
 	      break;
+	      
+	    case Transform::CenterRotNorm :
+	      {
+		if( TheSelect.getNbSelected() >0
+		    && (TheSelect.getSelectType() == PP3d::SelectType::Object
+			|| TheSelect.getSelectType() ==  PP3d::SelectType::Facet))
+		  {
+		    PP3d::SortEntityVisitor lVisit;		    
+		    TheSelect.execVisitorOnEntity(lVisit);
+		
+		    PP3d::Point3d lCenter;
+		    PP3d::Point3d lNorm;
+		
+		    if( PP3d::GetVectorFromFacets( lVisit, lNorm, lCenter ))
+		      {			
+			//	      std::cout << "VERIFICATION VECTEUR NORM:"
+			//	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
+			//	      << std::endl;
+			// On prend x mais on pourrait prendre ce que l'on veut
+			TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+			CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+			
+			std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
+				  << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
+				  << std::endl;	  
+			
+			// BUG  BUG BUG BUG BUG BUG
+			
+			lMatRot.initRotAxis( lNorm, TheAppli.currentTransform().angle().x() );
+		      }
+		  }
+	      }
+	      break;
+
 	      
 	    case Transform::CenterRotAxis :
 	      {

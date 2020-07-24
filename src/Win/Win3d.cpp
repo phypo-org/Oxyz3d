@@ -32,6 +32,7 @@
 #include "Shape/ExportObj.h"
 
 #include "Utils/PPFile.h"
+#include "Shape/PP3dUtils.h"
 
 #include "Win3d.h"
 #include "Canvas3d.h"
@@ -127,11 +128,11 @@ namespace M3d {
 	  {
 	    PP3d::SortEntityVisitor  lVisit;
 	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    	    
-	    lRet = lSav.save( *ioDatabase, &lVisit.cSetAllEntity );
+	    lRet = lSav.save( *ioDatabase, &TheSelect, &lVisit.cSetAllEntity );
 	  }
 	else
 	  {
-	    lRet = lSav.save( *ioDatabase, nullptr );
+	    lRet = lSav.save( *ioDatabase,  &TheSelect, nullptr );
 	  }
 	
 	lOut.close();
@@ -140,7 +141,7 @@ namespace M3d {
     return false;
   }
   //-------------------------------------------
-  static bool OpenBase( PP3d::DataBase * ioDatabase, const std::string & iName, bool iKeepId )
+  static bool OpenBase( PP3d::DataBase * ioDatabase,const std::string & iName, bool iKeepId )
   {
     std::ifstream lIn;						
     lIn.open( iName );
@@ -148,7 +149,7 @@ namespace M3d {
     if( lIn.good() )
       {									
 	PP3d::MyRead lRead( lIn );
-	bool lRet = lRead.read( *ioDatabase, iKeepId );
+	bool lRet = lRead.read( *ioDatabase, &TheSelect, iKeepId );
 	lIn.close();
 	return lRet;
       }
@@ -326,15 +327,20 @@ namespace M3d {
   {
     MyButton* lButton = reinterpret_cast<MyButton*>( pData);
     Win3d*    lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
-	
+    
+    TheSelect.removeAll();
+    
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-    if( PP3d::UndoHistory::Instance().readPrev( *luBase ) )
+    if( PP3d::UndoHistory::Instance().readPrev( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();
 	//	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
 
  	TheAppli.setDatabase( luBase );
       }
+    else
+      TheSelect.removeAll();
+
     TheAppli.redrawAllCanvas3d();
     TheAppli.redrawObjectTree();
   }
@@ -344,14 +350,18 @@ namespace M3d {
     MyButton* lButton = reinterpret_cast<MyButton*>( pData);
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
     
+    TheSelect.removeAll();
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-    if( PP3d::UndoHistory::Instance().readNext( *luBase ) )
+    if( PP3d::UndoHistory::Instance().readNext( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();
 	//	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
 
 	TheAppli.setDatabase( luBase );
       }
+    else
+      TheSelect.removeAll();
+      
  	
     TheAppli.redrawAll();
   }
@@ -1011,6 +1021,7 @@ namespace M3d {
 		  {
 		    PP3d::SortEntityVisitor lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
+		    /*
 		    size_t lSz = lVisit.cVectFacets.size();
 		    if( lSz >= 1 )
 		      {
@@ -1029,8 +1040,14 @@ namespace M3d {
 			    lCenter += pPoint->get();
 			  }
 			lCenter /= (double)lVisit.cVectPoints.size();
-			lNorm += lCenter;
-			
+		    */
+		    PP3d::Point3d lNorm;
+		    PP3d::Point3d lCenter;
+
+		    if( PP3d::GetVectorFromFacets( lVisit, lNorm, lCenter ))
+		      {
+			lNorm += lCenter;		    
+		    
 			if( TheAppli.addAxis( lCenter, lNorm ) == false)
 			  {
 			    fl_alert( "Creation of axe failed, perhaps same coordinates ?" );

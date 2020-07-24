@@ -7,16 +7,17 @@
 
 
 #include "SavRead.h"
+#include "Selection.h"
 
 namespace PP3d {
 
 
   //*************************************
-  bool UndoHistory::sav(  DataBase & iDb )
+  bool UndoHistory::sav(  DataBase & iDb, Selection *iSel )
   {
     std::ostringstream lOs;
     MySav lSav( lOs );
-    if( lSav.save( iDb ) == true )
+    if( lSav.save( iDb, iSel ) == true )
       {	  
 	if( cCurrent > 0 && cCurrent != getLast() )
 	  {
@@ -42,7 +43,7 @@ namespace PP3d {
     return false;
   }
   //------------------------------ 
-  bool UndoHistory::readPrev( DataBase & oDb )
+  bool UndoHistory::readPrev( DataBase & oDb, Selection *ioSel )
   {
 
     if( cCurrent <= 0 )
@@ -61,10 +62,10 @@ namespace PP3d {
       
          
     MyRead lRead( lIs );
-    return  lRead.read( oDb, true );
+    return  lRead.read( oDb, ioSel, true );
   }   
   //------------------------------ 
-  bool  UndoHistory::readNext( DataBase & oDb )
+  bool  UndoHistory::readNext( DataBase & oDb, Selection *ioSel )
   {    
     cCurrent++;
     if( cCurrent <= 0 )
@@ -83,7 +84,7 @@ namespace PP3d {
     std::istringstream lIs( cHistoSav[cCurrent] );
       
     MyRead lRead( lIs );
-    return  lRead.read( oDb, true ); 
+    return  lRead.read( oDb, ioSel, true ); 
   }   
   //------------------------------ 
   void UndoHistory::cancelLastSav()

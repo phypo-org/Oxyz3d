@@ -249,7 +249,7 @@ namespace PP3d {
   {
     DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
 		
-    std::cout << " <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " << std::endl;
+    //    std::cout << std::endl << "<<<<<Selection::selectPickingHit size: " << pHits.size() <<  " SM:" << pSelectMode << " " << std::endl;
 		
     for( PP3d::PickingHit& pHit : pHits )
       {
@@ -273,8 +273,7 @@ namespace PP3d {
 
     for( PP3d::PickingHit& pHit : pHits )
       {
-	DBG_SEL( "Hit :" << pHit );
-			
+	DBG_SEL( "Hit :" << pHit );			
       }
     //    cout<<"**************** 333 ***********************"<< endl;
 
@@ -283,10 +282,14 @@ namespace PP3d {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
-						
+    /*    for( PP3d::PickingHit& pHit : pHits )
+      {				
+	cout << ">>> Hit:" << pHit << endl;
+      }
+    */
     for( PP3d::PickingHit& pHit : pHits )
       {				
-	cout << "Hit:" << pHit << endl;
+	//	cout << "Hit:" << pHit << endl;
 	EntityPtr lEntity = pHit.cEntity;
 								
 	cLastHightLightEntityId = 0;
@@ -302,7 +305,7 @@ namespace PP3d {
 	  {
 	    if ( lEntity->isSelect() == false )
 	      {
-		cout<<"Selection Error "<< lEntity->getId() <<" mismach"<< endl;
+		cerr <<"Selection Error "<< lEntity->getId() <<" mismach"<< endl;
 	      }
 
 
@@ -367,15 +370,35 @@ namespace PP3d {
   {
     switch( pSelectType )
       {
-      case SelectType::Null:  return "None";
+      case SelectType::Null:   return "None";
       case SelectType::Point:  return "Point";
       case SelectType::Line:   return "Line";
       case SelectType::Facet:  return "Facet";
-      case SelectType::Poly: return "Poly";
+      case SelectType::Poly:   return "Poly";
       case SelectType::Object: return "Object";
-      case SelectType::All: return "All";
+      case SelectType::All:    return "All";
       }
     return "SelectType::unknown";
+  }
+  //--------------------------------
+  SelectType  Selection::GetSelectTypeFromStr( const char* pStr )
+  {
+    if( ::strcmp( pStr, "None" ) == 0 )
+      return SelectType::Null;
+    else                if( ::strcmp( pStr, "Point" ) == 0 )
+      return SelectType::Point;
+    else		if( ::strcmp( pStr, "Line" ) == 0 )
+      return SelectType::Line;
+    else		if( ::strcmp( pStr, "Facet" ) == 0 )
+      return SelectType::Facet;
+    else		if( ::strcmp( pStr, "Poly" ) == 0 )
+      return SelectType::Poly;
+    else		if( ::strcmp( pStr, "Object" ) == 0 )
+      return SelectType::Object;
+    else		if( ::strcmp( pStr, "All" ) == 0 )
+      return SelectType::All;
+    
+    return SelectType::Null;
   }
   //--------------------------------
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )

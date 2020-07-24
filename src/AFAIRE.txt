@@ -1,73 +1,53 @@
 
-Deplacement etc avec la normale
 -----------------------------------------------
-Changement de taille (barycentre des objets selectionné)
+o Commande pour rejouer la derniére commande
 -----------------------------------------------
-Changer  nom des subdivisions
------------------------------------------------
-Subdivide en 4 avec normale !
------------------------------------------------
-Extrusion de facettes
-Extrusion de points ?
+o Extrusion de points ?
 ----------------------------------------------
-Pontage
-----------------------------------------------
-- Faire la duplication :
-  Selection le(s) objets :
-  - faire une sauvegarde dans un string de la seletion
-  - les creer dans une base temporaire, recuperer les points de cette
-  base
-  - afficher la base en en modifiant les point comme pour le move et
-  rot classique
-  - a la fin, fusionnner la base temporaire avec l'ancienne (repassé
-  par une sauvegarde mémoire ?), ( recopier les Entité dans
-  l'ancienne)
-  ATTENTION AU ID, ET A L'UNIQUE ID DE LA BASE
-
-On pourrait faire la meme chose pour les nouveau objets habituel les
-mettre dans une base temporaire .
-IL faut ajouter le tracer de la nouvelle base dans Canvas3d::draw .
-
+o Pontage
 ----------------------------------------------
 
-- Selection de la saisie ? base separé, id dans un interval donné ?
+o Selection de la saisie ? base separé, id dans un interval donné ?
   constituant avec de vrai id et destruction s'il y a lieu?
 	Selection des objets temporaire ?
 
 - BUG :  avec le focus
 -----------------------------------------------
-Dialogues fixes ? 
+o Dialogues fixes ? 
 -----------------------------------------------
-- Creation de surface avec plusieurs line ou polyline
------------------------------------------------
-
-facetisation des points 
-
-OK - Subdivision avec lissage des facettes
------------------------------------------------
-Connexion entre deux facettes (Trous)
-Connexion entre deux facettes (Ponts)
------------------------------------------------
-Regroupement d'objets en ensemble / posibilités de les selectionner
+o Creation de surface avec plusieurs line ou polyline
 -----------------------------------------------
 
-o Sauvegarde de l'historique
+o facetisation des points 
+
+-----------------------------------------------
+o Connexion entre deux facettes (Trous)
+o Connexion entre deux facettes (Ponts) -> fusion des objects
+-----------------------------------------------
+o Regroupement d'objets en ensemble / posibilités de les selectionner
 -----------------------------------------------
 
-- Export ... d'autres format ...
+o Sauvegarde de l'historique (repertoire avec l'ensemble des historiques)
+o limites des up. Sauvegarder aussi l'historique ?
 -----------------------------------------------
-- TRanchage !!!!!!!!!!!
+
+o Export ... d'autres format ...
+-----------------------------------------------
+o TRanchage !!!!!!!!!!!
 -----------------------------------------------
 Intersectin de surface / de volume 
 -----------------------------------------------
 
-- pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
+o pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
   intersections de la grille)
 
 -----------------------------------------------
 
-- creation d'objet plans ( couleur speciale et grille pour la
+o creation d'objet plans ( couleur speciale et grille pour la
   representé)
 -----------------------------------------------
+------------------------------------------------
+----------------------------------------------
+o PORTAGE WINDOWS
 
-o limites des up. Sauvegarder aussi l'historique ?
+o optimisation

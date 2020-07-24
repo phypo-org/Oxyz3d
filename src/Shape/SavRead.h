@@ -11,6 +11,7 @@
 namespace PP3d {
 
   class DataBase;
+  class Selection;
 	
   //*************************************
   class MySav{
@@ -22,16 +23,16 @@ namespace PP3d {
       :cOut( pOut )
     {;}
 
-    bool save( DataBase& pData, std::set<Entity*> * iFilter = nullptr );
+    bool save( DataBase& pData, Selection * iSel= nullptr, std::set<Entity*> * iFilter = nullptr );
 
-    static bool Save( const char* iFileIn, PP3d::DataBase& iDatabase )
+    static bool Save( const char* iFileIn, PP3d::DataBase& iDatabase, Selection * iSel )
     {
       std::ofstream lFilSav;						
       lFilSav.open( iFileIn );
       if( lFilSav.good() )
 	{	  
 	  MySav lSav( lFilSav );	  	  
-	  return lSav.save( iDatabase );	  
+	  return lSav.save( iDatabase, iSel );	  
 	}
       return false;
     }
@@ -48,9 +49,9 @@ namespace PP3d {
       ,cCreateResult(ioCreateResult)
     {
     }	  
-    bool read( DataBase& pData, bool lConserverOldId = false );
+    bool read( DataBase& pData, Selection * iSel= nullptr, bool lConserverOldId = false );
     
-    static bool Read( const char* iFileIn, DataBase& oDatabase, bool iConserverOldId = false  )
+    static bool Read( const char* iFileIn, DataBase& oDatabase, Selection * iSel, bool iConserverOldId = false  )
     {
       std::ifstream lFileIn;						
       lFileIn.open( iFileIn  );
@@ -58,7 +59,7 @@ namespace PP3d {
       if( lFileIn.good() )
 	{	  
 	  PP3d::MyRead lRead( lFileIn);
-	  return lRead.read(  oDatabase, iConserverOldId);	  
+	  return lRead.read(  oDatabase, iSel, iConserverOldId);	  
 	}
       return false;
     }

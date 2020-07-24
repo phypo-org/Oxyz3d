@@ -20,7 +20,7 @@
 #define TheSelect          TheAppli.cSelect
 #define TheSelectTransform TheAppli.cSelectTransform
    
-#define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase() )
+#define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect )
 #define TheAppli M3d::Application::Instance()
 
 
@@ -40,6 +40,7 @@ namespace M3d{
       CenterRotX,
       CenterRotY,
       CenterRotZ,
+      CenterRotNorm,
       CenterRotAxis,
       
       ScaleUniform,
