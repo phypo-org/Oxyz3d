@@ -89,6 +89,17 @@ namespace PP3d{
       std::cout << (void*) pPoint << std::endl;
     }
   }; 
+  //**********************************
+	
+  class VisitorMinMax : public EntityVisitor, public MinMaxBox3d	{
+          
+  public:
+    // FAIRE PLUS MALIN ! notament pour les facettes
+    void execPoint( Point* pPoint ) override
+    {
+      add( pPoint->get() );
+    }
+  }; 
   //*********************************************
   // calcule et stocke la normale pour chaque facette
   struct VisitorNormalFacet : public EntityVisitor	{
@@ -100,6 +111,12 @@ namespace PP3d{
   struct VisitorNoNormFacet : public EntityVisitor	{
 	  
     virtual void execBeginFacet( Facet* pFacet )override;
+  };
+  //*********************************************
+  // calcule et stocke la normale pour chaque facette
+  struct VisitorInvertNormal : public EntityVisitor	{
+	  
+    virtual void execBeginLine( Line* pLine ) override;
   };
   //*********************************************
   //*********************************************

@@ -115,7 +115,10 @@ namespace M3d {
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
 
-#define  StrMenu_Cut "Cut"
+  
+#define StrMenu_InvertNormal   "Invert normal"
+
+#define  StrMenu_Cut "Cut line"
 #define  StrMenu_Cut2 "  2"
 #define  StrMenu_Cut3 "  3"
 #define  StrMenu_Cut4 "  4"
@@ -178,7 +181,13 @@ namespace M3d {
     
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object
 	 || TheSelect.getSelectType() ==  PP3d::SelectType::Facet)
-      pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);    
+      {	
+	pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+	if( TheSelect.getNbSelected() > 0 )
+	  {
+	    pMenu.add( StrMenu_InvertNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER );
+	  }
+      }
 		
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleU, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleX, "",  MyMenuCallbackSelect, this);
@@ -207,6 +216,7 @@ namespace M3d {
       {
 	pMenu.add( StrMenu_ConnectPoint, "c", MyMenuCallbackConnectPoint, this);	
       }
+    
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
       {
@@ -512,7 +522,16 @@ namespace M3d {
   {	  		
      BEGINCALL  
 
-		
+    if( strcmp( m->label(), StrMenu_InvertNormal) == 0)
+      {
+	PP3d::VisitorInvertNormal lVisitInv;
+	
+	TheSelect.execVisitorOnEntity( lVisitInv );
+	
+	PushHistory();	    
+	TheAppli.redrawAll();
+      }
+     else
     //============== TRANSFORMATION ====================
     // MOVE
     if( strcmp( m->label(), StrMenu_MoveX ) == 0)

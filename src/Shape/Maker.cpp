@@ -55,7 +55,7 @@ namespace PP3d {
       {
 	for( PIndex lCol=0; lCol < lNbCol; lCol++, p++ )
 	  {
-	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
+	    ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
 	    
 	    Point3d lPt3d( lPointsPtr[p-lNbCol]->get()*pMat );
 	    
@@ -79,7 +79,7 @@ namespace PP3d {
       }
 
 
-    std::cout << "Points:" << lPointsPtr.size() << std::endl;
+    //    std::cout << "Points:" << lPointsPtr.size() << std::endl;
 
 
     FacetPtr lFacetHight = nullptr;

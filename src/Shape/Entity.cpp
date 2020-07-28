@@ -110,8 +110,7 @@ namespace PP3d {
     //    std::cout << "Line::getReverseLine         " << cPoints.first  << " : " << cPoints.second << std::endl;
     
     PointPtrPair lReverse =   Reverse( cPoints);
-    //    std::cout << "Line::getReverseLine Reverse " << lReverse.first  << " : " << lReverse.second << std::endl;
-    
+    //    std::cout << "Line::getReverseLine Reverse " << lReverse.first  << " : " << lReverse.second << std::endl;    
     
     FindPointPairVisitor lVisit( lReverse );
 
@@ -145,7 +144,7 @@ namespace PP3d {
       {
 	lLine->inversePoint();
       }		
-  }
+  } 
   //-------------------------------------
   void Facet::execVisitor( EntityVisitor& pVisit )
   {

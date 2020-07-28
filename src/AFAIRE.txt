@@ -1,4 +1,6 @@
-
+o PORTAGE WINDOWS
+-----------------------------------------------
+o Donner une élévation a une facette/ligne
 -----------------------------------------------
 o Commande pour rejouer la derniére commande
 -----------------------------------------------
@@ -6,16 +8,32 @@ o Extrusion de points ?
 ----------------------------------------------
 o Pontage
 ----------------------------------------------
-
+o Subdivision Doo Sabatin
+----------------------------------------------
+o Intrude
+----------------------------------------------
+o Poser un objet sur un autre
+----------------------------------------------
+o Aplatir celon un  axe
+----------------------------------------------
+o Couper par un axe des objets/facette/lignes
+----------------------------------------------
+o mettre au niveau du sol (calculer le min et faire le deplacement)
+----------------------------------------------
+o Selection en fonction de la normale/surface/les deux ...
+----------------------------------------------
+o Aimant - deformation
+----------------------------------------------
 o Selection de la saisie ? base separé, id dans un interval donné ?
   constituant avec de vrai id et destruction s'il y a lieu?
 	Selection des objets temporaire ?
 
-- BUG :  avec le focus
+- BUG :  avec le focus - clavier
+
 -----------------------------------------------
-o Dialogues fixes ? 
+o Dialogues fixes ? / bloquant
 -----------------------------------------------
-o Creation de surface avec plusieurs line ou polyline
+o Creation de surface avec plusieurs line ou polyline PPCD
 -----------------------------------------------
 
 o facetisation des points 
@@ -33,9 +51,11 @@ o limites des up. Sauvegarder aussi l'historique ?
 
 o Export ... d'autres format ...
 -----------------------------------------------
-o TRanchage !!!!!!!!!!!
+o Tranchage !!!!!!!!!!!
 -----------------------------------------------
 Intersectin de surface / de volume 
+-----------------------------------------------
+o grille 2D /3D qui s'adapte à l'echelle ?
 -----------------------------------------------
 
 o pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
@@ -48,6 +68,5 @@ o creation d'objet plans ( couleur speciale et grille pour la
 -----------------------------------------------
 ------------------------------------------------
 ----------------------------------------------
-o PORTAGE WINDOWS
 
-o optimisation
+o optimisation  // specialisation des visiteurs plus poussé

@@ -336,7 +336,8 @@ namespace M3d {
     glLoadIdentity();
 	 
     gluPickMatrix((GLdouble) pX, (GLdouble) (lViewport[3] - pY),
-		  10, 10, lViewport );
+		  2, 2, lViewport );
+    //		  10, 10, lViewport );
 	 
     cKamera.execGL( true );
 	

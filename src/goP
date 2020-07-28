@@ -1,9 +1,18 @@
 #! /bin/bash
 # ./PPD --sync
-DATE=`date +%Y%m%d_%H%M`
-
-export PROFILING="valgrind -v --tool=callgrind "
 
 export LD_LIBRARY_PATH=${MYGCC}lib64
 
-$PROFILING --callgrind-out-file=callgrind-$DATE Debug/Oxyz3d.exe -lua -load "toto.oxyz" --sync $*
+PROFILING="valgrind -v --tool=callgrind --collect-systime=yes --cache-sim=yes --branch-sim=yes "
+
+VALGRIND="valgrind -v --tool=memcheck --leak-check=yes  --show-reachable=yes --error-limit=no --num-callers=20  --freelist-vol=20000000 "
+
+
+# $VALGRIND  --log-file=memcheck-$EXE_TITLE-$DATE $EXE_PROG $PARAM_CONF ;;
+# $PROFILING  --callgrind-out-file=callgrind-$EXE_TITLE-$DATE $EXE_PROG $PARAM_CONF;;
+
+
+$PROFILING Debug/Oxyz3d.exe -load "toto.oxyz" $*
+
+# valgrind -v --tool=memcheck --leak-check=yes  --show-reachable=yes --error-limit=no --num-callers=50  --freelist-vol=20000000  --log-file=mem.err ./PPD --sync $*
+

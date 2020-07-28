@@ -34,7 +34,11 @@ namespace PP3d {
 	<< " shape:" << (void*)pObj->getShape()
 	<< std::endl;
   }
-
+  //*********************************************
+  void VisitorInvertNormal::execBeginLine( Line* pLine ) 
+    {
+      pLine->inversePoint();
+    }
   //*********************************************
   void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
   {
