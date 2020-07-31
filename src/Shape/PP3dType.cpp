@@ -128,6 +128,13 @@ namespace PP3d {
       cPosition[i] = -lCenter[i]; 
   }
   //---------------------------------------------
+   void
+  Transf3d::setPosition( Double3  & iPos )
+  {
+    for( int i= 0; i < 3; i++ )
+      cPosition[i] = iPos[i]; 
+  }
+  //---------------------------------------------
   void
   Transf3d::scaleTo( double pSize )
   {
@@ -143,12 +150,9 @@ namespace PP3d {
   void
   Transf3d::scaleTo( MinMaxBox3d& pBox,  Double3& pSz )
   {
-
-
     cScale[0]  = pSz[ 0 ] / (pBox.getMax().cX-pBox.getMin().cX);		
     cScale[1]  = pSz[ 1 ] / (pBox.getMax().cY-pBox.getMin().cY);		
-    cScale[2]  = pSz[ 2 ] / (pBox.getMax().cZ-pBox.getMin().cZ);		
-			
+    cScale[2]  = pSz[ 2 ] / (pBox.getMax().cZ-pBox.getMin().cZ);	       			
   }
 
   /*---------------------------------------------------------------------*/

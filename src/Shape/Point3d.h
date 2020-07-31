@@ -32,7 +32,10 @@ namespace PP3d {
     {
       
     }
-	    
+
+    TFLOAT x() { return cX; }
+    TFLOAT y() { return cY; }
+    TFLOAT z() { return cZ; }
 
     TPoint3d& operator = ( const TPoint3d& pVar )
     {

@@ -47,6 +47,8 @@ public:
 	bool getProject( const Point3d& pPos, Point3d & pPtResult );
 	bool projectObjectToWin( Point3d pPos, Point3d & pPtResult, bool pExec  );
 	bool projectWinToObject( Point3d pPos, Point3d & pPtResult, bool pExec  );
+  
+	void zoomTo( Rect3d & iMMBox );
 
 };
 //***************************************

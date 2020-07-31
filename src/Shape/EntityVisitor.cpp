@@ -35,6 +35,11 @@ namespace PP3d {
 	<< std::endl;
   }
   //*********************************************
+  void VisitorMinMax::execPoint(  Point* pPoint )
+  {
+    add( pPoint->get() );
+  }
+  //*********************************************
   void VisitorInvertNormal::execBeginLine( Line* pLine ) 
     {
       pLine->inversePoint();

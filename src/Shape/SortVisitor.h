@@ -116,6 +116,33 @@ namespace PP3d{
     }    
   };
   //*****************************************
+  class SortEntityVisitorPoint : public EntityVisitor {
+
+    bool cAcceptDoublon;
+  public:
+    std::vector<PointPtr>  cVectPoints;
+    std::set<PointPtr>     cSetPoints;
+   
+    //--------------------------------
+    SortEntityVisitorPoint( bool iAcceptDoublon = false)
+      :cAcceptDoublon( iAcceptDoublon )
+    {
+    }
+    //--------------------------------
+    virtual void execPoint( Point* pPoint )
+    {
+      //std::cout << '.' << std::flush;
+      if( cAcceptDoublon == false )
+	{
+	  if( cSetPoints.find( pPoint) != cSetPoints.end() )
+	    return;
+	}
+      //std::cout << ':' << std::flush;
+      cVectPoints.push_back( pPoint );
+      cSetPoints.insert( pPoint );
+    }
+  };
+   //*****************************************
 
 } // namespace
 

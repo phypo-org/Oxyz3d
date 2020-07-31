@@ -7,6 +7,7 @@
 
 #include <unordered_set>
 #include "PP3dType.h"
+#include "MinMaxBox3d.h"
 
 
 
@@ -91,14 +92,9 @@ namespace PP3d{
   }; 
   //**********************************
 	
-  class VisitorMinMax : public EntityVisitor, public MinMaxBox3d	{
-          
-  public:
-    // FAIRE PLUS MALIN ! notament pour les facettes
-    void execPoint( Point* pPoint ) override
-    {
-      add( pPoint->get() );
-    }
+  class VisitorMinMax : public EntityVisitor, public MinMaxBox3d {
+  public:    
+    void execPoint( Point* pPoint ) override;
   }; 
   //*********************************************
   // calcule et stocke la normale pour chaque facette

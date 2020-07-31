@@ -148,7 +148,7 @@ namespace PP3d {
 	lEntity->execVisitor( pVisit );
     }
     //----------------------------
-    void execVisitorOnlyOnObjects(  EntityVisitor& pVisit )
+    void execVisitorOnlyOnObjects  (  EntityVisitor& pVisit )
     {
       for(  EntityPtr lEntity : cSelectObjVect )
 	{

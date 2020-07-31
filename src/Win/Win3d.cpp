@@ -95,7 +95,11 @@ namespace M3d {
 
 #define StrMenu_SetTransPoints "With two points"
 #define StrMenu_SetTransLine   "With line"
-#define StrMenu_SetTransInput   "With last two input points"
+#define StrMenu_SetTransInput  "With last two input points"
+
+#define StrMenu_PutOnGround    "PutOnGround"
+#define StrMenu_PutUnderGround "PutUnderGround"
+#define StrMenu_Recenter "Recenter"
 
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings ..."
@@ -107,6 +111,7 @@ namespace M3d {
 #define StrMenu_ViewAlong_X "View along -X"
 #define StrMenu_ViewAlong_Y "View along -Y"
 #define StrMenu_ViewAlong_Z "View along -Z"
+#define StrMenu_ViewRecenterOnSelection "bug - Recenter on selection"
 
 #define StrMenu_Demo1            "Demo 1"
 #define StrMenu_Demo2            "Demo 2"
@@ -809,13 +814,20 @@ namespace M3d {
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Point
   //		&& TheSelect.getNbSelected() < 2
   //		? FL_MENU_INACTIVE :0));
+  
+  
   cMenubar.add("&Utils/Create translation/" StrMenu_SetTransLine  , "", MyMenuCallback, this);
-	       //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
-	       //		&& TheSelect.getNbSelected() < 1
-	       //		? FL_MENU_INACTIVE :0));
-    
+  //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
+  //		&& TheSelect.getNbSelected() < 1
+  //		? FL_MENU_INACTIVE :0));
+  
   cMenubar.add("&Utils/Create translation/" StrMenu_SetTransInput  , "", MyMenuCallback, this);
 	       //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2) );
+  cMenubar.add("&Utils/", "", MyMenuCallback, this, FL_MENU_DIVIDER);
+	       
+  cMenubar.add("&Utils/" StrMenu_PutOnGround ,    "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_PutUnderGround , "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_Recenter , "", MyMenuCallback, this );
 
     //================================
 		
@@ -827,7 +839,9 @@ namespace M3d {
     cMenubar.add("&View/" StrMenu_ViewAlong_X, "", MyMenuCallback, this);
     cMenubar.add("&View/" StrMenu_ViewAlong_Y, "", MyMenuCallback, this);
     cMenubar.add("&View/" StrMenu_ViewAlong_Z, "", MyMenuCallback, this);
-
+    cMenubar.add("&View/" StrMenu_ViewAlong_Y, "", MyMenuCallback, this);
+    cMenubar.add("&View/" StrMenu_ViewRecenterOnSelection, "", MyMenuCallback, this);
+      
     //================================
     cMenubar.add("&Win/" StrMenu_Create3dView, "^v", MyMenuCallback, this);
     cMenubar.add("&Win/" StrMenu_ObjectTree, "^t", MyMenuCallback, this);
@@ -857,6 +871,11 @@ namespace M3d {
     static bool slFlagDialog=false; // C'est moche !!!!
     std::ostringstream lOsLuaCode;
     std::ostringstream lOsLuaOut;
+
+
+    PP3d::Mat4 lMatTran;
+    lMatTran.Identity();
+
 										
     Fl_Menu_* mw = (Fl_Menu_*)w;
     const Fl_Menu_Item* m = mw->mvalue();		
@@ -1079,6 +1098,48 @@ namespace M3d {
 		else if(  strcmp( m->label(), StrMenu_SetTransLine	) == 0)
 		  {
 		  }
+		else if(  strcmp( m->label(), StrMenu_PutOnGround	) == 0)
+		  {		    
+ 		    PP3d::VisitorMinMax lVisitMinMax;
+		    TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
+		    
+		    PP3d::SortEntityVisitorPoint lVisitPoint;
+		    TheSelect.execVisitorOnlyOnObjects( lVisitPoint );
+		    for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
+		      {
+			lPoint->get() -=  lVisitMinMax.getMin().y();
+		      }				
+		    TheAppli.redrawAllCanvas3d();
+		  }
+		else if(  strcmp( m->label(), StrMenu_PutUnderGround	) == 0)
+		  {		    
+ 		     PP3d::VisitorMinMax lVisitMinMax;
+		    TheSelect.execVisitorOnlyOnObjects( lVisitMinMax );
+		    
+		     PP3d::SortEntityVisitorPoint lVisitPoint;
+		    TheSelect.execVisitorOnlyOnObjects( lVisitPoint );
+		    for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
+		      {
+			lPoint->get() -=  lVisitMinMax.getMax().y();
+		      }				
+		    TheAppli.redrawAllCanvas3d();
+		  }
+		else if(  strcmp( m->label(), StrMenu_Recenter	) == 0)
+		  {		    
+ 		     PP3d::VisitorMinMax lVisitMinMax;
+		    TheSelect.execVisitorOnlyOnObjects( lVisitMinMax );
+		    
+		     PP3d::SortEntityVisitorPoint lVisitPoint;
+		    TheSelect.execVisitorOnlyOnObjects( lVisitPoint );
+		    
+		    PP3d::Point3d lCenter = lVisitMinMax.center();
+		    
+		    for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
+		      {
+			lPoint->get() -=  lCenter;
+		      }				
+		    TheAppli.redrawAllCanvas3d();
+		  }
 
     //=================== VIEW ====================
 		else if( strcmp( m->label(), StrMenu_DialogPerspectivSettings ) == 0)
@@ -1128,7 +1189,13 @@ namespace M3d {
 		    lKamera.razZInv(); 
  		    TheAppli.redrawAllCanvas3d();
   		  }
-
+    		else if( strcmp( m->label(), StrMenu_ViewRecenterOnSelection ) == 0)
+		  {
+		    PP3d::VisitorMinMax lVisitMinMax;
+		    TheSelect.execVisitorOnEntity ( lVisitMinMax );
+		    lKamera.zoomTo( lVisitMinMax ); 
+ 		    TheAppli.redrawAllCanvas3d();
+		  }
     //================= WINDOWS ===================
 		else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
 		  {

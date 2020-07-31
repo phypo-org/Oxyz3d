@@ -1,3 +1,4 @@
+
 #ifndef H__PP3dType__H
 #define H__PP3dType__H
 
@@ -8,6 +9,7 @@
 #include <GL/glx.h>
 #include <GL/glu.h>
 #endif
+
 
 #include <iostream>
 #include <stdexcept>
@@ -138,6 +140,10 @@ namespace PP3d {
     {
       *this = pVal;
     }
+    Double3( const Point3d&  pVal )
+    {
+      *this = pVal;
+    }
 
     PDouble x() const { return cVect[0]; }
     PDouble y() const { return cVect[1]; }
@@ -160,6 +166,14 @@ namespace PP3d {
     {
       for( int i=0; i<3; i++)			cVect[i] = pVal.cVect[i];
       return *this;
+    }
+    
+    const Double3 & operator = (const Point3d& pVal)
+    {
+      cVect[ 0 ] = const_cast<Point3d&>(pVal).x();
+      cVect[ 1 ] =  const_cast<Point3d&>(pVal).y();
+      cVect[ 2 ] =  const_cast<Point3d&>(pVal).z();
+      return  *this;
     }
 
     void raz (PDouble pVal=0)
@@ -278,6 +292,8 @@ namespace PP3d {
     Double3& position() { return cPosition; }
     Double3& angle()    { return cAngle; }
     Double3& scale()    { return cScale; }
+    
+    void setPosition( Double3 & iPos );
 
     void raz();
     void raz45();
