@@ -1,7 +1,8 @@
 #ifndef H__ObjProps__H
 #define H__ObjProps__H
 
- #include "MinMaxBox3d.h"
+#include "MinMaxBox3d.h"
+#include "ColorRGBA.h"
 
 namespace PP3d {
 	

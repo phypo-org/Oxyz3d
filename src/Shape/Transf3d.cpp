@@ -1,5 +1,6 @@
 
-#include "PP3dType.h"
+#include "Transf3d.h"
+#include "Point3d.h"
 
 #include "MinMaxBox3d.h"
 
@@ -10,6 +11,8 @@ const double PI =  3.141592653589793238462 ; // std::acos(-1);
 
 namespace PP3d {
 
+
+  
   /*---------------------------------------------------------------------*/
   /*    Transf3d::Transf3d ...                                         */
   /*---------------------------------------------------------------------*/

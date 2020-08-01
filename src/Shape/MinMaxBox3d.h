@@ -7,8 +7,10 @@
 /*---------------------------------------------------------------------*/
 
 
-#include "PP3dType.h"
+//#include "PP3dType.h"
 
+#include "Double3.h"
+#include "Point3d.h"
 
 #include <string.h>
 

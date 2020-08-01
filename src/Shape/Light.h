@@ -1,7 +1,8 @@
 #ifndef H__Light__H
 #define H__Light__H
 
-#include "PP3dType.h"
+#include "Point3d.h"
+#include "ColorRGBA.h"
 
 
 namespace PP3d {

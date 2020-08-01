@@ -5,7 +5,7 @@
 //#include <config.h>
 //#include <FL/Fl.H>
 #include "PP3dType.h"
-
+#include "Point3d.h"
 
 namespace PP3d {
 //*******************************************

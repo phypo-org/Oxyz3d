@@ -34,6 +34,9 @@ namespace PP3d{
     cPosition[1]= 0;
     cPosition[2]= 20;//cBaseSize;
 
+    
+    cPosition2.raz();
+    
     //cScale.set( 0.1, 0.1, 0.1);
   }
   //------------------------------------------------
@@ -106,11 +109,14 @@ namespace PP3d{
     // ATTENTION POUR VIEW SEUL SCALEX EST UTILISE !!!!!!!
     glScaled( cScale[0], cScale[0], cScale[0] );
 	
+    glTranslated( -cPosition2[ 0 ], -cPosition2[1], -cPosition2[2] );
+    
     if( ! pSelect )
       {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
       }
+    
   }
   //------------------------------------------------
   void Kamera::chgModeKamera()
@@ -184,14 +190,17 @@ namespace PP3d{
     std::cout << "MinMaxBox=" << iMMBox <<  std::endl;
     Point3d lCenter = iMMBox.center();
 
-    //    if( projectObjectToWin( lCenter, lCenterProj, true ))
-      {
-	std::cout << "actuel:" << position() << " -> " << lCenter << std::endl;
-	position().x() = lCenter.x();
-	position().y() = lCenter.y();
-	position().z() = lCenter.z();
+     
+    std::cout << "actuel:" << position() << " -> " << lCenter<< std::endl;
+    position2().x() = lCenter.x();
+    position2().y() = lCenter.y();
+    position2().z() = lCenter.z();
+    
+    position().x() = 0;
+    position().y() = 0;
+    position().z() = 0;
 
-      }    
+      
     //    scaleTo(  iMMBox, 1 );   
   }
   /*

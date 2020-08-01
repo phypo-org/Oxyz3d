@@ -97,9 +97,9 @@ namespace M3d {
 #define StrMenu_SetTransLine   "With line"
 #define StrMenu_SetTransInput  "With last two input points"
 
-#define StrMenu_PutOnGround    "PutOnGround"
-#define StrMenu_PutUnderGround "PutUnderGround"
-#define StrMenu_Recenter "Recenter"
+#define StrMenu_PutOnGround    "Put selection on ground"
+#define StrMenu_PutUnderGround "Put selection under ground"
+#define StrMenu_Recenter       "Recenter selection"
 
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings ..."
@@ -111,7 +111,7 @@ namespace M3d {
 #define StrMenu_ViewAlong_X "View along -X"
 #define StrMenu_ViewAlong_Y "View along -Y"
 #define StrMenu_ViewAlong_Z "View along -Z"
-#define StrMenu_ViewRecenterOnSelection "bug - Recenter on selection"
+#define StrMenu_ViewRecenterOnSelection "Recenter view on selection - (bug)"
 
 #define StrMenu_Demo1            "Demo 1"
 #define StrMenu_Demo2            "Demo 2"

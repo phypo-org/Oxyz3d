@@ -2,6 +2,7 @@
 
 #include "PP3dType.h"
 #include "MinMaxBox3d.h"
+#include "ColorRGBA.h"
 
 #include "string.h"
 
@@ -12,7 +13,7 @@ namespace PP3d {
 	{
 		glDisable(GL_LIGHTING);
 		
-				glLineWidth( 2 );
+		glLineWidth( 2 );
 
 		ColorRGBA::Red();
 		glBegin( GL_LINES );

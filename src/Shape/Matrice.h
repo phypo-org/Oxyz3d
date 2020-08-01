@@ -4,6 +4,8 @@
 #include <ostream>
 
 #include "Point3d.h"
+#include "Double3.h"
+#include "Transf3d.h"
 
 #include <utility>
 #include <iostream>

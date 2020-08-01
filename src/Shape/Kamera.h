@@ -2,8 +2,9 @@
 #define H__Kamera__H
 
 
-#include "PP3dType.h"
+#include "Transf3d.h"
 
+#include "Point3d.h"
 
 namespace PP3d {
 
@@ -29,6 +30,8 @@ public:
 
 	bool        cSmooth=false;
 
+public:
+        Double3 cPosition2;
 
 public:
 	Kamera( double pSize = 10 ); //1000
@@ -49,7 +52,12 @@ public:
 	bool projectWinToObject( Point3d pPos, Point3d & pPtResult, bool pExec  );
   
 	void zoomTo( Rect3d & iMMBox );
-
+    void setPosition2( Double3 & iPos )
+  {
+    for( int i= 0; i < 3; i++ )
+      cPosition2[i] = iPos[i]; 
+  }
+  Double3& position2() { return cPosition2;}
 };
 //***************************************
 }
