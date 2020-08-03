@@ -160,9 +160,9 @@ namespace PP3d {
   //--------------------------------
   void Selection::removeAll()
   {
-    for( auto lIter = cSelectObj.begin(); lIter != cSelectObj.end(); ++lIter)
+    for( EntityPtr lEntity : cSelectObj )
       {
-	(*lIter)->setSelect( false );
+	lEntity->setSelect( false );
       }
 		
     cSelectObj.clear();

@@ -92,6 +92,7 @@ namespace PP3d {
     std::unordered_set<EntityPtr> cSelectObj;
     std::vector<EntityPtr>        cSelectObjVect;
     // METTRE AUSI UN VECTEUR POUR GARDER L ORDRE DE SELECTION
+   void clear() {  cSelectObj.clear(); cSelectObjVect.clear(); }
 		
   public:
 		
@@ -99,8 +100,7 @@ namespace PP3d {
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();
-    void clear() {  cSelectObj.clear(); cSelectObjVect.clear(); }
-
+ 
     bool addToSelection( EntityPtr lEntity);
     bool isSelected( EntityPtr lEntity )
     {

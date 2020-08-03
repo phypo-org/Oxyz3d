@@ -53,17 +53,20 @@
 
 namespace M3d {
 
-  
+#define StrMenu_File             "&File/"
+
 #define StrMenu_NewBase          "New"
 #define StrMenu_OpenBase         "Open ..."
 #define StrMenu_SaveBase         "Save"
 #define StrMenu_SaveBaseAs       "Save as ..."
 #define StrMenu_SaveBaseSelect   "Save Selected ..."
 #define StrMenu_MergeBase        "Merge ..."
-  
-#define StrMenu_ExportD3dObj     "Export d3d file (.obj) ..."
-#define StrMenu_ExportSelectD3dObj "Export selection d3d file (.obj) ..."
-#define StrMenu_ImportD3dObj     "Import d3d file (.obj) ..."
+
+#define StrMenu_Export           "Export/"
+#define StrMenu_ExportD3dObj     "-> d3d file (.obj) ..."
+#define StrMenu_ExportSelectD3dObj "Selection -> d3d file (.obj) ..."
+#define StrMenu_Import          "Import/"
+#define StrMenu_ImportD3dObj     "d3d file (.obj) ..." // blanc au debut voulu pour <> export
 
 #define StrMenu_Preferences     "Preferences ..."
 
@@ -74,9 +77,13 @@ namespace M3d {
 #define StrMenu_ConsolSystem    "Console system"
 #define StrMenu_ConsolLua       "Console lua"
 
+
+#define StrMenu_Select          "&Select/"
 #define StrMenu_UnselectAll     "Unselect all"
 #define StrMenu_DeleteSelect    "Delete object selection"
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
+  
+#define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
 
 
 #define StrMenu_DefDefaultAxe   "Define default axe as default"
@@ -104,10 +111,10 @@ namespace M3d {
 
 #define StrMenu_DialogPerspectivSettings  "Perspective settings ..."
 
-#define StrMenu_ViewReset  "Reset View"
-#define StrMenu_ViewAlongX "View along X"
-#define StrMenu_ViewAlongY "View along Y"
-#define StrMenu_ViewAlongZ "View along Z"
+#define StrMenu_ViewReset   "Reset View"
+#define StrMenu_ViewAlongX  "View along X"
+#define StrMenu_ViewAlongY  "View along Y"
+#define StrMenu_ViewAlongZ  "View along Z"
 #define StrMenu_ViewAlong_X "View along -X"
 #define StrMenu_ViewAlong_Y "View along -Y"
 #define StrMenu_ViewAlong_Z "View along -Z"
@@ -742,29 +749,31 @@ namespace M3d {
 
     
     //================================
-    cMenubar.add("&File/"    StrMenu_NewBase,    "^n", MyMenuCallback, this); 
-    cMenubar.add("&File/"         StrMenu_OpenBase,    "^o", MyMenuCallback, this);
-    cMenubar.add("&File/"         StrMenu_MergeBase,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    ////////////////    cMenubar.add(StrMenu_File, "",MyMenuCallback, this);
     
-    cMenubar.add("&File/"         StrMenu_SaveBase,    "^s", MyMenuCallback, this);
-    cMenubar.add("&File/"         StrMenu_SaveBaseAs,  "", MyMenuCallback, this);
-    cMenubar.add("&File/"         StrMenu_SaveBaseSelect,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add(StrMenu_File    StrMenu_NewBase,    "^n", MyMenuCallback, this); 
+    cMenubar.add(StrMenu_File    StrMenu_OpenBase,    "^o", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    
+    cMenubar.add(StrMenu_File    StrMenu_SaveBase,    "^s", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File    StrMenu_SaveBaseAs,  "", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File    StrMenu_SaveBaseSelect,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
     
    
-    cMenubar.add("&File/Export/"         StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this);
-    cMenubar.add("&File/Export/"         StrMenu_ExportSelectD3dObj,"", MyMenuCallback, this);
-    cMenubar.add("&File/Import/"         StrMenu_ImportD3dObj,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectD3dObj,"", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File StrMenu_Import StrMenu_ImportD3dObj,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
-    cMenubar.add("&File/"         StrMenu_Preferences,  "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
-    cMenubar.add("&File/&Quit",                     "^q", QuitCallback,   this);
+    cMenubar.add(StrMenu_File    StrMenu_Preferences,  "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
+    cMenubar.add(StrMenu_File "&Quit",                     "^q", QuitCallback,   this);
 									       
     //================================
     cMenubar.add("&Edit/&Copy",  "", MyMenuCallback, this);
     cMenubar.add("&Edit/&Paste", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
-    cMenubar.add("&Selection/"  StrMenu_UnselectAll, "", MyMenuCallback, this);
-    cMenubar.add("&Selection/"  StrMenu_DeleteSelect, "", MyMenuCallback, this);
-    cMenubar.add("&Selection/"  StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_UnselectAll, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_DeleteSelect, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
     //================================
 
     
@@ -886,6 +895,7 @@ namespace M3d {
       }
 
     printf("%s\n", m->label());
+    
     M3d::Win3d* lWin3d = reinterpret_cast<M3d::Win3d*>(pUserData);
     M3d::Canvas3d* lCanvas =lWin3d->cuCanvas3d.get();
     PP3d::Kamera & lKamera= lWin3d->getKamera();

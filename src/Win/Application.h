@@ -109,7 +109,7 @@ namespace M3d{
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
     void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase )
     {
-      cSelect.clear();
+      cSelect.removeAll();
       cuDatabase = std::move(iuBase);
     }
     PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }

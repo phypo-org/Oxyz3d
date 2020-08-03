@@ -93,6 +93,7 @@ namespace M3d {
 #define StrMenu_ScaleRX    "Scale radial X"
 #define StrMenu_ScaleRY    "Scale radial Y"
 #define StrMenu_ScaleRZ    "Scale radial Z"
+  //#define StrMenu_ScaleRZ    "Scale normal"
 #define StrMenu_ScaleAxis  "# Scale around current axis"
 
 	

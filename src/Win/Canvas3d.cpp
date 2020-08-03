@@ -9,6 +9,7 @@
 #include <FL/names.h>
 #include <FL/Fl_Menu_Button.H>
 
+#include <FL/fl_draw.H>
 
 #include "Service.h"
 
@@ -245,6 +246,9 @@ namespace M3d {
 							
       }
     glFlush();
+
+    //    fl_color( 3 );
+    //    fl_line( 0,0, 1000, 2000 );
   }
   //---------------------------
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
@@ -552,11 +556,7 @@ namespace M3d {
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
 	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/30 );
-	  std::cout << "======== Grab Normal 1111111111" << std::endl; 
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
-
-	  std::cout << "======== Grab Normal 2222222222"
-		    << std::endl; 
 	  
 	  return;    //////////// ATTENTION 
 	}
@@ -952,6 +952,7 @@ namespace M3d {
 	     << " shift:" <<  Fl::event_shift()
 	     << " alt:" <<  Fl::event_alt());	
 
+
     switch( pEvent )
       {
 	//===========================
@@ -1157,7 +1158,7 @@ namespace M3d {
 			
       case FL_ENTER:
 	DBG_EVT( " ENTER " << Fl::belowmouse());
-	//			Fl::focus(Fl::belowmouse()); 
+	Fl::focus(Fl::belowmouse()); 
 	break;
       case FL_LEAVE:
 	DBG_EVT( " LEAVE " << Fl::belowmouse());
