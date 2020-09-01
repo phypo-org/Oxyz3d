@@ -340,8 +340,7 @@ namespace M3d {
     glLoadIdentity();
 	 
     gluPickMatrix((GLdouble) pX, (GLdouble) (lViewport[3] - pY),
-		  2, 2, lViewport );
-    //		  10, 10, lViewport );
+		  MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, lViewport );
 	 
     cKamera.execGL( true );
 	
@@ -555,7 +554,27 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-	  cVisitModifSelect->setCoef( (cMouseLastPosX-cMouseInitPosX)/30 );
+	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
+	  
+	  return;    //////////// ATTENTION 
+	}
+	break;	 
+	//================
+      case Transform::ScaleNormal:
+	{
+	 
+	  std::cout << "======== Grab Normal " << std::endl;
+ 
+	  
+	  if(cVisitModifSelect == nullptr )
+	    {
+	      cVisitModifSelect = new PP3d::VisitorScaleNormal(TheSelect); // DIFFERENCE !!!
+	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
+	    }
+	  
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
+	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/100.0 );
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  return;    //////////// ATTENTION 

@@ -21,7 +21,10 @@ namespace M3d {
   //---------------------------------------
   //#define INIT_ALL_DBG() 
   
-#define INIT_DBG( VAR )  iConfig.get( "Debug", "cDbg ## VAR", cDbg ## VAR  )
+#define INIT_DBG( VAR )  iConfig.get( "Debug", "Dbg ## VAR", cDbg ## VAR  )
+
+#define INIT_SEL( VAR )  iConfig.get( "Select", "## VAR", cSelect ## VAR  )
+ 
   
   void Preference::initFromIni( PPu::PPConfig & iConfig )
   {
@@ -33,10 +36,15 @@ namespace M3d {
     INIT_DBG( Baz );
     INIT_DBG( Sel );
     INIT_DBG( Fil );
-    INIT_DBG( Ini );		      
+    INIT_DBG( Ini );
+
+    INIT_SEL( PickingSize );
   }
 #undef INIT_DBG
-#define INIT_DBG( VAR )  iArgs.get( "cDbg ## VAR", cDbg ## VAR )
+#define INIT_DBG( VAR )  iArgs.get( "Dbg ## VAR", cDbg ## VAR )
+
+#undef INIT_SEL  
+#define INIT_SEL( VAR )  iArgs.get( "Select ## VAR", cSelect  ## VAR )
   //---------------------------------------
   void Preference::initFromArg( PPu::PPArgs & iArgs )
   {
@@ -48,7 +56,9 @@ namespace M3d {
     INIT_DBG( Baz );
     INIT_DBG( Sel );
     INIT_DBG( Fil );
-    INIT_DBG( Ini );		      
+    INIT_DBG( Ini );
+    
+    INIT_SEL( PickingSize );
   }
   //*********************************
  

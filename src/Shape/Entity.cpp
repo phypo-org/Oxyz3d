@@ -146,6 +146,21 @@ namespace PP3d {
       }		
   } 
   //-------------------------------------
+  Point3d Facet::getCenter( )
+  {		 	
+    PP3d::Point3d  lCenter;
+    
+    for( LinePtr lLine : cLines )
+      {
+	lCenter += lLine->first()->get();
+	lCenter += lLine->second()->get();
+      }
+    
+   lCenter /= cLines.size()*2;
+   
+   return lCenter;
+  } 
+  //-------------------------------------
   void Facet::execVisitor( EntityVisitor& pVisit )
   {
     pVisit.execBeginFacet( this );

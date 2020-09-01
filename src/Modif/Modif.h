@@ -98,7 +98,10 @@ namespace PP3d{
 			     SubDivFacetType iSubDivType,
 			     SubDivSelectType iSubDivSelect = SubDivSelectType::SELECT_ALL,
 			     double iMargeFactor=sInvGoldNumber );
-  };
+
+    static bool DeletePoints( DataBase * iBase, std::vector<PointPtr>& iPoints, bool iCreateFacet);
+    static bool DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet );
+    static bool DeletePointFromFacet( DataBase * iBase, PointPtr iPoint , FacetPtr ioFacet, std::vector<PointPtr> &oPoints  );  };
   //**************************************************
   // Calcule les coordonnees du milieu d"une facette
   class VisitorComputeMiddleFacet : public EntityVisitor	{

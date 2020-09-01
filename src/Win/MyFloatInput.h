@@ -39,6 +39,7 @@ public :
     :Fl_Int_Input( pX, pY, pW, pH, pStr )
   {
     setIntValue( iVal );
+    align( FL_ALIGN_LEFT );
   }
 
   void setIntValue( int pVal )

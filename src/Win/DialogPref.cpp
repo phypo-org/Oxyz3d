@@ -52,7 +52,9 @@ namespace M3d {
     friend class PPSingletonCrtp;
 
     Fl_Light_Button* cSelectPassOverLighting;
+    MyIntInput     * cSelectPickingSize;
 
+    
     MyIntInput* cDbgEvt ;
     MyIntInput* cDbgAct ;
     MyIntInput* cDbgDrw;
@@ -71,11 +73,11 @@ namespace M3d {
       DiagPref.cMyWindow = nullptr;
     }
     //----------------------------------------
-#undef  INT_VALUE
-#define INT_VALUE(A) MyPref.A = atoi( DiagPref.A->value())
+#undef  GET_INT_VALUE
+#define GET_INT_VALUE(A) MyPref.A = atoi( DiagPref.A->value())
     
-#undef  BOOL_VALUE
-#define BOOL_VALUE(A)  MyPref.A = DiagPref.A->value() == 1;
+#undef  GET_BOOL_VALUE
+#define GET_BOOL_VALUE(A)  MyPref.A = DiagPref.A->value() == 1;
     
     static void OkCB( Fl_Widget*, void*pUserData )
     {  
@@ -83,19 +85,21 @@ namespace M3d {
 
       std::cout << " DiagPref.cSelectPassOverLighting=" << (int) DiagPref.cSelectPassOverLighting->value()
 		<< std::endl;
-      MyPref.cSelectPassOverLighting = DiagPref.cSelectPassOverLighting->value() == 1;
-
+      GET_BOOL_VALUE( cSelectPassOverLighting);
+      // MyPref.cSelectPassOverLighting = DiagPref.cSelectPassOverLighting->value() == 1;
+      
+      GET_INT_VALUE( cSelectPickingSize );
       
       //Debug
-      INT_VALUE(cDbgEvt);
-      INT_VALUE(cDbgAct);
-      INT_VALUE(cDbgDrw);
-      INT_VALUE(cDbgBaz);
-      INT_VALUE(cDbgSel);
-      INT_VALUE(cDbgLua);
-      INT_VALUE(cDbgTree);
-      INT_VALUE(cDbgFil);
-      INT_VALUE(cDbgIni);
+      GET_INT_VALUE(cDbgEvt);
+      GET_INT_VALUE(cDbgAct);
+      GET_INT_VALUE(cDbgDrw);
+      GET_INT_VALUE(cDbgBaz);
+      GET_INT_VALUE(cDbgSel);
+      GET_INT_VALUE(cDbgLua);
+      GET_INT_VALUE(cDbgTree);
+      GET_INT_VALUE(cDbgFil);
+      GET_INT_VALUE(cDbgIni);
 
 	
 
@@ -109,20 +113,21 @@ namespace M3d {
     //----------------------------------------
     bool isAlreadyRunning() { return DiagPref.cMyWindow != nullptr; }
   
-#define INTPUT_INT(A,B) { A = new MyIntInput( lX, lY, 200, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( std::to_string(MyPref.A).c_str()); }
+#define INTPUT_INT(A,B) { A = new MyIntInput( lX, lY, 50, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( std::to_string(MyPref.A).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 
-#define INTPUT_BOOL(A,B) { A =  new Fl_Light_Button( lX, lY, 200, lH, B ); lY += A->h() + lMarge; A->value( MyPref.A ); }
+#define INTPUT_BOOL(A,B) { A =  new Fl_Light_Button( lX0, lY, 250, lH, B ); lY += A->h() + lMarge; A->value( MyPref.A ); }
   //----------------------------------------
     void init()
     {
       int lMarge = 10;
       int lWgroup = 600;
-      int lHgroup = 400;
+      int lHgroup = 400;  
       int lH = 30;
       int lW = 200;
 	
-      int lX = lMarge;
-      int lY = lMarge;
+      int lX0 = lMarge;
+      int lX  = lMarge; 
+      int lY  = lMarge;
       
       cMyWindow = new Fl_Double_Window(lWgroup + lMarge*4+100, lHgroup+lMarge*4+ 100, "Preferences");
       cMyWindow->callback((Fl_Callback*)CancelCB, nullptr);
@@ -140,11 +145,15 @@ namespace M3d {
 	}
 	//===================================
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Selection");
-	  lX = lMarge;
+	  lX  = lMarge+300;
+	  lX0 = lMarge;
 	  lY = lMarge;
 	  
 	  INTPUT_BOOL( cSelectPassOverLighting, "Inlight entity when pass over");
-	  cSelectPassOverLighting->value( MyPref.cSelectPassOverLighting);
+	  //	  cSelectPassOverLighting->value( MyPref.cSelectPassOverLighting);
+
+	  INTPUT_INT( cSelectPickingSize, "Precision of picking");
+	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
 
 	  
 	  lGr->end();
@@ -162,13 +171,13 @@ namespace M3d {
 	}
 	//===================================	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Debug");
-	  lX = lMarge+200;
+	  lX = lMarge+300;
 	  lY = lMarge;
 	
-	  cDbgEvt = new MyIntInput( lX, lY, 200, lH, "Debug Event", MyPref.cDbgEvt );
-	  lY += cDbgEvt->h() + lMarge;
-	  
-	  INTPUT_INT( cDbgAct, "Debug Action (windows events)   " );
+	  //	  cDbgEvt = new MyIntInput( lX, lY, 200, lH, "Debug Event", MyPref.cDbgEvt );
+	  //	  lY += cDbgEvt->h() + lMarge;
+	  INTPUT_INT( cDbgEvt, "Debug Event (windows events)    " );	  
+	  INTPUT_INT( cDbgAct, "Debug Action                    " );
 	  INTPUT_INT( cDbgDrw, "Debug Draw                      " );
 	  INTPUT_INT( cDbgBaz, "Debug Database                  " );
 	  INTPUT_INT( cDbgSel, "Debug Selection                 " );	  

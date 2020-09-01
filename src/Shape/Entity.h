@@ -100,6 +100,19 @@ namespace PP3d {
     size_t howManyOwner ( ) { return cOwners.size(); }
     void   clearOwner   ( Entity* pOwner ) { cOwners.erase( pOwner); }
     void   clearAllOwner( ) { cOwners.clear(); }
+    
+    virtual void remove( Entity* lEntity )
+    {
+      lEntity->removeOwner( this );
+    }
+
+    void removeFromOwners()
+    {
+      for( Entity* lOwner : getOwners() )
+	{
+	  lOwner->remove( this );
+	}
+    }
 
     virtual bool clear() { clearAllOwner();  return true; }
 		
@@ -246,7 +259,17 @@ namespace PP3d {
       if( lA != lB )
 	lB->addOwner( this );			
     }
-    
+    void setFirst(PointPtr iPoint) {
+      if( getFirst() )  getFirst()->removeOwner(this);
+      cPoints.first = iPoint;
+      iPoint->addOwner( this );
+    }
+    void setSecond(PointPtr iPoint) {
+      if( getSecond() )  getSecond()->removeOwner(this);
+      cPoints.second = iPoint;
+      iPoint->addOwner( this );
+    }
+
 
     void execVisitor( EntityVisitor& pVisit )override;
  
@@ -409,6 +432,8 @@ namespace PP3d {
     }
 
     LinePtr getLine(  size_t iPos ) { return cLines[iPos]; }
+    LinePtr getLineModulo(  size_t iPos ) { return cLines[iPos%cLines.size()]; }
+    void    removeLineModulo(  size_t iPos ) { cLines.erase( cLines.begin()+(iPos%cLines.size())); }
     LinePtr swapLine(  size_t iPos,  LinePtr iLine )
     {
       LinePtr lTmp =  cLines[iPos];
@@ -425,7 +450,8 @@ namespace PP3d {
     Point3d & getNormal()     { return cNorm; }
 		
     void execVisitor( EntityVisitor& pVisit )override;
-    void inverseLines( );
+    void inverseLines();
+    Point3d getCenter();
 
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;
@@ -453,7 +479,7 @@ namespace PP3d {
     
     void removeFacet(  FacetPtr pFacet)
     {
-      for( size_t i=0;  cFacets.size(); i++)
+      for( size_t i=0;  cFacets.size(); i++) 
 	{
 	  if( cFacets[i] == pFacet )
 	    {
@@ -461,6 +487,13 @@ namespace PP3d {
 	      pFacet->removeOwner(this);
 	      break;
 	    }
+	}
+    }    
+    virtual void remove( Entity* lEntity ) override
+    {
+      if( lEntity->getType() ==  ShapeType::Facet )
+	{
+	  removeFacet(  ((FacetPtr)lEntity) );
 	}
     }
 

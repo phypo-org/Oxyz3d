@@ -620,6 +620,6 @@ namespace PP3d {
 	ioFacet->clear();
 	cFreeFacets.push( ioFacet );
       }
-  }  
+  }
   //************************************
 } // end namespace

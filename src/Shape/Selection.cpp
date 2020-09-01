@@ -10,6 +10,7 @@
 #include "DebugVars.h"
 
 #include "OwnerVisitor.h"
+#include "Modif/Modif.h"
 
 
 using namespace std;
@@ -403,22 +404,36 @@ namespace PP3d {
   //--------------------------------
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )
   {
-    std::vector<EntityPtr> lDelList;
-   for(  EntityPtr lEntity : cSelectObjVect )
+    if( cSelectType == SelectType::Object )
       {
-	if( pDatabase.deleteEntity( lEntity ) )
+	std::vector<EntityPtr> lDelList;
+	for(  EntityPtr lEntity : cSelectObjVect )
 	  {
-	    lDelList.push_back( lEntity );
+	    if( pDatabase.deleteEntity( lEntity ) )
+	      {
+		lDelList.push_back( lEntity );
+	      }
+	  }
+		
+	for( EntityPtr lEntity : lDelList )
+	  {
+	    pDatabase.deleteEntity( lEntity );
 	  }
       }
-    
+    else 
+    if( cSelectType == SelectType::Point )
+      {
+	std::vector<PointPtr> lPoints;
+	
+	for(  EntityPtr lEntity : cSelectObjVect )
+	  {
+	    lPoints.push_back( dynamic_cast<PointPtr>( lEntity) );
+	  }
+	Modif::DeletePoints( &pDatabase, lPoints, true );
+      }
+	
     cSelectObj.clear();
     cSelectObjVect.clear();
-
-    for( EntityPtr lEntity : lDelList )
-      {
-	pDatabase.deleteEntity( lEntity );
-      }
   }
   //--------------------------------
   void Selection::addSelectionToInput( DataBase& pDatabase, bool pFlagLink )				

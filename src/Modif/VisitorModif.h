@@ -174,18 +174,53 @@ namespace PP3d {
     //---------------------------------		
     void execEndFacet( Facet* pEntity) override
     {
- 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
+      // 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
      VisitorModifPoints::execEndFacet(pEntity); 
-	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+     //	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
 
       if( cMode == Mode::MODIF )
 	{
-	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  //	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
 	  
 	  Point3d cNorm = pEntity->getNormal();
 	  for( Point* lPt:cModifPt )
 	    {
 	      lPt->get() += cNorm*cCoef; // si plusieurs facette les modifs s'additionnent	      
+	    }
+	  cModifPt.clear(); 
+	}        
+   }
+ 
+  };
+  //**************************
+  struct VisitorScaleNormal : public  VisitorModifPoints
+  {
+    //---------------------------------			  
+    VisitorScaleNormal( PP3d::Selection & iSelect)
+      :VisitorModifPoints( iSelect )
+    {
+
+    }
+    //---------------------------------		
+    void execEndFacet( Facet* pEntity) override
+    {
+      //      std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
+      VisitorModifPoints::execEndFacet(pEntity); 
+      //      std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+
+      if( cMode == Mode::MODIF )
+	{
+	  std::cout << " cScalePt:" << cModifPt.size() << std::endl;
+	  
+	  //	  Point3d cNorm = pEntity->getNormal();
+	  Point3d cCenter = pEntity->getCenter();
+	  
+	  for( Point* lPt:cModifPt )
+	    {
+	      Point3d lVect = lPt->get() - cCenter;
+	      lVect.normalize(cCoef);	      
+	      
+	      lPt->get() += lVect;	      
 	    }
 	  cModifPt.clear(); 
 	}        

@@ -50,7 +50,8 @@ namespace M3d{
       ScaleRX,
       ScaleRY,
       ScaleRZ,
-      ScaleAxis
+      ScaleAxis,
+      ScaleNormal
       };
 
   //************************************

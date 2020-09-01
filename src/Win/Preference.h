@@ -18,6 +18,8 @@ namespace M3d {
   public:
     //Interface
     float cMouseWheel=15;
+
+
     
     //Save
     const std::string sSaveDefault = "default.oxyz";
@@ -39,7 +41,8 @@ namespace M3d {
 
     //Select
     bool cSelectPassOverLighting = true ; // inlight entity when passing on
-      
+    int  cSelectPickingSize=10;
+     
     friend class PPSingletonCrtp;
       
     Preference();

@@ -61,13 +61,14 @@ bool Modif::SubDivAngle( DataBase * iBase,
 	    if( iSubDivType == SubDivFacetType::ANGLE_FACET_MARGE)
 	      {
 		FacetPtr lCentralFacPtr = iBase->getNewFacet();
-		if( ((int)iSubDivSelect) & ((int) SubDivSelectType::SELECT_CENTRAL))
+		if( (((uint)iSubDivSelect) & ((uint) SubDivSelectType::SELECT_CENTRAL)))
 		  oNewFacet.push_back( lCentralFacPtr );
 		
 		for( size_t i=0; i < lSz ; i++ )
 		  {
-		    FacetPtr lFacPtr = iBase->getNewFacet();
-		    if( ((int)iSubDivSelect) & ((int)SubDivSelectType::SELECT_MARGE))
+		    FacetPtr lFacPtr = iBase->getNewFacet();		   
+		    
+		    if( (((uint)iSubDivSelect) & ((uint)SubDivSelectType::SELECT_MARGE)))
 		      oNewFacet.push_back( lFacPtr );
 
 		    PointPtr Pt1 = lPoints[i];

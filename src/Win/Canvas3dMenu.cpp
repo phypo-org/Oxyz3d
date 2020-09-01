@@ -95,6 +95,7 @@ namespace M3d {
 #define StrMenu_ScaleRZ    "Scale radial Z"
   //#define StrMenu_ScaleRZ    "Scale normal"
 #define StrMenu_ScaleAxis  "# Scale around current axis"
+#define StrMenu_ScaleNormal  "Scale normal"
 
 	
 #define StrMenu_Dup        "Duplicate"	
@@ -137,7 +138,7 @@ namespace M3d {
  
 #define StrMenu_SubdivideCatmullClark      "Smooth"
 #define StrMenu_Triangulate           " angles "
-#define StrMenu_Triangulate1          " angles + central facette+ marges "
+#define StrMenu_Inset          "Inset" // " angles + central facette+ marges "
 #define StrMenu_Triangulate2          " segments"
 #define StrMenu_Triangulate3          " segments + central facette"
 #define StrMenu_Triangulate4          " segments + central facette + marges"
@@ -197,6 +198,7 @@ namespace M3d {
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if( TheAppli.getCurrentAxis() )
 	pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 
@@ -215,7 +217,7 @@ namespace M3d {
     if(  TheSelect.getSelectType() == PP3d::SelectType::Point
 	 && TheSelect.getNbSelected() > 1 )
       {
-	pMenu.add( StrMenu_ConnectPoint, "c", MyMenuCallbackConnectPoint, this);	
+	pMenu.add( StrMenu_ConnectPoint, "", MyMenuCallbackConnectPoint, this);	
       }
     
     
@@ -237,9 +239,9 @@ namespace M3d {
 	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
 	  && TheSelect.getNbSelected() > 0)
       {
+	pMenu.add( StrMenu_Inset, "", MyMenuCallbackInset, this);
 	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate,  "", MyMenuCallbackSubdivide1, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate1, "", MyMenuCallbackSubdivide1, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate2, "", MyMenuCallbackSubdivide2, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate3, "", MyMenuCallbackSubdivide2, this);
 	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate4, "", MyMenuCallbackSubdivide2, this, FL_MENU_DIVIDER);
@@ -622,6 +624,11 @@ namespace M3d {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::ScaleRZ );
       }
+    else if( strcmp( m->label(), StrMenu_ScaleNormal ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::ScaleNormal );
+      }
     else if( strcmp( m->label(), StrMenu_ScaleAxis ) == 0)
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
@@ -715,6 +722,26 @@ namespace M3d {
       }    
   }
   //-------------------------------------------
+  void Canvas3d::MyMenuCallbackInset(Fl_Widget* w, void* pUserData)
+  {
+    BEGINCALL  ;
+    PP3d::SortEntityVisitor lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );       
+    
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL))
+      {
+	//	std::cout << "MyMenuCallbackInset finish" << std::endl;
+	TheSelect.removeAll();
+	TheSelectTransform.changeSelectType( PP3d::SelectType::Facet );       
+	TheSelect.addGoodEntityFor(lNewFacets);
+	PushHistory();
+	TheAppli.redrawAll();	
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
+      }  
+  }
+  //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData)
   {
       BEGINCALL  ;
@@ -723,13 +750,6 @@ namespace M3d {
 
     PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::ANGLE_SIMPLE;
     
-    if( strcmp( m->label(), StrMenu_Triangulate1 )==0 )
-      {
-	lDivType = PP3d::SubDivFacetType::ANGLE_FACET_MARGE;	
-      }
- 
-
- 
     std::vector<PP3d::EntityPtr> lNewFacets;
     if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, lDivType ))
       {	

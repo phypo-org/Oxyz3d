@@ -107,7 +107,7 @@ LDFLAGS= -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2 
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2 
 
 
 
