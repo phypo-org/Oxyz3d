@@ -245,14 +245,21 @@ namespace M3d {
       {
 	// Une Nlle base
 	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-
+	
+	TheSelect.removeAll();
+	
 	std::string lFilename = cFc->value();
+	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
 	if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
 	  {
+	    //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
+	    
 	    PushHistory(); // on sauve l'ancienne base dans l'historique
 	    
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	    TheAppli.setDatabase( luBase ); // on prend la nlle base
+	    //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
+	    TheAppli.setDatabase( luBase, false ); // on prend la nlle base
+	    //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;
 	    
 	    MyPref.cLastSave = lFilename;
 	    TheAppli.redrawAll();
@@ -348,7 +355,7 @@ namespace M3d {
 	luBase->resetIdFromMax();
 	//	std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
 
- 	TheAppli.setDatabase( luBase );
+ 	TheAppli.setDatabase( luBase, false );
       }
     else
       TheSelect.removeAll();
@@ -369,13 +376,14 @@ namespace M3d {
 	luBase->resetIdFromMax();
 	//	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
 
-	TheAppli.setDatabase( luBase );
-      }
+	TheAppli.setDatabase( luBase, false );
+      } 
     else
       TheSelect.removeAll();
       
  	
-    TheAppli.redrawAll();
+    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawObjectTree();
   }
   //------------------------------------------------------
   static void CB_ViewTransfrom(Fl_Widget*w, void*pData)
@@ -436,7 +444,7 @@ namespace M3d {
     lBut4->value( false );
     //    lBut5->value( false );
 
-    std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
+    //    std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
 
     TheAppli.redrawAll();
   }
@@ -449,12 +457,12 @@ namespace M3d {
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
 	
 
-    std::cout << " value:" << (int)lToggle->value();
+    //    std::cout << " value:" << (int)lToggle->value();
     if( lToggle->value() )
       lToggle->value( true );
     else
       lToggle->value( false );
-    std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
+    //    std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
 
 		
     lWin3d->cuCanvas3d->setVisualMode(  (int)lToggle->value() );		
@@ -558,8 +566,8 @@ namespace M3d {
     cButUndo->tooltip("Redo");
     lX += lW;
 	
-    //    cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
-    //    cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
+        cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
+        cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
 
 
     //========================		
@@ -1276,8 +1284,8 @@ namespace M3d {
     else
       cButRedo->activate();
 
-    //    cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
-    //    cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
+        cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
+       cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
   }
   //-------------------------------------------
   void Win3d::setCurrentVal( const char* iLabel, double iVal)

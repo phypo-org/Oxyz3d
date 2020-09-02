@@ -8,7 +8,7 @@
 #include "ObjectPolylines.h"
 #include "ObjectPoly.h"
 
-
+/*
 const char* TokPoint="Point:";
 const char* TokLine="Line:";
 const char* TokFacet="Facet:";
@@ -18,6 +18,17 @@ const char* TokObject="Object:";
 const char* TokSaisiePt="SaisiePt:";
 
 const char* TokSelection="Selection:";
+*/
+
+const char* TokPoint="p:";
+const char* TokLine="L:";
+const char* TokFacet="F:";
+const char* TokPoly="P:";
+const char* TokObject="O:";
+
+const char* TokSaisiePt="Saisie:";
+
+const char* TokSelection="Sel:";
 
 
 bool sDebugSav = false;
@@ -390,20 +401,33 @@ namespace PP3d {
 
 			size_t lNb;
 			cIn >>  lNb  ;
-
+			
+			//	std::cout << "Selection " << lStrTypeSelect << " " << lSelType
+			//		  << " " << lNb << std::endl;
+			
 			for( size_t i=0; i< lNb; i++)
 			  {			    
 			    EntityId lId;
 			    
 			    cIn >> lId ;
+			    
 			    if( ioSel )
 			      {
+				//	std::cout << "Sel " << lId ;
+	
 				EntityPtr lEntity = lLocalDico.at(lId);
 				if( lEntity != nullptr )
-				  ioSel->addEntity( lEntity, true );
+				  {
+				    ioSel->addEntity( lEntity, true );
+				    //	    std::cout << " ok " <<  ioSel->getNbSelected()  << std::endl;
+				  }
+				//	else
+				//	  std::cout << " ko " << std::endl;
+
 			      }
-			  }		      
-		      }
+			  }
+			
+		      }	  
 		    else
 		    {
 		      SAVCOUT<< " Unknown Token :" << lToken << std::endl;

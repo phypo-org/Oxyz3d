@@ -54,9 +54,11 @@ namespace PP3d {
     
     cCurrent--;
 
-    // std::cout << "###################################################" << std::endl;
-    //  std::cout <<  "UndoHistory::readPrev "<< cCurrent << "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
-    //  std::cout << "###################################################" << std::endl;
+    std::cout << "###################################################" << std::endl;
+      std::cout <<  "UndoHistory::readPrev "<< cCurrent
+		<< "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>"
+		<< std::endl;
+      std::cout << "###################################################" << std::endl;
 
     std::istringstream lIs( cHistoSav[cCurrent] );
       

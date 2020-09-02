@@ -3,6 +3,7 @@
 
 #include "Shape/Selection.h"
 
+
 namespace PP3d {
 
   struct VisitorModifSelect : public EntityVisitor	{
@@ -64,12 +65,20 @@ namespace PP3d {
     }
   };
   //**************************
+
+// ATTENTION si un point appartient a plusieurs facettes, les transformations s'additionnent
+// Ce n'est pas forcement un effet voulu !!!
+// Comment faire autrement ?
+// compter precocement le nombre de owners actifs pour chaque points, stocker le nombre et
+// lors des transformation diviser la transformation par ce nombre ?
+
   struct VisitorModifPoints : public VisitorModifSelect
   {	
    // Memorize les coordonnees des points des entites selectionnes
     
-   std::unordered_map<EntityId, Point3d> lSavPt;
- 
+    std::unordered_map<EntityId, Point3d> lSavPt;
+    std::unordered_map<EntityId, int> lNbOwner;
+
     std::unordered_set<Point*>    cModifPt;    
     std::unordered_set<EntityPtr> cOwners;
     
@@ -113,7 +122,17 @@ namespace PP3d {
 	  {
 	    if( pPoint->isSelect() || lCptSelect > 0 )
 	      {
-		lSavPt.insert( { pPoint->getId(), pPoint->get() } ); 
+		lSavPt.insert( { pPoint->getId(), pPoint->get() } );
+		
+		auto lIter = lNbOwner.find( pPoint->getId() );
+		if(  lIter != lNbOwner.end() )
+		  {
+		    lIter->second++;
+		  }
+		else
+		  {
+		    lNbOwner.insert(  { pPoint->getId(), 1 } );
+		  }
 	      }
 	  }
 	  break;
@@ -185,7 +204,12 @@ namespace PP3d {
 	  Point3d cNorm = pEntity->getNormal();
 	  for( Point* lPt:cModifPt )
 	    {
-	      lPt->get() += cNorm*cCoef; // si plusieurs facette les modifs s'additionnent	      
+	      double lNb=1;
+	      auto lIter = lNbOwner.find( lPt->getId() );
+	      if(  lIter != lNbOwner.end() )
+		lNb = lIter->second;
+
+	      lPt->get() += (cNorm*cCoef)/lNb; // si plusieurs facette les modifs s'additionnent !!!
 	    }
 	  cModifPt.clear(); 
 	}        
@@ -217,10 +241,74 @@ namespace PP3d {
 	  
 	  for( Point* lPt:cModifPt )
 	    {
+	      double lNb=1;
+	      auto lIter = lNbOwner.find( lPt->getId() );
+	      if(  lIter != lNbOwner.end() )
+		lNb = lIter->second;
+
+
 	      Point3d lVect = lPt->get() - cCenter;
 	      lVect.normalize(cCoef);	      
 	      
-	      lPt->get() += lVect;	      
+	      lPt->get() += lVect/lNb;	      
+	    }
+	  cModifPt.clear(); 
+	}        
+   }
+ 
+  };
+  //*************************************
+  //**************************
+  struct VisitorRotNormal : public  VisitorModifPoints
+  {
+    //---------------------------------			  
+    VisitorRotNormal( PP3d::Selection & iSelect)
+      :VisitorModifPoints( iSelect )
+    {
+
+    }
+    //---------------------------------		
+    void execEndFacet( Facet* pEntity) override
+    {
+      //      std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
+      VisitorModifPoints::execEndFacet(pEntity); 
+      //      std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+
+      if( cMode == Mode::MODIF )
+	{
+	  std::cout << " cScalePt:" << cModifPt.size() << std::endl;
+	  
+	  //	  Point3d cNorm = pEntity->getNormal();
+	  Point3d cCenter = pEntity->getCenter();
+	  Point3d cNorm = pEntity->getNormal();
+
+	  PP3d::Mat4 lMatRecenter;
+	  lMatRecenter.initMove( cCenter ); //on revient au centre de la facette;
+	  PP3d::Point3d lNCenter =  -cCenter;					
+	  PP3d::Mat4 lMatZero;
+	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
+
+
+
+	  for( Point* lPt:cModifPt )
+	    {
+	      double lNb=1;
+	      auto lIter = lNbOwner.find( lPt->getId() );
+	      if(  lIter != lNbOwner.end() )
+		lNb = lIter->second;
+	      
+	      PP3d::Mat4 lMatRot;	  
+	      lMatRot.initRotAxis( cNorm, cCoef/lNb );
+
+	      PP3d::Mat4 lMatTran;
+	      lMatTran.Identity();
+	      lMatTran = lMatRecenter * lMatRot *  lMatZero;					
+
+
+	      Point3d lVect = lPt->get() - cCenter;
+	      lVect.normalize(cCoef);	      
+	      
+	      lPt->get()  = lPt->get() * lMatTran;	      
 	    }
 	  cModifPt.clear(); 
 	}        

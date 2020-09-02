@@ -69,4 +69,17 @@ o creation d'objet plans ( couleur speciale et grille pour la
 ------------------------------------------------
 ----------------------------------------------
 
-o optimisation  // specialisation des visiteurs plus poussé
+o optimisation
+      1) specialisation des visiteurs plus poussé
+
+
+o Primitives Fractals, Arbres ...
+
+o Tortues 3d programables (avec fork !) (logo)
+
+o Trajectoires
+
+
+
+o Ajouter des fonctions a LUA,
+  essayer la creation d'un objets avec lua !

@@ -482,6 +482,8 @@ namespace M3d {
   //---------------------------
   void Canvas3d::validDragSelect( PP3d::Mat4 &pMat )
   {
+    std::cout << "validDragSelect PushHistory " << std::endl;
+    
     dragSelect( pMat ); // Inutile ? 
     cDragPoints.clear();
     cDragSavPoints.clear();
@@ -514,7 +516,7 @@ namespace M3d {
     return false;
   }
   //---------------------------
-  void Canvas3d::userTransformSelection(int	pEvent, bool pFlagFinalize)
+  void Canvas3d::userTransformSelection(int pEvent, bool pFlagFinalize)
   {
     int lX = Fl::event_x();
     int lY = Fl::event_y();
@@ -536,9 +538,11 @@ namespace M3d {
   
     switch( TheAppli.getCurrentTransformType() )
       {
+	//================
       case Transform::Nothing:
 	std::cout << "Nothing to do !!!" << std::endl;
-	return ;
+	break;
+	//	return ;
 
 	//================
       case Transform::MoveNormal:
@@ -549,18 +553,20 @@ namespace M3d {
 	  
 	  if(cVisitModifSelect == nullptr )
 	    {
-	      cVisitModifSelect = new PP3d::VisitorMoveNormal(TheSelect);
+	      cVisitModifSelect = new PP3d::VisitorMoveNormal(TheSelect);// DIFFERENCE !!!
 	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );
+	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );// DIFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
+	  if( pFlagFinalize)
+	      validDragSelect( lMatTran );
 	  return;    //////////// ATTENTION 
 	}
-	break;	 
 	//================
+	
       case Transform::ScaleNormal:
 	{
 	 
@@ -574,13 +580,37 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/100.0 );
+	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/100.0 );// DIFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
-	  return;    //////////// ATTENTION 
+	  if( pFlagFinalize)
+	      validDragSelect( lMatTran );
+	  return;    //(double)/////////// ATTENTI suricata.yamlON 
 	}
-	break;	 
 	//================
+      case Transform::CenterRotFacetNorm:
+	{
+	 
+	  std::cout << "======== Grab Normal " << std::endl;	  
+	   
+	  if(cVisitModifSelect == nullptr )
+	    {
+	      cVisitModifSelect = new PP3d::VisitorRotNormal(TheSelect); // DIFFERENCE !!!
+	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
+	    }
+	  
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
+	  TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;             // DIFFERENCE !!!	
+	  cVisitModifSelect->setCoef( TheAppli.currentTransform().angle().x() );// DIFFERENCE !!!
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
+	  
+	  if( pFlagFinalize)
+	      validDragSelect( lMatTran );
+	  return;    //(double)/////////// ATTENTI suricata.yamlON 
+	}
+	//================
+
+	
 			
       case Transform::MoveX:
 	{

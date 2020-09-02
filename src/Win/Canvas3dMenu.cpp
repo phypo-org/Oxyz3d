@@ -84,6 +84,7 @@ namespace M3d {
 #define StrMenu_RotZ     "Rotate Z"
 #define StrMenu_RotNorm  "Rotate normal"
 #define StrMenu_RotAxis  "Rotate around current axis"
+#define StrMenu_RotFacetNorm  "Rotate facet normal"
 
 #define StrMenu_Scale      "Scale"
 #define StrMenu_ScaleU     "Scale uniform"
@@ -95,7 +96,7 @@ namespace M3d {
 #define StrMenu_ScaleRZ    "Scale radial Z"
   //#define StrMenu_ScaleRZ    "Scale normal"
 #define StrMenu_ScaleAxis  "# Scale around current axis"
-#define StrMenu_ScaleNormal  "Scale normal"
+#define StrMenu_ScaleNormal  "Scale around facet normal"
 
 	
 #define StrMenu_Dup        "Duplicate"	
@@ -181,6 +182,7 @@ namespace M3d {
     if( TheAppli.getCurrentAxis() )
       pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
     
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotFacetNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object
 	 || TheSelect.getSelectType() ==  PP3d::SelectType::Facet)
       {	
@@ -458,7 +460,7 @@ namespace M3d {
     
     std::vector<PP3d::EntityPtr> lNewFacets;
     
-    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.1 ))
       {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);  
@@ -587,6 +589,11 @@ namespace M3d {
       {
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	Application::Instance().setCurrentTransformType(Transform::CenterRotNorm );
+      }
+    else if( strcmp( m->label(), StrMenu_RotFacetNorm ) == 0)
+      {
+	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	Application::Instance().setCurrentTransformType(Transform::CenterRotFacetNorm );
       }
      // SCALE
     else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)
@@ -737,8 +744,8 @@ namespace M3d {
 	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
 	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
+	//	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	//	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
       }  
   }
   //-------------------------------------------

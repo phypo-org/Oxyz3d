@@ -42,7 +42,8 @@ namespace M3d{
       CenterRotZ,
       CenterRotNorm,
       CenterRotAxis,
-      
+      CenterRotFacetNorm,
+
       ScaleUniform,
       ScaleX,
       ScaleY,
@@ -108,9 +109,11 @@ namespace M3d{
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
-    void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase )
+    void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase, bool iRazSelect = true )
     {
-      cSelect.removeAll();
+      if( iRazSelect )
+	cSelect.removeAll();
+      
       cuDatabase = std::move(iuBase);
     }
     PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }

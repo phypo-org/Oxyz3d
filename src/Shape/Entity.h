@@ -51,11 +51,10 @@ namespace PP3d {
 		
     std::set<Entity*> cOwners;
 
+    
     bool              cIsSelected=false;
     bool              cIsHighlight=false;
-
-
-    bool              cTreeOpen=false;  // for interface
+    bool              cTreeOpen=false;      // for interface 
     
   private:
     void     setId(EntityId iId) { cId = iId; }
