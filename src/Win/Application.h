@@ -163,11 +163,11 @@ namespace M3d{
 	}
       return false;
     }
-    bool addAxis( PP3d::PointPtr  lA, PP3d::PointPtr lB )
+    bool addAxis( PP3d::PointPtr  lCenter, PP3d::PointPtr lVect )
     {
-      if( lA->get() != lB->get() )
+      if(lCenter->get() != lVect->get() )
 	{
-	  cCurrentAxis = MakeObjectLine( "Axis", lA->get(), lB->get() );
+	  cCurrentAxis = MakeObjectLine( "Axis", lCenter->get(), lVect->get() );
 	  cuDatabaseTransform->addObject( cCurrentAxis );
 	  redrawObjectTree();
 	  return true;

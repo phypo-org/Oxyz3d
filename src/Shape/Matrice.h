@@ -28,14 +28,38 @@ namespace PP3d {
     PDouble cMat[4][4];
 
   public:
-    //-----------------------------
     Mat4() {;}
+    //-----------------------------
+    void set( PDouble x1, PDouble x2,  PDouble x3,
+	      PDouble y1, PDouble y2,  PDouble y3,
+	      PDouble z1, PDouble z2,  PDouble z3 )
+    {
+      cMat[0][0] = x1;
+      cMat[0][1] = x2;
+      cMat[0][2] = x3;
+      cMat[0][3] = 0;
+ 
+      cMat[1][0] = y1; 
+      cMat[1][1] = y2;     
+      cMat[1][2] = y3;
+      cMat[1][3] = 0;
+  
+      cMat[2][0] = z1;
+      cMat[2][1] = z2;
+      cMat[2][2] = z3;  
+      cMat[2][3] = 0;
+      
+      cMat[3][0] = 0;
+      cMat[3][1] = 0;
+      cMat[3][2] = 0;  
+      cMat[3][3] = 1;      
+    }
     //-----------------------------
     Mat4( const Mat4& iSrc) 
     {
       ::memcpy( cMat, iSrc.cMat, sizeof( cMat ) );	    
     }
-    //-----------------------------
+   //-----------------------------
     void operator = ( const Mat4& iSrc)
     {
       ::memcpy( cMat, iSrc.cMat, sizeof( cMat ) );
@@ -207,8 +231,23 @@ namespace PP3d {
     const PDouble* vectForGL() const
     {
       return &cMat[0][0];
-    }		
-		
+    }
+    
+    void rotateAlign( Point3d u1, Point3d u2);
+
+    static Vector3d GetCross( Vector3d u1, Vector3d u2)
+  {
+    Vector3d axis = Vector3d::Cross( u1, u2 );
+    return axis;
+  }
+  
+    static Vector3d GetCrossNorm( Vector3d u1, Vector3d u2)
+  {
+    Vector3d axis = Vector3d::Cross( u1, u2 );
+    axis.normalize();
+    return axis;
+  }
+ 		
   };
 
 

@@ -33,9 +33,13 @@ namespace PP3d {
       
     }
 
-    TFLOAT x() { return cX; }
-    TFLOAT y() { return cY; }
-    TFLOAT z() { return cZ; }
+    TFLOAT x() const { return cX; }
+    TFLOAT y() const { return cY; }
+    TFLOAT z() const { return cZ; }
+    
+    TFLOAT & x() { return cX; }
+    TFLOAT & y() { return cY; }
+    TFLOAT & z() { return cZ; }
 
     TPoint3d& operator = ( const TPoint3d& pVar )
     {
@@ -199,18 +203,18 @@ namespace PP3d {
       return cX * b.cX + cY * b.cY + cZ * b.cZ;
     }
     //--------------------------------	
-    static TPoint3d Cross( TPoint3d a, TPoint3d b )   // produit vectoriel 
+    static TPoint3d Cross( TPoint3d u, TPoint3d v )   // produit vectoriel 
     {
-      return TPoint3d( a.cY * b.cZ - a.cZ * b.cY,
-		       a.cZ * b.cX - a.cX * b.cZ,    
-		       a.cX * b.cY - a.cY * b.cX ) ;
+      return TPoint3d( u.cY * v.cZ - u.cZ * v.cY,
+		       u.cZ * v.cX - u.cX * v.cZ,    
+		       u.cX * v.cY - u.cY * v.cX ) ;
     }
     //--------------------------------	
-    TPoint3d cross( TPoint3d b )   // produit vectoriel 
+    TPoint3d cross( TPoint3d v )   // produit vectoriel 
     {
-      return TPoint3d( cY * b.cZ - cZ * b.cY,
-		       cZ * b.cX - cX * b.cZ,    
-		       cX * b.cY - cY * b.cX ) ;
+      return TPoint3d( cY * v.cZ - cZ * v.cY,
+		       cZ * v.cX - cX * v.cZ,    
+		       cX * v.cY - cY * v.cX ) ;
     }
     //--------------------------------	
     TFLOAT modulus()
@@ -278,12 +282,13 @@ namespace PP3d {
 	}
       lSum /= iVect.size();
       
+      
       return lSum;
     }
     //--------------------------------	
-    void normalize( float pVal)
+    void normalize( PDouble pVal=1.0)
     {				
-      TFLOAT d = (TFLOAT) std::sqrt(cX*cX+cY*cY+cZ*cZ);
+      PDouble d = (PDouble) std::sqrt(cX*cX+cY*cY+cZ*cZ);
       if (d == 0.0f) {
 	d = 1.0f;
       }
@@ -297,6 +302,7 @@ namespace PP3d {
   using Point3d  = TPoint3d<PDouble>;
   using Point3dF = TPoint3d<GLfloat>;
 	
+  using Vector3d  = TPoint3d<PDouble>;
 	
   //******************************************
   class VectPoint3d{

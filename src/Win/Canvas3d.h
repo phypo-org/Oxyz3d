@@ -132,6 +132,8 @@ namespace M3d {
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
 		
     static void MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSelect(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData );

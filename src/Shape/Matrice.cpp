@@ -120,6 +120,7 @@ namespace PP3d{
     *this *= lTmp;
   }
   //-----------------------------
+  // rotation d'un angle a  autour du vecteur u
   void Mat4::initRotAxis( Point3d  u, PDouble a)
   {
     // Mat[ line ][ col ]
@@ -128,7 +129,7 @@ namespace PP3d{
     long double x = u.cX;
     long double y = u.cY;
     long double z = u.cZ;
-    long double cm1 = 1-c;
+    long double ic = 1-c;
     long double xy=x*y;
     long double xz=x*z;
     long double yz=y*z;
@@ -141,21 +142,103 @@ namespace PP3d{
     
 
     
-    cMat[0][0] = x2*cm1 + c;
-    cMat[0][1] = xy*cm1 - zs;			     
-    cMat[0][2] = xz*cm1 + ys;
+    cMat[0][0] = x2*ic + c;
+    cMat[0][1] = xy*ic - zs;			     
+    cMat[0][2] = xz*ic + ys;
 
-    cMat[1][0] = xy*cm1+zs;
-    cMat[1][1] = y2*cm1+c;  
-    cMat[1][2] = yz*cm1-xs;
+    cMat[1][0] = xy*ic+zs;
+    cMat[1][1] = y2*ic+c;  
+    cMat[1][2] = yz*ic-xs;
     
-    cMat[2][0] = xz*cm1-ys;
-    cMat[2][1] = yz*cm1+xs;  
-    cMat[2][2] = z2*cm1+c;
+    cMat[2][0] = xz*ic-ys;
+    cMat[2][1] = yz*ic+xs;  
+    cMat[2][2] = z2*ic+c;
 	
     initRotFor4x4();
   }
+  //-----------------------------
+  // aligne deux vecteurs  optimise
+  /*
+  void Mat4::rotateAlign( Vector3d u1, Vector3d u2)
+  {
+    Vector3d axis = Vector3d::Cross( u1, u2 );
+    
+    const double cosA = Vector3d::Dot( u1, u2 );
+    const double k = 1.0f / (1.0f + cosA);
 
+    cMat[0][0] = (axis.x()* axis.x()* k) + cosA;
+    cMat[0][1] = (axis.y() * axis.x()* k) - axis.z();
+    cMat[0][2] = (axis.z() * axis.x()* k) + axis.y();
+    
+    cMat[1][0] = (axis.x()* axis.y() * k) + axis.z(); 
+    cMat[1][1] = (axis.y() * axis.y() * k) + cosA;     
+    cMat[1][2] = (axis.z() * axis.y() * k) - axis.x();
+    
+    cMat[2][0] = (axis.x()* axis.z() * k) - axis.y();
+    cMat[2][1] = (axis.y() * axis.z() * k) + axis.x();
+    cMat[2][2] = (axis.z() * axis.z() * k) + cosA ;
+               
+    initRotFor4x4();
+  }
+  */
+  // aligne deux vecteurs
+  // bug 1 fois sur deux
+  /*
+  void Mat4::rotateAlign( Vector3d u1, Vector3d u2)
+  {
+    Vector3d axis = Vector3d::Cross( u1, u2 );
+    axis.normalize();
+
+    //   Vector3d axis = normalize(Vector3d::Cross( u1, u2 ); );
+    
+    double dotProduct = Vector3d::Dot( u1, u2 );
+    if( dotProduct > 1.0 )
+      dotProduct = 1.0;
+    else
+      if( dotProduct < -1.0 )
+	dotProduct = -1.0;
+    //    dotProduct = clamp( dotProduct, -1.0f, 1.0f );
+    
+    double angleRadians = acosf( dotProduct );
+
+    const double sinA = sinf( angleRadians );
+    const double cosA = cosf( angleRadians );
+    const double invCosA = 1.0f - cosA;
+
+    set( (axis.x() * axis.x() * invCosA) + cosA,
+	 (axis.y() * axis.x() * invCosA) - (sinA * axis.z()), 
+	 (axis.z() * axis.x() * invCosA) + (sinA * axis.y()),
+	 (axis.x() * axis.y() * invCosA) + (sinA * axis.z()),  
+	 (axis.y() * axis.y() * invCosA) + cosA,      
+	 (axis.z() * axis.y() * invCosA) - (sinA * axis.x()),
+	 (axis.x() * axis.z() * invCosA) - (sinA * axis.y()),  
+	 (axis.y() * axis.z() * invCosA) + (sinA * axis.x()),  
+	 (axis.z() * axis.z() * invCosA) + cosA 
+	 );
+    //   initRotFor4x4();
+}
+  */
+   void Mat4::rotateAlign( Vector3d u1, Vector3d u2)
+  {
+    Vector3d axis = Vector3d::Cross( u1, u2 );
+    axis.normalize();
+
+    double dotProduct = Vector3d::Dot( u1, u2 );
+    
+    if( dotProduct > 1.0 )
+      dotProduct = 1.0;
+    else
+      if( dotProduct < -1.0 )
+	dotProduct = -1.0;
+
+    double angleRadians = acosf( dotProduct );
+
+    std::cout <<"dotProduct:"<<  dotProduct << " angleRadians:" << (angleRadians/3.1416)*180 <<std::endl;
+      
+    initRotAxis(  axis, angleRadians );
+  }
+
+  
   //**************************************
 
 }

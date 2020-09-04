@@ -116,6 +116,7 @@ namespace PP3d{
     }    
   };
   //*****************************************
+  // meme chose mais Que pour les points
   class SortEntityVisitorPoint : public EntityVisitor {
 
     bool cAcceptDoublon;

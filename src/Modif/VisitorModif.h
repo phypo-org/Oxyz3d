@@ -279,12 +279,12 @@ namespace PP3d {
 	  std::cout << " cScalePt:" << cModifPt.size() << std::endl;
 	  
 	  //	  Point3d cNorm = pEntity->getNormal();
-	  Point3d cCenter = pEntity->getCenter();
-	  Point3d cNorm = pEntity->getNormal();
+	  Point3d lCenter = pEntity->getCenter();
+	  Point3d lNorm = pEntity->getNormal();
 
 	  PP3d::Mat4 lMatRecenter;
-	  lMatRecenter.initMove( cCenter ); //on revient au centre de la facette;
-	  PP3d::Point3d lNCenter =  -cCenter;					
+	  lMatRecenter.initMove( lCenter ); //on revient au centre de la facette;
+	  PP3d::Point3d lNCenter =  -lCenter;					
 	  PP3d::Mat4 lMatZero;
 	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
@@ -298,16 +298,12 @@ namespace PP3d {
 		lNb = lIter->second;
 	      
 	      PP3d::Mat4 lMatRot;	  
-	      lMatRot.initRotAxis( cNorm, cCoef/lNb );
+	      lMatRot.initRotAxis( lNorm, cCoef/lNb );
 
 	      PP3d::Mat4 lMatTran;
 	      lMatTran.Identity();
 	      lMatTran = lMatRecenter * lMatRot *  lMatZero;					
-
-
-	      Point3d lVect = lPt->get() - cCenter;
-	      lVect.normalize(cCoef);	      
-	      
+      	      
 	      lPt->get()  = lPt->get() * lMatTran;	      
 	    }
 	  cModifPt.clear(); 

@@ -115,8 +115,10 @@ bool Modif::SubDivAngle( DataBase * iBase,
       
       for( LinePtr lLine : lOldFacet->getLines() )
 	{
+	  lLine->removeFromOwners();
 	  iBase->freeLine( lLine );	  
-	}
+	}      
+      //     lOldFacet->removeFromOwners();
       iBase->freeFacet( lOldFacet );
     }
   

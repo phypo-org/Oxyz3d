@@ -18,16 +18,18 @@
 #include <sstream>
 
 
+#include "Shape/GLUtility.h"
+#include "Shape/Light.h"
 #include "Shape/ObjectLine.h"
 #include "Shape/ObjectPoly.h"
-#include "Shape/GLUtility.h"
+#include "Shape/OwnerVisitor.h"
 #include "Shape/PrimitivFactory.h"
-#include "Shape/Light.h"
 #include "Shape/SortVisitor.h"
-#include "Shape/ViewProps.h"
 #include "Shape/Selection.h"
 #include "Shape/SubDiv.h"
 #include "Shape/SavRead.h"
+#include "Shape/PP3dUtils.h"
+#include "Shape/ViewProps.h"
 
 #include "Modif/Modif.h"
 
@@ -98,7 +100,14 @@ namespace M3d {
 #define StrMenu_ScaleAxis  "# Scale around current axis"
 #define StrMenu_ScaleNormal  "Scale around facet normal"
 
-	
+#define StrMenu_Flatten "Flatten"
+#define StrMenu_FlattenX StrMenu_Flatten " X"
+#define StrMenu_FlattenY StrMenu_Flatten " Y"
+#define StrMenu_FlattenZ StrMenu_Flatten " Z"
+#define StrMenu_FlattenAxis StrMenu_Flatten "# current axis"
+#define StrMenu_FlattenAvg StrMenu_Flatten "# average of facet"
+
+  
 #define StrMenu_Dup        "Duplicate"	
 #define StrMenu_DupInPlace  StrMenu_Dup  " in place"
 #define StrMenu_DupMoveX    StrMenu_Dup  " and move X"
@@ -117,8 +126,9 @@ namespace M3d {
 #define StrMenu_ExtrudeZ    StrMenu_Extrude  " Z"
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
-
   
+#define StrMenu_PutOn     " # Put facet 1 on facet 2"
+
 #define StrMenu_InvertNormal   "Invert normal"
 
 #define  StrMenu_Cut "Cut line"
@@ -261,7 +271,6 @@ namespace M3d {
       case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
       case PP3d::SelectType::Object :
-	/////       [[fallthrough]];
 	break;
       case PP3d::SelectType::Facet :	
 	{
@@ -270,6 +279,15 @@ namespace M3d {
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "", MyMenuCallbackExtrude, this);
+	  
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenX, "", MyMenuCallbackFlatten, this);
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenY, "", MyMenuCallbackFlatten, this);
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenZ, "", MyMenuCallbackFlatten, this);
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenAxis, "", MyMenuCallbackFlatten, this);
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenAvg, "", MyMenuCallbackFlatten, this);
+	  
+	  if( TheSelect.getNbSelected() == 2 )
+	    pMenu.add( StrMenu_PutOn, "", MyMenuCallbackPutOn, this);
 	}
 	break;
       case PP3d::SelectType::Poly :
@@ -489,6 +507,160 @@ namespace M3d {
 	    Application::Instance().setCurrentTransformType(Transform::MoveAxis);
 	  }
       }
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData)
+  {	  		
+    BEGINCALL ;
+    
+
+    if( strcmp( m->label(), StrMenu_FlattenX ) == 0)
+      {
+	PP3d::SortEntityVisitorPoint lVisit;    
+	TheSelect.execVisitorOnEntity( lVisit );
+	PP3d::Point3d lAvg;
+	for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lAvg += lPtr->get();
+	  }
+	lAvg /= lVisit.cVectPoints.size();
+	
+	for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lPtr->get().x() =  lAvg.x();
+	  }
+	PushHistory();
+	TheAppli.redrawAll();
+
+      }
+    else if( strcmp( m->label(), StrMenu_FlattenY ) == 0)
+      {
+	PP3d::SortEntityVisitorPoint lVisit;    
+	TheSelect.execVisitorOnEntity( lVisit );
+	PP3d::Point3d lAvg;
+	for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lAvg += lPtr->get();
+	  }
+	lAvg /= lVisit.cVectPoints.size();
+	
+	for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lPtr->get().y() =  lAvg.y();
+	  }
+	PushHistory();
+	TheAppli.redrawAll();
+	
+      }
+    else if( strcmp( m->label(), StrMenu_FlattenZ ) == 0)
+      {
+	PP3d::SortEntityVisitorPoint lVisit;    
+	TheSelect.execVisitorOnEntity( lVisit );
+	PP3d::Point3d lAvg;
+	for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lAvg += lPtr->get();
+	  }
+	lAvg /= lVisit.cVectPoints.size();
+	
+	for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+	  {
+	    lPtr->get().z() =  lAvg.z();
+	  }
+	PushHistory();
+	TheAppli.redrawAll();	 	
+      }
+    else if( strcmp( m->label(), StrMenu_FlattenAvg ) == 0)
+      {
+	// il faut trouver le centre et le vecteur moyen
+	PP3d::SortEntityVisitor lVisit;		    
+	TheSelect.execVisitorOnEntity(lVisit);
+	
+	PP3d::Point3d lCenter;
+	PP3d::Point3d lAvgNorm;
+	
+	if( PP3d::GetVectorFromFacets( lVisit, lAvgNorm, lCenter ))
+	  {		    
+	    PP3d::Point3d lNCenter =  -lCenter;					
+	    PP3d::Mat4 lMatZero;
+	    lMatZero.initMove( lNCenter );  //pour se positionner en zero;
+	     
+	    PP3d::Mat4 lMatRecenter;
+	    lMatRecenter.initMove( lCenter ); //pour revenir au centre;
+	
+	    // il faut tourner les points pour que le y du repere s'aligne sur la moyenne des normales
+	    
+	    PP3d::Mat4 lMatAlign;
+	    PP3d::Point3d u1(0,1,0);
+	    lMatAlign.rotateAlign(  u1, lAvgNorm);  // BUG  marche fois sur deux !!!!!!!!!!!!!!!
+	    
+	    
+	    for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
+	      {
+		lPtr->get() *= lMatZero;  // changement de repere sur lCenter		
+		lPtr->get() *= lMatAlign;
+		lPtr->get() *= lMatRecenter;  // on revient au repere central
+	      }
+	  }
+	PushHistory();
+	TheAppli.redrawAll();	 	
+      }
+    else if( strcmp( m->label(), StrMenu_FlattenAxis ) == 0)
+      {
+	// A FAIRE
+      }
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData)
+  {	  		
+    BEGINCALL ;
+    
+    if( TheSelect.getSelectType() == PP3d::SelectType::Facet
+	&& TheSelect.getNbSelected() == 2 )
+      {
+	PP3d::FacetPtr lFacetToMove = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
+	PP3d::FacetPtr lFacetDest   = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
+
+	PP3d::Vector3d lNormToMove =  lFacetToMove->getNormal();
+	PP3d::Vector3d lNormDest   =  lFacetDest->getNormal();
+	PP3d::Mat4 lMatAlign;
+	lMatAlign.rotateAlign( lNormDest, lNormToMove ); // BUG !!!!!!!!!!! marche fois sur deux !!!!
+	PP3d::Vector3d lCross = PP3d::Mat4:: GetCross( lNormDest, lNormToMove );       
+	lCross*=10; 
+	PP3d::Point3d l1( 1,0,0);
+	lCross += l1;
+	//	TheAppli.addAxis(l1, lCross );
+	std::cout << "******************** NormMove:" << lNormToMove
+		  << "lNormDest:" <<lNormDest<< " -> Cross " << lCross << std::endl;
+	PP3d::Vector3d  lCross2= PP3d::Mat4::GetCrossNorm( lNormDest, lNormToMove );
+	PP3d::Point3d l2( 1,0,0);
+	lCross2 *=10;
+	lCross2 += l2;
+
+	//	TheAppli.addAxis( l2,lCross2 );
+	
+	PP3d::Point3d lPtToMove = lFacetToMove->getCenter();
+	PP3d::Point3d lPtDest   = lFacetDest->getCenter();
+	//	PP3d::Vector3d lMove = lNormDest - lNormToMove ;
+
+	PP3d::OwnerEntityVisitor lVisit;	
+	lVisit.addOwnersOf( lFacetToMove );
+	
+	for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
+	  {
+	    lPoly->execVisitor( lVisit ) ; // je sais, c'est tres limite comme code !
+	  }
+
+	for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
+	  {
+	    lPtr->get() -= lPtToMove;  // Deplacement en zero
+	    lPtr->get() *= lMatAlign;  // Rotation alignement
+	    lPtr->get() += lPtDest;    // positionnement sur l'autre facette   
+	  }
+
+	PushHistory();
+	TheAppli.redrawAll();	 	
+      }    
   }
   //-------------------------------------------
   static bool DuplicateSelection()

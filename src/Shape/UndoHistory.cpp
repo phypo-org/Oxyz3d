@@ -19,8 +19,9 @@ namespace PP3d {
     MySav lSav( lOs );
     if( lSav.save( iDb, iSel ) == true )
       {	  
-	if( cCurrent > 0 && cCurrent != getLast() )
+	if( cCurrent >= 0 && cHistoSav.size() && cCurrent != getLast() )
 	  {
+	    std::cout << "HISTO ERASE " << +cCurrent+1 << std::endl;
 	    cHistoSav.erase( cHistoSav.begin()+cCurrent+1, cHistoSav.end());
 	  }
 	  

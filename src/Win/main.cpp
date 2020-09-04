@@ -35,7 +35,7 @@ int main(int argc, char **argv)
  
  
   M3d::Application::Instance().createNewWin3d( 1000, 800 );
-  M3d::Application::Instance().redrawObjectTree();	
+  //  M3d::Application::Instance().redrawObjectTree();	
 
   std::string lVal;
   if( (lVal = lArgs.getValue(  "-load" )).size() != 0 )
