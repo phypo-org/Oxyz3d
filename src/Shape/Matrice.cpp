@@ -158,29 +158,30 @@ namespace PP3d{
   }
   //-----------------------------
   // aligne deux vecteurs  optimise
-  /*
-  void Mat4::rotateAlign( Vector3d u1, Vector3d u2)
+  
+  void Mat4::rotateAlign( Vector3d d, Vector3d z)
   {
-    Vector3d axis = Vector3d::Cross( u1, u2 );
+    Vector3d v = Vector3d::Cross( z, d );
     
-    const double cosA = Vector3d::Dot( u1, u2 );
-    const double k = 1.0f / (1.0f + cosA);
+    const double cosA = Vector3d::Dot( z, d );
+    const double k = 1.0 / (1.0 + cosA);
 
-    cMat[0][0] = (axis.x()* axis.x()* k) + cosA;
-    cMat[0][1] = (axis.y() * axis.x()* k) - axis.z();
-    cMat[0][2] = (axis.z() * axis.x()* k) + axis.y();
-    
-    cMat[1][0] = (axis.x()* axis.y() * k) + axis.z(); 
-    cMat[1][1] = (axis.y() * axis.y() * k) + cosA;     
-    cMat[1][2] = (axis.z() * axis.y() * k) - axis.x();
-    
-    cMat[2][0] = (axis.x()* axis.z() * k) - axis.y();
-    cMat[2][1] = (axis.y() * axis.z() * k) + axis.x();
-    cMat[2][2] = (axis.z() * axis.z() * k) + cosA ;
-               
-    initRotFor4x4();
+    set(
+	v.x() * v.x() * k + cosA,
+	v.y() * v.x() * k - v.z(),
+	v.z() * v.x() * k + v.y(),
+	
+	v.x() * v.y() * k + v.z(), 
+	v.y() * v.y() * k + cosA,    
+	v.z() * v.y() * k - v.x(),
+	
+	v.x() * v.z() * k  - v.y(),
+	v.y() * v.z() * k + v.x(),
+	v.z() * v.z() * k + cosA
+	);    
   }
-  */
+
+  
   // aligne deux vecteurs
   // bug 1 fois sur deux
   /*
@@ -218,12 +219,13 @@ namespace PP3d{
     //   initRotFor4x4();
 }
   */
-   void Mat4::rotateAlign( Vector3d u1, Vector3d u2)
+  
+  void Mat4::rotateAlignInv( Vector3d d, Vector3d z)
   {
-    Vector3d axis = Vector3d::Cross( u1, u2 );
+    Vector3d axis = Vector3d::Cross( z, d );
     axis.normalize();
 
-    double dotProduct = Vector3d::Dot( u1, u2 );
+    double dotProduct = Vector3d::Dot( z, d );
     
     if( dotProduct > 1.0 )
       dotProduct = 1.0;
@@ -232,12 +234,10 @@ namespace PP3d{
 	dotProduct = -1.0;
 
     double angleRadians = acosf( dotProduct );
-
-    std::cout <<"dotProduct:"<<  dotProduct << " angleRadians:" << (angleRadians/3.1416)*180 <<std::endl;
       
-    initRotAxis(  axis, angleRadians );
+    initRotAxis(  axis, -angleRadians );
   }
-
+  
   
   //**************************************
 

@@ -91,7 +91,6 @@ namespace PP3d {
       std::swap( cMat[1][2], cMat[2][1] );
       std::swap( cMat[1][3], cMat[3][1] );
       std::swap( cMat[2][3], cMat[3][2] );
-
     }
     //-----------------------------
     void initMove( PDouble pX, PDouble pY, PDouble pZ )
@@ -234,6 +233,7 @@ namespace PP3d {
     }
     
     void rotateAlign( Point3d u1, Point3d u2);
+    void rotateAlignInv( Point3d u1, Point3d u2);
 
     static Vector3d GetCross( Vector3d u1, Vector3d u2)
   {

@@ -104,7 +104,7 @@ namespace M3d {
 #define StrMenu_FlattenX StrMenu_Flatten " X"
 #define StrMenu_FlattenY StrMenu_Flatten " Y"
 #define StrMenu_FlattenZ StrMenu_Flatten " Z"
-#define StrMenu_FlattenAxis StrMenu_Flatten "# current axis"
+#define StrMenu_FlattenAxis StrMenu_Flatten "# BUG current axis"
 #define StrMenu_FlattenAvg StrMenu_Flatten "# average of facet"
 
   
@@ -127,7 +127,8 @@ namespace M3d {
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
   
-#define StrMenu_PutOn     " # Put facet 1 on facet 2"
+#define StrMenu_PutOn     "Put facet 1 on facet 2"
+#define StrMenu_TurnOnY     "Align Facet Normal on Y axe"
 
 #define StrMenu_InvertNormal   "Invert normal"
 
@@ -288,6 +289,8 @@ namespace M3d {
 	  
 	  if( TheSelect.getNbSelected() == 2 )
 	    pMenu.add( StrMenu_PutOn, "", MyMenuCallbackPutOn, this);
+	  
+	  pMenu.add( StrMenu_TurnOnY, "", MyMenuCallbackPutOn, this);
 	}
 	break;
       case PP3d::SelectType::Poly :
@@ -572,6 +575,7 @@ namespace M3d {
       }
     else if( strcmp( m->label(), StrMenu_FlattenAvg ) == 0)
       {
+	//	BUG !!!!!!!!!!!!!!!!!!
 	// il faut trouver le centre et le vecteur moyen
 	PP3d::SortEntityVisitor lVisit;		    
 	TheSelect.execVisitorOnEntity(lVisit);
@@ -581,25 +585,23 @@ namespace M3d {
 	
 	if( PP3d::GetVectorFromFacets( lVisit, lAvgNorm, lCenter ))
 	  {		    
-	    PP3d::Point3d lNCenter =  -lCenter;					
-	    PP3d::Mat4 lMatZero;
-	    lMatZero.initMove( lNCenter );  //pour se positionner en zero;
-	     
-	    PP3d::Mat4 lMatRecenter;
-	    lMatRecenter.initMove( lCenter ); //pour revenir au centre;
-	
-	    // il faut tourner les points pour que le y du repere s'aligne sur la moyenne des normales
-	    
 	    PP3d::Mat4 lMatAlign;
-	    PP3d::Point3d u1(0,1,0);
-	    lMatAlign.rotateAlign(  u1, lAvgNorm);  // BUG  marche fois sur deux !!!!!!!!!!!!!!!
+	    PP3d::Point3d u1(0,1,0);	    
+	    lMatAlign.rotateAlign( u1, lAvgNorm  );
+	    
+	    PP3d::Mat4 lMatInv;
+	    lMatInv.rotateAlignInv( u1, lAvgNorm ); 
 	    
 	    
 	    for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
 	      {
-		lPtr->get() *= lMatZero;  // changement de repere sur lCenter		
-		lPtr->get() *= lMatAlign;
-		lPtr->get() *= lMatRecenter;  // on revient au repere central
+		lPtr->get() -= lCenter;  // changement de repere sur lCenter		
+		lPtr->get() *= lMatAlign; // on fait tourner pour mettre la normale sur l'axe des y
+		lPtr->get().y() = 0;
+		lPtr->get() *= lMatInv;  // on remet la normale a sa place
+		  
+		lPtr->get() += lCenter;  // on revient au repere central
+		// On doit pouvoir combiner tout ca dans une seul matrice pour eviter des calculs inutiles
 	      }
 	  }
 	PushHistory();
@@ -614,34 +616,21 @@ namespace M3d {
   void Canvas3d::MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData)
   {	  		
     BEGINCALL ;
-    
-    if( TheSelect.getSelectType() == PP3d::SelectType::Facet
+
+    if( strcmp( m->label(), StrMenu_PutOn ) == 0
+	&& TheSelect.getSelectType() == PP3d::SelectType::Facet
 	&& TheSelect.getNbSelected() == 2 )
       {
 	PP3d::FacetPtr lFacetToMove = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
 	PP3d::FacetPtr lFacetDest   = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
 
-	PP3d::Vector3d lNormToMove =  lFacetToMove->getNormal();
+	PP3d::Vector3d lNormToMove =  -lFacetToMove->getNormal(); // l'inverse !!!
 	PP3d::Vector3d lNormDest   =  lFacetDest->getNormal();
 	PP3d::Mat4 lMatAlign;
-	lMatAlign.rotateAlign( lNormDest, lNormToMove ); // BUG !!!!!!!!!!! marche fois sur deux !!!!
-	PP3d::Vector3d lCross = PP3d::Mat4:: GetCross( lNormDest, lNormToMove );       
-	lCross*=10; 
-	PP3d::Point3d l1( 1,0,0);
-	lCross += l1;
-	//	TheAppli.addAxis(l1, lCross );
-	std::cout << "******************** NormMove:" << lNormToMove
-		  << "lNormDest:" <<lNormDest<< " -> Cross " << lCross << std::endl;
-	PP3d::Vector3d  lCross2= PP3d::Mat4::GetCrossNorm( lNormDest, lNormToMove );
-	PP3d::Point3d l2( 1,0,0);
-	lCross2 *=10;
-	lCross2 += l2;
-
-	//	TheAppli.addAxis( l2,lCross2 );
+	lMatAlign.rotateAlign( lNormDest, lNormToMove  ); 
 	
 	PP3d::Point3d lPtToMove = lFacetToMove->getCenter();
 	PP3d::Point3d lPtDest   = lFacetDest->getCenter();
-	//	PP3d::Vector3d lMove = lNormDest - lNormToMove ;
 
 	PP3d::OwnerEntityVisitor lVisit;	
 	lVisit.addOwnersOf( lFacetToMove );
@@ -657,10 +646,67 @@ namespace M3d {
 	    lPtr->get() *= lMatAlign;  // Rotation alignement
 	    lPtr->get() += lPtDest;    // positionnement sur l'autre facette   
 	  }
-
+	
 	PushHistory();
 	TheAppli.redrawAll();	 	
-      }    
+      }
+    else
+    if( strcmp( m->label(), StrMenu_TurnOnY ) == 0
+	&& TheSelect.getSelectType() == PP3d::SelectType::Facet )
+      {
+	// A OPTIMISER !!!!
+
+	PP3d::OwnerEntityVisitor lVisitAll;	
+	lVisitAll.addOwnersOf( TheSelect.getSelectionVect() );
+
+	
+	PP3d::SortEntityVisitor lVisitSelect;
+	TheSelect.execVisitorOnEntity( lVisitSelect );
+	
+
+	for( PP3d::ObjectPtr lObj : lVisitAll.cVectObjects ) // pour tout les objets trouvés
+	  {	    
+	    PP3d::SortEntityVisitor lVisitObj;		    
+	    lObj->execVisitor(lVisitObj); // pour les facettes de l'objet
+	
+	    PP3d::Vector3d lAvgNorm;
+	    PP3d::Vector3d lAvgCenter;
+	    int lCpt=0;
+	    for( PP3d::FacetPtr lFacet : lVisitObj.cVectFacets )
+	      {		
+		auto lIter = lVisitSelect.cSetFacets.find( lFacet );
+		if( lIter == lVisitSelect.cSetFacets.end() )
+		  continue;
+		// la facette appartient a la selection et a l'objets
+		
+		lCpt++;
+		lAvgNorm += lFacet->getNormal();
+		lAvgCenter += lFacet->getCenter();
+	      }
+	    if( lCpt )
+	      {
+		lAvgNorm /= lCpt;
+		lAvgCenter /= lCpt;
+
+		PP3d::Vector3d lNormToMove =  -lAvgNorm; // l'inverse !!!
+		PP3d::Mat4 lMatAlign;
+		PP3d::Point3d lAxeY(0,1,0);
+		lMatAlign.rotateAlign( lAxeY, lNormToMove  ); 
+	
+		for( PP3d::PointPtr lPtr :  lVisitObj.cVectPoints )
+		  {
+		    lPtr->get() -= lAvgCenter;  // Deplacement en zero
+		    lPtr->get() *= lMatAlign;  // Rotation alignement
+		    lPtr->get() += lAvgCenter;  // On revient a la position originelle  
+		  }
+	      }
+	  }
+      
+	PushHistory();
+	TheAppli.redrawAll();	 	
+      }
+
+    
   }
   //-------------------------------------------
   static bool DuplicateSelection()

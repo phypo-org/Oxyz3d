@@ -23,16 +23,15 @@ namespace PP3d{
   {
     // Znear et Zfar doivent etre > 0 !
     raz();
-    cFovY   =  100.0 ;
+    cFovY   =  20.0 ;
     cAspect = cRatioWH ; 
     cZnear  = 0.01 ;        // Mettre dans Application::Pparametres !
     cZfar   = 1000;
  
     // pour Viewer
-    cPosition[0]= 0;
-	
+    cPosition[0]= 0;	
     cPosition[1]= 0;
-    cPosition[2]= 20;//cBaseSize;
+    cPosition[2]= 60;//cBaseSize;
 
     
     cPosition2.raz();
@@ -85,6 +84,7 @@ namespace PP3d{
 	
     if( cModeKamera == ModeKamera::MODE_PERPECTIVE )
       {
+	cAspect =  cRatioWH;
 	gluPerspective( cFovY, cAspect, cZnear, cZfar );
       }
     else

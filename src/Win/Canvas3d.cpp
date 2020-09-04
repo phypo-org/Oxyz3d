@@ -174,7 +174,9 @@ namespace M3d {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
     cKamera.execGL();
-		
+
+    
+    getKamera().position()[2]  =60;
 
     //===========================================================
     glLineWidth( 1 );
@@ -403,7 +405,9 @@ namespace M3d {
   {
     if( cMouseLastPosX == -1 )
       return;
-		
+
+    //    std::cout << " ZKam:" << getKamera().position()[2] << " " << std::flush;
+    
     int lX = Fl::event_x();
     int lY = Fl::event_y();
     //		if( Fl::event_button2() )
@@ -1270,7 +1274,7 @@ namespace M3d {
 		{
 		  cScale = cKamera.scale().x();
 		  cKamera.position()[2] -= cScale;
-		  cout << " MOVE_Z_N<" << cScale << "> " ;
+		  cout << " MOVE_Z_N<" << cScale << "> Z<" << cKamera.position()[2]<<">";
 
 		}
 	      else if( strcmp( lStr, MOVE_Z_P )==0)
