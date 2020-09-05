@@ -25,9 +25,8 @@ int main(int argc, char **argv)
       WARN_LOG( "Config file not found : " <<  TheAppli.getConfig().getFilename() );
     }
   
-  MyPref.initFromIni( TheAppli.getConfig() );
-  
-  
+
+  MyPref.initFromIni( TheAppli.getConfig() );    
   PPu::PPArgs lArgs( argc, argv );
   MyPref.initFromArg( lArgs );
   

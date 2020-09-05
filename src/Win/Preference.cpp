@@ -25,7 +25,6 @@ namespace M3d {
 
 #define INIT_SEL( VAR )  iConfig.get( "Select", "## VAR", cSelect ## VAR  )
  
-  
   void Preference::initFromIni( PPu::PPConfig & iConfig )
   {
     INIT_DBG( Evt );
@@ -45,6 +44,9 @@ namespace M3d {
 
 #undef INIT_SEL  
 #define INIT_SEL( VAR )  iArgs.get( "Select ## VAR", cSelect  ## VAR )
+  
+#undef INIT_HISTO  
+#define INIT_HISTO( VAR )  iArgs.get( "Histo ## VAR", cHisto  ## VAR )
   //---------------------------------------
   void Preference::initFromArg( PPu::PPArgs & iArgs )
   {
@@ -59,6 +61,7 @@ namespace M3d {
     INIT_DBG( Ini );
     
     INIT_SEL( PickingSize );
+
   }
   //*********************************
  

@@ -86,9 +86,9 @@ namespace M3d {
 #define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
 
 
-#define StrMenu_DefDefaultAxe   "Define default axe as default"
-#define StrMenu_DefDefaultPlane "Define default plane as default"
-#define StrMenu_DefDefaultTrans "Define default translation as default"
+#define StrMenu_DefDefaultAxe   "Define select axis/translation as default"
+#define StrMenu_DefDefaultPlane "Define select plane as default"
+#define StrMenu_DefDefaultTrans "Define select translation as default"
 
 #define StrMenu_SetAxePoints   "With selection"
   //#define StrMenu_SetAxeLine     "With line"
@@ -385,6 +385,11 @@ namespace M3d {
     TheAppli.redrawAllCanvas3d();
     TheAppli.redrawObjectTree();
   }
+  //-------------------------------------------
+  static void PushHistoryCB(Fl_Widget*w, void*pData)
+  {
+    PushHistory();    
+  }
   //------------------------------------------------------
   static void CB_ViewTransfrom(Fl_Widget*w, void*pData)
   {
@@ -555,6 +560,14 @@ namespace M3d {
 			     UndoCB, this, nullptr);
     cButUndo->image( lPixUndo );
     cButUndo->tooltip("Undo");
+    lX += lW;
+	
+    Fl_Image* lPixPush = MyImage::LoadImage("Icons/store.png", Application::sIconSize);
+    
+    cButStore = new MyButton( lX, lY, lW, lH, nullptr,
+			     PushHistoryCB, this, nullptr);
+    cButStore->image( lPixPush );
+    cButStore->tooltip("Push history");
     lX += lW;
 	
     Fl_Image* lPixRedo = MyImage::LoadImage("Icons/redo.png", Application::sIconSize);

@@ -23,14 +23,14 @@ namespace PP3d {
 
     
     std::vector<std::string> cHistoSav;
-    size_t                   cMaxHisto = 32 ;    
+    size_t                   cMaxHisto = 16 ;    
     int                      cCurrent =0;
   public:
 
      UndoHistory() {;}
 
     size_t getMaxHisto()            { return cMaxHisto;}
-    void setMaxHisto( size_t iVal ) { cMaxHisto = iVal; }
+    void setMaxHisto( size_t iVal );
 
     int getLast() { return ((int)cHistoSav.size())-1; }
     

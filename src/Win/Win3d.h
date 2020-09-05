@@ -43,6 +43,7 @@ namespace M3d {
     MyIntInput*             cCurrentUndoMax;
     MyButton*               cButUndo;
     MyButton*               cButRedo;
+    MyButton*               cButStore;
   private:
     Fl_Output*              cInfoOutput;
 

@@ -54,7 +54,8 @@ namespace M3d {
     Fl_Light_Button* cSelectPassOverLighting;
     MyIntInput     * cSelectPickingSize;
 
-    
+    MyIntInput     * cHistoMaxDept;
+
     MyIntInput* cDbgEvt ;
     MyIntInput* cDbgAct ;
     MyIntInput* cDbgDrw;
@@ -89,7 +90,9 @@ namespace M3d {
       // MyPref.cSelectPassOverLighting = DiagPref.cSelectPassOverLighting->value() == 1;
       
       GET_INT_VALUE( cSelectPickingSize );
-      
+      size_t lMaxHisto = atoi( DiagPref.cHistoMaxDept->value());
+      PP3d::UndoHistory::Instance().setMaxHisto( lMaxHisto );
+	
       //Debug
       GET_INT_VALUE(cDbgEvt);
       GET_INT_VALUE(cDbgAct);
@@ -114,6 +117,7 @@ namespace M3d {
     bool isAlreadyRunning() { return DiagPref.cMyWindow != nullptr; }
   
 #define INTPUT_INT(A,B) { A = new MyIntInput( lX, lY, 50, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( std::to_string(MyPref.A).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
+#define INTPUT_VAR_INT(A,V,B) { A = new MyIntInput( lX, lY, 50, lH, B, V ); lY += A->h() + lMarge; ; A->value( std::to_string(V).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 
 #define INTPUT_BOOL(A,B) { A =  new Fl_Light_Button( lX0, lY, 250, lH, B ); lY += A->h() + lMarge; A->value( MyPref.A ); }
   //----------------------------------------
@@ -153,6 +157,21 @@ namespace M3d {
 	  //	  cSelectPassOverLighting->value( MyPref.cSelectPassOverLighting);
 
 	  INTPUT_INT( cSelectPickingSize, "Precision of picking");
+	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
+
+	  
+	  lGr->end();
+	  lGr->hide();
+	  Fl_Group::current()->resizable(lGr);
+	}
+	//===================================
+	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Misc");
+	  lX  = lMarge+300;
+	  lX0 = lMarge;
+	  lY = lMarge;
+	  
+
+	  INTPUT_VAR_INT( cHistoMaxDept, PP3d::UndoHistory::Instance().getMaxHisto(), "Undo level");
 	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
 
 	  

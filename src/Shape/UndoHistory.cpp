@@ -95,5 +95,22 @@ namespace PP3d {
     cHistoSav.pop_back();
     cCurrent = cHistoSav.size();
   }
+
+  void UndoHistory::setMaxHisto( size_t iVal ) {
+    if( iVal < 4 )
+      iVal = 4;
+    
+    size_t lOldMaxHisto = cMaxHisto;
+    
+    cMaxHisto = iVal;
+
+    if( cMaxHisto < lOldMaxHisto )
+      {	
+	cHistoSav.erase( cHistoSav.begin(), cHistoSav.begin()-(lOldMaxHisto-cMaxHisto));	      cCurrent -= lOldMaxHisto-cMaxHisto;
+	if( cCurrent < 0 )
+	  cCurrent = 0;
+      }
+  }
+
   //*************************************
 }

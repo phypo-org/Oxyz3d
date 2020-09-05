@@ -42,8 +42,8 @@ namespace M3d {
     //Select
     bool cSelectPassOverLighting = true ; // inlight entity when passing on
     int  cSelectPickingSize=10;
-     
-    friend class PPSingletonCrtp;
+
+     friend class PPSingletonCrtp;
       
     Preference();
     

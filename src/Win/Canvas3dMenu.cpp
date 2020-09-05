@@ -3,6 +3,7 @@
 //#include <config.h>
 #include <FL/Fl.H>
 
+#include <FL/fl_ask.H>
 
 #include <FL/gl.h>
 
@@ -128,7 +129,16 @@ namespace M3d {
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
-#define StrMenu_TurnOnY     "Align Facet Normal on Y axe"
+  
+#define StrMenu_Align     "Align"  
+#define StrMenu_AlignOnX  "Align Facet Normal on X axe"
+#define StrMenu_AlignOnY  "Align Facet Normal on Y axe"
+#define StrMenu_AlignOnZ  "Align Facet Normal on Z axe"
+#define StrMenu_AlignOn_X  "Align Facet Normal on -X axe"
+#define StrMenu_AlignOn_Y  "Align Facet Normal on -Y axe"
+#define StrMenu_AlignOn_Z  "Align Facet Normal on -Z axe"
+#define StrMenu_AlignOnAxis  "BUG - Align Facet Normal on current axis"
+#define StrMenu_AlignOnNorm  "Align Facet Normal on first Facet Normal"
 
 #define StrMenu_InvertNormal   "Invert normal"
 
@@ -290,7 +300,14 @@ namespace M3d {
 	  if( TheSelect.getNbSelected() == 2 )
 	    pMenu.add( StrMenu_PutOn, "", MyMenuCallbackPutOn, this);
 	  
-	  pMenu.add( StrMenu_TurnOnY, "", MyMenuCallbackPutOn, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnY, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnZ, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_X, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Y, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Z, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnAxis, "", MyMenuCallbackAlign, this);
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnNorm, "", MyMenuCallbackAlign, this);
 	}
 	break;
       case PP3d::SelectType::Poly :
@@ -650,64 +667,104 @@ namespace M3d {
 	PushHistory();
 	TheAppli.redrawAll();	 	
       }
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackAlign(Fl_Widget* w, void* pUserData)
+  {	  		
+    BEGINCALL ;
+
+    if( TheSelect.getSelectType() != PP3d::SelectType::Facet )
+      return;
+    
+ 		
+    PP3d::Point3d lAxis(1,0,0);
+    
+    if( strcmp( m->label(), StrMenu_AlignOnX ) == 0 )
+      lAxis.set( 1,0,0);
+    else if( strcmp( m->label(), StrMenu_AlignOnY ) == 0 )
+      lAxis.set( 0,1,0);
+    else if( strcmp( m->label(), StrMenu_AlignOnZ ) == 0 )
+      lAxis.set( 0,0,1);
+    else if( strcmp( m->label(), StrMenu_AlignOn_X ) == 0 )
+      lAxis.set( -1,0,0);
+    else if( strcmp( m->label(), StrMenu_AlignOn_Y ) == 0 )
+      lAxis.set( 0,-1,0);
+    else if( strcmp( m->label(), StrMenu_AlignOn_Z ) == 0 )
+      lAxis.set( 0,0,-1);
     else
-    if( strcmp( m->label(), StrMenu_TurnOnY ) == 0
-	&& TheSelect.getSelectType() == PP3d::SelectType::Facet )
-      {
-	// A OPTIMISER !!!!
+      if( strcmp( m->label(), StrMenu_AlignOnAxis ) == 0 )
+	{
+	  if( TheAppli.getCurrentAxis() == nullptr )
+	    {
+	      fl_alert( "No default axis");
+	      return;
+	    }
+	 lAxis =  TheAppli.getCurrentAxis()->getAxis();
+	}
+    else
+      if( strcmp( m->label(), StrMenu_AlignOnNorm ) == 0 )
+	{
+	  if( TheSelect.getNbSelected() < 2)
+	    {
+	      fl_alert( "At least two facets needed");
+	      return;
+	    }
+	  // first facet of selection only use for give normal
+	  lAxis =  ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal();
+	  TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );
+	}
+	  
+    // A OPTIMISER !!!!
 
-	PP3d::OwnerEntityVisitor lVisitAll;	
-	lVisitAll.addOwnersOf( TheSelect.getSelectionVect() );
+    PP3d::OwnerEntityVisitor lVisitAll;	
+    lVisitAll.addOwnersOf( TheSelect.getSelectionVect() );
 
 	
-	PP3d::SortEntityVisitor lVisitSelect;
-	TheSelect.execVisitorOnEntity( lVisitSelect );
+    PP3d::SortEntityVisitor lVisitSelect;
+    TheSelect.execVisitorOnEntity( lVisitSelect );
 	
-
-	for( PP3d::ObjectPtr lObj : lVisitAll.cVectObjects ) // pour tout les objets trouvés
-	  {	    
-	    PP3d::SortEntityVisitor lVisitObj;		    
-	    lObj->execVisitor(lVisitObj); // pour les facettes de l'objet
 	
-	    PP3d::Vector3d lAvgNorm;
-	    PP3d::Vector3d lAvgCenter;
-	    int lCpt=0;
-	    for( PP3d::FacetPtr lFacet : lVisitObj.cVectFacets )
-	      {		
-		auto lIter = lVisitSelect.cSetFacets.find( lFacet );
-		if( lIter == lVisitSelect.cSetFacets.end() )
-		  continue;
-		// la facette appartient a la selection et a l'objets
+    for( PP3d::ObjectPtr lObj : lVisitAll.cVectObjects ) // pour tout les objets trouvés
+      {	    
+	PP3d::SortEntityVisitor lVisitObj;		    
+	lObj->execVisitor(lVisitObj); // pour les facettes de l'objet
+	
+	PP3d::Vector3d lAvgNorm;
+	PP3d::Vector3d lAvgCenter;
+	int lCpt=0;
+	for( PP3d::FacetPtr lFacet : lVisitObj.cVectFacets )
+	  {		
+	    auto lIter = lVisitSelect.cSetFacets.find( lFacet );
+	    if( lIter == lVisitSelect.cSetFacets.end() )
+	      continue;
+	    // la facette appartient a la selection et a l'objets
 		
-		lCpt++;
-		lAvgNorm += lFacet->getNormal();
-		lAvgCenter += lFacet->getCenter();
-	      }
-	    if( lCpt )
-	      {
-		lAvgNorm /= lCpt;
-		lAvgCenter /= lCpt;
+	    lCpt++;
+	    lAvgNorm += lFacet->getNormal();
+	    lAvgCenter += lFacet->getCenter();
+	  }
+	if( lCpt )
+	  {
+	    lAvgNorm /= lCpt;
+	    lAvgCenter /= lCpt;
 
-		PP3d::Vector3d lNormToMove =  -lAvgNorm; // l'inverse !!!
-		PP3d::Mat4 lMatAlign;
-		PP3d::Point3d lAxeY(0,1,0);
-		lMatAlign.rotateAlign( lAxeY, lNormToMove  ); 
+	    PP3d::Vector3d lNormToMove =  lAvgNorm; // l'inverse !!!
+	    PP3d::Mat4 lMatAlign;
+	    
+	    lMatAlign.rotateAlign( lAxis, lNormToMove  ); 
 	
-		for( PP3d::PointPtr lPtr :  lVisitObj.cVectPoints )
-		  {
-		    lPtr->get() -= lAvgCenter;  // Deplacement en zero
-		    lPtr->get() *= lMatAlign;  // Rotation alignement
-		    lPtr->get() += lAvgCenter;  // On revient a la position originelle  
-		  }
+	    for( PP3d::PointPtr lPtr :  lVisitObj.cVectPoints )
+	      {
+		lPtr->get() -= lAvgCenter;  // Deplacement en zero
+		lPtr->get() *= lMatAlign;  // Rotation alignement
+		lPtr->get() += lAvgCenter;  // On revient a la position originelle  
 	      }
 	  }
-      
-	PushHistory();
-	TheAppli.redrawAll();	 	
       }
-
-    
-  }
+	
+    PushHistory();
+    TheAppli.redrawAll();	 	
+   }
   //-------------------------------------------
   static bool DuplicateSelection()
   {    

@@ -513,8 +513,8 @@ namespace M3d {
     PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
     if(lObjAxis != nullptr )
       {
-	oPtZero = lObjAxis->first3d();
-	oAxis = lObjAxis->second3d() - oPtZero;
+	oPtZero = lObjAxis->getVectorOrigin();
+	oAxis = lObjAxis->getAxis();
 	return true;
       }
     return false;

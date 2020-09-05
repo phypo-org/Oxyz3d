@@ -91,6 +91,19 @@ namespace PP3d {
 	  }
 	}
     }
+
+    
+    //---------------------------		
+    PP3d::Point3d getAxis()
+    {
+      PP3d::Point3d  lAxis = second3d() - first3d();
+      return lAxis;
+    }
+    //---------------------------		
+    PP3d::Point3d getVectorOrigin() { return first3d(); }
+    //---------------------------		
+    PP3d::Point3d getVector() { return getAxis();}
+
   };
   //******************************  
   inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB )
