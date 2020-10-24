@@ -220,7 +220,9 @@ namespace M3d {
   void ShapeLua::registerMyFunction()
   {
     ShapeLua::sLibSep=0;
-    
+    //=====================
+    registerFunction( "", "help",     PLuaSession::LUA_ListLibraryFonction );
+
     //=====================
     registerFunction( "Win",   "NewCanvas3d",         LUA_NewCanvas3d );
     //=====================		      

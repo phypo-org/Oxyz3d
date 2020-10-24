@@ -54,7 +54,11 @@ public:
     textsize(12);
     cmd[0] = 0;
     
+
+    
     cLua=  &M3d::Application::Instance().getLua();	
+    
+    cLua->setCurrentStream( & cOutStream );
     /*
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");
     cLua->doCode( "PListLib()");
@@ -66,7 +70,6 @@ public:
     cLua->doCode("ShapeAddCurrentPoint(3,2,1)");
     cLua->doCode("ShapeAddCurrentPoint(3,4,2)");		
     */
-    cLua->setCurrentStream( & cOutStream );
   }
   //---------------------------------------------------
   ~ConsoleLua()
@@ -86,16 +89,20 @@ public:
   // Run the specified command in the shell, append output to terminal
   void RunCommand(const char *command)
   {
-    append("\n");
-    fprintf(stderr, "RunCommand: '%s'\n", command);
-
+     append("\n");
+    
+    fprintf(stderr, "RunCommand: <<<%s>>>\n", command);
     cLua->doCode( command );
+    fprintf(stderr, "Return: <<<%s>>>", cOutStream.str().c_str());
 
     if( cOutStream.str().size() )
       {
 	append( cOutStream.str().c_str() );
-	cOutStream.clear();
+	cOutStream.str("");
       }
+    else {
+      append("ok");
+   }
   }
   //---------------------------------------------------
   // Handle events in the Fl_Text_Editor
@@ -151,6 +158,7 @@ extern Fl_Double_Window* CallConsoleLua()
     {
       lWin =new Fl_Double_Window(600, 400, "Lua");
       ConsoleLua::sConsolLua  = new  ConsoleLua(10,10, lWin->w()-20, lWin->h()-20);
+      ConsoleLua::sConsolLua->append("Type help() for list  commands.\n");
       ConsoleLua::sConsolLua->append(">");
       lWin->end();
 			

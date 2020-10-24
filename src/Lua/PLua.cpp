@@ -23,19 +23,19 @@ namespace PLua{
   //*************************************************
   // CLibraryRegistry
   /*
-  PLuaSession::ContainerCLibraryRegister *PLuaSession::sContainerCLibraryRegister = nullptr;
+    PLuaSession::ContainerCLibraryRegister *PLuaSession::sContainerCLibraryRegister = nullptr;
 	
-  unsigned long HashAssocibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A )
-  {
+    unsigned long HashAssocibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A )
+    {
     return PPTools::hash_string( A->cKey );
-  }
-  //------------------------------------------------
-  long CmpAssocCLibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A,
-				 PLuaSession::ContainerCLibraryRegister::PAssocAtom *B,
-				 void*)
-  {	
+    }
+    //------------------------------------------------
+    long CmpAssocCLibraryRegistry( PLuaSession::ContainerCLibraryRegister::PAssocAtom *A,
+    PLuaSession::ContainerCLibraryRegister::PAssocAtom *B,
+    void*)
+    {	
     return strcmp( A->cKey, B->cKey );
-  }
+    }
   */
   //------------------------------------------------
 
@@ -46,14 +46,14 @@ namespace PLua{
     sContainerCLibraryRegister.insert( { pLibraryName,  new CLibraryRegisterFunctionStruct( pFtn)} );
     return true;
   }
-/*
+  /*
   //------------------------------------------------
   long 
   CmpStrRegisterFtn( const char* A, const char*B, void * )
   {
-    return strcmp( A, B );
+  return strcmp( A, B );
   }
-*/	
+  */	
   // CLibraryRegistry
   //*************************************************
 
@@ -62,33 +62,33 @@ namespace PLua{
 
   //*************************************************
   /*
-  unsigned long HashAssoc( PLuaSession::ContainerSessionLua::PAssocAtom *A )
-  {
+    unsigned long HashAssoc( PLuaSession::ContainerSessionLua::PAssocAtom *A )
+    {
     return PPTools::hash_string( A->cKey );
-  }
+    }
 
-  long CmpAssoc( PLuaSession::ContainerSessionLua::PAssocAtom *A,
-		 PLuaSession::ContainerSessionLua::PAssocAtom *B, void* )
-  {	
+    long CmpAssoc( PLuaSession::ContainerSessionLua::PAssocAtom *A,
+    PLuaSession::ContainerSessionLua::PAssocAtom *B, void* )
+    {	
     return strcmp( A->cKey, B->cKey );
-  }
+    }
   */
   //*************************************************
   bool
   PLuaSession::Init()
   {
     /*
-    if( sContainerLuaSessionsMutex == nullptr && sContainerLuaSessions == nullptr )
+      if( sContainerLuaSessionsMutex == nullptr && sContainerLuaSessions == nullptr )
       {
-	sContainerLuaSessionsMutex = new std::mutex();
-	LOCK;
-	PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
-	sContainerLuaSessions = new ContainerSessionLua( HashAssoc, CmpAssoc );
+      sContainerLuaSessionsMutex = new std::mutex();
+      LOCK;
+      PPTools::PSimpleLocker lLock( *sContainerLuaSessionsMutex );
+      sContainerLuaSessions = new ContainerSessionLua( HashAssoc, CmpAssoc );
 
 
-	sContainerCLibraryRegister = new ContainerCLibraryRegister( HashAssocCLibraryRegistry, CmpAssocCLibraryRegistry );
+      sContainerCLibraryRegister = new ContainerCLibraryRegister( HashAssocCLibraryRegistry, CmpAssocCLibraryRegistry );
 			
-	return true;
+      return true;
       } 
     */
     return false; 
@@ -109,7 +109,7 @@ namespace PLua{
       }
     lStr += iName;
 		
-		PCOUT << "registerFunction " << iLibName << " "<<  iName << "->" << lStr << std::endl;
+    PCOUT << "registerFunction " << iLibName << " "<<  iName << "->" << lStr << std::endl;
 
 	
     lua_register( cLuaState, lStr.c_str(),  iFtn );
@@ -187,7 +187,7 @@ namespace PLua{
 
 
     { //  LOCK
-	LOCK;
+      LOCK;
       std::unique_lock<std::mutex> lLock( sContainerLuaSessionsMutex );
       sContainerLuaSessions.insert( {cNameSession, this} );
     } //  UNLOCK
@@ -214,7 +214,7 @@ namespace PLua{
   {
     Init();
 
-	LOCK;
+    LOCK;
     std::unique_lock<std::mutex> lLock( sContainerLuaSessionsMutex );
     sContainerLuaSessions.insert( { pSession->cNameSession, pSession} );
   }
@@ -222,20 +222,20 @@ namespace PLua{
   bool 
   PLuaSession::RemoveSession( PLuaSession* iSession )
   {
-      {
-	LOCK;
-	return sContainerLuaSessions.erase( iSession->cNameSession) !=0;
-      }
+    {
+      LOCK;
+      return sContainerLuaSessions.erase( iSession->cNameSession) !=0;
+    }
     return false;
   }
   //------------------------------------------------
   bool 
   PLuaSession::RemoveSession( std::string& iSessionName )
   {
-      {
-	LOCK;
-	return sContainerLuaSessions.erase( iSessionName  );
-      }
+    {
+      LOCK;
+      return sContainerLuaSessions.erase( iSessionName  );
+    }
     return false;
   }
   //------------------------------------------------
@@ -273,8 +273,8 @@ namespace PLua{
       {
 	if( sPLuaSessionPrototype != nullptr )
 	  lSession = sPLuaSessionPrototype->getNewPrototypeSession(iSessionName, iStream );
-	 else
-		 lSession = new PLuaSession(  iSessionName, iStream );
+	else
+	  lSession = new PLuaSession(  iSessionName, iStream );
 
 	AddSession( lSession );
       } 
@@ -308,30 +308,27 @@ namespace PLua{
 	lSavStream = setCurrentStream( iStream );
       }
     
-    std::cout <<"docode <" << pCode << ">" << std::endl;
+    std::cout <<"DBG>docode <" << pCode << ">" << std::endl;
     
     //	if (luaL_dofile( cLuaState, pCode)!=0)
     int lRet =luaL_dostring( cLuaState, pCode);
     if (lRet!=0)
-      {
-	std::cerr << "ERROR Lua::doCode - luaL_dostring "
-		  << lRet << std::endl;
-	std::cerr << "ERROR Lua::doCode - luaL_dostring "
-		  << lua_tostring( cLuaState ,-1) << std::endl;
-
-	
-
+      {	
 	if( cCurrentStream )
 	  {
 	    *cCurrentStream << "ERROR Lua::doCode - luaL_dostring "
-		  << lua_tostring( cLuaState ,-1) << std::endl;
+			    << lua_tostring( cLuaState ,-1) ;//<< std::endl;
 	  }
+	else {
+	  std::cerr << "ERROR Lua::doCode - luaL_dostring "
+		    << lua_tostring( cLuaState ,-1) << std::endl;
+	}
 	
 	// il y a eu une erreur dans le script
 	return lua_tostring( cLuaState ,-1);
       }
     
-    if( iStream != nullptr )
+    if( lSavStream != nullptr )
       {
 	setCurrentStream( lSavStream  );
       }
@@ -342,25 +339,25 @@ namespace PLua{
   const char*
   PLuaSession::doFile( const char* pFile, std::ostream* iStream)
   {
-		std::ostream* lSavStream=nullptr	;
-		if( iStream != nullptr )
-			{
-				lSavStream = setCurrentStream( iStream );
-			}
+    std::ostream* lSavStream=nullptr	;
+    if( iStream != nullptr )
+      {
+	lSavStream = setCurrentStream( iStream );
+      }
 
     int lRet =  luaL_dofile( cLuaState, pFile );
 		
-		if( iStream != nullptr )
-			{
-				setCurrentStream( lSavStream  );
-			}
-		
-		if( lRet != 0 )
+    if( iStream != nullptr )
       {
-				// il y a eu une erreur dans le script
-				OS_TRACE( "PLuaSession::doFile : " << pFile );
+	setCurrentStream( lSavStream  );
+      }
+		
+    if( lRet != 0 )
+      {
+	// il y a eu une erreur dans le script
+	OS_TRACE( "PLuaSession::doFile : " << pFile );
 				
-				return lua_tostring( cLuaState ,-1);
+	return lua_tostring( cLuaState ,-1);
       }
 
     return nullptr;
@@ -464,6 +461,7 @@ namespace PLua{
   CLUA_OPEN_CODE( (PLuaSession::LUA_LoadCLibrary), 1)
 
   //lOut << "Params:" << lNbParams << std::endl;
+  
 
   for (int i = 1; i < lNbParam; i++)
     {
