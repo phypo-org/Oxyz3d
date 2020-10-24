@@ -125,6 +125,7 @@ namespace M3d {
     void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove);
     void picking( int pX, int pY, bool cFlagMove );
 
+    void drawRect(int x1, int y1, int x2, int y2);
 
     //=========== MENUS =================
     void makeMenu( Fl_Menu_Button& pMenu);

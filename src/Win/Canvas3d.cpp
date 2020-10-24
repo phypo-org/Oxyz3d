@@ -98,7 +98,7 @@ namespace M3d {
     cViewPropsTransform.cLineWidth = 2;
     cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
 	 
-    
+
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
@@ -130,6 +130,77 @@ namespace M3d {
 	  }
       }
   }
+
+  
+  //---------------------------
+  void Canvas3d::drawRect(int x1, int y1, int x2, int y2)
+  {
+    std::cout << "____________________________" << std::endl;
+
+    
+    
+    glPushMatrix(); 
+    glLoadIdentity();
+    
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+ 
+    glDrawBuffer(GL_FRONT );
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+   //	glOrtho(0, glw.getWidth(),0, glw.getHeight(),-1,1);
+    // cKamera.orthoForRect();
+    
+    //    glMatrixMode(GL_MODELVIEW);
+    
+    //  glEnable(GL_COLOR_LOGIC_OP);
+    //  glLogicOp(GL_XOR);
+
+    float dx = pixel_w()/2.0;
+    float dy = pixel_h()/2.0;
+    std::cout << "dx:" << dx << " dy:" << dy;
+    
+    glColor4f(0.3f, 0.3f, 0.3f, 0.3f);
+    //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //  glRectf(x1, y1, x2, y2);
+
+    float X1 = x1 - dx;
+    float X2 = x2 - dx;
+    float Y1 = y1 - dy;
+    float Y2 = y2 - dy;
+    std::cout << " X1:" << X1 << " Y1:" << Y1 << " X2:" << X2 << " Y2:" << Y2 << std::endl;
+    
+    glColor4f( 1, 1, 1, 0.3);
+    glBegin(GL_LINE_LOOP);
+    // Top left
+    glVertex3f( X1, Y1, 0.0);
+    // top right
+    glVertex3f( X2,  Y1, 0.0);
+    // Bottom right
+    glVertex3f( X2,  Y2,  0.0);
+    // bottom left
+    glVertex3f( X1, Y2,  0.0);
+    
+    glVertex3f( X1, Y1, 0.0);
+    glVertex3f( X2, Y2, 0.0);
+    glVertex3f( X2, Y1, 0.0);
+    glVertex3f( X1, y2, 0.0);
+
+    glEnd();
+		
+    /*
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    */
+    glPopMatrix();
+    glEnable(GL_DEPTH_TEST);    
+    glEnable(GL_LIGHTING);
+    //  glDisable(GL_COLOR_LOGIC_OP);
+   //    glFlush();
+    /*
+    //   glDrawBuffer(GL_BACK);
+    */
+  }
+ 
   //---------------------------
   void Canvas3d::draw() 
   {
@@ -176,7 +247,7 @@ namespace M3d {
     cKamera.execGL();
 
     
-    getKamera().position()[2]  =60;
+    getKamera().position()[2]  =60;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     //===========================================================
     glLineWidth( 1 );
@@ -213,28 +284,19 @@ namespace M3d {
 	 TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
        }
 
-     /*
-     if( TheAppli.getCurrentAxe() != nullptr )
-       {
-	 // Faire qq chose de  Mieux  AFAIRE
-	 
-	 int lMemWidth = cViewProps.cLineWidth;
-	 PP3d::ColorRGBA lMemColor( cViewProps.cColorLine );
-	 
-	 cViewProps.cLineWidth = 8;
-	 cViewProps.cColorLine.set(1.0,0.0,0.0);
-	 
-	 TheAppli.getCurrentAxe()->drawGL( cViewProps );
-	 
-	 cViewProps.cLineWidth = lMemWidth;
-	 cViewProps.cColorLine = lMemColor;
-       }
-     */
-
      
      
     if( cMode == ModeUser::MODE_SELECT_RECT )
-      {				
+      {
+	std::cout << "[[[[[[[[[[[[[[[(DrawREct]]]]]]]]]]]]]])"
+		  << " x:" << cMouseInitPosX
+		  << " y:" << cMouseInitPosY
+		  << " -> x:" << cMouseLastPosX
+		  << " -> y:" << cMouseLastPosY
+		  << std::endl;
+	
+	drawRect( cMouseInitPosX, cMouseInitPosY, cMouseLastPosX, cMouseLastPosY );
+ /*
 	glEnable( GL_BLEND );
 	glDepthMask( GL_FALSE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
@@ -245,13 +307,11 @@ namespace M3d {
 
 	glDepthMask( GL_TRUE );
 	glDisable( GL_BLEND );
-							
+	  */						
       }
     glFlush();
+  }  
 
-    //    fl_color( 3 );
-    //    fl_line( 0,0, 1000, 2000 );
-  }
   //---------------------------
   void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
   {    
@@ -1001,6 +1061,7 @@ namespace M3d {
     traceMode();
     
     DBG_EVT( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> "
+	     << " button:" << Fl::event_button() 
 	     << " ctrl: " << Fl::event_ctrl()
 	     << " shift:" <<  Fl::event_shift()
 	     << " alt:" <<  Fl::event_alt());	
@@ -1011,7 +1072,7 @@ namespace M3d {
 	//===========================
 				
       case FL_PUSH :
-	DBG_EVT( " Button Push"  );
+	DBG_EVT( "-------------- Button Push "  << Fl::event_button()  << " " << Fl::event_shift());
 	Fl::focus(this);
 
 
@@ -1039,13 +1100,25 @@ namespace M3d {
 	  }
 				
 	// SELECTION RECTANGLE : BUG
-	if( Fl::event_button() == FL_LEFT_MOUSE
-	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
+	if( Fl::event_button() == FL_MIDDLE_MOUSE
+	    &&  Fl::event_shift() ) // &&  cMode == ModeUser::MODE_BASE)
 	  {
-	    DBG_ACT( " cUserActionRectangle " );
+	    std::cout << "SELECT_RECT" << std::endl;
+	
+	     
+	    DBG_EVT( "******************* cUserActionRectangle " );
+	    DBG_EVT( "******************* cUserActionRectangle " );
+	    
+	    DBG_ACT( "******************* cUserActionRectangle " );
+	    DBG_ACT( "******************* cUserActionRectangle " );
+	    DBG_ACT( "******************* cUserActionRectangle " );
+	    DBG_ACT( "******************* cUserActionRectangle " );
+	    DBG_ACT( "******************* cUserActionRectangle " );
+	    
 	    cMode = ModeUser::MODE_SELECT_RECT;
 
 	    userPrepareAction( pEvent );
+	    TheAppli.redrawAllCanvas3d();
 
 	    return 1;
 	  }
@@ -1142,6 +1215,7 @@ namespace M3d {
 				
 	if( cMode == ModeUser::MODE_SELECT_RECT )
 	  {
+	    std::cout << "{{{{{{{{{{{{{{{{{{ RELEASE RECT }}}}}}}}}}}}}}" << std::endl;
 	    userSelectionRectangle(pEvent, true );
 	    userTerminateAction( pEvent );
 	  }		
@@ -1167,6 +1241,12 @@ namespace M3d {
 		  {
 		    userSelectionPoint( pEvent, false );
 		  }
+		else
+		  if( cMode == ModeUser::MODE_SELECT_RECT )
+		    {
+		      cMouseLastPosX = Fl::event_x();
+		      cMouseLastPosY = Fl::event_y();
+		    }	    
 	  }
 	setCursor3dPosition( Fl::event_x(), Fl::event_y());			 					
 	TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;

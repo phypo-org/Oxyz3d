@@ -43,6 +43,9 @@ public:
 	void chgModeKamera();
 	bool isPerspectiveOn() { return cModeKamera == ModeKamera::MODE_PERPECTIVE;}
 
+  void orthoForRect(){ 	glOrtho( -cRatioWH*cBaseSize, cRatioWH*cBaseSize, -cBaseSize, cBaseSize, -cBaseSize*10, cBaseSize*10); }
+
+
 	void setPerspective( double pFovY, double pAspect, double pZnear, double pZfar )
 	{
 		cFovY = pFovY; cAspect = pAspect; cZnear = pZnear; cZfar = pZfar;

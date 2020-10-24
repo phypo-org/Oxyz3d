@@ -523,21 +523,19 @@ namespace M3d {
     ,cDatabase( pDatabase )
     ,cMenubar(0,0,10000, 30)
   {
-    static int slWinId=1;
-    cWinId=slWinId++;
-
-    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, 100, this->w()-10, (this->h()-100)-16 , "1" );
-		
-    // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
-    //sw.mode(FL_RGB);
-    this->resizable( cuCanvas3d.get() );
-	
     //================
     int lX = 15;
     int lY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
     int lW = 70;
-											
+    static int slWinId=1;
+    cWinId=slWinId++;
+
+  		
+    // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
+    //sw.mode(FL_RGB);
+	
+ 									
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
     cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
@@ -549,8 +547,12 @@ namespace M3d {
 
     lW =  Application::sIconSize+4;
     lH =  Application::sIconSize+4;
-		
-    lX += lW;
+
+    int lXCanvas = lY+lH+2;
+    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, lXCanvas, this->w()-10, (this->h()-lXCanvas)-16 , "1" );
+    
+     this->resizable( cuCanvas3d.get() );
+   lX += lW;
 
 
     //========================		
@@ -579,8 +581,8 @@ namespace M3d {
     cButUndo->tooltip("Redo");
     lX += lW;
 	
-        cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
-        cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
+    //      cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
+    //     cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
 
 
     //========================		
@@ -588,6 +590,7 @@ namespace M3d {
     //========================		
 
 
+    //   lX += lW;
     lX += lW;
 
 
@@ -612,8 +615,7 @@ namespace M3d {
     //    lButSelAll->value(false);
     //    lButSelAll->image( lPixSel );
     //    lButSelAll->tooltip("Enable selection for all type (execpt transformation)");
-   lX += lW;
-
+ 
     //========================		
     lPixSel = MyImage::LoadImage("Icons/vertex.png", Application::sIconSize);
 
@@ -663,7 +665,8 @@ namespace M3d {
     lButSelTran->setUserData( this, (void*)PP3d::SelectType::Null,   lButSelTran, lButSelBody, lButSelPt,   lButSelLine, lButFacet,   lButSelAll   );
 
     //=================================================================
-    lX += lW*2;
+	
+    lX += lW;
 
     //========================		
     lPixSel = MyImage::LoadImage("Icons/skelet.png", Application::sIconSize);
@@ -677,7 +680,6 @@ namespace M3d {
     lBut1->tooltip("Wire");
     lX += lW;
     //========================		
-	
 
     lBut1->setUserData( this, lBut1);
 
@@ -704,7 +706,7 @@ namespace M3d {
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagViewNormal );
     lBut->value( cuCanvas3d->cFlagViewNormal);
     lBut->image( lPixViewNormal );
-    lBut->tooltip("Grayed draw");
+    lBut->tooltip("View facet normal");
     lX += lW;
 
 
@@ -722,7 +724,7 @@ namespace M3d {
 
 		
     //=================================================================
-    lX += lW*2;
+    lX += lW;
     //========================
     lBut = nullptr;
 
@@ -1297,8 +1299,9 @@ namespace M3d {
     else
       cButRedo->activate();
 
-        cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
-       cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
+
+    //    cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
+    //    cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
   }
   //-------------------------------------------
   void Win3d::setCurrentVal( const char* iLabel, double iVal)
