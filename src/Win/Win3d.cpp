@@ -801,18 +801,20 @@ namespace M3d {
     cMenubar.add(StrMenu_File    StrMenu_NewBase,    "^n", MyMenuCallback, this); 
     cMenubar.add(StrMenu_File    StrMenu_OpenBase,    "^o", MyMenuCallback, this);
     cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
+
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBase,    "^s", MyMenuCallback, this);
     cMenubar.add(StrMenu_File    StrMenu_SaveBaseAs,  "", MyMenuCallback, this);
     cMenubar.add(StrMenu_File    StrMenu_SaveBaseSelect,  "", MyMenuCallback, this, FL_MENU_DIVIDER);
     
-   
-    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this);
-    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectD3dObj,"", MyMenuCallback, this);
-    cMenubar.add(StrMenu_File StrMenu_Import StrMenu_ImportD3dObj,  "", MyMenuCallback, this, FL_MENU_DIVIDER)    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportStl,     "", MyMenuCallback, this);
+    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportD3dObj,     "^e", MyMenuCallback, this); 
+    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectD3dObj,"", MyMenuCallback, this, FL_MENU_DIVIDER);   
+    cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportStl,     "", MyMenuCallback, this);
     cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectStl,"", MyMenuCallback, this);
-;
 
+    
+    cMenubar.add(StrMenu_File StrMenu_Import StrMenu_ImportD3dObj,  "", MyMenuCallback, this);
+    
     cMenubar.add(StrMenu_File    StrMenu_Preferences,  "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
     cMenubar.add(StrMenu_File "&Quit",                     "^q", QuitCallback,   this);
 									       

@@ -215,7 +215,7 @@ namespace PP3d {
     for( auto lIter = pSet.begin(); lIter != pSet.end(); ++lIter) 
       (*lIter)->cPt *= pMat;
   }
-  inline static PointPtrPair Reverse(const PointPtrPair& iPair ) {  return PointPtrPair( iPair.second, iPair.first ); }
+  inline static PointPtrPair Reverse(const PointPtrPair& iPair ) {  return PointPtrPair( iPair.second, iPair.first); }
 
   //*********************************************
 

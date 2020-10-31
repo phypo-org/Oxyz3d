@@ -3,7 +3,7 @@
 BUGS
 ============================================
 
-OK - Bug au SubMiddleAngle ou alors SubCallmulClark
+FAIT - Bug au SubMiddleAngle ou alors SubCallmulClark
   : des trous appararaise quand l'un puis l'autre
   disparais quand undo puis smooth : deja eu le cas ?
   la sauvegarde repare l'objet !
@@ -22,7 +22,8 @@ OPTIMISATION
 - Optimisations :
   - smooth tres lent !!!
 
-- Passez certain algo (decoupage en MT)
+- Passez certain algo (decoupage) en MT
+- Utilisez des Visiteurs plus spécifique
 
 
 ============================================
@@ -38,7 +39,7 @@ o Saisie numerique pour les rotation/translation/scale TAB comme dans Wings
 o Dialogues fixes ? / bloquant / ou interdiction d'en ouvrir un autre
   ou certain menu
 -----------------------------------------------
-o PushHisto manuel (pour la selection)
+FAIT o PushHisto manuel (pour la selection)
 -----------------------------------------------
 o Inversion de la selection !
 o Regroupement d'objets en ensemble / posibilités de les selectionner
@@ -87,6 +88,7 @@ o limites des up. Sauvegarder aussi l'historique ? -> Parametres
 o Sauvegarde en mode binaire ! (aussi pour l'historique)
 -----------------------------------------------
 o Export ... d'autres format ...
+o STL 
 -----------------------------------------------
 o Tranchage !!!!!!!!!!!
 -----------------------------------------------

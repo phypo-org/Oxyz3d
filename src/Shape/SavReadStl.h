@@ -18,6 +18,11 @@ namespace PP3d {
 
     std::ostream & cOut;
 
+    void writePoint      ( PP3d::Point3d & iPt );
+    void writeFacetBegin ( PP3d::Point3d & iNorm);
+    void writeVertex     ( PP3d::Point3d & iPt);
+    void writeFacetEnd   ();
+
   public:
     //-----------------------------------------
     MySavStl( std::ostream& pOut )
