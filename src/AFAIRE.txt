@@ -88,7 +88,7 @@ o limites des up. Sauvegarder aussi l'historique ? -> Parametres
 o Sauvegarde en mode binaire ! (aussi pour l'historique)
 -----------------------------------------------
 o Export ... d'autres format ...
-o STL 
+o STL binaire
 -----------------------------------------------
 o Tranchage !!!!!!!!!!!
 -----------------------------------------------

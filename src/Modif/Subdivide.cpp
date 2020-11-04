@@ -32,7 +32,7 @@ namespace PP3d{
 	    iSubDiv->clear(); // !!!!!!!!!
 	  }
     
-	PP3d::SortEntityVisitor lVisit;
+	PP3d::SortEntityVisitorPointLine lVisit;
 	lFac->execVisitor( lVisit );
 
 	std::vector<PointPtr> & lPts   = lVisit.cVectPoints;

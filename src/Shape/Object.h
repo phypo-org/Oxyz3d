@@ -97,7 +97,6 @@ namespace PP3d {
     //		PP3dId  getId() { return getMyEntity().getId(); }
     virtual EntityPtr getShape()=0;
 		
-    PointPtrHash getPoints();
 
     virtual void recomputeAll(ObjProps&pProps);
 

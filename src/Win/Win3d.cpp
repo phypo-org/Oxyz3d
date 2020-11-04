@@ -89,23 +89,23 @@ namespace M3d {
 #define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
 
 
-#define StrMenu_DefDefaultAxe   "Define select axis/translation as default"
-#define StrMenu_DefDefaultPlane "Define select plane as default"
-#define StrMenu_DefDefaultTrans "Define select translation as default"
+#define StrMenu_DefDefaultAxe   "Define select axis"
+  //#define StrMenu_DefDefaultPlane "Define select plane as default"
+  //#define StrMenu_DefDefaultTrans "Define select translation as default"
 
-#define StrMenu_SetAxePoints   "With selection"
-  //#define StrMenu_SetAxeLine     "With line"
-#define StrMenu_SetAxeNormal   "With facet normal"
-#define StrMenu_SetAxeInput    "With last two input points"
+#define StrMenu_SetAxePoints   "With two selected points of object"
+  // inutile #define StrMenu_SetAxeLine     "With selected line of object"
+#define StrMenu_SetAxeNormal   "With selected facet normal"
+#define StrMenu_SetAxeInput    "With the last two input points"
 
-#define StrMenu_SetPlanePoints "With three points"
-#define StrMenu_SetPlaneLines  "With two connect Lines"
-#define StrMenu_SetPlaneFacet  "With one facet"
-#define StrMenu_SetPlaneInput  "With last three input points"
+  //#define StrMenu_SetPlanePoints "X With three points"
+  //  //2#define StrMenu_SetPlaneLines  "X With two connect Lines"
+  //#define StrMenu_SetPlaneFacet  "X With one facet"
+  //#define StrMenu_SetPlaneInput  "X With last three input points"
 
-#define StrMenu_SetTransPoints "With two points"
-#define StrMenu_SetTransLine   "With line"
-#define StrMenu_SetTransInput  "With last two input points"
+//#define StrMenu_SetTransPoints "X With two selected points of object"
+//#define StrMenu_SetTransLine   "X With selected line of object"
+//#define StrMenu_SetTransInput  "X With the last two input points"
 
 #define StrMenu_PutOnGround    "Put selection on ground"
 #define StrMenu_PutUnderGround "Put selection under ground"
@@ -141,7 +141,7 @@ namespace M3d {
 
 	if( iUseSelect )
 	  {
-	    PP3d::SortEntityVisitor  lVisit;
+	    PP3d::SortVisitorEntity  lVisit;
 	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    	    
 	    lRet = lSav.save( *ioDatabase, &TheSelect, &lVisit.cSetAllEntity );
 	  }
@@ -186,7 +186,7 @@ namespace M3d {
 	
 	if( iUseSelect )
 	  {
-	    PP3d::SortEntityVisitor  lVisit;
+	    PP3d::SortVisitorEntity  lVisit;
 	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    
 	    lRet = lExpObj.save( *ioDatabase, &lVisit.cSetAllEntity);
 	  }
@@ -829,8 +829,8 @@ namespace M3d {
 
     
     cMenubar.add("&Utils/" StrMenu_DefDefaultAxe  , "", MyMenuCallback, this);
-    cMenubar.add("&Utils/" StrMenu_DefDefaultPlane, "", MyMenuCallback, this);
-    cMenubar.add("&Utils/" StrMenu_DefDefaultTrans, "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    //    cMenubar.add("&Utils/X StrMenu_DefDefaultPlane", "", MyMenuCallback, this);
+    //    cMenubar.add("&Utils/X StrMenu_DefDefaultTrans", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
     cMenubar.add("&Utils/Create axe/" StrMenu_SetAxePoints  , "", MyMenuCallback, this);
     //    (TheSelect.getSelectType() != PP3d::SelectType::Point
@@ -851,39 +851,38 @@ namespace M3d {
   //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2
   //	       ? FL_MENU_INACTIVE :0) );
     
-  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlanePoints, "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/X Create plane/X"  StrMenu_SetPlanePoints, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Point
   //		&& TheSelect.getNbSelected() < 3
   //		? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneLines , "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create plane/X" StrMenu_SetPlaneLines , "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
   //		&& TheSelect.getNbSelected() < 1
   //		? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneFacet, "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create plane/X" StrMenu_SetPlaneFacet, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Facet
   //		&& TheSelect.getNbSelected() < 1
   //		? FL_MENU_INACTIVE :0));
 	       
-  cMenubar.add("&Utils/Create plane/" StrMenu_SetPlaneInput, "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create plane/X" StrMenu_SetPlaneInput, "", MyMenuCallback, this);
   //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2
   //	       ? FL_MENU_INACTIVE :3) );
 
-  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransPoints, "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create translation/X" StrMenu_SetTransPoints, "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Point
   //		&& TheSelect.getNbSelected() < 2
   //		? FL_MENU_INACTIVE :0));
   
   
-  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransLine  , "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create translation/X" StrMenu_SetTransLine  , "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Line
   //		&& TheSelect.getNbSelected() < 1
   //		? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Create translation/" StrMenu_SetTransInput  , "", MyMenuCallback, this);
+  //  cMenubar.add("&Utils/Create translation/X" StrMenu_SetTransInput  , "", MyMenuCallback, this);
 	       //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2) );
-  cMenubar.add("&Utils/", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 	       
   cMenubar.add("&Utils/" StrMenu_PutOnGround ,    "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_PutUnderGround , "", MyMenuCallback, this );
@@ -1090,7 +1089,6 @@ namespace M3d {
 		    TheAppli.redrawObjectTree();
 		  }
     //=================== UTILS ====================    
-   
 		else if(  strcmp( m->label(), StrMenu_DefDefaultAxe	) == 0)
 		  {
 		    if( TheAppli.isSelectAxis() )
@@ -1103,7 +1101,7 @@ namespace M3d {
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetAxePoints	) == 0)
 		  {
-		    PP3d::SortEntityVisitor lVisit;		    
+		    PP3d::SortEntityVisitorPoint lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
 		    size_t lSz = lVisit.cVectPoints.size();
 		    if( lSz >= 2 )
@@ -1119,7 +1117,7 @@ namespace M3d {
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetAxeNormal	) == 0)
 		  {
-		    PP3d::SortEntityVisitor lVisit;		    
+		    PP3d::SortEntityVisitorPointFacet lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
 		    /*
 		    size_t lSz = lVisit.cVectFacets.size();
@@ -1158,27 +1156,48 @@ namespace M3d {
 		    }		     
 	    
 		  }
-		else if(  strcmp( m->label(), StrMenu_SetAxeInput	) == 0)
+		else if( strcmp( m->label(), StrMenu_SetAxeInput) == 0)
 		  {
+		    PP3d::SortEntityVisitorPoint lVisit;
+		    if( TheBase.execVisitorOnCurrentLine( lVisit ) && lVisit.cVectPoints.size() >= 2 )
+		      {
+			PP3d::Point3d lCenter = lVisit.cVectPoints[0]->get();
+			PP3d::Point3d lNorm   = lVisit.cVectPoints[1]->get();
+			if( TheAppli.addAxis( lCenter, lNorm ) == false)
+			  {
+			    fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+			  }					      
+		      }
+		    else
+		      {
+		      fl_alert( "We must have two distinct points");
+		    }		       
 		  }
-		else if(  strcmp( m->label(), StrMenu_SetPlanePoints	) == 0)
+    /*		else if(  strcmp( m->label(), StrMenu_SetPlanePoints	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetPlaneLines	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetPlaneFacet	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetPlaneInput	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetTransPoints	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
 		else if(  strcmp( m->label(), StrMenu_SetTransLine	) == 0)
 		  {
+		    fl_alert( "Not implemented" );
 		  }
+    */
 		else if(  strcmp( m->label(), StrMenu_PutOnGround	) == 0)
 		  {		    
  		    PP3d::VisitorMinMax lVisitMinMax;

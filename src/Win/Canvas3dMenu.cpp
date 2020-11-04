@@ -61,13 +61,16 @@ namespace M3d {
 #define StrMenu_CreateShapeLine      StrMenu_CreateShape "Line"
 #define StrMenu_CreateShapePolyline  StrMenu_CreateShape "Polyline"
 #define StrMenu_CreateShapeFacet     StrMenu_CreateShape "Facet"
+#define StrMenu_CreateShapeFacetP    StrMenu_CreateShape "FacetPoly"
+#define StrMenu_CreateShapeFacet2P   StrMenu_CreateShape "BiFacetPoly"
 
 
 #define StrMenu_Revol     "New Revol "
 #define StrMenu_RevolX    StrMenu_Revol "X ..."
 #define StrMenu_RevolY    StrMenu_Revol "Y ..."
 #define StrMenu_RevolZ    StrMenu_Revol "Z ..."
-  	
+#define StrMenu_RevolAxis    StrMenu_Revol "current axis..."
+
 #define StrMenu_CallDialoDiagSub     "New Subdivide ..."
 
 #define StrMenu_Demo1            "Demo 1"
@@ -86,6 +89,7 @@ namespace M3d {
 #define StrMenu_RotY     "Rotate Y"
 #define StrMenu_RotZ     "Rotate Z"
 #define StrMenu_RotNorm  "Rotate normal"
+#define StrMenu_CenterRotAxis  "Rotate around current axis (center)"
 #define StrMenu_RotAxis  "Rotate around current axis"
 #define StrMenu_RotFacetNorm  "Rotate facet normal"
 
@@ -169,7 +173,7 @@ namespace M3d {
 #define StrMenu_SubdivideCatmullClarkFalse "Small spike"
   //#define StrMenu_SubdivideCentralSpike "Spike  central facet (Bug!)"
 #define StrMenu_SubdivideFold        "Fold"
-//#define StrMenu_SubdivideCentralFold "Fold  central facet (Bug!)"
+  //#define StrMenu_SubdivideCentralFold "Fold  central facet (Bug!)"
 
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
@@ -201,7 +205,10 @@ namespace M3d {
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if( TheAppli.getCurrentAxis() )
+      {
+      pMenu.add( StrMenu_Rot  "/" StrMenu_CenterRotAxis, "",  MyMenuCallbackSelect, this);
       pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
+      }
     
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotFacetNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object
@@ -223,7 +230,7 @@ namespace M3d {
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if( TheAppli.getCurrentAxis() )
-	pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+      pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
       {
@@ -260,7 +267,7 @@ namespace M3d {
 
     if(  (TheSelect.getSelectType() != PP3d::SelectType::Point
 	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
-	  && TheSelect.getNbSelected() > 0)
+	 && TheSelect.getNbSelected() > 0)
       {
 	pMenu.add( StrMenu_Inset, "", MyMenuCallbackInset, this);
 	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
@@ -321,6 +328,7 @@ namespace M3d {
   // If no entity is selected
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
   {
+    int lMenuFlagActif=0;
     pMenu.add( StrMenu_CreateFacet,    "^c",  MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateCylinder, "y",   MyMenuCallbackPrimitiv,   this);
     pMenu.add( StrMenu_CreateSphere,   "s",   MyMenuCallbackPrimitiv,   this);
@@ -340,48 +348,66 @@ namespace M3d {
     // Ajout helice 
     // ... Ajout script lua !!! plugin
     
-    if(TheAppli.getDatabase()->isCurrentPoints()
-	&&TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
-      {
-	pMenu.add(StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this);
-      }
+    lMenuFlagActif = FL_MENU_INACTIVE;
     
-    if(TheAppli.getDatabase()->isCurrentPoints()
-	&&TheAppli.getDatabase()->getNbCurrentPoints()  >= 3 )
+    if(TheAppli.getDatabase()->isCurrentPoints() 
+       &&TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
       {
-	pMenu.add(StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this);
+	lMenuFlagActif=0;
       }
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this,lMenuFlagActif);
+      
     
+    lMenuFlagActif = FL_MENU_INACTIVE;
     if(TheAppli.getDatabase()->isCurrentPoints()
-	&&TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
+       &&TheAppli.getDatabase()->getNbCurrentPoints()  >= 3 )
       {
-	pMenu.add(StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this, FL_MENU_DIVIDER);
+ 	lMenuFlagActif=0;
       }
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
+   
+    
+    lMenuFlagActif=0;
+    if(TheAppli.getDatabase()->isCurrentPoints()
+       &&TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
+      {
+ 	lMenuFlagActif=0;
+      }
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "", MyMenuCallbackPrimitiv,this, FL_MENU_DIVIDER | lMenuFlagActif);
+      
 
-    pMenu.add( StrMenu_RevolX, "^x", MyMenuCallbackPrimitiv, this);
-    pMenu.add( StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this);
-    pMenu.add( StrMenu_RevolZ, "^z", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+    lMenuFlagActif = 0;
+    if( TheBase.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
+    
+    pMenu.add( StrMenu_RevolX, "^x", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
+    pMenu.add( StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
+    pMenu.add( StrMenu_RevolZ, "^z", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
+    
+    if( TheAppli.isSelectAxis() ==false ) lMenuFlagActif=FL_MENU_INACTIVE; 
+    pMenu.add( StrMenu_RevolAxis, "", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
-    pMenu.add( StrMenu_CallDialoDiagSub, "^b",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_CallDialoDiagSub, "^b",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER  );
 
   }
   //-------------------------------------------
   //-------------------------------------------
- //-------------------------------------------
-  #define BEGINCALL \
-   static bool slFlagDialog=false; \
-		\
-    Fl_Menu_* mw = (Fl_Menu_*)w;\
-    const Fl_Menu_Item* m = mw->mvalue();		\
-    if (!m)\
-      {\
-	printf("NULL\n");\
-			\
-	return ;\
-      }\
-\
-    printf("%s\n", m->label());\
-    M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);\
+  //-------------------------------------------
+#define BEGINCALL							\
+  static bool slFlagDialog=false;					\
+									\
+  Fl_Menu_* mw = (Fl_Menu_*)w;						\
+  const Fl_Menu_Item* m = mw->mvalue();					\
+  if (!m)								\
+    {									\
+      printf("NULL\n");							\
+									\
+      return ;								\
+    }									\
+									\
+  printf("%s\n", m->label());						\
+  M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);	\
   
 
   //-------------------------------------------
@@ -390,10 +416,12 @@ namespace M3d {
   {		
     BEGINCALL  
 				
-    if( strcmp( m->label(), StrMenu_CreateFacet ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
-      }
+      if( strcmp( m->label(), StrMenu_CreateFacet ) == 0)
+	{
+	  std::cout << "MyMenuCallbackPrimitiv StrMenu_CreateFacet"<< std::endl;
+    
+	  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
+	}
     if( strcmp( m->label(), StrMenu_CreateCylinder ) == 0)
       {
 	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER  );
@@ -442,6 +470,20 @@ namespace M3d {
 		lShape =TheAppli.getDatabase()->convertCurrentLineToFacet();
 	      }
 	  }
+	if( strcmp( m->label(), StrMenu_CreateShapeFacetP ) == 0)
+	  {
+	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
+	      {
+		lShape =TheAppli.getDatabase()->convertCurrentLineToFacetPoly();
+	      }
+	  }
+	if( strcmp( m->label(), StrMenu_CreateShapeFacet2P ) == 0)
+	  {
+	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
+	      {
+		lShape =TheAppli.getDatabase()->convertCurrentLineToBiFacetPoly();
+	      }
+	  }
 	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
@@ -471,16 +513,19 @@ namespace M3d {
       {
 	if( strcmp( m->label(), StrMenu_RevolX )  == 0)
 	  {
-	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolX  );
+	    CallDialogRevol( TypeRevol::RevolX  );
 	  }
 	else if( strcmp( m->label(), StrMenu_RevolY )  == 0)
 	  {
-	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolY  );
+	    CallDialogRevol( TypeRevol::RevolY  );
 	  }
-
 	else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
 	  {
-	    CallDialogRevol( slFlagDialog, lCanvas, TypeRevol::RevolZ  );
+	    CallDialogRevol( TypeRevol::RevolZ  );
+	  }									
+	else if( strcmp( m->label(), StrMenu_RevolAxis)  == 0)
+	  {
+	    CallDialogRevol( TypeRevol::RevolAxis  );
 	  }									
       }
     //========================================
@@ -493,12 +538,12 @@ namespace M3d {
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
   {	  		
     BEGINCALL ;
-    PP3d::SortEntityVisitor lVisit;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
     
     std::vector<PP3d::EntityPtr> lNewFacets;
     
-    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.1 ))
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
       {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);  
@@ -594,7 +639,7 @@ namespace M3d {
       {
 	//	BUG !!!!!!!!!!!!!!!!!!
 	// il faut trouver le centre et le vecteur moyen
-	PP3d::SortEntityVisitor lVisit;		    
+	PP3d::SortEntityVisitorPointFacet lVisit;		    
 	TheSelect.execVisitorOnEntity(lVisit);
 	
 	PP3d::Point3d lCenter;
@@ -699,20 +744,20 @@ namespace M3d {
 	      fl_alert( "No default axis");
 	      return;
 	    }
-	 lAxis =  TheAppli.getCurrentAxis()->getAxis();
+	  lAxis =  TheAppli.getCurrentAxis()->getAxis();
 	}
-    else
-      if( strcmp( m->label(), StrMenu_AlignOnNorm ) == 0 )
-	{
-	  if( TheSelect.getNbSelected() < 2)
-	    {
-	      fl_alert( "At least two facets needed");
-	      return;
-	    }
-	  // first facet of selection only use for give normal
-	  lAxis =  ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal();
-	  TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );
-	}
+      else
+	if( strcmp( m->label(), StrMenu_AlignOnNorm ) == 0 )
+	  {
+	    if( TheSelect.getNbSelected() < 2)
+	      {
+		fl_alert( "At least two facets needed");
+		return;
+	      }
+	    // first facet of selection only use for give normal
+	    lAxis =  ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal();
+	    TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );
+	  }
 	  
     // A OPTIMISER !!!!
 
@@ -720,13 +765,13 @@ namespace M3d {
     lVisitAll.addOwnersOf( TheSelect.getSelectionVect() );
 
 	
-    PP3d::SortEntityVisitor lVisitSelect;
+    PP3d::SortEntityVisitorFacet lVisitSelect;
     TheSelect.execVisitorOnEntity( lVisitSelect );
 	
 	
     for( PP3d::ObjectPtr lObj : lVisitAll.cVectObjects ) // pour tout les objets trouvés
       {	    
-	PP3d::SortEntityVisitor lVisitObj;		    
+	PP3d::SortEntityVisitorPointFacet lVisitObj;		    
 	lObj->execVisitor(lVisitObj); // pour les facettes de l'objet
 	
 	PP3d::Vector3d lAvgNorm;
@@ -764,11 +809,11 @@ namespace M3d {
 	
     PushHistory();
     TheAppli.redrawAll();	 	
-   }
+  }
   //-------------------------------------------
   static bool DuplicateSelection()
   {    
-    PP3d::SortEntityVisitor  lVisit;    
+    PP3d::SortVisitorEntity  lVisit;    
     TheSelect.execVisitorOnlyOnObjects( lVisit );
     
     std::stringstream lDupStr;
@@ -784,14 +829,14 @@ namespace M3d {
 	lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false );
 
 	/*
-	lRet = lRead.read( *TheAppli.getDatabase(), false );
-	if( lRet && lNewObjs.size() )
+	  lRet = lRead.read( *TheAppli.getDatabase(), false );
+	  if( lRet && lNewObjs.size() )
 	  {	    
-	    TheSelect.removeAll();
-	    for( PP3d::EntityPtr lObj : lNewObjs )
-	      {
-		TheSelect.addEntity( lObj );
-	      }
+	  TheSelect.removeAll();
+	  for( PP3d::EntityPtr lObj : lNewObjs )
+	  {
+	  TheSelect.addEntity( lObj );
+	  }
 	  }
 	*/
       }
@@ -800,178 +845,183 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
   {	  		
-     BEGINCALL  
+    BEGINCALL  
 
-    if( strcmp( m->label(), StrMenu_InvertNormal) == 0)
-      {
-	PP3d::VisitorInvertNormal lVisitInv;
+      if( strcmp( m->label(), StrMenu_InvertNormal) == 0)
+	{
+	  PP3d::VisitorInvertNormal lVisitInv;
 	
-	TheSelect.execVisitorOnEntity( lVisitInv );
+	  TheSelect.execVisitorOnEntity( lVisitInv );
 	
-	PushHistory();	    
-	TheAppli.redrawAll();
-      }
-     else
-    //============== TRANSFORMATION ====================
-    // MOVE
-    if( strcmp( m->label(), StrMenu_MoveX ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveX);
-      }
-    else if( strcmp( m->label(), StrMenu_MoveY ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveY);
-      }
-    else if( strcmp( m->label(), StrMenu_MoveZ ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveZ);
-      }
-    else if( strcmp( m->label(), StrMenu_MoveNormal ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveNormal);
-      }
-    else if( strcmp( m->label(), StrMenu_MoveAxis ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveAxis);
-      }
-     // ROTATE
-    else if( strcmp( m->label(), StrMenu_RotX ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotX);
-      }
-    else if( strcmp( m->label(), StrMenu_RotY ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType( Transform::CenterRotY );
-      }
-    else if( strcmp( m->label(), StrMenu_RotZ ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
-      }    
-    else if( strcmp( m->label(), StrMenu_RotAxis ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
-      }
-    else if( strcmp( m->label(), StrMenu_RotNorm ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotNorm );
-      }
-    else if( strcmp( m->label(), StrMenu_RotFacetNorm ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotFacetNorm );
-      }
-     // SCALE
-    else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleUniform );
-      }
-     else if( strcmp( m->label(), StrMenu_ScaleX ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleX );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleY ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleY );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleZ ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleZ );
-      }
-     else if( strcmp( m->label(), StrMenu_ScaleRX ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleRX );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleRY ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleRY );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleRZ ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleRZ );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleNormal ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleNormal );
-      }
-    else if( strcmp( m->label(), StrMenu_ScaleAxis ) == 0)
-      {
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::ScaleAxis );
-      }
-       // DUP
-    else if( strcmp( m->label(), StrMenu_DupInPlace ) == 0)
-      {	
-	DuplicateSelection();
-	PushHistory();
-	TheAppli.redrawAll();	
-      }
-     else if( strcmp( m->label(), StrMenu_DupMoveX ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveX);
-      }
-     else if( strcmp( m->label(), StrMenu_DupMoveY ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveY);
-      }
-     else if( strcmp( m->label(), StrMenu_DupMoveZ ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::MoveZ);
-      }
-     else if( strcmp( m->label(), StrMenu_DupRotX ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotX);
-      }
-     else if( strcmp( m->label(), StrMenu_DupRotY ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotY);
-      }
-     else if( strcmp( m->label(), StrMenu_DupRotZ ) == 0)
-      {	
-	DuplicateSelection();
-	TheAppli.redrawAll();	
-	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
-      }
- }
+	  PushHistory();	    
+	  TheAppli.redrawAll();
+	}
+      else
+	//============== TRANSFORMATION ====================
+	// MOVE
+	if( strcmp( m->label(), StrMenu_MoveX ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveX);
+	  }
+	else if( strcmp( m->label(), StrMenu_MoveY ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveY);
+	  }
+	else if( strcmp( m->label(), StrMenu_MoveZ ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveZ);
+	  }
+	else if( strcmp( m->label(), StrMenu_MoveNormal ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveNormal);
+	  }
+	else if( strcmp( m->label(), StrMenu_MoveAxis ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveAxis);
+	  }
+    // ROTATE
+	else if( strcmp( m->label(), StrMenu_RotX ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotX);
+	  }
+	else if( strcmp( m->label(), StrMenu_RotY ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType( Transform::CenterRotY );
+	  }
+	else if( strcmp( m->label(), StrMenu_RotZ ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
+	  }    
+	else if( strcmp( m->label(), StrMenu_CenterRotAxis ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
+	  }
+	else if( strcmp( m->label(), StrMenu_RotAxis ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::RotAxis );
+	  }
+	else if( strcmp( m->label(), StrMenu_RotNorm ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotNorm );
+	  }
+	else if( strcmp( m->label(), StrMenu_RotFacetNorm ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotFacetNorm );
+	  }
+    // SCALE
+	else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleUniform );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleX ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleX );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleY ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleY );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleZ ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleZ );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleRX ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleRX );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleRY ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleRY );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleRZ ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleRZ );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleNormal ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleNormal );
+	  }
+	else if( strcmp( m->label(), StrMenu_ScaleAxis ) == 0)
+	  {
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::ScaleAxis );
+	  }
+    // DUP
+	else if( strcmp( m->label(), StrMenu_DupInPlace ) == 0)
+	  {	
+	    DuplicateSelection();
+	    PushHistory();
+	    TheAppli.redrawAll();	
+	  }
+	else if( strcmp( m->label(), StrMenu_DupMoveX ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveX);
+	  }
+	else if( strcmp( m->label(), StrMenu_DupMoveY ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveY);
+	  }
+	else if( strcmp( m->label(), StrMenu_DupMoveZ ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::MoveZ);
+	  }
+	else if( strcmp( m->label(), StrMenu_DupRotX ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotX);
+	  }
+	else if( strcmp( m->label(), StrMenu_DupRotY ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotY);
+	  }
+	else if( strcmp( m->label(), StrMenu_DupRotZ ) == 0)
+	  {	
+	    DuplicateSelection();
+	    TheAppli.redrawAll();	
+	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+	    Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
+	  }
+  }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData)
   {
-     BEGINCALL  ;
+    BEGINCALL  ;
 
-     PP3d::SortEntityVisitor lVisit;
+    PP3d::SortEntityVisitorPoint lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
     
     if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() ))
@@ -984,7 +1034,7 @@ namespace M3d {
   void Canvas3d::MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData )
   {
     BEGINCALL  ;
-    PP3d::SortEntityVisitor lVisit;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
 
     bool lModifOldPts = true;
@@ -1007,7 +1057,7 @@ namespace M3d {
   void Canvas3d::MyMenuCallbackInset(Fl_Widget* w, void* pUserData)
   {
     BEGINCALL  ;
-    PP3d::SortEntityVisitor lVisit;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );       
     
     std::vector<PP3d::EntityPtr> lNewFacets;
@@ -1026,8 +1076,8 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData)
   {
-      BEGINCALL  ;
-    PP3d::SortEntityVisitor lVisit;
+    BEGINCALL  ;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
 
     PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::ANGLE_SIMPLE;
@@ -1044,8 +1094,8 @@ namespace M3d {
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData)
   {
-      BEGINCALL  ;
-    PP3d::SortEntityVisitor lVisit;
+    BEGINCALL  ;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
 
     PP3d::SubDivFacetType lDivType = PP3d::SubDivFacetType::CENTRAL_POINT;
@@ -1075,7 +1125,7 @@ namespace M3d {
   {
     BEGINCALL  ;
      
-    PP3d::SortEntityVisitor lVisit;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
 
     
@@ -1117,7 +1167,7 @@ namespace M3d {
     else  if( strcmp( m->label(), StrMenu_Cut3 ) == 0)
       {
  	lNbCut = 3;
-     }
+      }
     else  if( strcmp( m->label(), StrMenu_Cut4 ) == 0)
       {
  	lNbCut = 4;
@@ -1129,7 +1179,7 @@ namespace M3d {
     else  if( strcmp( m->label(), StrMenu_Cut6 ) == 0)
       {
   	lNbCut =6 ;
-     }
+      }
     else  if( strcmp( m->label(), StrMenu_Cut7 ) == 0)
       {
  	lNbCut = 7;
@@ -1158,7 +1208,7 @@ namespace M3d {
     if( lNbCut > 1 )
       {
 	// On recupere les objects de la selection
-	PP3d::SortEntityVisitor lVisit;
+	PP3d::SortEntityVisitorLine lVisit;
 	TheSelect.execVisitorOnEntity( lVisit );
 	TheSelect.removeAll();
 	
@@ -1169,7 +1219,7 @@ namespace M3d {
 	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
 	PushHistory();
 	TheAppli.redrawAll();
-    } 
+      } 
   }
   
   //***************************************

@@ -235,10 +235,11 @@ namespace PP3d {
   }
   //------------------------------------------
   GLuint DataBase::getNbCurrentPoints()
-  {
-    if( cCurrentLine == nullptr ) return 0;
-		
-    return (GLuint)cCurrentLine->getPoints().size();
+  {   
+    PP3d::SortEntityVisitorPoint lVisit;
+    if(  execVisitorOnCurrentLine( lVisit ) )           
+      return (GLuint)lVisit.cVectPoints.size();
+    return 0;
   }
   //------------------------------------------		
   Object* DataBase::validCurrentCreation()
@@ -281,7 +282,8 @@ namespace PP3d {
   //------------------------------------------
   ObjectLine* DataBase::convertCurrentLineToLine()
   {
-    if( cCurrentLine == nullptr || cCurrentLine->getPoints().size() != 2 )
+    PP3d::SortEntityVisitorPoint lVisit;
+    if( execVisitorOnCurrentLine( lVisit ) == false ||  lVisit.cVectPoints.size() < 2 )
       return nullptr;
 
 
@@ -316,6 +318,51 @@ namespace PP3d {
     cCurrentLine= nullptr;
 	
     return lFacet;
+  }
+  //------------------------------------------		
+  ObjectPoly* DataBase::convertCurrentLineToFacetPoly()
+  {
+    if( cCurrentLine == nullptr )
+      return nullptr;
+
+    PolyPtr  lPoly   = getNewPoly();
+    FacetPtr lFacet1 = cCurrentLine->giveFacet();
+    lFacet1->closeFacet();
+    lPoly->addFacet( lFacet1 );
+	
+    
+    ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
+    addObject( lObjPoly );			
+			
+    delete cCurrentLine;
+    cCurrentLine= nullptr;
+	
+    return lObjPoly;
+  }
+  //------------------------------------------		
+  ObjectPoly* DataBase::convertCurrentLineToBiFacetPoly()
+  {
+    if( cCurrentLine == nullptr )
+      return nullptr;
+
+    PolyPtr  lPoly   = getNewPoly();
+    FacetPtr lFacet1 = cCurrentLine->giveFacet();
+    lFacet1->closeFacet();
+    lPoly->addFacet( lFacet1 );
+		    
+    FacetPtr lFacet2 = lFacet1->duplicate( *this);
+    lFacet2->inverseLines();
+    lPoly->addFacet( lFacet2 );
+
+    
+    ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
+    addObject( lObjPoly );			
+			
+    delete cCurrentLine;
+    cCurrentLine= nullptr;
+
+    
+    return lObjPoly;
   }
   //------------------------------------------
   // c'est deja un polyline, il suffit de le reommer et de l'ajouter a la base
@@ -532,7 +579,7 @@ namespace PP3d {
   {
     //   std::cout << "DataBase::addToInput" << std::endl;
    
-    PP3d::SortEntityVisitor  lVisit;
+    PP3d::SortEntityVisitorPoint  lVisit;
     pEntity->execVisitor( lVisit );
     for( PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
       {				
@@ -589,6 +636,16 @@ namespace PP3d {
     return lTmp;
   }  
   //---------------------------------------------------------
+  PolyPtr DataBase::getNewPoly()
+  {
+    if( cFreePolys.empty() )
+      return new Poly();
+    
+    PolyPtr lTmp = cFreePolys.top();
+    cFreePolys.pop();
+    return lTmp;
+  }  
+  //---------------------------------------------------------
   void DataBase::freePoint( PointPtr ioPt )
   {
     //   clearAllOwner();
@@ -605,6 +662,7 @@ namespace PP3d {
     //  clearAllOwner();
     if( removeEntityIfNoOwner( ioLine ))
       {
+	// pas de free des points car ils sont mutualisées ou alors compter les owners 
 	ioLine->razId();
 	ioLine->clear();
 	cFreeLines.push( ioLine );
@@ -617,8 +675,21 @@ namespace PP3d {
     if( removeEntityIfNoOwner( ioFacet ) )
       {
 	ioFacet->razId();
+	// faire un free des lignes 
 	ioFacet->clear();
 	cFreeFacets.push( ioFacet );
+      }
+  }
+  //---------------------------------------------------------
+  void DataBase::freePoly( PolyPtr ioPoly)
+  {
+    //    clearAllOwner();
+    if( removeEntityIfNoOwner( ioPoly ) )
+      {
+	ioPoly->razId();
+	// faire un free des facettes 
+	ioPoly->clear();
+	cFreePolys.push( ioPoly );
       }
   }
   //************************************

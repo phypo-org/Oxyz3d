@@ -7,7 +7,7 @@ namespace PP3d {
   
 
   //-------------------------------------------
-  inline bool  GetVectorFromFacets( PP3d::SortEntityVisitor & iVisit, PP3d::Point3d & oNorm, PP3d::Point3d & oCenter )
+  inline bool  GetVectorFromFacets( PP3d::SortEntityVisitorPointFacet & iVisit, PP3d::Point3d & oNorm, PP3d::Point3d & oCenter )
   {
     oCenter.raz();
     

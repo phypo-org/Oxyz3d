@@ -301,12 +301,14 @@ namespace PP3d{
   //---------------------------
 
   //---------------------------
-  PointPtrHash Object::getPoints()
+  /*
+ PointPtrHash Object::getHashPoints()
   {
     VisitorGetPoints<PointPtrHash> lVisit;
     getShape()->execVisitor( lVisit );
 		
     return lVisit.getPoints();
-  }
-  //********************************
+  } 
+  */
+ //********************************
 }

@@ -88,7 +88,7 @@ namespace PP3d {
 	  }
 	else if( lFacet->getLines().size() > 3 )
 	  {	  
-	    PP3d::SortEntityVisitor lVisit;
+	    PP3d::SortEntityVisitorPoint lVisit;
 	    lFacet->execVisitor( lVisit );
 	      
 	    Float3   lMiddle;           
@@ -133,7 +133,7 @@ namespace PP3d {
       {	  
 	MySavStl lSav( lFilSav );
 
-	SortEntityVisitor lSort;
+	SortEntityVisitorFacet lSort;
 
 	if( iDatabase != nullptr )
 	  {

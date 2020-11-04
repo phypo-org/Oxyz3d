@@ -567,18 +567,7 @@ namespace M3d {
 	cDragSavPoints.clear();
       }
   }
-  //---------------------------
-  bool getAxis( PP3d::Point3d & oPtZero, PP3d::Point3d & oAxis  )
-  {
-    PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
-    if(lObjAxis != nullptr )
-      {
-	oPtZero = lObjAxis->getVectorOrigin();
-	oAxis = lObjAxis->getAxis();
-	return true;
-      }
-    return false;
-  }
+
   //---------------------------
   void Canvas3d::userTransformSelection(int pEvent, bool pFlagFinalize)
   {
@@ -652,6 +641,7 @@ namespace M3d {
 	  return;    //(double)/////////// ATTENTI suricata.yamlON 
 	}
 	//================
+	// Chaque facette tourne autor de sa normale
       case Transform::CenterRotFacetNorm:
 	{
 	 
@@ -670,7 +660,7 @@ namespace M3d {
 	  
 	  if( pFlagFinalize)
 	      validDragSelect( lMatTran );
-	  return;    //(double)/////////// ATTENTI suricata.yamlON 
+	  return;    //(double)/////////// ATTENTlON 
 	}
 	//================
 
@@ -704,7 +694,7 @@ namespace M3d {
 	{
 	  PP3d::Point3d lPtZero;
 	  PP3d::Point3d lAxis;
-	  if( getAxis( lPtZero, lAxis ) )	{
+	  if( TheAppli.getAxis( lPtZero, lAxis ) )	{
 	    {
 	      TheAppli.currentTransform().position().x() += lAxis.cX*lDx/100;
 	      TheAppli.currentTransform().position().y() += lAxis.cY*lDx/100;
@@ -769,13 +759,15 @@ namespace M3d {
 		{
 		  PP3d::Point3d lPtZero;
 		  PP3d::Point3d lAxis;
-		  if( getAxis( lPtZero, lAxis ) )
-		    { ;	} // A FAIRE
+		  if( TheAppli.getAxis( lPtZero, lAxis ) )
+		    {
+		      // normalize ?
+		    } // A FAIRE
 		}
 		break;
 	      default:;
 	      }
-	    
+	     
 	    //	  CallDialogKeepFloat( TheAppli.currentTransform().scale.x());
 	    lMatScale.initScale( TheAppli.currentTransform().scale() );
 	    lMatTran = lMatRecenter * lMatScale *  lMatZero;					
@@ -787,6 +779,7 @@ namespace M3d {
       case Transform::CenterRotZ :
       case Transform::CenterRotNorm :
       case Transform::CenterRotAxis :
+      case Transform::RotAxis :
 	{		
 	  std::cout << "Center:" << cDragCenter  << std::endl;
 	  
@@ -840,12 +833,12 @@ namespace M3d {
 		    && (TheSelect.getSelectType() == PP3d::SelectType::Object
 			|| TheSelect.getSelectType() ==  PP3d::SelectType::Facet))
 		  {
-		    PP3d::SortEntityVisitor lVisit;		    
+		    PP3d::SortEntityVisitorPointFacet lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
 		
 		    PP3d::Point3d lCenter;
 		    PP3d::Point3d lNorm;
-		
+		    
 		    if( PP3d::GetVectorFromFacets( lVisit, lNorm, lCenter ))
 		      {			
 			//	      std::cout << "VERIFICATION VECTEUR NORM:"
@@ -854,41 +847,59 @@ namespace M3d {
 			// On prend x mais on pourrait prendre ce que l'on veut
 			TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
 			CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
-			
-			std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
-				  << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
-				  << std::endl;	  
-			
-			// BUG  BUG BUG BUG BUG BUG
-			
+			 
+			//			std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
+			//				  << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
+			//	  << std::endl;	 
+			lNorm.normalize();
 			lMatRot.initRotAxis( lNorm, TheAppli.currentTransform().angle().x() );
 		      }
 		  }
 	      }
 	      break;
-
 	      
 	    case Transform::CenterRotAxis :
 	      {
 		  PP3d::Point3d lPtZero;
 		  PP3d::Point3d lAxis;
-		  if( getAxis( lPtZero, lAxis ))
+		  if( TheAppli.getAxis( lPtZero, lAxis ))
 		    {
-		  //	      std::cout << "VERIFICATION VECTEUR NORM:"
-		  //	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
-		  //	      << std::endl;
-		  // On prend x mais on pourrait prendre ce que l'on veut
-		  TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
-		  CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
-		  
-		    std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
-			      << " : " << (TheAppli.currentTransform().angle().x()*180)/M_PI
-			      << std::endl;	  
-		    
-		    // BUG  BUG BUG BUG BUG BUG
-		    
-		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );
-		  }		      
+		      lAxis -= lPtZero;
+		      lAxis.normalize();		      
+		      
+		      PP3d::SortEntityVisitorPointFacet lVisit;		    
+		      TheSelect.execVisitorOnEntity(lVisit);		    
+		      
+		      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		      
+		      lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
+		    }		      
+	      }
+	      break;
+	      
+	    case Transform::RotAxis :
+	      {
+		  PP3d::Point3d lPtZero;
+		  PP3d::Point3d lAxis;
+		  if( TheAppli.getAxis( lPtZero, lAxis ))
+		    {
+		      lAxis -= lPtZero;
+		      lAxis.normalize();		      
+		      
+		      lMatRecenter.initMove( lPtZero ); //on revient au centre;
+	    
+		      PP3d::Point3d lNCenter =  -lPtZero;					
+		      lMatZero.initMove( lNCenter ); //on se positionne en zero;
+	    
+		      PP3d::SortEntityVisitorPointFacet lVisit;		    
+		      TheSelect.execVisitorOnEntity(lVisit);		    
+		      
+		      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		      
+		      lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
+		    }		      
 	      }
 	      break;
 
@@ -986,7 +997,7 @@ namespace M3d {
     DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getType() );
     std::cout << " **************** userInputPoint Hightlight " << iEntity->getType() << std::endl;
     
-    PP3d::SortEntityVisitor  lVisit;
+    PP3d::SortEntityVisitorPoint  lVisit;
     iEntity->execVisitor( lVisit );
 
     for( PP3d::PointPtr lPt : lVisit.cVectPoints) // les points sont uniques

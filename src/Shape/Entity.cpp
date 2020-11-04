@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "SortVisitor.h"
+#include "DataBase.h"
 
 
 
@@ -51,7 +52,7 @@ namespace PP3d {
   //---------------------------
   void Entity::deleteAllHieracrchy()
   {    
-    SortEntityVisitor lVisit(false);
+    SortVisitorEntity lVisit(false);  //SortEntityVisitor
     execVisitor( lVisit );
 
     for( auto lEntity : lVisit.cSetAllEntity )
@@ -145,6 +146,18 @@ namespace PP3d {
 	lLine->inversePoint();
       }		
   } 
+  //-------------------------------------
+  Facet* Facet::duplicate( DataBase & lBase )
+  {
+    FacetPtr lNew = lBase.getNewFacet();
+    
+    size_t i =0;
+    for( size_t i=0; i< cLines.size(); i++ )
+      {
+	lNew->addLine( lBase.getNewLine( cLines[i]->first(), cLines[i]->second())); 
+      }
+     return lNew;
+   }
   //-------------------------------------
   Point3d Facet::getCenter( )
   {		 	

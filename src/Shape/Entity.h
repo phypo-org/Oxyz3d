@@ -32,6 +32,7 @@ namespace PP3d {
   class Poly;
   class Object;
   class Mat4;
+  class DataBase;
 
   class EntityVisitorType;
 
@@ -366,6 +367,7 @@ namespace PP3d {
     ShapeType getType() const  override { return ShapeType::Facet;}
 	
     void closeFacet();
+    
 
     bool addTrueLine( LinePtr iLine )
     {
@@ -430,27 +432,28 @@ namespace PP3d {
       addLine( iNewLine );
     }
 
-    LinePtr getLine(  size_t iPos ) { return cLines[iPos]; }
-    LinePtr getLineModulo(  size_t iPos ) { return cLines[iPos%cLines.size()]; }
-    void    removeLineModulo(  size_t iPos ) { cLines.erase( cLines.begin()+(iPos%cLines.size())); }
-    LinePtr swapLine(  size_t iPos,  LinePtr iLine )
+    LinePtr      getLine(  size_t iPos ) { return cLines[iPos]; }
+    LinePtr      getLineModulo(  size_t iPos ) { return cLines[iPos%cLines.size()]; }
+    void         removeLineModulo(  size_t iPos ) { cLines.erase( cLines.begin()+(iPos%cLines.size())); }
+    LinePtr      swapLine(  size_t iPos,  LinePtr iLine )
     {
       LinePtr lTmp =  cLines[iPos];
       iLine->addOwner( this );
       cLines[iPos] = iLine;
       return lTmp;
     }
-    bool clear() override { cLines.clear(); return Entity::clear(); }
-
+    bool         clear() override { cLines.clear(); return Entity::clear(); }
+    
+    Facet*       duplicate( DataBase & lBase );
 
     LinePtrVect& getLines()   { return cLines;}
-    GLuint getNbLines()  const { return (GLuint )cLines.size(); }
+    GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
 
-    Point3d & getNormal()     { return cNorm; }
+    Point3d &    getNormal()     { return cNorm; }
 		
-    void execVisitor( EntityVisitor& pVisit )override;
-    void inverseLines();
-    Point3d getCenter();
+    void         execVisitor( EntityVisitor& pVisit )override;
+    void         inverseLines();
+    Point3d      getCenter();
 
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;

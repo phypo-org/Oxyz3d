@@ -89,20 +89,31 @@ namespace PP3d {
     EntityId validEntity( Entity* lEntitiy, bool iTotalScan = false );
 
 		
-    void          addPointToCurrentLine( Point3d pPt );
-    void          delPointToCurrentLine( );
-    GLuint        getNbCurrentPoints();
-    ObjectFacet*     convertCurrentLineToFacet();
+    void             addPointToCurrentLine( Point3d pPt );
+    void             delPointToCurrentLine( );
+    GLuint           getNbCurrentPoints();
+    ObjectFacet *    convertCurrentLineToFacet();
+    ObjectPoly *     convertCurrentLineToFacetPoly();
+    ObjectPoly *     convertCurrentLineToBiFacetPoly();
     ObjectPolylines* convertCurrentLineToPolylines();
-    ObjectLine*      convertCurrentLineToLine();
+    ObjectLine *     convertCurrentLineToLine();
 
     bool isCurrentPoints()    { return cCurrentLine     != nullptr; }
-    bool iscCurrentCreation() { return cCurrentCreation != nullptr; }
+    bool isCurrentCreation() { return cCurrentCreation != nullptr; }
     FacetPtr getCurrentLine()
     {
       if( cCurrentLine != nullptr)
 	return  cCurrentLine->getFacet();
       return nullptr;
+    }
+
+    bool execVisitorOnCurrentLine( EntityVisitor & iVisit ){    
+      if( cCurrentLine != nullptr)
+	{
+	  cCurrentLine->getShape()->execVisitor( iVisit );
+	  return true;
+	}
+      return false;
     }
     
     ObjectPolylines* getObjectCurrentLine()
@@ -197,16 +208,19 @@ namespace PP3d {
     std::stack<PointPtr> cFreePoints;     
     std::stack<LinePtr>  cFreeLines;     
     std::stack<FacetPtr> cFreeFacets;     
-    //    std::stack<PolyPtr>  cFreePolys;     
+    std::stack<PolyPtr>  cFreePolys;     
+   //    std::stack<PolyPtr>  cFreePolys;     
 
   public:
     PointPtr getNewPoint(const Point3d & p);
     LinePtr  getNewLine(PointPtr lA, PointPtr lB);
     FacetPtr getNewFacet();
+    PolyPtr  getNewPoly();
 
     void freePoint( PointPtr ioPt );
-    void freeLine( LinePtr ioLine );
+    void freeLine( LinePtr   ioLine );
     void freeFacet( FacetPtr ioFacet);
+    void freePoly( PolyPtr  ioPoly);
   };
   //************************************
 }

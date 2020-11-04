@@ -22,6 +22,7 @@
    
 #define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect )
 #define TheAppli M3d::Application::Instance()
+#define TheBase  (*TheAppli.getDatabase())
 
 
 
@@ -43,6 +44,7 @@ namespace M3d{
       CenterRotNorm,
       CenterRotAxis,
       CenterRotFacetNorm,
+      RotAxis,
 
       ScaleUniform,
       ScaleX,
@@ -152,6 +154,7 @@ namespace M3d{
 	
     void setCursorPosition( PP3d::Point3d& pPos);
 
+    //---------------------------
     bool addAxis( PP3d::Point3d & lA, PP3d::Point3d & lB )
     {
       if( lA != lB )
@@ -163,6 +166,7 @@ namespace M3d{
 	}
       return false;
     }
+    //---------------------------
     bool addAxis( PP3d::PointPtr  lCenter, PP3d::PointPtr lVect )
     {
       if(lCenter->get() != lVect->get() )
@@ -175,6 +179,7 @@ namespace M3d{
       return false;
     
     }
+    //---------------------------
     bool setCurrentAxis(PP3d::ObjectPtr iObj) {
       if( iObj->getObjType() == PP3d::ObjectType::ObjLine )
 	{
@@ -183,14 +188,31 @@ namespace M3d{
 	}
       return false;
     }
-    PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
-
+     //---------------------------
+   PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
+    //---------------------------
+    bool getAxis( PP3d::Point3d & oPtZero, PP3d::Point3d & oAxis  )
+    {
+      PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
+      if(lObjAxis != nullptr )
+	{
+	  oPtZero = lObjAxis->getVectorOrigin();
+	  oAxis = lObjAxis->getAxis();
+	  return true;
+	}
+      return false;
+    }
+    //---------------------------
     bool isSelectAxis() {
+
+      std::cout << "isSelectAxis:" << TheSelectTransform.getSelectionVect()[0]->getType()  <<  " " << PP3d::ShapeType::Object
+		<< "   "	<< TheSelectTransform.getSelectionVect()[0]->getType() << " " <<  PP3d::ShapeType::Object << std::endl;
       return (TheSelectTransform.getSelectType() != PP3d::SelectType::Null
-	      && TheSelectTransform.getNbSelected() == 1
+	      && TheSelectTransform.getNbSelected() >= 1
 	      && TheSelectTransform.getSelectionVect()[0]->getType() == PP3d::ShapeType::Object
 	      && ((PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0])->getObjType() == PP3d::ObjectType::ObjLine);
     }
+    //---------------------------
  };
   //************************************
 

@@ -19,7 +19,7 @@ bool Modif::SubDivAngle( DataBase * iBase,
     {
       Float3                cMiddle;      
 
-      PP3d::SortEntityVisitor lVisit;
+      PP3d::SortEntityVisitorPoint lVisit;
       lOldFac->execVisitor( lVisit );
       
       for( PointPtr lPt:  lVisit.cVectPoints )
