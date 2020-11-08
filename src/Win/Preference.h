@@ -17,7 +17,8 @@ namespace M3d {
       
   public:
     //Interface
-    float cMouseWheel=15;
+    // float cMouseWheel=15;
+    float cMouseWheel=1.2;
 
 
     

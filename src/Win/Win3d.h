@@ -52,6 +52,9 @@ namespace M3d {
   public:
     std::unique_ptr<Canvas3d> cuCanvas3d;
     
+    std::string              cCurrentMesurementUnitStr="Unknow unit";
+    double                   cCurrentMesurementUnit=0.0;
+    
 
   public:
     Win3d( const char*pName, int pW, int pH, PP3d::DataBase & pDatabase);
@@ -67,6 +70,12 @@ namespace M3d {
     static void QuitCallback(Fl_Widget*, void*);	 
 
     friend class Canvas3d;
+
+    void setMesurement( double iM, const char * iMStr )
+    {
+      cCurrentMesurementUnit    = iM;
+      cCurrentMesurementUnitStr = iMStr;
+    }
   };
   //****************************************
 }

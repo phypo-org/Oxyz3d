@@ -205,8 +205,8 @@ namespace M3d{
     //---------------------------
     bool isSelectAxis() {
 
-      std::cout << "isSelectAxis:" << TheSelectTransform.getSelectionVect()[0]->getType()  <<  " " << PP3d::ShapeType::Object
-		<< "   "	<< TheSelectTransform.getSelectionVect()[0]->getType() << " " <<  PP3d::ShapeType::Object << std::endl;
+      //      std::cout << "isSelectAxis:" << TheSelectTransform.getSelectionVect()[0]->getType()  <<  " " << PP3d::ShapeType::Object
+      //		<< "   "	<< TheSelectTransform.getSelectionVect()[0]->getType() << " " <<  PP3d::ShapeType::Object << std::endl;
       return (TheSelectTransform.getSelectType() != PP3d::SelectType::Null
 	      && TheSelectTransform.getNbSelected() >= 1
 	      && TheSelectTransform.getSelectionVect()[0]->getType() == PP3d::ShapeType::Object

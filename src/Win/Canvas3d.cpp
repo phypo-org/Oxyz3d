@@ -254,14 +254,242 @@ namespace M3d {
 	
     if( cGridMode == ModeGrid::GRID_2D )
       {
-	glColor4f( 0.4f, 0.4f, 0.4f, 0.5f );
-	PP3d::GLUtility::DrawGrid( (float)cKamera.getSize()*10, 5, false);	 
+	
+	//	glColor4f( 0.6f, 0.6f, 0.6f, 0.05f );
+	//	PP3d::GLUtility::DrawGrid( 100000, 1000, 3, 1);
+	
+	//	glColor4f( 0.5f, 0.5f, 0.5f, 0.1f );
+	//	PP3d::GLUtility::DrawGrid( 2000, 100, 4, .5);
+		
+ 	float lScale = 1.0/cKamera.scale().x();
+
+	float col1 = 0.4f;
+	float col2 = 0.6f;
+	float col3 = 0.8f;
+	
+	float sz1 = 0.05;
+	float sz2 = 1.5;
+	float sz3 = 2;
+	
+
+	double lLimitScale   = 0.000000000004f;
+	double lSz    = 0.0000000002;
+	
+	double lMul   = 10.0; 
+	int    lNbDiv = 200;
+
+	double lDivision = 0;
+	std::string lMesurement= "";
+
+
+	const char *lTabMesurement[43]={
+	  "1E-6 nanometer",   
+	  "1E-5 nanometer",   
+	  "1E-4 nanometer",   
+	  "1E-3 nanometer",    
+	  "1E-2 nanometer",    
+	  "1E-1 nanometer",  // atom size
+	  "1 nanometer",         
+	  "10 nanometer",
+	  "100 nanometer",
+	  "1 micrometer μ",
+	  "10 micrometer μ",
+	  "100 micrometer μ ", 
+	  "1 mm",                // 1
+	  "1 cm",
+	  "1 dm",
+	  "1 m",
+	  "1 dam",
+	  "1 hm",
+	  "1 km",
+	  "10 km",
+	  "100 km",
+	  "1000 km",
+	  "10.000 km",
+          "100.000 km",
+	  "1 E6 km",
+	  "1 E7 km",
+	  "1 E8 km",
+	  "1 E9 km",
+	  "1 E10 km",
+	  "1 E11 km",
+	  "1 E12 km",
+	  "1 E13 km",
+	  "1 E14 km",
+	  "1 E15 km",
+	  "1 E16 km",
+	  "1 E17 km",
+	  "1 E18 km",
+	  "1 E19 km",
+	  "1 E20 km",
+	  "1 E21 km",
+	  "1 E22 km",
+	  "1 E23 km",
+	  "1 E24 km"  // the size of the univers
+	};
+
+
+
+
+
+
+	long lPosScale =  (long)(log10(lScale*2.5)+12);
+	lSz  *= exp10(lPosScale);
+
+	glColor4f( col1, col1, col1, col1 );
+	PP3d::GLUtility::DrawGrid( lSz,           lNbDiv, sz1 );
+	
+	glColor4f( col2, col2, col2, col2 );
+	PP3d::GLUtility::DrawGrid( lSz*lMul,      lNbDiv, sz2 );
+	
+	glColor4f( col3, col3, col3, col3 );
+	PP3d::GLUtility::DrawGrid( lSz*lMul*lMul, lNbDiv, sz3 );
+	lDivision = lSz / lNbDiv;
+	
+	lMesurement = lTabMesurement[lPosScale];
+	cMyWin3d.setMesurement( lDivision, lTabMesurement[lPosScale] );
+
+	/*
+	int i= 0;
+
+	for( ; i< 43; i++ )
+	  {
+	    if( lScale < lLimitScale )
+	      {
+		glColor4f( col1, col1, col1, col1 );
+		PP3d::GLUtility::DrawGrid( lSz,           lNbDiv, sz1 );
+		
+		glColor4f( col2, col2, col2, col2 );
+		PP3d::GLUtility::DrawGrid( lSz*lMul,      lNbDiv, sz2 );
+	    
+		glColor4f( col3, col3, col3, col3 );
+		PP3d::GLUtility::DrawGrid( lSz*lMul*lMul, lNbDiv, sz3 );
+		lDivision = lSz / lNbDiv;
+		lMesurement = lTabMesurement[i];
+
+		cMyWin3d.setMesurement( lDivision, lTabMesurement[i] );
+		break;
+	      }
+	    lLimitScale *=lMul;
+	    lSz  *=lMul;
+	  }
+	*/
+	
+	std::cout << "Canvas3d::draw Scale:"
+		  <<  cKamera.scale().x() << " -> " << lScale
+		  <<  " lSz:" << lSz
+		  << " limitscale:" << lLimitScale
+		  <<  " log10:" << (log10(lLimitScale))
+		  << "->" << (long)(log10(lLimitScale)+12)
+		  << "->" << (long)(log10(lScale*2.5)+12)
+
+	  //	  << " i:" << i  
+	  //		  << " Division:" << lDivision
+		  << " " << lMesurement << std::endl;
+	/*
+	if( lScale < 0.005 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 0.2, 200, sz1 );
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 2, 200, sz2 );
+	    
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 20, 200, sz3 );
+	  }
+	else
+	if( lScale < 0.05 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 2, 200, sz1 );
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 20, 200, sz2 );
+	    
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 200, 200, sz3 );
+	  }
+	else
+	if( lScale < 0.5 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 20, 200, sz1 );
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 200, 200, sz2 );
+	    
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 2000, 200, sz3 );
+	  }
+	else
+	if( lScale < 5 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 200, 200, sz1);
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 2000, 200, sz2 );
+
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 20000, 200, sz3 ); 
+	  }
+	else
+	if( lScale < 50)
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 2000, 200, sz1);
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 20000, 200, sz2 );
+
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 200000, 200, sz3 ); 
+	  }
+	else
+	if( lScale < 500 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 20000, 200, sz1);
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 200000, 200, sz2 );
+
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 2000000, 200, sz3 ); 
+	  }
+	else
+	if( lScale < 5000 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 200000, 200, sz1);
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 2000000, 200, sz2 );
+
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 20000000, 200, sz3 ); 
+	  }
+	else
+	if( lScale < 50000 )
+	  {
+	    glColor4f( col1, col1, col1, col1 );
+	    PP3d::GLUtility::DrawGrid( 2000000, 200, sz1);
+	    
+	    glColor4f( col2, col2, col2, col2 );
+	    PP3d::GLUtility::DrawGrid( 20000000, 200, 1 );
+
+	    glColor4f( col3, col3, col3, col3 );
+	    PP3d::GLUtility::DrawGrid( 200000000, 200, sz3 ); 
+	  }
+	*/
+
 	//	if( cGridMode == ModeGrid::GRID_3D )
 	//				T3dPrimitiv::DrawNappeT3d( 1200, 6);
       }
-		
+
     if( cAxisFlag )
-      PP3d::GLUtility::DrawOrtho( (float)cKamera.getSize(), 1 );  
+      PP3d::GLUtility::DrawOrtho( (float)8/cKamera.scale().x(), 1, 2 );  
 		
 		
     if( cFlagCursor3d )
@@ -301,7 +529,7 @@ namespace M3d {
 	glDepthMask( GL_FALSE );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 				
-	glColor4f(0.3f, 0.1f, 0.1f, 0.3f);
+	glColor4f(col1, 0.1f, 0.1f, 0.3f);
 
 	TheAppli.getDatabase()->getSelectionRectanglePosition().drawGL();
 
@@ -1492,22 +1720,24 @@ namespace M3d {
 	Fl::focus(this);
 	if( cMode == ModeUser::MODE_MOVE_CAMERA )
 	  {
-	    cout << " WHEEL x:" << Fl::event_dx() << " y:" <<  Fl::event_dy() ;
+	    cout << " WHEEL x:" << Fl::event_dx() << " y:" <<  Fl::event_dy() << " " ;
 						
 	    cScale = cKamera.scale().x();
 	    if( Fl::event_dy() != 0)
 	      {
 	  
 		//	    cScale += Fl::event_dy()/10.0;
-		cScale *= 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.01);
+		// cScale *= 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.01);
+		cout << 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.0001) << " " << endl;
+		 cScale *= 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.0001);
 	      }
 			
-	    if(cScale  < 0.0000000001 ) 
-	      cScale = 0.0000000001;
-	    if( cScale > 100000000 )
-	      cScale = 100000000;
-						
-	    Service::Warning << "Scale out of range !";
+	    if(cScale  < 1E-30 ) 
+	      cScale   = 1E-30;
+	    if( cScale > 1E13 )
+	      cScale   = 1E13;
+						  
+	    //	    Service::Warning << "Scale out of range !";
 						
 	    cKamera.scaleTo(cScale);
 	    redraw();

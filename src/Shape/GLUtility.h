@@ -15,8 +15,8 @@ namespace PP3d {
 		
 	public:
 		
-		static void DrawOrtho(   float pSz, int  pNeg );
-		static void DrawGrid( float pSz, int pNb, bool pNombre );
+	  static void DrawOrtho(   float pSz, int  pNeg, float pWidth=2 );
+		static void DrawGrid( float pSz=50, int pNbDiv=50, float pWidth=0.5 );
 		static void DrawChar( Point3d pPos, float pSz,  char pChar );
 		static void DrawText( bool pOrient, Point3d pPos, float pSz, const char* pStr, int  pReverse=0  );
 		static void DrawCursor( Point3d pPt, float pSz );
