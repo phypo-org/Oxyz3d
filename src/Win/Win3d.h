@@ -36,8 +36,10 @@ namespace M3d {
     MyFloatInput*           cYinput;
     MyFloatInput*           cZinput;
 
+    MyInput*                cCurrentUnity; //METTRE une drop down !
+    MyFloatInput*           cCurrentScale;
     MyFloatInput*           cCurrentInput1;
-    
+
   public:
     MyIntInput*             cCurrentUndo;
     MyIntInput*             cCurrentUndoMax;
@@ -71,10 +73,13 @@ namespace M3d {
 
     friend class Canvas3d;
 
-    void setMesurement( double iM, const char * iMStr )
+    void setMesurement( double iScale, double iM, const char * iMStr )
     {
       cCurrentMesurementUnit    = iM;
       cCurrentMesurementUnitStr = iMStr;
+      cCurrentScale->setFloatValue( iScale );
+      cCurrentUnity->value( cCurrentMesurementUnitStr.c_str() );
+
     }
   };
   //****************************************

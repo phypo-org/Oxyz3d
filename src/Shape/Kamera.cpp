@@ -199,10 +199,85 @@ namespace PP3d{
     position().x() = 0;
     position().y() = 0;
     position().z() = 0;
-
       
     //    scaleTo(  iMMBox, 1 );   
   }
+  //------------------------------------------------
+  void Kamera::setScale( double iScale )
+  {
+    // 43 niveau comme le tableau
+    // sacle = 1, soit 1 mm est la valeur par default
+    
+    if(iScale  < 1E-30 ) 
+      iScale   = 1E-30;
+    else
+      if( iScale > 1E13 )
+	iScale   = 1E13;
+
+
+    scaleTo(iScale);
+  }
+  //------------------------------------------------  
+  static  const char *lTabMesurement[43]={
+    "1E-6 nm",   
+    "1E-5 nm",   
+    "1E-4 nm",   
+    "1E-3 nm",    
+    "1E-2 nm",    
+    "1E-1 nm",  // atom size
+    "1 nm",         
+    "10 nm",
+    "100 nm",
+    "1 μm",
+    "10 μm",
+    "100 μm ", 
+    "1 mm",                // 1
+    "1 cm",
+    "1 dm",
+    "1 m",
+    "1 dam",
+    "1 hm",
+    "1 km",
+    "10 km",
+    "100 km",
+    "1000 km",
+    "10.000 km",
+    "100.000 km",
+    "1 E6 km",
+    "1 E7 km",
+    "1 E8 km",
+    "1 E9 km",
+    "1 E10 km",
+    "1 E11 km",
+    "1 E12 km",
+    "1 E13 km",
+    "1 E14 km",
+    "1 E15 km",
+    "1 E16 km",
+    "1 E17 km",
+    "1 E18 km",
+    "1 E19 km",
+    "1 E20 km",
+    "1 E21 km",
+    "1 E22 km",
+    "1 E23 km",
+    "1 E24 km"  // more or less the size of the univers
+  };
+  const char *Kamera::getMesurement( int iPosScale )
+  {
+    static char sStr[33];    
+    
+    if( iPosScale < 0 || iPosScale > 42 )       // 42 !
+      {
+	// BUG for the size, if several windows at the same time !!!!!
+	
+	sprintf( sStr, "Off-limits - 1E%d m", (iPosScale -15));
+	return sStr;
+      }
+       
+    return lTabMesurement[iPosScale] ;
+  }
+
   /*
   //------------------------------------------------
 

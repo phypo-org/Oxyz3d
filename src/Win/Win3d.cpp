@@ -528,7 +528,11 @@ namespace M3d {
 		
     lWin3d->canvasRedraw();
   }
-  //-------------------------------------------
+ //-------------------------------------------
+   static void	ChangeUnity(Fl_Widget*w, void*pData)
+   {
+   }
+ //-------------------------------------------
 	
   static void	BasculePerspective(Fl_Widget*w, void*pData)
   {
@@ -559,15 +563,22 @@ namespace M3d {
     // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
     //sw.mode(FL_RGB);
 	
- 									
+ 
+    cCurrentUnity = new MyInput( lX, lY+lH, lW, lH, "Unity", ChangeUnity );
+    lX += cCurrentUnity->w() + 2;
+    cCurrentScale = new MyFloatInput( lX, lY+lH, lW, lH, "Scale" );
+    lX += cCurrentScale->w() + 2;
+    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
+    
+    lX = 15;
+   									
     cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
     lX += cXinput->w() + 2;
-    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
     cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
     lX += cYinput->w() + 2;
     cZinput = new MyFloatInput( lX, lY, lW,  lH, "Z" );
     lX += cZinput->w() + 2;
-
+ 
 
     lW =  Application::sIconSize+4;
     lH =  Application::sIconSize+4;

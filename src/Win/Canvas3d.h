@@ -91,6 +91,7 @@ namespace M3d {
     Canvas3d( Win3d& pW3d, int pX, int pY, int pW, int pH ,const char *l=nullptr);
     virtual ~Canvas3d(  );
 
+    void drawGrid();
     void draw();
     int  handle(	int	pEventh	); 
 
