@@ -107,9 +107,6 @@ namespace M3d {
     int       cMouseLastPosX=-1;
     int       cMouseLastPosY=-1;
 	 
-    int       cRectBeginX=-1;
-    int       cRectBeginY=-1;
-		
     void userPrepareAction( int	pEvent );
     void userCancelAction(	int	pEvent );						 
     void userTerminateAction(	int	pEvent );						 
@@ -119,14 +116,14 @@ namespace M3d {
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     void userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     void userSelectionPoint(int	pEvent, bool cFlagMove);
-    void setCursor3dPosition( int pX, int pY, int pZ=0 );
+    void setCursor3dPosition( int pX, int pY );
 		
-    PP3d::Point3d tranform2Dto3D(  int pX, int pY, int pZ=0);
+    PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
 
     void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove);
-    void picking( int pX, int pY, bool cFlagMove );
+    void picking( int pX, int pY, bool cFlagMove, int iSizeX, int iSizeY );
 
-    void drawRect(int x1, int y1, int x2, int y2);
+    void drawSelectRect();
 
     //=========== MENUS =================
     void makeMenu( Fl_Menu_Button& pMenu);

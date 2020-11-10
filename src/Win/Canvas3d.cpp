@@ -27,6 +27,7 @@
 #include "Shape/Selection.h"
 #include "Shape/SortVisitor.h"
 #include "Shape/PP3dUtils.h"
+#include "Shape/MinMaxBox3d.h"
 
 
 #include "Application.h"
@@ -102,8 +103,7 @@ namespace M3d {
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
-  {
-	
+  {	
   }
   //---------------------------
   void Canvas3d::traceMode() const
@@ -130,77 +130,66 @@ namespace M3d {
 	  }
       }
   }
-
-  
   //---------------------------
-  void Canvas3d::drawRect(int x1, int y1, int x2, int y2)
+  void Canvas3d::drawSelectRect()  // 2D !
   {
-    std::cout << "____________________________" << std::endl;
+   
+    glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
+    glLoadIdentity(); // Clear the matrix
+       
+    int lW = pixel_w();
+    int lH = pixel_h();
 
-    
-    
-    glPushMatrix(); 
-    glLoadIdentity();
-    
+    glOrtho( 0, lW, 0, lH, -100.0, 100.0); // Setup an Ortho view
+    glViewport(0, 0, lW, lH);
+
+    glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
+    glLoadIdentity(); // Clear the model matrix
+    glEnable( GL_BLEND );
     glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
- 
-    glDrawBuffer(GL_FRONT );
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-   //	glOrtho(0, glw.getWidth(),0, glw.getHeight(),-1,1);
-    // cKamera.orthoForRect();
-    
-    //    glMatrixMode(GL_MODELVIEW);
-    
-    //  glEnable(GL_COLOR_LOGIC_OP);
-    //  glLogicOp(GL_XOR);
+    glDepthMask( GL_FALSE );
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+				
+    glColor4f(0.9f, 0.1f, 0.1f, 0.1f);
+    glDisable( GL_LIGHTING );
 
-    float dx = pixel_w()/2.0;
-    float dy = pixel_h()/2.0;
-    std::cout << "dx:" << dx << " dy:" << dy;
-    
-    glColor4f(0.3f, 0.3f, 0.3f, 0.3f);
-    //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //  glRectf(x1, y1, x2, y2);
 
-    float X1 = x1 - dx;
-    float X2 = x2 - dx;
-    float Y1 = y1 - dy;
-    float Y2 = y2 - dy;
-    std::cout << " X1:" << X1 << " Y1:" << Y1 << " X2:" << X2 << " Y2:" << Y2 << std::endl;
-    
-    glColor4f( 1, 1, 1, 0.3);
-    glBegin(GL_LINE_LOOP);
-    // Top left
-    glVertex3f( X1, Y1, 0.0);
-    // top right
-    glVertex3f( X2,  Y1, 0.0);
-    // Bottom right
-    glVertex3f( X2,  Y2,  0.0);
-    // bottom left
-    glVertex3f( X1, Y2,  0.0);
-    
-    glVertex3f( X1, Y1, 0.0);
-    glVertex3f( X2, Y2, 0.0);
-    glVertex3f( X2, Y1, 0.0);
-    glVertex3f( X1, y2, 0.0);
+    PP3d::Point3d lMin( cMouseInitPosX, lH-cMouseInitPosY, 0 );
+    PP3d::Point3d lMax( cMouseLastPosX, lH- cMouseLastPosY, 0);
 
+    cout << "min:" << lMin << " max:" << lMax << endl;
+       
+    PP3d::Rect3d lRect(lMin, lMax);
+    lRect.drawGL();
+
+    glBegin( GL_LINES );
+       
+
+    glLineWidth( 1 );
+    // Diagonale
+    //       glVertex3dv( lMin.vectForGL() ); 
+    //       glVertex3dv( lMax.vectForGL() );
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, 0 );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, 0 );
+       
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, 0 );
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, 0 );
+
+       
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, 0);
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, 0);
+  
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, 0);
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, 0);      
+	
     glEnd();
-		
-    /*
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    */
-    glPopMatrix();
-    glEnable(GL_DEPTH_TEST);    
     glEnable(GL_LIGHTING);
-    //  glDisable(GL_COLOR_LOGIC_OP);
-   //    glFlush();
-    /*
-    //   glDrawBuffer(GL_BACK);
-    */
+      
+    glDepthMask( GL_TRUE );
+    glDisable( GL_BLEND );             
   }
-   //---------------------------
+  //---------------------------
   //Draw three grids
   
   void Canvas3d::drawGrid()
@@ -236,17 +225,40 @@ namespace M3d {
 	float sz3 = 2;
 
 	int lNbDiv = 200;
-	
+	//	int lNbDiv = 10;   // debug
+	//	lSz       /= 10;   // debug
+
+
 	// on commence par la grille la plus fine 
 	glColor4f( col1, col1, col1, col1 );
-	PP3d::GLUtility::DrawGrid( lSz,           lNbDiv, sz1 );
-	
+	PP3d::GLUtility::DrawGrid(  lSz,           lNbDiv, sz1 );
+
 	glColor4f( col2, col2, col2, col2 );
-	PP3d::GLUtility::DrawGrid( lSz*lMul,      lNbDiv, sz2 );
+	PP3d::GLUtility::DrawGrid(  lSz*lMul,      lNbDiv, sz2 );
 	
 	glColor4f( col3, col3, col3, col3 );
-	PP3d::GLUtility::DrawGrid( lSz*lMul*lMul, lNbDiv, sz3 );
+	PP3d::GLUtility::DrawGrid(  lSz*lMul*lMul, lNbDiv, sz3 );
 	lDivision = lSz / lNbDiv;      
+
+	
+	/* RECADRAGE ?????
+	   double lX=0, lZ=0;
+	   double lPx = 0; //pixel_w()/2;
+	   double lPz = 0; //pixel_h()/2;
+	   PP3d::Point3d lPt = transform2Dto3D( lPx, lPz );
+	
+	   cout<< "lPx:=" << lPx << " lPz:=" <<lPz << " -> " << lPt << endl;
+	
+	   glColor4f( 0.8, 0.1, 0.1, 0.3 );
+	   PP3d::GLUtility::DrawGrid( lX, lZ, lSz,           lNbDiv, sz1 );
+	
+	   glColor4f( col1, col2, col2, col2 );
+	   PP3d::GLUtility::DrawGrid( lX, lZ, lSz*lMul,      lNbDiv, sz2 );
+	
+	   glColor4f( col1, col3, col3, col3 );
+	   PP3d::GLUtility::DrawGrid( lX, lZ, lSz*lMul*lMul, lNbDiv, sz3 );
+	   lDivision = lSz / lNbDiv;      
+	*/
       }	
   }
   //---------------------------
@@ -256,9 +268,7 @@ namespace M3d {
 		
     cKamera.setAspectRatio( pixel_w(), pixel_h());
 
-
-    cKamera.initGL();
-	
+    cKamera.initGL();	
 		
     //==========  On place les lumieres dans le monde, pas avec la camera =============
     glMatrixMode(GL_MODELVIEW);
@@ -270,7 +280,6 @@ namespace M3d {
 
     if( cFlagLightColor )
       {		
-
 	PP3d::Light::RainbowOn();
       }
     else
@@ -297,9 +306,7 @@ namespace M3d {
     
     getKamera().position()[2]  =60;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    //===========================================================
-    //  glLineWidth( 1 );
-	
+    //===========================================================	
     drawGrid();
 
     if( cAxisFlag )
@@ -308,7 +315,7 @@ namespace M3d {
 		
     if( cFlagCursor3d )
       {
-	PP3d::GLUtility::DrawCursorCruz( TheAppli.getDatabase()->getCursorPosition(), 50);
+	PP3d::GLUtility::DrawCursorCruz2( TheAppli.getDatabase()->getCursorPosition(), 50);
       }
 
 		
@@ -316,41 +323,25 @@ namespace M3d {
     cViewProps.cFlagViewNormal = cFlagViewNormal;
  
 
-     TheAppli.getDatabase()->recomputeAll();     
-     TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw, TheSelect.getSelectType() );
+    // Draw the 3d view of object
+    TheAppli.getDatabase()->recomputeAll();     
+    TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw  , TheSelect.getSelectType() );
 
 
-     if( cFlagViewTransform )
-       {
-	 TheAppli.getDatabaseTransform()->recomputeAll();
-	 TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
-       }
-
-     
-     
-    if( cMode == ModeUser::MODE_SELECT_RECT )
+    // Draw transformation
+    if( cFlagViewTransform )
       {
-	std::cout << "[[[[[[[[[[[[[[[(DrawREct]]]]]]]]]]]]]])"
-		  << " x:" << cMouseInitPosX
-		  << " y:" << cMouseInitPosY
-		  << " -> x:" << cMouseLastPosX
-		  << " -> y:" << cMouseLastPosY
-		  << std::endl;
-	
-	drawRect( cMouseInitPosX, cMouseInitPosY, cMouseLastPosX, cMouseLastPosY );
- /*
-	glEnable( GL_BLEND );
-	glDepthMask( GL_FALSE );
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
-				
-	glColor4f(col1, 0.1f, 0.1f, 0.3f);
-
-	TheAppli.getDatabase()->getSelectionRectanglePosition().drawGL();
-
-	glDepthMask( GL_TRUE );
-	glDisable( GL_BLEND );
-	  */						
+	TheAppli.getDatabaseTransform()->recomputeAll();
+	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
       }
+
+
+    // draw rectangle selection if needed
+    if( cMode == ModeUser::MODE_SELECT_RECT )
+      {	
+	drawSelectRect();
+      }
+  
     glFlush();
   }  
 
@@ -393,7 +384,8 @@ namespace M3d {
       }
 		
     if( lVectHits.size() )
-      {										////				std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
+      {
+	//	std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
 
 	if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
 	  {
@@ -402,7 +394,6 @@ namespace M3d {
 						     cSelectMode, pFlagMove ))
 	      {
 		TheAppli.redrawAllCanvas3d();
-		//		TheAppli.redrawObjectTree();			
 	      }
 	  }
 	else
@@ -412,13 +403,12 @@ namespace M3d {
 					    cSelectMode, pFlagMove ))
 	      {
 		TheAppli.redrawAllCanvas3d();
-		//	TheAppli.redrawObjectTree();			
 	      }
 	  }
       }
   }
   //---------------------------
-  void Canvas3d::picking( int pX, int pY, bool pFlagMove )
+  void Canvas3d::picking( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY )
   {
     DBG_SEL( "=== picking:" << pX << " " << pY << " SM:" << cSelectMode );
     //    std::cout <<  "=== picking:" << pX << " " << pY << " SM:" << cSelectMode << std::endl;
@@ -444,13 +434,13 @@ namespace M3d {
     glLoadIdentity();
 	 
     gluPickMatrix((GLdouble) pX, (GLdouble) (lViewport[3] - pY),
-		  MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, lViewport );
+		  iSizeX, iSizeY, lViewport );
 	 
     cKamera.execGL( true );
 	
     glMatrixMode(GL_MODELVIEW);
     
-    if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
+    if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )  // pour les transformations
       TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() );
     else
       TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
@@ -476,7 +466,7 @@ namespace M3d {
       {
 	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
   	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelectTransform );
-    }
+      }
     userTerminateAction(pEvent);
   }									 
   //------------------------------
@@ -486,13 +476,11 @@ namespace M3d {
 		
     cMouseInitPosX = cMouseLastPosX = -1;
     cMouseInitPosY = cMouseLastPosY = -1;
-    cRectBeginX = -1;
-    cRectBeginY = -1;
+    
     TheAppli.setCurrentTransformType( Transform::Nothing );
     TheAppli.currentTransform().raz();
 
     PP3d::Point3d lVoid;
-     TheAppli.getDatabase()->setSelectionRectanglePosition( lVoid, lVoid );
     cMode = ModeUser::MODE_BASE;
     cancelDragSelect();					
     cSelectMode = PP3d::SelectMode::Undefine;
@@ -560,7 +548,7 @@ namespace M3d {
 	cDragCenter =   TheSelect.getCenter( *TheAppli.getDatabase() );			
 	// We keep all the adress of points of selected entities
 	PP3d::GetPoints< PP3d::EntityPtrHash, PP3d::PointPtrSet>(TheSelect.getSelection(),
-								  cDragPoints );
+								 cDragPoints );
 
 	// Save the original coordinates of points       	  
 	cDragSavPoints.resize( cDragPoints.size() );
@@ -657,7 +645,7 @@ namespace M3d {
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	      validDragSelect( lMatTran );
+	    validDragSelect( lMatTran );
 	  return;    //////////// ATTENTION 
 	}
 	//================
@@ -679,7 +667,7 @@ namespace M3d {
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	      validDragSelect( lMatTran );
+	    validDragSelect( lMatTran );
 	  return;    //(double)/////////// ATTENTI suricata.yamlON 
 	}
 	//================
@@ -701,7 +689,7 @@ namespace M3d {
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	      validDragSelect( lMatTran );
+	    validDragSelect( lMatTran );
 	  return;    //(double)/////////// ATTENTlON 
 	}
 	//================
@@ -732,7 +720,7 @@ namespace M3d {
 	}
 	break;
 
-     case Transform::MoveAxis:
+      case Transform::MoveAxis:
 	{
 	  PP3d::Point3d lPtZero;
 	  PP3d::Point3d lAxis;
@@ -751,69 +739,69 @@ namespace M3d {
 
 	//========== SCALE =========================
 
-	case Transform::ScaleUniform :
-	case Transform::ScaleX :
-	case Transform::ScaleY :
-	case Transform::ScaleZ :
-	case Transform::ScaleRX :
-	case Transform::ScaleRY :
-	case Transform::ScaleRZ :
-	  {
-	    PP3d::Mat4 lMatRecenter;
-	    lMatRecenter.initMove( cDragCenter ); //on revient au centre;
+      case Transform::ScaleUniform :
+      case Transform::ScaleX :
+      case Transform::ScaleY :
+      case Transform::ScaleZ :
+      case Transform::ScaleRX :
+      case Transform::ScaleRY :
+      case Transform::ScaleRZ :
+	{
+	  PP3d::Mat4 lMatRecenter;
+	  lMatRecenter.initMove( cDragCenter ); //on revient au centre;
 	    
-	    PP3d::Point3d lNCenter =  -cDragCenter;					
-	    PP3d::Mat4 lMatZero;
-	    lMatZero.initMove( lNCenter ); //on se positionne en zero;
+	  PP3d::Point3d lNCenter =  -cDragCenter;					
+	  PP3d::Mat4 lMatZero;
+	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 	    
-	    PP3d::Mat4 lMatScale;	  
-	    switch(  TheAppli.getCurrentTransformType() )
-	      {		
-	      case Transform::ScaleUniform :
-		{
-		  TheAppli.currentTransform().scale().x() += lScale;
-		  TheAppli.currentTransform().scale().y() += lScale;
-		  TheAppli.currentTransform().scale().z() += lScale;
-		  break;
-		}
-	      case Transform::ScaleX :
-		  TheAppli.currentTransform().scale().x() += lScale;
-		  break;
-	      case Transform::ScaleY :
-		  TheAppli.currentTransform().scale().y() += lScale;
-		  break;
-	      case Transform::ScaleZ :
-		  TheAppli.currentTransform().scale().z() += lScale;
-		  break;
-	      case Transform::ScaleRX :
-		  TheAppli.currentTransform().scale().y() += lScale;
-		  TheAppli.currentTransform().scale().z() += lScale;
-		  break;
-	      case Transform::ScaleRY :
-		  TheAppli.currentTransform().scale().x() += lScale;
-		  TheAppli.currentTransform().scale().z() += lScale;
-		  break;
-	      case Transform::ScaleRZ :
-		  TheAppli.currentTransform().scale().x() += lScale;
-		  TheAppli.currentTransform().scale().y() += lScale;
-		  break;
-	      case Transform::ScaleAxis :
-		{
-		  PP3d::Point3d lPtZero;
-		  PP3d::Point3d lAxis;
-		  if( TheAppli.getAxis( lPtZero, lAxis ) )
-		    {
-		      // normalize ?
-		    } // A FAIRE
-		}
+	  PP3d::Mat4 lMatScale;	  
+	  switch(  TheAppli.getCurrentTransformType() )
+	    {		
+	    case Transform::ScaleUniform :
+	      {
+		TheAppli.currentTransform().scale().x() += lScale;
+		TheAppli.currentTransform().scale().y() += lScale;
+		TheAppli.currentTransform().scale().z() += lScale;
 		break;
-	      default:;
 	      }
+	    case Transform::ScaleX :
+	      TheAppli.currentTransform().scale().x() += lScale;
+	      break;
+	    case Transform::ScaleY :
+	      TheAppli.currentTransform().scale().y() += lScale;
+	      break;
+	    case Transform::ScaleZ :
+	      TheAppli.currentTransform().scale().z() += lScale;
+	      break;
+	    case Transform::ScaleRX :
+	      TheAppli.currentTransform().scale().y() += lScale;
+	      TheAppli.currentTransform().scale().z() += lScale;
+	      break;
+	    case Transform::ScaleRY :
+	      TheAppli.currentTransform().scale().x() += lScale;
+	      TheAppli.currentTransform().scale().z() += lScale;
+	      break;
+	    case Transform::ScaleRZ :
+	      TheAppli.currentTransform().scale().x() += lScale;
+	      TheAppli.currentTransform().scale().y() += lScale;
+	      break;
+	    case Transform::ScaleAxis :
+	      {
+		PP3d::Point3d lPtZero;
+		PP3d::Point3d lAxis;
+		if( TheAppli.getAxis( lPtZero, lAxis ) )
+		  {
+		    // normalize ?
+		  } // A FAIRE
+	      }
+	      break;
+	    default:;
+	    }
 	     
-	    //	  CallDialogKeepFloat( TheAppli.currentTransform().scale.x());
-	    lMatScale.initScale( TheAppli.currentTransform().scale() );
-	    lMatTran = lMatRecenter * lMatScale *  lMatZero;					
-	  }
+	  //	  CallDialogKeepFloat( TheAppli.currentTransform().scale.x());
+	  lMatScale.initScale( TheAppli.currentTransform().scale() );
+	  lMatTran = lMatRecenter * lMatScale *  lMatZero;					
+	}
 	break;
 	//============ ROTATE =======================
       case Transform::CenterRotX :
@@ -902,46 +890,46 @@ namespace M3d {
 	      
 	    case Transform::CenterRotAxis :
 	      {
-		  PP3d::Point3d lPtZero;
-		  PP3d::Point3d lAxis;
-		  if( TheAppli.getAxis( lPtZero, lAxis ))
-		    {
-		      lAxis -= lPtZero;
-		      lAxis.normalize();		      
+		PP3d::Point3d lPtZero;
+		PP3d::Point3d lAxis;
+		if( TheAppli.getAxis( lPtZero, lAxis ))
+		  {
+		    lAxis -= lPtZero;
+		    lAxis.normalize();		      
 		      
-		      PP3d::SortEntityVisitorPointFacet lVisit;		    
-		      TheSelect.execVisitorOnEntity(lVisit);		    
+		    PP3d::SortEntityVisitorPointFacet lVisit;		    
+		    TheSelect.execVisitorOnEntity(lVisit);		    
 		      
-		      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
-		      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 		      
-		      lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
-		    }		      
+		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
+		  }		      
 	      }
 	      break;
 	      
 	    case Transform::RotAxis :
 	      {
-		  PP3d::Point3d lPtZero;
-		  PP3d::Point3d lAxis;
-		  if( TheAppli.getAxis( lPtZero, lAxis ))
-		    {
-		      lAxis -= lPtZero;
-		      lAxis.normalize();		      
+		PP3d::Point3d lPtZero;
+		PP3d::Point3d lAxis;
+		if( TheAppli.getAxis( lPtZero, lAxis ))
+		  {
+		    lAxis -= lPtZero;
+		    lAxis.normalize();		      
 		      
-		      lMatRecenter.initMove( lPtZero ); //on revient au centre;
+		    lMatRecenter.initMove( lPtZero ); //on revient au centre;
 	    
-		      PP3d::Point3d lNCenter =  -lPtZero;					
-		      lMatZero.initMove( lNCenter ); //on se positionne en zero;
+		    PP3d::Point3d lNCenter =  -lPtZero;					
+		    lMatZero.initMove( lNCenter ); //on se positionne en zero;
 	    
-		      PP3d::SortEntityVisitorPointFacet lVisit;		    
-		      TheSelect.execVisitorOnEntity(lVisit);		    
+		    PP3d::SortEntityVisitorPointFacet lVisit;		    
+		    TheSelect.execVisitorOnEntity(lVisit);		    
 		      
-		      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
-		      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 		      
-		      lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
-		    }		      
+		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
+		  }		      
 	      }
 	      break;
 
@@ -983,7 +971,9 @@ namespace M3d {
     double lY = lH-((double) Fl::event_y());
 
     // On projette le point 0,0,0 de la 3d vers la 2d pour recuperer le Z a ajouter a notre x et y
-		
+
+    // Il faudrait definir un plan 2D pour la saisie courante, pour la coordonnée manquante
+    // et trouver l'intersection du plan et de la droite projeté pour recupérer le Z
 		
     PP3d::Point3d lPt0;
     PP3d::Point3d lResult0;
@@ -1008,19 +998,19 @@ namespace M3d {
     std::cout << "==========================================================================" << std::endl;
 			 
 	
-    TheAppli.getDatabase()->setCursorPosition(	pResult );
+    TheAppli.getDatabase()->setCursorPosition (	pResult );
     TheAppli.setCursorPosition( pResult );
     /*
-    {
+      {
       std::ostringstream lOsLuaCode;
       std::ostringstream lOsLuaOut;
 			
       lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
       lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
       if( TheAppli.execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
-	{
-	}
-    }
+      {
+      }
+      }
     */
     
     TheAppli.getDatabase()->addPointToCurrentLine( pResult );
@@ -1050,7 +1040,7 @@ namespace M3d {
     TheAppli.redrawAllCanvas3d();
   }
   //---------------------------
-  PP3d::Point3d Canvas3d::tranform2Dto3D(  int pX, int pY, int pZ )
+  PP3d::Point3d Canvas3d::transform2Dto3D(  int pX, int pY, int pZ )
   {
     double lH = pixel_h();				
     double lX = ((double )pX);
@@ -1058,52 +1048,60 @@ namespace M3d {
     double lZ = ((double ) pZ);
 
 		
+    PP3d::Point3d lPt0;
+    PP3d::Point3d lResult0;
+    getKamera().projectObjectToWin( lPt0, lResult0, true);
+		
+		
     PP3d::Point3d pResult;
-    cKamera.projectWinToObject( PP3d::Point3d(lX,lY,lZ), pResult, true);
+    cKamera.projectWinToObject( PP3d::Point3d(lX,lY,lResult0.cZ), pResult, true);
     return pResult;
   }
   //---------------------------
-  void Canvas3d::setCursor3dPosition( int pX, int pY, int pZ )
+  void Canvas3d::setCursor3dPosition( int pX, int pY )
   {
-    PP3d::Point3d pResult = tranform2Dto3D( pX, pY, pZ );
-     TheAppli.getDatabase()->setCursorPosition(	pResult );
+    PP3d::Point3d pResult = transform2Dto3D( pX, pY );
+
+    TheAppli.getDatabase()->setCursorPosition(	pResult );
     TheAppli.setCursorPosition( pResult );
   }
   //---------------------------
-  void Canvas3d::userSelectionRectangle(int	pEvent, bool pFlagFinalize )
-  {
-		
-    if( cRectBeginX == -1 )
+  void Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
+  {    
+    if( cMouseInitPosX == -1 )
       {
-	cRectBeginX = Fl::event_x();
-	cRectBeginY = Fl::event_y();
-	return;
+	cMouseInitPosX = Fl::event_x();
+	cMouseInitPosY = Fl::event_y();			
       }
-    PP3d::Point3d lCurrent = tranform2Dto3D( Fl::event_x(),  Fl::event_y() );
-    PP3d::Point3d lBegin   = tranform2Dto3D( cRectBeginX, cRectBeginY);
-			
-     TheAppli.getDatabase()->setSelectionRectanglePosition( lBegin, lCurrent );
+   
+  
     if( pFlagFinalize )
       {
+	cMouseInitPosX = cMouseLastPosX = -1;
+	cMouseInitPosY = cMouseLastPosY = -1;
+
+
+	//FAIRE LA SELECTION
+
 	//			PP3d::Selection::Instance().selectRect(  TheAppli.getDatabase()->getSelectionRectanglePosition() );
       }
   }
   //---------------------------------------------------------
   void Canvas3d::userSelectionPoint(int	pEvent, bool pFlagMove)
   {
-    /*	double lH = pixel_h();
-	double lX = ((double )Fl::event_x());
-	double lY = lH-((double) Fl::event_y());
+    int lH = pixel_h();
+    
+    double lX = ((double )Fl::event_x());
+    double lY = lH-((double) Fl::event_y());
 		
-	// On projette le point 0,0,0 de la 3d vers la 2d pour recuperer le Z a ajouter a notre x et y
-	PP3d::Point3d lPt0;
-	PP3d::Point3d lResult0;
-	cKamera.projectObjectToWin( lPt0, lResult0, true);
+    // On projette le point 0,0,0 de la 3d vers la 2d pour recuperer le Z a ajouter a notre x et y
+    PP3d::Point3d lPt0;
+    PP3d::Point3d lResult0;
+    cKamera.projectObjectToWin( lPt0, lResult0, true);
 		
-
-	 TheAppli.getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
+    /*    TheAppli.getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
 		
-    picking( Fl::event_x(),  Fl::event_y(), pFlagMove )	;
+    picking( Fl::event_x(),  Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize )	;
   }
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent	) 
@@ -1160,8 +1158,7 @@ namespace M3d {
 	
 	     
 	    DBG_EVT( "******************* cUserActionRectangle " );
-	    DBG_EVT( "******************* cUserActionRectangle " );
-	    
+	    DBG_EVT( "******************* cUserActionRectangle " );	    
 	    DBG_ACT( "******************* cUserActionRectangle " );
 	    DBG_ACT( "******************* cUserActionRectangle " );
 	    DBG_ACT( "******************* cUserActionRectangle " );
@@ -1297,8 +1294,11 @@ namespace M3d {
 		else
 		  if( cMode == ModeUser::MODE_SELECT_RECT )
 		    {
+		      cout <<  "DRAG MODE_SELECT_RECT  CALL userSelectionRectangle " <<endl;
 		      cMouseLastPosX = Fl::event_x();
 		      cMouseLastPosY = Fl::event_y();
+		      userSelectionRectangle(pEvent);			
+		      TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		    }	    
 	  }
 	setCursor3dPosition( Fl::event_x(), Fl::event_y());			 					
@@ -1310,7 +1310,6 @@ namespace M3d {
       case FL_MOVE:
 	{
 	  DBG_EVT( " <MOVE> " << cMouseLastPosX );
-	  
 	  if( cMouseLastPosX != -1 )
 	    {					 	
 	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
@@ -1318,12 +1317,14 @@ namespace M3d {
 		  userChangeKameraView( pEvent );
 		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}
-	      else if( cMode == ModeUser::MODE_SELECT_RECT)
+	      /*
+		else if( cMode == ModeUser::MODE_SELECT_RECT)
 		{
-		  userSelectionRectangle(pEvent);			
-		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
+		cout <<  "MODE_SELECT_RECT  CALL userSelectionRectangle " <<endl;
+		userSelectionxxxxRectangle(pEvent);			
+		TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}	
-	
+	      */
 	    }
 	  else
 	    if( cMode == ModeUser::MODE_BASE )
@@ -1379,7 +1380,7 @@ namespace M3d {
 		  break;
 		case FL_BackSpace:
 		case FL_Delete:
-		   TheAppli.getDatabase()->delPointToCurrentLine();
+		  TheAppli.getDatabase()->delPointToCurrentLine();
 		  break;
 
 		case FL_Up:
@@ -1401,7 +1402,7 @@ namespace M3d {
 	      else if( strcmp( lStr, UNSELECT_ALL) == 0 )
 		{
 		  if( cMode == ModeUser::MODE_BASE )
-		   TheSelect.removeAll();
+		    TheSelect.removeAll();
 		}
 	      else if( strcmp( lStr, MOVE_Z_N )==0)
 		{
@@ -1503,9 +1504,9 @@ namespace M3d {
 		  cFlagCursor3d = ! cFlagCursor3d;
 		}
 	      /*
-	      else if( strcmp( lStr, STR_EXIT ) ==0)
+		else if( strcmp( lStr, STR_EXIT ) ==0)
 		{
-		  ::exit(0);
+		::exit(0);
 		}
 	      */
 	    }

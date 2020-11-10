@@ -98,7 +98,7 @@ namespace PP3d {
     // Draw a 1x1 grid along the X and Z axis'
     for( double  i = -pSz; i <= pSz; i += pStep )
       {    
-      // Start drawing some lines
+	// Start drawing some lines
         glBegin(GL_LINES);
   
 	// Do the horizontal lines (along the X)
@@ -108,6 +108,39 @@ namespace PP3d {
 	// Do the vertical lines (along the Z)
 	glVertex3f(i, 0, -pSz);
 	glVertex3f(i, 0, pSz);
+
+        // Stop drawing lines
+        glEnd();
+      }
+    glEnable(GL_LIGHTING);
+
+  }
+  //--------------------------
+  void GLUtility::DrawGrid( double iX, double iZ, float  pSz, int pNbDiv, float pWidth )
+  {
+    //		std::cout << "====================== DRAW GRID ===================="
+    //				<< std::endl;
+	
+    //  ColorRGBA::Grey();
+    glLineWidth( pWidth );
+			
+ 	       
+    double pStep = pSz /(double)pNbDiv;
+    glDisable(GL_LIGHTING);
+		
+    // Draw a 1x1 grid along the X and Z axis'
+    for( double  i = -pSz; i <= pSz; i += pStep )
+      {    
+	// Start drawing some lines
+        glBegin(GL_LINES);
+  
+	// Do the horizontal lines (along the X)
+	glVertex3f(-(pSz+pSz), 0, iZ+i);
+	glVertex3f(pSz+pSz, 0, iZ+i);
+
+	// Do the vertical lines (along the Z)
+	glVertex3f(iX+i, 0,-(pSz+iZ));
+	glVertex3f(iX+i, 0, iZ+pSz);
 
         // Stop drawing lines
         glEnd();
@@ -209,24 +242,46 @@ namespace PP3d {
     glBegin( GL_LINES );
 
     glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY-pSz, (float)pPt.cZ );
-    glVertex3f( (float)pPt.cX + pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
+    glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY+pSz, (float)pPt.cZ );
 
     glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY-pSz, (float)pPt.cZ  );
-    glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY + pSz, (float)pPt.cZ );
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY+pSz, (float)pPt.cZ );
 
-    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY,    (float)pPt.cZ-pSz );
-    glVertex3f( (float)pPt.cX + pSz,(float) pPt.cY , (float)pPt.cZ+ pSz );
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY,  (float)pPt.cZ-pSz );
+    glVertex3f( (float)pPt.cX+pSz,(float) pPt.cY , (float)pPt.cZ+ pSz );
 
-    glVertex3f( (float)pPt.cX+pSz,(float) pPt.cY, (float)pPt.cZ-pSz  );
-    glVertex3f( (float)pPt.cX - pSz, (float)pPt.cY , (float)pPt.cZ + pSz);
+    glVertex3f( (float)pPt.cX+pSz,(float) pPt.cY,  (float)pPt.cZ-pSz  );
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY , (float)pPt.cZ + pSz);
 
-    glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz,    (float)pPt.cZ-pSz );
-    glVertex3f( (float)pPt.cX, (float)pPt.cY + pSz , (float)pPt.cZ+ pSz );
+    glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz,  (float)pPt.cZ-pSz );
+    glVertex3f( (float)pPt.cX, (float)pPt.cY+pSz , (float)pPt.cZ+pSz );
 
-    glVertex3f( (float)pPt.cX, (float)pPt.cY+pSz, (float)pPt.cZ-pSz  );
-    glVertex3f( (float)pPt.cX, (float)pPt.cY - pSz , (float)pPt.cZ + pSz);
+    glVertex3f( (float)pPt.cX, (float)pPt.cY+pSz,  (float)pPt.cZ-pSz  );
+    glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz , (float)pPt.cZ+pSz);
 
     glEnd();
+    glEnable(GL_LIGHTING);
+  }
+  //--------------------------
+  void
+  GLUtility::DrawCursorCruz2( Point3d pPt, float pSz )
+  {	
+    glDisable(GL_LIGHTING);
+    glBegin( GL_LINES );
+
+    glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY+pSz, (float)pPt.cZ+pSz);
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY-pSz, (float)pPt.cZ-pSz);
+ 
+    glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY+pSz, (float)pPt.cZ-pSz);
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY-pSz, (float)pPt.cZ+pSz);
+    
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY+pSz, (float)pPt.cZ-pSz);
+    glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY-pSz, (float)pPt.cZ+pSz);
+  
+    glVertex3f( (float)pPt.cX+pSz, (float)pPt.cY-pSz, (float)pPt.cZ-pSz);
+    glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY+pSz, (float)pPt.cZ+pSz);
+    glEnd();
+    
     glEnable(GL_LIGHTING);
   }
   //--------------------------
@@ -477,6 +532,100 @@ namespace PP3d {
 		
     glEnd();
 
+    glEnable(GL_LIGHTING);
+
+  }
+  //-----------------------------------------
+  void GLUtility::DrawParralepipede(Rect3d&lMmb)
+  {
+		 
+    glDisable( GL_LIGHTING );				
+    glBegin( GL_LINES );
+
+    Point3d & lMin = lMmb.getMin();
+    Point3d & lMax = lMmb.getMax();
+
+
+    glVertex3dv( lMin.vectForGL() );
+    glVertex3dv( lMax.vectForGL() );
+
+
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMax.cZ );
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMin.cZ );
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMin.cZ );
+
+
+
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMin.cZ );
+
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMax.cZ );
+    
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMax.cZ );
+
+
+    
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMax.cZ );
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMax.cZ );
+   
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMin.cZ );
+
+    glVertex3f( (float)lMax.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMin.cZ );
+
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMin.cZ );
+
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMax.cZ );
+	
+    glEnd();
+    glEnable(GL_LIGHTING);
+
+  }
+  //-----------------------------------------
+  void GLUtility::DrawRect(Rect3d&lMmb)
+  {
+		 
+    glDisable( GL_LIGHTING );				
+    glBegin( GL_LINES );
+
+    Point3d & lMin = lMmb.getMin();
+    Point3d & lMax = lMmb.getMax();
+
+
+    glVertex3dv( lMin.vectForGL() );
+    glVertex3dv( lMax.vectForGL() );
+
+
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMax.cZ );
+
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMin.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMin.cZ );
+
+
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMin.cY, (float)lMax.cZ );
+
+    glVertex3f( (float)lMax.cX, (float)lMax.cY, (float)lMax.cZ );
+    glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMin.cZ );
+
+	
+    glEnd();
     glEnable(GL_LIGHTING);
 
   }

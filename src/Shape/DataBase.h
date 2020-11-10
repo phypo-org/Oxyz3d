@@ -39,7 +39,6 @@ namespace PP3d {
 
     Point3d              cCursor;
 		
-    MinMaxBox3d          cRectSelect;
 
   private:
     static void resetUniqueId(EntityId iResetVal=1) {
@@ -74,14 +73,7 @@ namespace PP3d {
     void setCursorPosition( Point3d pPt ) { cCursor=pPt; }
     Point3d getCursorPosition() { return cCursor; }
 		
-    void setSelectionRectanglePosition(  Point3d A, Point3d B)
-    {
-      cRectSelect.set( A, B);			
-    }
-    MinMaxBox3d getSelectionRectanglePosition()
-    {
-      return cRectSelect;
-    }
+ 
   private:
     void     addValidEntityForUndo(  Entity* pEntity );
   public:
