@@ -120,8 +120,8 @@ namespace M3d {
 		
     PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
 
-    void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove);
-    void picking( int pX, int pY, bool cFlagMove, int iSizeX, int iSizeY );
+    void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove, bool pRectSelect);
+    void picking( int pX, int pY, bool cFlagMove, int iSizeX, int iSizeY, bool pRectSelect );
 
     void drawSelectRect();
 

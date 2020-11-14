@@ -248,7 +248,7 @@ namespace PP3d {
   //--------------------------------
   bool Selection::selectPickingHit( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
   {
-    DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
+    //  DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
 		
     //    std::cout << std::endl << "<<<<<Selection::selectPickingHit size: " << pHits.size() <<  " SM:" << pSelectMode << " " << std::endl;
 		
@@ -257,7 +257,8 @@ namespace PP3d {
 	EntityPtr lEntity = cBase.findEntity( pHit.cName );				
 	if( lEntity == nullptr )
 	  {
-	    DBG_SEL( "***************** Selection "<<pHit.cName<<" not found ! **********************");
+	    std::cout <<  "***************** Selection "<<pHit.cName<<" not found ! ABORT selectPickingHit **********************" << endl;
+	    DBG_SEL( "***************** Selection "<<pHit.cName<<" not found ! ABORT selectPickingHit **********************");
 	    return false;
 	  }				
 				
@@ -272,10 +273,10 @@ namespace PP3d {
     // Je n'utilise pas std::sort : il plante !!!
     insertionSort( pHits );
 
-    for( PP3d::PickingHit& pHit : pHits )
-      {
-	DBG_SEL( "Hit :" << pHit );			
-      }
+    //   for( PP3d::PickingHit& pHit : pHits )
+    //     {
+    //	DBG_SEL( "Hit :" << pHit );			
+    //    }
     //    cout<<"**************** 333 ***********************"<< endl;
 
 						
@@ -293,11 +294,9 @@ namespace PP3d {
 	//	cout << "Hit:" << pHit << endl;
 	EntityPtr lEntity = pHit.cEntity;
 								
-	cLastHightLightEntityId = 0;
 	if(pFlagOnlyHightlight)
 	  {
 	    lEntity->setHighlight( true );
-	    cLastHightLightEntityId = lEntity->getId();
 	    return true;
 	  }
 	
@@ -365,6 +364,110 @@ namespace PP3d {
 		
     //   cout <<  " KO " << endl;
     return false;
+  }
+  //--------------------------------
+  bool Selection::selectPickingHitRect( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
+  {
+    //    DBG_SEL_NL(" <Selection::selectPickingHitRect : " << pHits.size() <<  " SM:" << pSelectMode << " " );
+
+    std::vector<EntityPtr> lToAdd;
+    std::vector<EntityPtr> lToRemove;
+
+    lToAdd.reserve(pHits.size() );
+    lToRemove.reserve(pHits.size() );
+      
+    for( PP3d::PickingHit& pHit : pHits )
+      {       
+	EntityPtr lEntity = cBase.findEntity( pHit.cName );				
+	if( lEntity == nullptr )
+	  {
+	    cout<<  "***************** Selection "<< pHit.cName<<" not found ! ABORT selectPickingHit **********************" << endl;
+	    DBG_SEL( "***************** Selection "<<pHit.cName<<" not found ! ABORT selectPickingHit **********************");
+	    continue;
+	  }								
+	pHit.cEntity = lEntity;
+      }
+
+						
+#if __GNUC__ > 6 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+
+    for( PP3d::PickingHit& pHit : pHits )
+      {
+	EntityPtr lEntity = pHit.cEntity;
+	
+	if( lEntity == nullptr )
+	  continue;
+	
+								
+	if(pFlagOnlyHightlight)
+	  {
+	    lEntity->setHighlight( true );
+	    continue;
+	  }
+	
+	if( isSelected( lEntity ) )
+	  {
+	    if ( lEntity->isSelect() == false )
+	      {
+		cerr <<"Selection Error "<< lEntity->getId() <<" mismach"<< endl;
+		continue;
+	      }
+
+	    switch( pSelectMode )
+	      {
+	      case SelectMode::Undefine:
+		pSelectMode = SelectMode::Unselect;
+	      case SelectMode::Inverse:
+	      case SelectMode::Unselect:
+		lToRemove.push_back(lEntity);
+		break;
+	      case SelectMode::Select:
+		DBG_SEL( " NO " );
+	      }
+	    //	    cout <<  " R ->SM:" << pSelectMode << endl;
+	    continue;
+	  }				
+	else
+	  {
+	    //	    cout <<  " U " ;
+	    switch( pSelectMode )
+	      {
+	      case SelectMode::Undefine:
+		pSelectMode = SelectMode::Select;
+	      case SelectMode::Inverse:
+	      case SelectMode::Select:
+		lToAdd.push_back( lEntity );
+		break;
+	      case SelectMode::Unselect:
+		//		cout <<  " NO " << endl;
+		continue;
+	      }
+						
+	    //	    cout <<  " A ->SM:" << pSelectMode << endl;
+	  }				
+      }
+
+
+   for( EntityPtr lEntity : lToRemove )
+      {
+	removeEntity(lEntity);
+      }
+   for( EntityPtr lEntity : lToAdd )
+      {
+	addEntity( lEntity );
+      }
+
+
+
+#if __GNUC__ > 6 
+#pragma GCC diagnostic pop
+#endif		
+		
+    //   cout <<  " KO " << endl;
+    return true;
   }
   //--------------------------------
   const char* Selection::GetStrSelectType( SelectType pSelectType )

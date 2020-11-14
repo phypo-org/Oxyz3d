@@ -346,18 +346,21 @@ namespace M3d {
   }  
 
   //---------------------------
-  void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove)
+  void Canvas3d::processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool pFlagMove, bool pRectSelect)
   {    
     DBG_SEL( " processHits=" <<  pNbHits );
-    //   std::cout <<  "======== processHits=" <<  pNbHits  << std::endl;
-		
+    cout << " >>>>>>>>>>>>>>>>>>>> processHits=" <<  pNbHits << endl;
+   //   std::cout <<  "======== processHits=" <<  pNbHits  << std::endl;
+
     GLuint*	ptr = (GLuint *) pSelectBuf;
 		
     //		std::vector< std::unique_ptr<PP3d::PickingHit> > lVectHits;
     //		std::vector< PP3d::PickingHit* > lVectHits;
     std::vector< PP3d::PickingHit > lVectHits;
+    lVectHits.reserve( pNbHits );
 	
-    for(GLuint lH = 0; lH < pNbHits; lH++) // for each hit  
+    cout << " processHits before for" <<endl;
+     for(GLuint lH = 0; lH < pNbHits; lH++) // for each hit  
       { 
 	GLuint lNbNames = *ptr;
 	ptr++;
@@ -382,44 +385,53 @@ namespace M3d {
 	      }
 	  }
       }
+     cout <<" processHits after for" <<endl;
 		
     if( lVectHits.size() )
       {
-	//	std::sort( lVectHits.begin(), lVectHits.end(), []( PP3d::PickingHit &A, PP3d::PickingHit &B) { return A.cZ1 < B.cZ2; });				
+	bool lFlagRedraw = false;
+	
+	PP3d::Selection * lSelect = &TheSelect;
+	PP3d::DataBase  * lBase   = TheAppli.getDatabase();
+	if( TheSelectTransform.getSelectType() == PP3d::SelectType::Null )
+	  { // Selection de transformation
+	    //	    lSelect = &TheSelectTransform;
+	    //	    lBase   = TheAppli.getDatabaseTransform();
 
-	if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
-	  {
-	    if( TheSelectTransform.selectPickingHit( lVectHits,
-						     *TheAppli.getDatabaseTransform(),
-						     cSelectMode, pFlagMove ))
-	      {
-		TheAppli.redrawAllCanvas3d();
-	      }
+	    
 	  }
+	cout <<" processHits before Select" <<endl;
+	 
+	if( pRectSelect )
+	  lFlagRedraw = lSelect->selectPickingHitRect( lVectHits,
+						       *lBase,
+						       cSelectMode, pFlagMove );
 	else
-	  {
-	    if( TheSelect.selectPickingHit( lVectHits,
-					    *TheAppli.getDatabase(),
-					    cSelectMode, pFlagMove ))
-	      {
-		TheAppli.redrawAllCanvas3d();
-	      }
-	  }
+	  lFlagRedraw = lSelect->selectPickingHit( lVectHits,
+						   *lBase,
+						   cSelectMode, pFlagMove );
+	cout << " processHits after Select" <<endl;
+	if( lFlagRedraw )	    
+	  TheAppli.redrawAllCanvas3d();
       }
+    cout <<" processHits after redrawAll" <<endl;
   }
   //---------------------------
-  void Canvas3d::picking( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY )
+  void Canvas3d::picking( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
   {
     DBG_SEL( "=== picking:" << pX << " " << pY << " SM:" << cSelectMode );
     //    std::cout <<  "=== picking:" << pX << " " << pY << " SM:" << cSelectMode << std::endl;
 
+    cout <<  "=== picking:" << pX << " " << pY << " SM:" << cSelectMode << endl;
+    
     GLint lViewport[4];
     glGetIntegerv(GL_VIEWPORT, lViewport);
 
-	 
-    const int BUFSIZE = 4096;
-    GLuint lSelectBuf[BUFSIZE];
-    ::memset(&lSelectBuf, 0, sizeof(lSelectBuf)  );
+    
+    const int BUFSIZE = 100000 ;
+    GLuint * lSelectBuf = new GLuint[BUFSIZE];
+    
+    ::memset( lSelectBuf, 0, sizeof(GLuint)*BUFSIZE);
 	 
     glSelectBuffer(BUFSIZE, lSelectBuf);
 	 
@@ -439,16 +451,29 @@ namespace M3d {
     cKamera.execGL( true );
 	
     glMatrixMode(GL_MODELVIEW);
-    
+
+    cout <<  "=== picking before draw"<< endl;
+
     if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )  // pour les transformations
       TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() );
     else
       TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
+    cout <<  "=== picking before flush"<< endl;
 
     glPopMatrix();
     glFlush();
     GLuint lNbHits = glRenderMode(GL_RENDER);
-    processHits( lNbHits, lSelectBuf, pFlagMove  ); 	
+    if( lNbHits <= BUFSIZE )
+      {
+	cout <<  "=== picking before processHits"<< endl;
+
+	processHits( lNbHits, lSelectBuf, pFlagMove, pFlagRect);
+      }
+    else
+      {
+	cerr << "*** Error glRenderMode return " << lNbHits << endl;
+      }
+    
   }
   //---------------------------
   void Canvas3d::userPrepareAction( int	pEvent )
@@ -1072,36 +1097,52 @@ namespace M3d {
       {
 	cMouseInitPosX = Fl::event_x();
 	cMouseInitPosY = Fl::event_y();			
-      }
-   
+      }     
+    
+    //   cout << "userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
+    //	 << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
+    
+    float lMiddleX = (cMouseInitPosX + cMouseLastPosX)/2.0f;
+    float lMiddleY = (cMouseInitPosY + cMouseLastPosY)/2.0f;
+    float lMaxX = std::max( cMouseInitPosX , cMouseLastPosX );
+    float lMaxY = std::max( cMouseInitPosY , cMouseLastPosY );
+    float lSzX  = (lMaxX - lMiddleX)*2;
+    float lSzY  = (lMaxY - lMiddleY)*2;
+    
+    cout << "userSelectionRectangle Middle x:" <<  lMiddleX  << " y:" <<lMiddleY
+	 << "  Sz  x:" <<  lSzX  << " y:" <<  lSzY << endl;
+
+    if( pFlagFinalize )
+      picking( (int)lMiddleX,   (int)lMiddleY, false,  (int)lSzX,   (int)lSzY,  pFlagFinalize )	;
+    
   
     if( pFlagFinalize )
       {
 	cMouseInitPosX = cMouseLastPosX = -1;
 	cMouseInitPosY = cMouseLastPosY = -1;
-
-
-	//FAIRE LA SELECTION
-
-	//			PP3d::Selection::Instance().selectRect(  TheAppli.getDatabase()->getSelectionRectanglePosition() );
       }
+    
+    
+    //FAIRE LA SELECTION
+    
+    //			PP3d::Selection::Instance().selectRect(  TheAppli.getDatabase()->getSelectionRectanglePosition() );
   }
   //---------------------------------------------------------
   void Canvas3d::userSelectionPoint(int	pEvent, bool pFlagMove)
   {
-    int lH = pixel_h();
+    //    int lH = pixel_h();
     
-    double lX = ((double )Fl::event_x());
-    double lY = lH-((double) Fl::event_y());
+    //    double lX = ((double )Fl::event_x());
+    //    double lY = lH-((double) Fl::event_y());
 		
     // On projette le point 0,0,0 de la 3d vers la 2d pour recuperer le Z a ajouter a notre x et y
-    PP3d::Point3d lPt0;
-    PP3d::Point3d lResult0;
-    cKamera.projectObjectToWin( lPt0, lResult0, true);
+    //    PP3d::Point3d lPt0;
+   //2    PP3d::Point3d lResult0;
+  //   cKamera.projectObjectToWin( lPt0, lResult0, true);
 		
     /*    TheAppli.getDatabase()->selectPoint( PP3d::Point3d(lX, lY, lResult0.cZ), cKamera, PP3d::SelectType::Object );*/
 		
-    picking( Fl::event_x(),  Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize )	;
+    picking( Fl::event_x(),  Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent	) 
@@ -1153,23 +1194,11 @@ namespace M3d {
 	// SELECTION RECTANGLE : BUG
 	if( Fl::event_button() == FL_MIDDLE_MOUSE
 	    &&  Fl::event_shift() ) // &&  cMode == ModeUser::MODE_BASE)
-	  {
-	    std::cout << "SELECT_RECT" << std::endl;
-	
-	     
-	    DBG_EVT( "******************* cUserActionRectangle " );
-	    DBG_EVT( "******************* cUserActionRectangle " );	    
-	    DBG_ACT( "******************* cUserActionRectangle " );
-	    DBG_ACT( "******************* cUserActionRectangle " );
-	    DBG_ACT( "******************* cUserActionRectangle " );
-	    DBG_ACT( "******************* cUserActionRectangle " );
-	    DBG_ACT( "******************* cUserActionRectangle " );
-	    
+	  {	  
 	    cMode = ModeUser::MODE_SELECT_RECT;
 
 	    userPrepareAction( pEvent );
 	    TheAppli.redrawAllCanvas3d();
-
 	    return 1;
 	  }
 
@@ -1265,7 +1294,6 @@ namespace M3d {
 				
 	if( cMode == ModeUser::MODE_SELECT_RECT )
 	  {
-	    std::cout << "{{{{{{{{{{{{{{{{{{ RELEASE RECT }}}}}}}}}}}}}}" << std::endl;
 	    userSelectionRectangle(pEvent, true );
 	    userTerminateAction( pEvent );
 	  }		
@@ -1294,7 +1322,6 @@ namespace M3d {
 		else
 		  if( cMode == ModeUser::MODE_SELECT_RECT )
 		    {
-		      cout <<  "DRAG MODE_SELECT_RECT  CALL userSelectionRectangle " <<endl;
 		      cMouseLastPosX = Fl::event_x();
 		      cMouseLastPosY = Fl::event_y();
 		      userSelectionRectangle(pEvent);			
@@ -1317,14 +1344,6 @@ namespace M3d {
 		  userChangeKameraView( pEvent );
 		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		}
-	      /*
-		else if( cMode == ModeUser::MODE_SELECT_RECT)
-		{
-		cout <<  "MODE_SELECT_RECT  CALL userSelectionRectangle " <<endl;
-		userSelectionxxxxRectangle(pEvent);			
-		TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
-		}	
-	      */
 	    }
 	  else
 	    if( cMode == ModeUser::MODE_BASE )

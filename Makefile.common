@@ -94,7 +94,7 @@ CCFLAGS=-std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
 		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \
 		$(FLAGS_COMPIL_EXT)
 
-# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6
+# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6 -I/usr/include/lua
 
 
 
@@ -107,7 +107,7 @@ LDFLAGS= -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2 
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  -I/usr/include/lua
 
 
 
