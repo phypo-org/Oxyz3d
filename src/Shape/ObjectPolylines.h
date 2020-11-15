@@ -5,6 +5,9 @@
 #include "Calcul3d.h"
 #include "ViewProps.h"
 
+#include "EntityVisitorDraw.h"
+#include "EntityVisitorPicking.h"
+
 namespace PP3d {
 
   //******************************

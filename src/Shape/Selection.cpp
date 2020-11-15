@@ -247,11 +247,7 @@ namespace PP3d {
 	
   //--------------------------------
   bool Selection::selectPickingHit( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
-  {
-    //  DBG_SEL_NL(" <Selection::selectPickingHit : " << pHits.size() <<  " SM:" << pSelectMode << " " );
-		
-    //    std::cout << std::endl << "<<<<<Selection::selectPickingHit size: " << pHits.size() <<  " SM:" << pSelectMode << " " << std::endl;
-		
+  {		
     for( PP3d::PickingHit& pHit : pHits )
       {
 	EntityPtr lEntity = cBase.findEntity( pHit.cName );				
@@ -264,20 +260,7 @@ namespace PP3d {
 				
 	pHit.cEntity = lEntity;
       }
-
-    //    cout<<"**************** 22222 ***********************"<< endl;
-		
-    // On tri les plus petits objets en premier, entre meme type c'est le Z qui compte
-    //	std::sort( pHits.begin(), pHits.end(), MyCmp );
-
-    // Je n'utilise pas std::sort : il plante !!!
     insertionSort( pHits );
-
-    //   for( PP3d::PickingHit& pHit : pHits )
-    //     {
-    //	DBG_SEL( "Hit :" << pHit );			
-    //    }
-    //    cout<<"**************** 333 ***********************"<< endl;
 
 						
 #if __GNUC__ > 6 
@@ -363,6 +346,63 @@ namespace PP3d {
 #endif		
 		
     //   cout <<  " KO " << endl;
+    return false;
+  }
+  //--------------------------------
+  bool Selection::selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
+  {		  			
+#if __GNUC__ > 6 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
+    
+    if(pFlagOnlyHightlight)
+      {
+	iEntity->setHighlight( true );
+	return true;
+      }
+	
+    if( isSelected( iEntity ) )
+      {
+	if ( iEntity->isSelect() == false )
+	  {
+	    cerr <<"Selection Error "<< iEntity->getId() <<" mismach"<< endl;
+	    iEntity->setSelect( true );
+	  }
+
+	switch( pSelectMode )
+	  {
+	  case SelectMode::Undefine:
+	    pSelectMode = SelectMode::Unselect;
+	  case SelectMode::Inverse:
+	  case SelectMode::Unselect:
+	    removeEntity(iEntity);
+	    break;
+	  case SelectMode::Select:
+	    DBG_SEL( " NO " );
+	  }
+	return true;
+      }				
+    else
+      {
+	switch( pSelectMode )
+	  {
+	  case SelectMode::Undefine:
+	    pSelectMode = SelectMode::Select;
+	  case SelectMode::Inverse:
+	  case SelectMode::Select:
+	    addEntity( iEntity );								
+	    break;
+	  case SelectMode::Unselect:
+	    return false;
+	  }
+						
+	return true;
+      }			
+#if __GNUC__ > 6 
+#pragma GCC diagnostic pop
+#endif		
+		
     return false;
   }
   //--------------------------------

@@ -426,8 +426,15 @@ namespace PP3d {
 	    lObj->drawGL( pViewProps );
 	  }
 	else
+	if(  pSelectOrDrawMode == GLMode::Select  )
 	  {
 	    lObj->selectGL( pViewProps );
+	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
+	  }
+	else
+	if(  pSelectOrDrawMode == GLMode::DrawSelectColor  )
+	  {
+	    lObj->selectGLColor( pViewProps );
 	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
 	  }
 	//	std::cout << " fin lObj:" << lObj->getName() << std::endl;
@@ -442,7 +449,16 @@ namespace PP3d {
 	    cCurrentLine->drawGL( pViewProps );
 	  }
 	else
-	  cCurrentLine->selectGL( pViewProps );
+	if(  pSelectOrDrawMode == GLMode::Select  )
+	  {
+	    cCurrentLine->selectGL( pViewProps );
+	  }
+	else
+	if(  pSelectOrDrawMode == GLMode::DrawSelectColor  )
+	  {
+	    cCurrentLine->selectGLColor( pViewProps );
+	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
+	  }
       }
 		
     glLoadName(0);

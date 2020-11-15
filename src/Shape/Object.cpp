@@ -9,6 +9,7 @@
 #include "Selection.h"
 #include "PP3dType.h"
 
+#include "EntityVisitorPicking.h"
 
 #include <algorithm>
 
@@ -254,6 +255,105 @@ namespace PP3d{
 					
 	  drawSelectLineGL( pViewProps);					
 	  drawSelectPointGL( pViewProps );
+	}
+	break;
+      }
+    //	drawInfoGL( pViewProps, cMyProps );
+  }
+  //---------------------------
+  void Object::drawSelectPointGLColor(ViewProps& pViewProps )
+  {
+    VisitorDrawSelectColorPoints	lVisit( pViewProps, cMyProps);
+    execVisitor( lVisit );
+  }
+  //---------------------------
+  void Object::drawSelectLineGLColor(ViewProps& pViewProps )
+  {
+    VisitorDrawSelectColorLine	lVisit( pViewProps, cMyProps);
+    execVisitor( lVisit );
+  }
+  //---------------------------
+  void Object::drawSelectFacetGLColor(ViewProps& pViewProps )
+  {
+    VisitorDrawSelectColorFacet lVisit( pViewProps, cMyProps);
+    execVisitor( lVisit );
+  }
+  //---------------------------
+  void Object::drawSelectPolyGLColor(ViewProps& pViewProps )
+  {
+    VisitorDrawSelectColorPoly lVisit( pViewProps, cMyProps);
+    execVisitor( lVisit );
+  }
+  //---------------------------
+  void Object::drawSelectObjectGLColor(ViewProps& pViewProps )
+  {
+    VisitorDrawSelectColorObject lVisit( pViewProps, cMyProps);
+    execVisitor( lVisit );
+  }
+  //---------------------------
+  void Object::selectGLColor(ViewProps& pViewProps )
+  {
+    if( cMyProps.cVisible == false )
+      {
+	return;
+      }
+    //	std::cout << "Object::selectGLColor " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
+
+
+
+    switch( pViewProps.cSelectType )
+      {
+      case SelectType::Null:
+	break;
+	
+      case SelectType::Point:
+	{
+	  if( pViewProps.cViewMode == 0)						
+	    drawPolyGL( pViewProps);
+										
+	  drawLineGL( pViewProps );									
+	  drawSelectPointGLColor( pViewProps );
+	}
+	break;
+				
+				
+      case SelectType::Line:
+	{
+	  if( pViewProps.cViewMode == 0)						
+	    drawPolyGL( pViewProps);
+					
+	  drawSelectLineGLColor( pViewProps );
+	}
+	break;
+								
+      case SelectType::Facet:
+	{
+	  drawLineGL( pViewProps);					
+	  drawSelectFacetGLColor( pViewProps );
+	}
+	break;
+
+      case SelectType::Poly:
+	{
+	  drawLineGL( pViewProps);					
+	  drawSelectPolyGLColor( pViewProps );
+	}
+	break;
+				
+      case SelectType::Object:
+	{
+	  drawLineGL( pViewProps);
+	  drawSelectObjectGLColor( pViewProps );
+	}
+	break;
+			
+      case SelectType::All:
+	{
+	  if( pViewProps.cViewMode == 0)						
+	    drawSelectFacetGL( pViewProps );
+					
+	  drawSelectLineGL( pViewProps);					
+	  drawSelectPointGLColor( pViewProps );
 	}
 	break;
       }

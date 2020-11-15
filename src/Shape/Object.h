@@ -103,6 +103,7 @@ namespace PP3d {
 
     virtual void drawGL( ViewProps& pViewProps );
     virtual void selectGL( ViewProps& pViewProps );
+    virtual void selectGLColor( ViewProps& pViewProps );
 
     virtual void drawPointGL( ViewProps& pViewProps );
     virtual void drawLineGL( ViewProps& pViewProps );
@@ -115,6 +116,12 @@ namespace PP3d {
     virtual void drawSelectFacetGL( ViewProps& pViewProps );
     virtual void drawSelectPolyGL( ViewProps& pViewProps );
     virtual void drawSelectObjectGL( ViewProps& pViewProps );
+
+    virtual void drawSelectPointGLColor( ViewProps& pViewProps );
+    virtual void drawSelectLineGLColor( ViewProps& pViewProps );
+    virtual void drawSelectFacetGLColor( ViewProps& pViewProps );
+    virtual void drawSelectPolyGLColor( ViewProps& pViewProps );
+    virtual void drawSelectObjectGLColor( ViewProps& pViewProps );
 
 
     //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ); 

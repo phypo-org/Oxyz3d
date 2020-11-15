@@ -93,6 +93,7 @@ namespace M3d {
 
     void drawGrid();
     void draw();
+    void drawForSelect();
     int  handle(	int	pEventh	); 
 
     PP3d::Kamera&   getKamera()   { return cKamera;   }
@@ -116,12 +117,14 @@ namespace M3d {
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     void userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     void userSelectionPoint(int	pEvent, bool cFlagMove);
+    void userSelectionPointColor(int	pEvent, bool cFlagMove);
     void setCursor3dPosition( int pX, int pY );
 		
     PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
 
     void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove, bool pRectSelect);
     void picking( int pX, int pY, bool cFlagMove, int iSizeX, int iSizeY, bool pRectSelect );
+    void pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
 
     void drawSelectRect();
 

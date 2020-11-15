@@ -1,6 +1,7 @@
 #ifndef H__ColorRGBA__H
 #define H__ColorRGBA__H
 
+#include "PP3dType.h"
 
 namespace PP3d {
 
@@ -32,6 +33,13 @@ namespace PP3d {
       :cR(iCol.cR),cG(iCol.cG),cB(iCol.cB),cA(iCol.cA)
     {      
     }
+    ColorRGBA( GLuint iId)
+      :cR(((iId & 0x000000FF) >>  0)/255.0f)
+      ,cG(((iId & 0x0000FF00) >>  8)/255.0f)
+      ,cB(((iId & 0x00FF0000) >>  16)/255.0f)
+      ,cA(((iId & 0xFF000000) >>  24)/255.0f)
+    {      
+    }
     void zero()
     {
       cR=cG=cB=cA=0;
@@ -50,7 +58,20 @@ namespace PP3d {
       cB = pB;
       cA = pA;
     }
-    
+   void setId( GLuint iId )
+    {
+      cR =  ((iId & 0x000000FF) >>  0)/255.0f;
+      cG =  ((iId & 0x0000FF00) >>  8)/255.0f;
+      cB =  ((iId & 0x00FF0000) >>  16)/255.0f;
+      cA =  ((iId & 0xFF000000) >>  24)/255.0f;
+    }
+
+    static GLuint GetId( unsigned char iData[4]  )
+    { 
+      return 	iData[0] + (iData[1]<<8)  + (iData[2]<<16); // + (iData[3]<<24); 
+    }
+
+ 
 
     const FColor* vectForGL() const
     {
@@ -68,6 +89,8 @@ namespace PP3d {
       cB = iCol.cB;
       cA = iCol.cA;
     }
+    
+    
     void GL() const { glColor4fv( &cR); }
     void materialGL() { glMaterialfv( GL_FRONT_AND_BACK, 
 				      GL_AMBIENT_AND_DIFFUSE, &cR);}
@@ -79,6 +102,35 @@ namespace PP3d {
     void fogGL() { glFogfv( GL_FOG_COLOR,  &cR );
     }
   public:
+    static void Id( GLuint iId){
+      /*
+          std::cout << "Id: " << std::hex
+		<< ((iId & 0x000000FF) >>  0) <<" "
+		<< ((iId & 0x0000FF00) >>  8) <<" "
+		<< ((iId & 0x00FF0000) >>  16)<<" "
+		<< std::endl;      
+      */
+      /*
+      float r = ((iId & 0x000000FF) >>  0)/255.0f;
+      float g = ((iId & 0x0000FF00) >>  8)/255.0;
+      float b = ((iId & 0x00FF0000) >>  16)/255.0f;
+      std::cout << "Id: " << std::hex <<(int) r*255.0f
+		<< " " << std::hex << (int) g*255.0f
+		<< " " << std::hex << (int) b*255.0f
+		<< std::endl;
+    
+	glColor4f(r, g, b, 1);
+        */
+	
+    glColor4f(
+		((iId & 0x000000FF) >>  0)/255.0f,
+		((iId & 0x0000FF00) >>  8)/255.0f,
+		((iId & 0x00FF0000) >>  16)/255.0f,
+		1);
+	
+      
+	}
+    static void Zero()     { glColor4f( 0.0, 0.0, 0.0, 0.0); }
     static void Red()	    { glColor3f(1.0,0.0,0.0); 	}
     static void Green()     { glColor3f(0.0,1.0,0.0); 	}
     static void Blue()      { glColor3f( 0.0, 0.0, 1.0 ); }

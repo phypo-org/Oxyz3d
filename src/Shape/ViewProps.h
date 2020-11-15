@@ -17,10 +17,12 @@ namespace PP3d {
   class ViewProps{
 
   public:
+    
     bool cFlagDrawPoint;
     bool cFlagDrawLine;
     bool cFlagDrawFacet;
 
+ 
 
     ColorRGBA  cColorPoint;
     ColorRGBA  cColorPointSelect;
@@ -59,22 +61,22 @@ namespace PP3d {
     //------------------
     void pointGL()
     {
-      cColorPoint.GL();
+      if( cGLMode == GLMode::Draw )	cColorPoint.GL();
       glPointSize( cPointSize );				
     }
     void pointSelectGL()
     {
-      cColorPointSelect.GL();
+      if( cGLMode == GLMode::Draw )	cColorPointSelect.GL();
       glPointSize( cPointSizeSelect );				
     }
     void pointHighlightGL()
     {
-      cColorPointHighlight.GL();
+      if( cGLMode == GLMode::Draw )	cColorPointHighlight.GL();
       glPointSize( cPointSizeHighlight );				
     }
     void pointGL( bool pSelect, bool& pHighlight)
     {
-      if( pSelect || pHighlight )
+      if(  pSelect || pHighlight )
 	{
 	  if( pHighlight )
 	    {
@@ -91,17 +93,18 @@ namespace PP3d {
     //------------------
     void lineGL()
     {
-      cColorLine.GL() ;
+      if( cGLMode == GLMode::Draw )	cColorLine.GL() ;
+      
       glLineWidth( cLineWidth );
     }
     void lineSelectGL()
     {
-      cColorLineSelect.GL() ;
+      if( cGLMode == GLMode::Draw )	cColorLineSelect.GL() ;
       glLineWidth( cLineWidthSelect );
     }
     void lineHighlightGL()
     {
-      cColorLineHighlight.GL() ;
+      if( cGLMode == GLMode::Draw )	cColorLineHighlight.GL() ;
       glLineWidth( cLineWidthHighlight );
     }
     void lineGL( bool pSelect, bool& pHighlight)
@@ -122,15 +125,15 @@ namespace PP3d {
     //------------------
     void facetGL( )
     {
-      cColorFacet.materialGL();
+      if( cGLMode == GLMode::Draw )	cColorFacet.materialGL();
     }
     void facetSelectGL()
     {
-      cColorFacetSelect.materialGL();
+      if( cGLMode == GLMode::Draw )	cColorFacetSelect.materialGL();
     }
     void facetHighlightGL()
     {
-      cColorFacetHighlight.materialGL();
+      if( cGLMode == GLMode::Draw )	cColorFacetHighlight.materialGL();
     }
     void facetGL( bool pSelect, bool& pHighlight )
     {

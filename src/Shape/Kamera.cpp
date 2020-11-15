@@ -41,23 +41,17 @@ namespace PP3d{
   //------------------------------------------------
   void Kamera::initGL()
   {	
-    glClearColor( 0.3f, 0.3f, 0.3f, 1 );
     glClearDepth(1.0f);
     glDepthFunc(GL_LEQUAL);
     glEnable( GL_DEPTH_TEST );
+    glDepthFunc(GL_LESS); // PHIPO 20201114 ???
 		
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		
     glFrontFace( GL_CCW );    // facette visible si contre horaire
     glDisable( GL_CULL_FACE );
 
-			
-    if( cSmooth )
-      {
-	glShadeModel( GL_SMOOTH); // blends colors nicely, and smoothes out lighting
-      }
 
-    //	   glShadeModel(GL_FLAT);
     //	glEnable( GL_TEXTURE_2D );
 	
     //	glEnable( GL_AUTO_NORMAL);
@@ -69,8 +63,7 @@ namespace PP3d{
 	glEnable( GL_POINT_SMOOTH );
 	glEnable( GL_LINE_SMOOTH);
 	glEnable( GL_POLYGON_SMOOTH );
-      }
-		 
+      }     
   }	
   //------------------------------------------------
   void Kamera::execGL( bool pSelect )
@@ -117,6 +110,7 @@ namespace PP3d{
 	glLoadIdentity();
       }
     
+    position()[2]  =60;//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   }
   //------------------------------------------------
   void Kamera::chgModeKamera()
