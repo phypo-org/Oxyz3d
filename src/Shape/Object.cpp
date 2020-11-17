@@ -207,7 +207,6 @@ namespace PP3d{
       }
     //		std::cout << "Object::selectGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
 
-
     switch( pViewProps.cSelectType )
       {
       case SelectType::Null:
@@ -215,10 +214,7 @@ namespace PP3d{
 	
       case SelectType::Point:
 	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	  //	    drawPolyGL( pViewProps);
-										
-	  //	  drawLineGL( pViewProps );									
+	  drawPolyGL( pViewProps);		      							
 	  drawSelectPointGL( pViewProps );
 	}
 	break;
@@ -226,140 +222,34 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	  //	    drawPolyGL( pViewProps);
-					
+	  drawPolyGL( pViewProps);					
 	  drawSelectLineGL( pViewProps );
 	}
 	break;
 								
       case SelectType::Facet:
 	{
-	  //	  drawLineGL( pViewProps);					
       	  drawSelectFacetGL( pViewProps );
 	}
 	break;
 
       case SelectType::Poly:
 	{
-	  //	  drawLineGL( pViewProps);					
 	  drawSelectPolyGL( pViewProps );
 	}
 	break;
 				
       case SelectType::Object:
 	{
-	  //	  drawLineGL( pViewProps);
 	  drawSelectObjectGL( pViewProps );
 	}
 	break;
 			
       case SelectType::All:
 	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	    drawSelectFacetGL( pViewProps );
-					
+	  drawSelectFacetGL( pViewProps );					
 	  drawSelectLineGL( pViewProps);					
 	  drawSelectPointGL( pViewProps );
-	}
-	break;
-      }
-    //	drawInfoGL( pViewProps, cMyProps );
-  }
-  //---------------------------
-  void Object::drawSelectPointGLColor(ViewProps& pViewProps )
-  {
-    VisitorDrawSelectColorPoints	lVisit( pViewProps, cMyProps);
-    execVisitor( lVisit );
-  }
-  //---------------------------
-  void Object::drawSelectLineGLColor(ViewProps& pViewProps )
-  {
-    VisitorDrawSelectColorLine	lVisit( pViewProps, cMyProps);
-    execVisitor( lVisit );
-  }
-  //---------------------------
-  void Object::drawSelectFacetGLColor(ViewProps& pViewProps )
-  {
-    VisitorDrawSelectColorFacet lVisit( pViewProps, cMyProps);
-    execVisitor( lVisit );
-  }
-  //---------------------------
-  void Object::drawSelectPolyGLColor(ViewProps& pViewProps )
-  {
-    VisitorDrawSelectColorPoly lVisit( pViewProps, cMyProps);
-    execVisitor( lVisit );
-  }
-  //---------------------------
-  void Object::drawSelectObjectGLColor(ViewProps& pViewProps )
-  {
-    VisitorDrawSelectColorObject lVisit( pViewProps, cMyProps);
-    execVisitor( lVisit );
-  }
-  //---------------------------
-  void Object::selectGLColor(ViewProps& pViewProps )
-  {
-    if( cMyProps.cVisible == false )
-      {
-	return;
-      }
-    //	std::cout << "Object::selectGLColor " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
-
-
-
-    switch( pViewProps.cSelectType )
-      {
-      case SelectType::Null:
-	break;
-	
-      case SelectType::Point:
-	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	  	    drawPolyGL( pViewProps);
-										
-	  //	  drawLineGL( pViewProps );									
-	  drawSelectPointGLColor( pViewProps );
-	}
-	break;
-				
-				
-      case SelectType::Line:
-	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	  	    drawPolyGL( pViewProps);
-					
-	  drawSelectLineGLColor( pViewProps );
-	}
-	break;
-								
-      case SelectType::Facet:
-	{
-	  //	  drawLineGL( pViewProps);					
-	  drawSelectFacetGLColor( pViewProps );
-	}
-	break;
-
-      case SelectType::Poly:
-	{
-	  drawLineGL( pViewProps);					
-	  //	  drawSelectPolyGLColor( pViewProps );
-	}
-	break;
-				
-      case SelectType::Object:
-	{
-	  //	  drawLineGL( pViewProps);
-	  drawSelectObjectGLColor( pViewProps );
-	}
-	break;
-			
-      case SelectType::All:
-	{
-	  //	  if( pViewProps.cViewMode == 0)						
-	    	    drawSelectFacetGL( pViewProps );
-					
-	  drawSelectLineGL( pViewProps);					
-	  drawSelectPointGLColor( pViewProps );
 	}
 	break;
       }
@@ -372,49 +262,6 @@ namespace PP3d{
 
     execVisitor( lVisit );
   }
-  //---------------------------
-  /*
-    void Object::drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ) 
-    {
-    VisitorDrawPoints	lVisit( pViewProps, pObjProps);;
-    execVisitor( lVisit );
-    }
-  */
-  //---------------------------
-  //---------------------------
-  /*
-    void Object::drawSelectionGL( ViewProps& pViewProps )
-    {
-		
-    if( cMyProps.cVisible == false )
-    return;
 
-    // Pas une bonne idée !
-		
-    //		drawGL( pViewProps );
-
-	 
-    Point3d lSize3d = cMyProps.cMinMaxBox.size();
-    PDouble lSize = std::max(lSize3d.cX,lSize3d.cY )  ;
-    lSize= std::max( lSize3d.cZ, lSize);
-		
-    ColorRGBA::Yellow();
-    GLUtility::DrawCursorCruz( cMyProps.cCenter, lSize);
-		
-    //	GLUtility::DrawMinMaxBox( cMyProps.cMinMaxBox );
-    }
-  */
-  //---------------------------
-
-  //---------------------------
-  /*
- PointPtrHash Object::getHashPoints()
-  {
-    VisitorGetPoints<PointPtrHash> lVisit;
-    getShape()->execVisitor( lVisit );
-		
-    return lVisit.getPoints();
-  } 
-  */
  //********************************
 }

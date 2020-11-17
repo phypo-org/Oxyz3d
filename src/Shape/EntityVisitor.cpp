@@ -34,6 +34,7 @@ namespace PP3d {
 	<< " shape:" << (void*)pObj->getShape()
 	<< std::endl;
   }
+
   //*********************************************
   void VisitorMinMax::execPoint(  Point* pPoint )
   {
@@ -43,7 +44,12 @@ namespace PP3d {
   void VisitorInvertNormal::execBeginLine( Line* pLine ) 
     {
       pLine->inversePoint();
-    }
+      //cOs << "\t" <<(*pPoly)
+      //	<< " Facets:" << pPoly->getFacets().size()
+      //	<< std::endl;
+  }		
+ 
+
   //*********************************************
   void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
   {
@@ -55,7 +61,7 @@ namespace PP3d {
       {
 	Calcul3d::Normal( lLines[0]->first()->get(),
 			  lLines[0]->second()->get(),
-			  lLines[1]->second()->get(), // pas first !!!		
+			  lLines[1]->second()->get(), // pas first !!!	
 			  pFacet->getNormal() );
 	return;
       }
@@ -70,14 +76,5 @@ namespace PP3d {
 			   pFacet->getNormal() );
 	 return;
        }  
-  }
-
-  //*********************************************
-  //*********************************************
-
-  //*********************************************
-
-  //*********************************************
- 
-}// namespace
-
+  }		
+ }// namespace

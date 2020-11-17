@@ -393,12 +393,12 @@ namespace M3d {
     if( TheSelectTransform.getSelectType() == PP3d::SelectType::Null )  // pour les transformations
       {
 	TheAppli.getDatabase()->recomputeAll();     
-	TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::DrawSelectColor  , TheSelect.getSelectType() );
+	TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
       }
     else
       {
 	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::DrawSelectColor, TheSelectTransform.getSelectType() ); 
+	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() ); 
       }
 
     glFlush();
