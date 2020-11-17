@@ -50,7 +50,7 @@ namespace PP3d {
 
 
 	
-  enum class GLMode { Select, Draw, DrawSelectColor };
+  enum class GLMode { Select=0, Draw=1, DrawSelectColor=2 };
 
   enum class SelectMode { Undefine, Select, Unselect, Inverse };
   inline std::ostream& operator << ( std::ostream& pOs, SelectMode pVal)

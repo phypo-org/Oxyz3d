@@ -152,7 +152,7 @@ namespace PP3d {
   //---------------------------	----	
   void VisitorDrawSelectColorObject::execAfterBegin( EntityPtr iVar)
   {
-    std::cout << " VisitorDrawSelectColorObject::execAfterBegin : "  << cId << std::endl;
+    //    std::cout << " VisitorDrawSelectColorObject::execAfterBegin : "  << cId << std::endl;
 
     ColorRGBA::Id( cId ); // L'id de l'objet
   }

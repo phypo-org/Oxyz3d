@@ -114,10 +114,11 @@ namespace PP3d{
       case SelectType::All:
       case SelectType::Point:
 	{
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == 0 )
 	    drawFacetGL(pViewProps);
 					
-	  drawLineGL( pViewProps );					
+	  drawLineGL( pViewProps );
+	    
 	  drawPointGL( pViewProps);
 				
 	}
@@ -125,6 +126,7 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
+	  //	  std::cout << "Object::drawGL line cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
 	  if( pViewProps.cViewMode == 0)						
 	    drawFacetGL( pViewProps);
 					
@@ -137,22 +139,26 @@ namespace PP3d{
 	{
 	  if( pViewProps.cViewMode == 0)						
 	    drawFacetGL( pViewProps);
-					
-	  drawLineGL( pViewProps	);		
+
+	  //	  std::cout << "Object::drawGL facet  cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
+   
+	  drawLineGL( pViewProps );		
 	}
 	break;
 
       case SelectType::Poly:
 	{
+	  //	  std::cout << "Object::drawGL poly cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
 	  if( pViewProps.cViewMode == 0)						
 	    drawPolyGL(pViewProps);
-					
+	  
 	  drawLineGL( pViewProps );			
 	}
 	break;
 				
       case SelectType::Object:
 	{
+	  //	  std::cout << "Object::drawGL object cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
 	  if( pViewProps.cViewMode == 0)						
 	    drawObjectGL( pViewProps);
 					
@@ -209,10 +215,10 @@ namespace PP3d{
 	
       case SelectType::Point:
 	{
-	  if( pViewProps.cViewMode == 0)						
-	    drawPolyGL( pViewProps);
+	  //	  if( pViewProps.cViewMode == 0)						
+	  //	    drawPolyGL( pViewProps);
 										
-	  drawLineGL( pViewProps );									
+	  //	  drawLineGL( pViewProps );									
 	  drawSelectPointGL( pViewProps );
 	}
 	break;
@@ -220,8 +226,8 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-	  if( pViewProps.cViewMode == 0)						
-	    drawPolyGL( pViewProps);
+	  //	  if( pViewProps.cViewMode == 0)						
+	  //	    drawPolyGL( pViewProps);
 					
 	  drawSelectLineGL( pViewProps );
 	}
@@ -229,28 +235,28 @@ namespace PP3d{
 								
       case SelectType::Facet:
 	{
-	  drawLineGL( pViewProps);					
-	  drawSelectFacetGL( pViewProps );
+	  //	  drawLineGL( pViewProps);					
+      	  drawSelectFacetGL( pViewProps );
 	}
 	break;
 
       case SelectType::Poly:
 	{
-	  drawLineGL( pViewProps);					
+	  //	  drawLineGL( pViewProps);					
 	  drawSelectPolyGL( pViewProps );
 	}
 	break;
 				
       case SelectType::Object:
 	{
-	  drawLineGL( pViewProps);
+	  //	  drawLineGL( pViewProps);
 	  drawSelectObjectGL( pViewProps );
 	}
 	break;
 			
       case SelectType::All:
 	{
-	  if( pViewProps.cViewMode == 0)						
+	  //	  if( pViewProps.cViewMode == 0)						
 	    drawSelectFacetGL( pViewProps );
 					
 	  drawSelectLineGL( pViewProps);					
@@ -308,10 +314,10 @@ namespace PP3d{
 	
       case SelectType::Point:
 	{
-	  if( pViewProps.cViewMode == 0)						
-	    drawPolyGL( pViewProps);
+	  //	  if( pViewProps.cViewMode == 0)						
+	  	    drawPolyGL( pViewProps);
 										
-	  drawLineGL( pViewProps );									
+	  //	  drawLineGL( pViewProps );									
 	  drawSelectPointGLColor( pViewProps );
 	}
 	break;
@@ -319,8 +325,8 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-	  if( pViewProps.cViewMode == 0)						
-	    drawPolyGL( pViewProps);
+	  //	  if( pViewProps.cViewMode == 0)						
+	  	    drawPolyGL( pViewProps);
 					
 	  drawSelectLineGLColor( pViewProps );
 	}
@@ -328,7 +334,7 @@ namespace PP3d{
 								
       case SelectType::Facet:
 	{
-	  drawLineGL( pViewProps);					
+	  //	  drawLineGL( pViewProps);					
 	  drawSelectFacetGLColor( pViewProps );
 	}
 	break;
@@ -336,21 +342,21 @@ namespace PP3d{
       case SelectType::Poly:
 	{
 	  drawLineGL( pViewProps);					
-	  drawSelectPolyGLColor( pViewProps );
+	  //	  drawSelectPolyGLColor( pViewProps );
 	}
 	break;
 				
       case SelectType::Object:
 	{
-	  drawLineGL( pViewProps);
+	  //	  drawLineGL( pViewProps);
 	  drawSelectObjectGLColor( pViewProps );
 	}
 	break;
 			
       case SelectType::All:
 	{
-	  if( pViewProps.cViewMode == 0)						
-	    drawSelectFacetGL( pViewProps );
+	  //	  if( pViewProps.cViewMode == 0)						
+	    	    drawSelectFacetGL( pViewProps );
 					
 	  drawSelectLineGL( pViewProps);					
 	  drawSelectPointGLColor( pViewProps );

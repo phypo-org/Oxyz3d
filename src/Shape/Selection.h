@@ -92,7 +92,7 @@ namespace PP3d {
     std::unordered_set<EntityPtr> cSelectObj;
     std::vector<EntityPtr>        cSelectObjVect;
     // METTRE AUSI UN VECTEUR POUR GARDER L ORDRE DE SELECTION
-   void clear() {  cSelectObj.clear(); cSelectObjVect.clear(); }
+    void clear() {  cSelectObj.clear(); cSelectObjVect.clear(); }
 		
   public:
 		
@@ -116,7 +116,7 @@ namespace PP3d {
 
 
     void               changeSelectType( SelectType pType );
-    void               changeSelectType( SelectType pType, OwnerEntityVisitor & lVisit  );
+    void               changeSelectType( SelectType pType, SortEntityVisitor & lVisit  );
     void               addGoodEntityFor( std::vector<EntityPtr> &iVect);
     SelectType&        getSelectType() { return  cSelectType; }
     static const char* GetStrSelectType(SelectType);
@@ -126,9 +126,7 @@ namespace PP3d {
 
     Point3d getCenter( DataBase& pDatabase );
 
-    bool selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight );
-    bool selectPickingHit( std::vector< PP3d::PickingHit > & pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight );
-    bool selectPickingHitRect( std::vector< PP3d::PickingHit>& pHits, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight );
+    bool selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode & pSelectMode, bool pFlagOnlyHightlight );
     void deleteAllFromDatabase(DataBase& pDatabase);
     
     void addSelectionToInput( DataBase& pDatabase, bool pFlagLink );				

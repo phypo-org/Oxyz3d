@@ -252,7 +252,8 @@ namespace M3d {
 	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	
 	TheSelect.removeAll();
-	
+	TheSelectTransform.removeAll();
+
 	std::string lFilename = cFc->value();
 	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
 	if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
@@ -372,7 +373,9 @@ namespace M3d {
     Win3d*    lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
     
     TheSelect.removeAll();
-    
+    TheSelectTransform.removeAll();
+
+
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
     if( PP3d::UndoHistory::Instance().readPrev( *luBase, &TheSelect ) )
       {
@@ -382,7 +385,10 @@ namespace M3d {
  	TheAppli.setDatabase( luBase, false );
       }
     else
+      {
       TheSelect.removeAll();
+      TheSelectTransform.removeAll();
+   }
 
     TheAppli.redrawAllCanvas3d();
     TheAppli.redrawObjectTree();
@@ -394,6 +400,8 @@ namespace M3d {
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
     
     TheSelect.removeAll();
+    TheSelectTransform.removeAll();
+    
     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
     if( PP3d::UndoHistory::Instance().readNext( *luBase, &TheSelect ) )
       {
@@ -402,8 +410,10 @@ namespace M3d {
 
 	TheAppli.setDatabase( luBase, false );
       } 
-    else
+    else{
       TheSelect.removeAll();
+      TheSelectTransform.removeAll();
+    }
       
  	
     TheAppli.redrawAllCanvas3d();
@@ -1080,6 +1090,8 @@ namespace M3d {
 		else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 		  {
 		    TheSelect.removeAll();
+		    TheSelectTransform.removeAll();
+		    
 		    TheAppli.redrawAllCanvas3d();
 		    TheAppli.redrawObjectTree();
 		  }

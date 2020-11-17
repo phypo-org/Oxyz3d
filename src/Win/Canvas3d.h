@@ -116,14 +116,12 @@ namespace M3d {
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     void userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
-    void userSelectionPoint(int	pEvent, bool cFlagMove);
     void userSelectionPointColor(int	pEvent, bool cFlagMove);
     void setCursor3dPosition( int pX, int pY );
 		
     PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
 
-    void processHits( GLuint pNbHits, GLuint*  pSelectBuf, bool cFlagMove, bool pRectSelect);
-    void picking( int pX, int pY, bool cFlagMove, int iSizeX, int iSizeY, bool pRectSelect );
+    bool selectEntity( PP3d::EntityId iId, bool pFlagMove   );
     void pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
 
     void drawSelectRect();

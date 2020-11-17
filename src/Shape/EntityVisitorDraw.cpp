@@ -207,12 +207,12 @@ namespace PP3d {
   }
   //---------------------------	
   void VisitorDrawFacet::execBeginLine( LinePtr pLine )
-  {    
-   glVertex3dv( pLine->getFirst()->get().vectForGL() );
-   
-   if( cNumLineEnd == cNumLine++ ){
-    glVertex3dv( pLine->getSecond()->get().vectForGL() );
-   }
+  {
+    glVertex3dv( pLine->getFirst()->get().vectForGL() );
+    
+    if( cNumLineEnd == cNumLine++ ){
+      glVertex3dv( pLine->getSecond()->get().vectForGL() );
+    }
   }
   //---------------------------	
   void VisitorDrawFacet::execEndFacet( FacetPtr pFacet )
