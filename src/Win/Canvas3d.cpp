@@ -102,7 +102,7 @@ namespace M3d {
  
     cViewPropsTransform.cLineWidth = 2; 
     cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
-  
+    
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
@@ -211,9 +211,8 @@ namespace M3d {
     lSz  *= exp10(lPosScale);      // on modifie la taille de la grille en fonction de l'echelle 
 
     std::string lMesurement= "";
-    double lDivision = 0;
-    cMyWin3d.setMesurement( lScale, lDivision, cKamera.getMesurement(lPosScale) );
-
+    //    double lDivision = 0;
+    cMyWin3d.setMeasurement( lScale, lPosScale );
 
     // On crée 3 grille Allant de 10 en 10
     if( cGridMode == ModeGrid::GRID_2D )
@@ -244,7 +243,7 @@ namespace M3d {
 	
 	glColor4f( col3, col3, col3, col3 );
 	PP3d::GLUtility::DrawGrid(  lSz*lMul*lMul, lNbDiv, sz3 );
-	lDivision = lSz / lNbDiv;      
+	//	lDivision = lSz / lNbDiv;      
 
 	
 	/* RECADRAGE ?????
@@ -426,11 +425,11 @@ namespace M3d {
 	  }
 	////    cout <<" processHits before Select" <<endl;
 	
-	PP3d::SelectMode lSelectMode = 	PP3d::SelectMode::Select;
+	//	PP3d::SelectMode lSelectMode = 	PP3d::SelectMode::Select;
 	
 	lFlagRedraw = lSelect->selectPickingColor(  lEntity,
 						    *lBase,
-						     lSelectMode,
+						     cSelectMode,
 						    pFlagMove );	
 	////	    cout << " processHits after Select" <<endl;
 	
@@ -440,7 +439,7 @@ namespace M3d {
     return lFlagRedraw;
   }  
   //---------------------------
-  void Canvas3d::pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
+  bool Canvas3d::pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
   {
     //      cout << ":pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl;
   
@@ -454,15 +453,21 @@ namespace M3d {
 	glReadPixels( pX, pY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, lData);
 	////	cout << "Data: " << std::hex << (int)lData[0] <<" " <<   (int)lData[1]<<" "  <<  (int)lData[2] <<" " <<  (int)lData[3]  << endl;
 
+
 	PP3d::EntityId lId = PP3d::ColorRGBA::GetId( lData );
+
+	if( lId == 0 )
+	  {
+	    return false;
+	  }
+	
 	selectEntity( lId, pFlagMove); 
       }
     else
       {
 	if( iSizeX <= 0 || iSizeY <=  0 )
 	  {
-	    //	    cout << "pickingColor too small"<< endl;
-	    return ;
+	    return false;
 	  }
 	
 	/*	cout << "Canvas3d::pickingColor move:" << pFlagMove
@@ -494,6 +499,7 @@ namespace M3d {
 	      }
 	  }
       }
+    return true;
   }
   //---------------------------
   void Canvas3d::userPrepareAction( int	pEvent )
@@ -1009,7 +1015,7 @@ namespace M3d {
       }
   }
   //---------------------------
-  void Canvas3d::userInputPoint(int	pEvent)
+  void Canvas3d::userInputPoint(int pEvent, bool iFinalize )
   {
     double lH = pixel_h();
     double lX = ((double )Fl::event_x());
@@ -1057,8 +1063,12 @@ namespace M3d {
       }
       }
     */
-    
-    TheAppli.getDatabase()->addPointToCurrentLine( pResult );
+
+    if( iFinalize )
+      TheAppli.getDatabase()->addPointToCurrentLine( pResult );
+    else
+      TheAppli.getDatabase()->viewCurrentPoint( pResult );
+
 				
     TheAppli.redrawAllCanvas3d();
   }
@@ -1111,7 +1121,7 @@ namespace M3d {
     TheAppli.setCursorPosition( pResult );
   }
   //---------------------------
-  void Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
+  bool Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
   {
     //  cout << "userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
     //	 << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
@@ -1153,13 +1163,13 @@ namespace M3d {
 	  {
 	    pickingColor( lMinX, lMinY, true, lSzX, lSzY, true );
 	  }
-      }    
+      }
+    return true;
   }
   //---------------------------------------------------------
-  void Canvas3d::userSelectionPointColor(int pEvent, bool pFlagMove)
+  bool Canvas3d::userSelectionPointColor(int pEvent, bool pFlagMove)
   {
-    //   std::cout << "userSelectionPointColor x:" <<   Fl::event_x() << " y:" <<   Fl::event_y()  << endl;
-    pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
+    return pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
 
   //---------------------------------------------------------
@@ -1174,8 +1184,9 @@ namespace M3d {
 	     << " button:" << Fl::event_button() 
 	     << " ctrl: " << Fl::event_ctrl()
 	     << " shift:" <<  Fl::event_shift()
-	     << " alt:" <<  Fl::event_alt());	
+	     << " alt:" <<  Fl::event_alt());
     
+    TheAppli.getDatabase()->hideCurrentPoint();
     
     switch( pEvent )
       {
@@ -1191,7 +1202,7 @@ namespace M3d {
 	  {
 	    DBG_ACT(" **************** cUserActionSaisie " );
 	    std::cout << " **************** cUserActionSaisie " << std::endl;
-	    userInputPoint( pEvent );
+	    userInputPoint( pEvent, true );
 						
 	    return 1;
 	  }
@@ -1247,8 +1258,11 @@ namespace M3d {
 		{
 		  cSelectMode = PP3d::SelectMode::Undefine;
 		  userPrepareAction( pEvent );
-		  userSelectionPointColor( pEvent, false );
-		  cMode = ModeUser::MODE_SELECT;
+		  if( userSelectionPointColor( pEvent, false ))
+		    cMode = ModeUser::MODE_SELECT;
+		  else
+		    cMode = ModeUser::MODE_SELECT_RECT;
+
 		    
 		  return 1;
 		}
@@ -1365,10 +1379,17 @@ namespace M3d {
 	  else
 	    if( cMode == ModeUser::MODE_BASE )
 	      {
+		if(  Fl::event_ctrl() )
+		  { 
+		    userInputPoint( pEvent, false ); // just view th possible position of point
+		  }
+		else
 		if( MyPref.cSelectPassOverLighting )
 		  {
 		    userSelectionPointColor( pEvent, true );
 		  }
+		
+
 					
 		setCursor3dPosition( Fl::event_x(), Fl::event_y());
 		TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;

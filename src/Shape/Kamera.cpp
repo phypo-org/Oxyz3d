@@ -200,7 +200,7 @@ namespace PP3d{
   void Kamera::setScale( double iScale )
   {
     // 43 niveau comme le tableau
-    // sacle = 1, soit 1 mm est la valeur par default
+    // scale = 1, soit 1 mm est la valeur par default
     
     if(iScale  < 1E-30 ) 
       iScale   = 1E-30;
@@ -212,7 +212,15 @@ namespace PP3d{
     scaleTo(iScale);
   }
   //------------------------------------------------  
-  static  const char *lTabMesurement[43]={
+   void Kamera::setScaleToMeasurement( int iPosScale )
+   {
+     double lScale = exp10(iPosScale-12)/2.5;
+     lScale = 1.0/lScale;
+     setScale( lScale );
+   }
+  //------------------------------------------------
+  #define lTabMesurementSize 43
+  static  const char *lTabMesurement[lTabMesurementSize]={
     "1E-6 nm",   
     "1E-5 nm",   
     "1E-4 nm",   
@@ -257,11 +265,11 @@ namespace PP3d{
     "1 E23 km",
     "1 E24 km"  // more or less the size of the univers
   };
-  const char *Kamera::getMesurement( int iPosScale )
+  const char *Kamera::GetMeasurement( int iPosScale )
   {
     static char sStr[33];    
     
-    if( iPosScale < 0 || iPosScale > 42 )       // 42 !
+    if( iPosScale < 0 || iPosScale >= lTabMesurementSize )     
       {
 	// BUG for the size, if several windows at the same time !!!!!
 	
@@ -271,6 +279,8 @@ namespace PP3d{
        
     return lTabMesurement[iPosScale] ;
   }
+  int Kamera::GetNbMeasurement() { return lTabMesurementSize; } // return the total number of unity
+  int Kamera::GetDefaultMeasurement() { return 12; } // 1mm A mettre dans les preferences 
 
   /*
   //------------------------------------------------

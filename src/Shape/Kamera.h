@@ -61,8 +61,14 @@ namespace PP3d {
 	cPosition2[i] = iPos[i]; 
     }
     Double3& position2() { return cPosition2;}
+    
     void setScale( double iScale );
-    const char *getMesurement( int iPosScale ); // return the univeral unity 
+
+
+    void setScaleToMeasurement( int iPosScale );
+    static const char *GetMeasurement( int iPosScale ); // return the univeral unity 
+    static int         GetNbMeasurement( ); // return the total number of unity
+    static int         GetDefaultMeasurement();
   };
   //***************************************
 }

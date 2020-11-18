@@ -541,6 +541,12 @@ namespace M3d {
  //-------------------------------------------
    static void	ChangeUnity(Fl_Widget*w, void*pData)
    {
+     MyChoiceButton* lChoice = reinterpret_cast<MyChoiceButton*>( pData);
+     Win3d* lWin3d           = reinterpret_cast<Win3d*>( lChoice->cUserData1);
+    cout << "ChangeUnity button : " << lChoice->value() << endl;
+    lWin3d->getKamera().setScaleToMeasurement( lChoice->value() );
+    lWin3d->setMeasurement( lChoice->value() );
+    lWin3d->canvasRedraw();
    }
  //-------------------------------------------
 	
@@ -574,19 +580,26 @@ namespace M3d {
     //sw.mode(FL_RGB);
 	
  
-    cCurrentUnity = new MyInput( lX, lY+lH, lW, lH, "Unity", ChangeUnity );
+    cCurrentUnity =  new MyChoiceButton( lX, lY+lH, lW*1.5, lH, "", ChangeUnity, this );
+    for( int i=0 ; i< PP3d::Kamera::GetNbMeasurement(); i++)
+      {
+	cCurrentUnity->add( PP3d::Kamera::GetMeasurement(i));
+      }
+    cCurrentUnity->value(PP3d::Kamera::GetDefaultMeasurement());
+    cCurrentUnity->tooltip("Current unity");
+
     lX += cCurrentUnity->w() + 2;
-    cCurrentScale = new MyFloatInput( lX, lY+lH, lW, lH, "Scale" );
-    lX += cCurrentScale->w() + 2;
-    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "Current" );
+    //    cCurrentScale = new MyFloatInput( lX, lY+lH, lW, lH, "Scale" );
+    //    lX += cCurrentScale->w() + 2;
+    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "" );
     
     lX = 15;
    									
-    cXinput = new MyFloatInput( lX, lY, lW, lH, "X" );
+    cXinput = new MyFloatInput( lX, lY, lW*1.5, lH, "x" );
     lX += cXinput->w() + 2;
-    cYinput = new MyFloatInput( lX, lY, lW, lH, "Y" );
+    cYinput = new MyFloatInput( lX, lY, lW*1.5, lH, "y" );
     lX += cYinput->w() + 2;
-    cZinput = new MyFloatInput( lX, lY, lW,  lH, "Z" );
+    cZinput = new MyFloatInput( lX, lY, lW*1.5,  lH, "z" );
     lX += cZinput->w() + 2;
  
 

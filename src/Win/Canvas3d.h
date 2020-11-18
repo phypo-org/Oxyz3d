@@ -63,6 +63,8 @@ namespace M3d {
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
 
+
+
   public:
     void setViewTransform( bool cVal) { cFlagViewTransform = cVal; }
     bool getViewTransform()           { return cFlagViewTransform; }
@@ -112,17 +114,17 @@ namespace M3d {
     void userCancelAction(	int	pEvent );						 
     void userTerminateAction(	int	pEvent );						 
     void userChangeKameraView(int	pEvent);
-    void userInputPoint(int	pEvent);
+    void userInputPoint(int	pEvent, bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
-    void userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
-    void userSelectionPointColor(int	pEvent, bool cFlagMove);
+    bool userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
+    bool userSelectionPointColor(int	pEvent, bool cFlagMove);
     void setCursor3dPosition( int pX, int pY );
 		
     PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
 
     bool selectEntity( PP3d::EntityId iId, bool pFlagMove   );
-    void pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
+    bool pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
 
     void drawSelectRect();
 

@@ -205,7 +205,8 @@ namespace PP3d{
       {
 	return;
       }
-    //		std::cout << "Object::selectGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
+
+    //    std::cout << "*** Object::selectGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
 
     switch( pViewProps.cSelectType )
       {
@@ -214,7 +215,9 @@ namespace PP3d{
 	
       case SelectType::Point:
 	{
-	  drawPolyGL( pViewProps);		      							
+  	  if( pViewProps.cViewMode == 0)						
+	    drawPolyGL( pViewProps);
+	  
 	  drawSelectPointGL( pViewProps );
 	}
 	break;
@@ -222,14 +225,16 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-	  drawPolyGL( pViewProps);					
+  	  if( pViewProps.cViewMode == 0)						
+	    drawPolyGL( pViewProps);
+	  
 	  drawSelectLineGL( pViewProps );
 	}
 	break;
 								
       case SelectType::Facet:
 	{
-      	  drawSelectFacetGL( pViewProps );
+	  drawSelectFacetGL( pViewProps );
 	}
 	break;
 

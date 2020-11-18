@@ -29,7 +29,7 @@ namespace PP3d {
     :cCurrentCreation(nullptr)
     ,cCurrentLine(nullptr)
   {
-
+  
   }
   //------------------------------------------
   void 	DataBase::demo1()
@@ -167,6 +167,27 @@ namespace PP3d {
       DBG_BAZ( " removeEntityIfNoOwner failed : too many owner" );
     }
     return false;
+  }
+  //------------------------------------------
+  void DataBase::viewCurrentPoint( Point3d & pPt )
+  {
+    if( cCurrentPointObject == nullptr )
+      {
+	PointPtr lPt   = new Point( Point3d(0, 0, 0));
+	PointPtr lPt2  = new Point( Point3d(0, 0, 0));
+	LinePtr  lLine = new Line( lPt, lPt2 );
+	lPt->setSelect( true );
+	cCurrentPointObject = new ObjectPolylines( "Current", new Facet( lLine ));
+      }
+
+    cCurrentPointObject->getFacet()->getLine(0)->first()->set( Point3d( pPt.x(), 0, pPt.z() ));
+    cCurrentPointObject->getFacet()->getLine(0)->second()->set( pPt );
+    cCurrentPoint = cCurrentPointObject;
+  }
+  //------------------------------------------
+  void DataBase::hideCurrentPoint( )
+  {
+    cCurrentPoint = nullptr;
   }
   //------------------------------------------
   void DataBase::addPointToCurrentLine( Point3d pPt )
@@ -426,7 +447,6 @@ namespace PP3d {
 	    lObj->drawGL( pViewProps );
 	  }
 	else
-	if(  pSelectOrDrawMode == GLMode::Select  )
 	  {
 	    lObj->selectGL( pViewProps );
 	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
@@ -435,6 +455,14 @@ namespace PP3d {
       }
 		
 		
+    if( cCurrentPoint != nullptr
+	&&  pSelectOrDrawMode == GLMode::Draw )
+      {
+	//		std::cout << "**************** draw currentline ****" << std::endl;
+	cCurrentPoint->drawGL( pViewProps );
+      }	 
+      
+    
     if( cCurrentLine != nullptr )
       {
 	if( pSelectOrDrawMode == GLMode::Draw )
@@ -443,13 +471,11 @@ namespace PP3d {
 	    cCurrentLine->drawGL( pViewProps );
 	  }
 	else
-	if(  pSelectOrDrawMode == GLMode::Select  )
 	  {
 	    cCurrentLine->selectGL( pViewProps );
 	  }	 
       }
 		
-    glLoadName(0);
 		
     // on ne peut pas selectionner les saisies en cours !
     if(  pSelectOrDrawMode == GLMode::Draw  )

@@ -36,7 +36,7 @@ namespace M3d {
     MyFloatInput*           cYinput;
     MyFloatInput*           cZinput;
 
-    MyInput*                cCurrentUnity; //METTRE une drop down !
+    MyChoiceButton*         cCurrentUnity; //METTRE une drop down !
     MyFloatInput*           cCurrentScale;
     MyFloatInput*           cCurrentInput1;
 
@@ -54,8 +54,7 @@ namespace M3d {
   public:
     std::unique_ptr<Canvas3d> cuCanvas3d;
     
-    std::string              cCurrentMesurementUnitStr="Unknow unit";
-    double                   cCurrentMesurementUnit=0.0;
+    long                   cCurrentMeasurementUnit=0;
     
 
   public:
@@ -72,14 +71,19 @@ namespace M3d {
     static void QuitCallback(Fl_Widget*, void*);	 
 
     friend class Canvas3d;
-
-    void setMesurement( double iScale, double iM, const char * iMStr )
+  public:
+    void setMeasurement( double iScale, long lPosScale )
     {
-      cCurrentMesurementUnit    = iM;
-      cCurrentMesurementUnitStr = iMStr;
-      cCurrentScale->setFloatValue( iScale );
-      cCurrentUnity->value( cCurrentMesurementUnitStr.c_str() );
-
+      //      std::cout << "setMeasurement : " << iScale << " " <<  lPosScale << std::endl;
+      
+      cCurrentMeasurementUnit    = lPosScale;
+      //      cCurrentScale->setFloatValue( iScale );
+      cCurrentUnity->value( cCurrentMeasurementUnit );
+    }
+    void setMeasurement( int lPosScale )
+    {
+       double lScale = exp10(lPosScale-12);
+       setMeasurement( lScale, lPosScale );
     }
   };
   //****************************************

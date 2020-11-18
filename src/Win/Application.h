@@ -88,6 +88,7 @@ namespace M3d{
     Transform       cCurrentTransform;
     PP3d::Transf3d  cCurrentTransf;
     
+ 
 
   public:
     static const int sIconBigSize = 64;

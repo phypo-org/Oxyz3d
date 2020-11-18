@@ -264,7 +264,7 @@ namespace PP3d {
   } 
 
   //--------------------------------
-  bool Selection::selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode& pSelectMode, bool pFlagOnlyHightlight )
+  bool Selection::selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode & pSelectMode, bool pFlagOnlyHightlight )
   {		  			
 #if __GNUC__ > 6 
 #pragma GCC diagnostic push
@@ -274,6 +274,7 @@ namespace PP3d {
     if(pFlagOnlyHightlight)
       {
 	iEntity->setHighlight( true );
+	cLastHightLightEntityId = iEntity->getId();
 	return true;
       }
 	
@@ -397,39 +398,6 @@ namespace PP3d {
 	pDatabase.addToInput( lEntity, pFlagLink );				
       }	
   }
-  //--------------------------------
-  /*
-    void Selection::drawGL( DataBase& pDatabase, ViewProps& pViewProps )
-    {
-    if( cSelectType != SelectType::Poly )
-    return;
-    ViewProps lViewProps( pViewProps );
-		
-    lViewProps.cColorPoint = ColorRGBA( 1, 0.5, 0, 0 );
-    lViewProps.cColorLine  = ColorRGBA( 1, 0.5, 0, 0 );
-    lViewProps.cColorFacet = ColorRGBA( 1, 0.5, 0, 0 );
-
- 
-    glPushMatrix();
-		
-    //	cCurrentTransform.execGL();
-    glLoadMatrixd( cCurrentMatrice.vectForGL() );
-		
-    for( auto lIter = cSelectObjVect.begin() ; lIter != cSelectObj.end(); ++lIter  )
-    {
-    //		std::cout << "        Selection::drawGL " << lSubSel.cObjId << std::endl;
-    Entity* lObj =  (*lIter);
-    if( lObj != nullptr )
-    {
-    std::cout << "<<<     call    drawSelectionGL" << std::endl;
-    lObj->drawSelectionGL( lViewProps );
-    }
-    std::cout << ">>>     fin call    drawSelectionGL" << std::endl;
-
-    }
-    glPopMatrix();
-    }
-  */
   //******************************************
 
 }

@@ -22,6 +22,7 @@ namespace M3d{
     ,cCurrentTransform( Transform::Nothing)
   {
     std::cout << "========= Application::Application" << std::endl;
+    
 		
     M3d::ShapeLua::SetPrototype();
     cSelectTransform.changeSelectType( PP3d::SelectType::Null );

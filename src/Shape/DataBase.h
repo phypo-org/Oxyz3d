@@ -38,7 +38,13 @@ namespace PP3d {
     ObjectPolylines      *cCurrentLine=nullptr;  
 
     Point3d              cCursor;
-		
+
+
+    ObjectPolylines*     cCurrentPoint = nullptr;
+    ObjectPolylines*     cCurrentPointObject = nullptr;
+
+    
+  
 
   private:
     static void resetUniqueId(EntityId iResetVal=1) {
@@ -81,6 +87,8 @@ namespace PP3d {
     EntityId validEntity( Entity* lEntitiy, bool iTotalScan = false );
 
 		
+    void             viewCurrentPoint( Point3d & pPt );
+    void             hideCurrentPoint();
     void             addPointToCurrentLine( Point3d pPt );
     void             delPointToCurrentLine( );
     GLuint           getNbCurrentPoints();
