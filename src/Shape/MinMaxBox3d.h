@@ -150,7 +150,6 @@ namespace PP3d{
     void drawGL();
 
     //-------------------------------
-
     friend class T3dVect3D;
     friend std::ostream& operator <<( std::ostream& pOs, const Rect3d& pMM)
     {

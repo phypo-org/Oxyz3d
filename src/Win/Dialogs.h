@@ -25,11 +25,14 @@ enum class TypeRevol{ RevolX, RevolY, RevolZ, RevolAxis };
 void CallDialogRevol( TypeRevol pTypeRevol );
 
 extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
-extern bool CallDialogInputInt( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas,  const char* iLabel, int & ioVal);
+extern bool CallDialogInputInt( const char* iLabel, int & ioVal);
+extern bool CallDialogInputDouble(  const char* iLabel, double & ioVal);
+
 extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 
 extern void CallDialogPref();
 extern void CallDialogFile( const std::string & iTitle);
+
 
 Fl_Double_Window* CallConsolePython();
 Fl_Double_Window* CallConsoleSystem();

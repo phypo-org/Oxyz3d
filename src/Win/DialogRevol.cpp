@@ -143,6 +143,8 @@ namespace M3d {
 	
       std::cout << "*********************************** FIN DIALOGUE **************************" << std::endl;
       maj();
+      
+      //      while( Fl::wait() && MyDiag.cMyWindow != nullptr );
 
     }
 

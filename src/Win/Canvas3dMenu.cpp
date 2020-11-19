@@ -1199,7 +1199,7 @@ namespace M3d {
     else  if( strcmp( m->label(), StrMenu_CutN ) == 0)
       {
 	int lVal = 20;
-	if( CallDialogInputInt( slFlagDialog, lCanvas, "Cut line", lVal ) )
+	if( CallDialogInputInt( "Cut line", lVal ) )
 	  lNbCut = lVal;
       }
 

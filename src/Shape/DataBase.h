@@ -76,8 +76,8 @@ namespace PP3d {
     void      swapCurrentCreation( Object* pCurrentCreation );
 
 		
-    void setCursorPosition( Point3d pPt ) { cCursor=pPt; }
-    Point3d getCursorPosition() { return cCursor; }
+    void     setCursorPosition( Point3d pPt ) { cCursor=pPt; }
+    Point3d  getCursorPosition() { return cCursor; }
 		
  
   private:

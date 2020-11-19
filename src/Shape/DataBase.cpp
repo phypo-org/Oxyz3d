@@ -34,30 +34,6 @@ namespace PP3d {
   //------------------------------------------
   void 	DataBase::demo1()
   {
-
-    //	  Shape3dBase* lShape = new Shape3dCube( 30 );
-    /*
-      Shape3dLine* lShape = new Shape3dLine();
-      lShape->addPoint( Point3d( 35, 57, 59 ) ); 
-      lShape->addPoint( Point3d( 135, 157, 159 ) ); 
-      lShape->addPoint( Point3d( 200, 200, 300 ) ); 
-      lShape->addPoint( Point3d( 300, 300, 400 ) ); 
-
-      addShape( lShape );
-
-      Shape3dBase* lTetra = PrimitivFactory::Create( PrimitivFactory::Type::TETRA, 50 );
-      addShape( lTetra );
-
-      Shape3dBase* lCube = PrimitivFactory::Create( PrimitivFactory::Type::CUBE, 150 );
-      addShape( lCube );
-      lCube->move( Point3d( 300, 300, 300 ));
-	
-
-      Shape3dBase* lPyra = PrimitivFactory::Create( PrimitivFactory::Type::PYRAMID, 100 );
-      addShape( lPyra );
-      lPyra->move( Point3d( -300, -300, -300 ));
-
-    */
     std::string lName;
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::OCTO, lName); 
@@ -83,12 +59,8 @@ namespace PP3d {
       lObj->rename( "Ico test");
     }
 
-		
-		
-
     //	  lShape.turnY( 45 );
     //	  lShape.scale( 2 );
-
 
   }
   //------------------------------------------
@@ -137,8 +109,7 @@ namespace PP3d {
     while( cCurrentLine != nullptr )
       {
 	delPointToCurrentLine();
-      }
-    
+      }    
     //    delete cCurrentCreation;  // normalement a nullptr qd on detruit !
   }
   //------------------------------------------
@@ -217,11 +188,22 @@ namespace PP3d {
       }
     else if(lLines.size() == 1 && lLines[0]->isPoint() )  // Un  point !
       {
+	if( lLines[0]->getFirst()->get() == pPt )
+	  {
+	    std::cerr << "*** ERROR : same point " << std::endl;
+	    return ;
+	  }
 	//	std::cout << " is Point  "  << std::endl;	
 	lLines[0]->getPoints().second = lPoint;  // on change le second point
       }
     else
       {
+	if( lLines[lLines.size()-1]->getSecond()->get() == pPt )
+	  {
+	    std::cerr << "*** ERROR : same point " << std::endl;
+	    return ;
+	  }
+	    
 	//	std::cout << " new line   "  << std::endl;	
 	LinePtr	lLine = new Line(  lLines[lLines.size()-1]->getPoints().second, lPoint);
 	lLines.push_back( lLine );

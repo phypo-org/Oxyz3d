@@ -297,6 +297,15 @@ namespace PP3d {
       cY *= d;
       cZ *= d;		
     }
+
+    void round( const double iVal )
+    {
+      if( iVal == 0 ) return;
+	
+      cX = cX - fmod(cX , iVal);      
+      cY = cY - fmod(cY , iVal);
+      cZ = cZ - fmod(cZ , iVal);
+    }
   };
 	
   using Point3d  = TPoint3d<PDouble>;

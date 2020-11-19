@@ -114,14 +114,14 @@ namespace M3d {
     void userCancelAction(	int	pEvent );						 
     void userTerminateAction(	int	pEvent );						 
     void userChangeKameraView(int	pEvent);
-    void userInputPoint(int	pEvent, bool iFinalize);
+    void userInputPoint( bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     bool userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     bool userSelectionPointColor(int	pEvent, bool cFlagMove);
-    void setCursor3dPosition( int pX, int pY );
+    bool setCursor3dPosition( int pX, int pY );
 		
-    PP3d::Point3d transform2Dto3D(  int pX, int pY, int pZ=0);
+    bool transform2Dto3D(  int pX, int pY, PP3d::Point3d & iResult );
 
     bool selectEntity( PP3d::EntityId iId, bool pFlagMove   );
     bool pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );

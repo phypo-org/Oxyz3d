@@ -98,6 +98,18 @@ namespace M3d {
 #define StrMenu_SetAxeNormal   "With selected facet normal"
 #define StrMenu_SetAxeInput    "With the last two input points"
 
+
+#define StrMenu_DefInputPlane  "Define input plane"
+#define StrMenu_InputPlaneX    " : X plane"
+#define StrMenu_InputPlaneY    " : Y plane"
+#define StrMenu_InputPlaneZ    " : Z plane"
+#define StrMenu_InputPlaneFree " : Free plane (3 points or 2 lines needed)"
+#define StrMenu_PlaneHeight    " : Plane height ..."
+
+  
+#define StrMenu_RoundInput    " Round input value to  ..."
+  
+  
   //#define StrMenu_SetPlanePoints "X With three points"
   //  //2#define StrMenu_SetPlaneLines  "X With two connect Lines"
   //#define StrMenu_SetPlaneFacet  "X With one facet"
@@ -920,8 +932,13 @@ namespace M3d {
 	       
   cMenubar.add("&Utils/" StrMenu_PutOnGround ,    "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_PutUnderGround , "", MyMenuCallback, this );
-  cMenubar.add("&Utils/" StrMenu_Recenter , "", MyMenuCallback, this );
-
+  cMenubar.add("&Utils/" StrMenu_Recenter , "", MyMenuCallback, this,   FL_MENU_DIVIDER);
+  
+  cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneY, "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZ, "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_PlaneHeight, "", MyMenuCallback, this,   FL_MENU_DIVIDER );
+  cMenubar.add("&Utils/" StrMenu_RoundInput, "", MyMenuCallback, this );
     //================================
 		
     cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
@@ -1276,7 +1293,37 @@ namespace M3d {
 		      }				
 		    TheAppli.redrawAllCanvas3d();
 		  }
-
+		else if(  strcmp( m->label(), StrMenu_InputPlaneX ) == 0)
+		  {
+		    TheAppli.setInputPlane( InputPlaneType::X );
+		  }
+		else if(  strcmp( m->label(), StrMenu_InputPlaneY ) == 0)
+		  {
+		    TheAppli.setInputPlane( InputPlaneType::Y );
+		  }
+		else if(  strcmp( m->label(), StrMenu_InputPlaneZ ) == 0)
+		  {
+		    TheAppli.setInputPlane( InputPlaneType::Z );
+		  }
+		else if(  strcmp( m->label(), StrMenu_PlaneHeight ) == 0)
+		  {
+		    double lVal = TheAppli.getInputPlaneHeight();
+		    if( CallDialogInputDouble( "Plane height", lVal ) )
+		      {
+			
+			std::cout << "getInputPlaneHeight Val:" <<lVal << std::endl;
+			
+			TheAppli.setInputPlaneHeight( lVal );
+		      }
+		  }
+		else if(  strcmp( m->label(), StrMenu_RoundInput ) == 0)
+		  {
+		    double lVal = TheAppli.getInputPlaneHeight();
+		    if( CallDialogInputDouble( "Rounding input", lVal ) )
+		      {		       			
+			TheAppli.setRoundingInput( lVal );
+		      }
+		  }    
     //=================== VIEW ====================
 		else if( strcmp( m->label(), StrMenu_DialogPerspectivSettings ) == 0)
 		  {

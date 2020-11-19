@@ -28,7 +28,7 @@
 #include "Shape/SortVisitor.h"
 #include "Shape/PP3dUtils.h"
 #include "Shape/MinMaxBox3d.h"
-
+#include "Shape/Line3dVect.h"
 
 #include "Application.h"
 #include "MyFlWidget.h"
@@ -37,6 +37,9 @@
 #include "Win3d.h"
 
 #include "Preference.h"
+
+
+
 
 using namespace std;
 
@@ -350,9 +353,7 @@ namespace M3d {
   }  
   //---------------------------
   void Canvas3d::drawForSelect()  // AJOUTER LA TAILLE
-  {
-
-    
+  {    
     glViewport(0,0,pixel_w(),pixel_h());            //A CHANGER POUR PICKING MOUSE, METTRE LA TAILLE		
     cKamera.setAspectRatio( pixel_w(), pixel_h());
     cKamera.initGL();	 // CREER un initSelectGL
@@ -1015,63 +1016,58 @@ namespace M3d {
       }
   }
   //---------------------------
-  void Canvas3d::userInputPoint(int pEvent, bool iFinalize )
-  {
-    double lH = pixel_h();
-    double lX = ((double )Fl::event_x());
-    double lY = lH-((double) Fl::event_y());
+  void Canvas3d::userInputPoint( bool iFinalize )
+  {     
+    if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
+      {
+	PP3d::Point3d lResult = TheAppli.getDatabase()->getCursorPosition();
 
-    // On projette le point 0,0,0 de la 3d vers la 2d pour recuperer le Z a ajouter a notre x et y
-
-    // Il faudrait definir un plan 2D pour la saisie courante, pour la coordonnée manquante
-    // et trouver l'intersection du plan et de la droite projeté pour recupérer le Z
-		
-    PP3d::Point3d lPt0;
-    PP3d::Point3d lResult0;
-    getKamera().projectObjectToWin( lPt0, lResult0, true);
-		
-
-    std::cout << "==========================================================================" << std::endl;
-    // std::cout << "1----> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " << std::endl;
-		
-    // On projette ensuite ce point dans l'espace 3d
-		
-    PP3d::Point3d pResult;
-		
-    std::cout << "lX:" << lX << " lY:" << lY ;
-    getKamera().projectWinToObject( PP3d::Point3d( lX, lY, lResult0.cZ), pResult, true);
-    std::cout << " --> (" << pResult.cX<< "  " << pResult.cY << "  " << pResult.cZ << " ) " << std::endl;
-
-    // Pour verifier on fait l'operation inverse
-    getKamera().projectObjectToWin( pResult, lResult0, true);				
-    std::cout << " ==> (" << lResult0.cX<< "  " << lResult0.cY << "  " << lResult0.cZ << " ) " << std::endl;
-		
-    std::cout << "==========================================================================" << std::endl;
-			 
+	TheAppli.round( lResult );
 	
-    TheAppli.getDatabase()->setCursorPosition (	pResult );
-    TheAppli.setCursorPosition( pResult );
-    /*
-      {
-      std::ostringstream lOsLuaCode;
-      std::ostringstream lOsLuaOut;
-			
-      lOsLuaCode << "ShapeAddCurrentPoint("<<  pResult.cX << ',' << pResult.cY << ',' <<  pResult.cZ <<')'<< std::endl;
-      lOsLuaCode << "OxyzRedrawCanvas()"<< std::endl;
-      if( TheAppli.execLuaHisto(lOsLuaCode, lOsLuaOut) !=0)
-      {
+	if( iFinalize )
+	  TheAppli.getDatabase()->addPointToCurrentLine( lResult );
+	else
+	  TheAppli.getDatabase()->viewCurrentPoint( lResult );
+	
+	
+	TheAppli.redrawAllCanvas3d();
       }
-      }
-    */
+  }
+  /*
+    //    cout << "---------------------------------------" << endl;
+    
+    //    cout << "P0 :" << lPt0 << " P1 :" << lPt1 << "-> R0:" << lR0 << " R1:" << lR1 	 <<  " Vn" << lVn << endl;
+    //    cout << "P0W:" << lPt0W << " P1W:" << lPt1W << endl; 
+    
 
+    // On cherche l'intersection sur le plan xz, donc y==0
+    // En parametrique l'equation de la droite : A=lR0+lVn * t
+    // Pour y donc lR.cY+lVn.cY*t = 0 donc t = -lPT.cY/lVn.cY; il faut que lVn.cY!=0
+
+ 
+    double lX = lR0.cX+lVn.cX*t;      
+    double lY = lR0.cY+lVn.cY*t; // normalemnet 0 !
+    double lZ = lR0.cZ+lVn.cZ*t;
+
+    
+    PP3d::Point3d lResult( lX, lY, lZ );
+    PP3d::Point3d lResultW( lX, lY, lZ );
+    getKamera().projectObjectToWin( lResult, lResultW , true);
+    cout << "==>lResult:" << lResult <<  " W:" <<lResultW  << endl;
+
+		 	
+    TheAppli.getDatabase()->setCursorPosition (	lResult );
+    TheAppli.setCursorPosition( lResult );
+ 
     if( iFinalize )
-      TheAppli.getDatabase()->addPointToCurrentLine( pResult );
+      TheAppli.getDatabase()->addPointToCurrentLine( lResult );
     else
-      TheAppli.getDatabase()->viewCurrentPoint( pResult );
+      TheAppli.getDatabase()->viewCurrentPoint( lResult );
 
 				
     TheAppli.redrawAllCanvas3d();
   }
+  */
   //---------------------------
   void Canvas3d::userInputPoint( PP3d::Entity* iEntity )
   {
@@ -1095,30 +1091,52 @@ namespace M3d {
     TheAppli.redrawAllCanvas3d();
   }
   //---------------------------
-  PP3d::Point3d Canvas3d::transform2Dto3D(  int pX, int pY, int pZ )
+  bool Canvas3d::transform2Dto3D(  int pX, int pY,  PP3d::Point3d & iResult )
   {
-    double lH = pixel_h();				
-    double lX = ((double )pX);
-    double lY = lH-((double) pY);
-    double lZ = ((double ) pZ);
+    // On lance une droite à partir de la position de la souris
+    // le Z n'est pas vraiment important (attention a la precision des doubles quand meme)
+    
+    PP3d::Point3d lPt0( Fl::event_x(), pixel_h()-Fl::event_y(),  pixel_h());
+    PP3d::Point3d lPt1( Fl::event_x(), pixel_h()-Fl::event_y(), - pixel_h() );
+    
+    PP3d::Point3d lR0;
+    PP3d::Point3d lR1;
+    
+    // On projette les deux points dans la base 3D
+    getKamera().projectWinToObject( lPt0, lR0, true);
+    getKamera().projectWinToObject( lPt1, lR1, true);
 
-		
-    PP3d::Point3d lPt0;
-    PP3d::Point3d lResult0;
-    getKamera().projectObjectToWin( lPt0, lResult0, true);
-		
-		
-    PP3d::Point3d pResult;
-    cKamera.projectWinToObject( PP3d::Point3d(lX,lY,lResult0.cZ), pResult, true);
-    return pResult;
+    // Calcul du vecteur de la droite
+    PP3d::Line3dVect lLineV( lR0, lR1 );
+
+
+    cout <<"transform2Dto3D Plane Height:" << TheAppli.getInputPlaneHeight() << endl;
+    bool lOk = false;
+    switch( TheAppli.getInputPlane() )
+      {
+      case InputPlaneType::X : lOk = lLineV.intersectPlanX( iResult, TheAppli.getInputPlaneHeight() );
+	break;
+      case InputPlaneType::Y : lOk = lLineV.intersectPlanY( iResult, TheAppli.getInputPlaneHeight() );
+	break;
+      case InputPlaneType::Z : lOk = lLineV.intersectPlanZ( iResult, TheAppli.getInputPlaneHeight() );
+	break;  
+      case InputPlaneType::Free : ;
+      }
+
+    return lOk;
   }
   //---------------------------
-  void Canvas3d::setCursor3dPosition( int pX, int pY )
+  bool Canvas3d::setCursor3dPosition( int pX, int pY )
   {
-    PP3d::Point3d pResult = transform2Dto3D( pX, pY );
-
-    TheAppli.getDatabase()->setCursorPosition(	pResult );
-    TheAppli.setCursorPosition( pResult );
+    PP3d::Point3d lResult;    
+    
+    if( transform2Dto3D( pX, pixel_h()-pY, lResult ) )
+      {
+	TheAppli.getDatabase()->setCursorPosition ( lResult );
+	TheAppli.setCursorPosition( lResult );
+	return true;
+      }
+    return false;
   }
   //---------------------------
   bool Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
@@ -1202,7 +1220,7 @@ namespace M3d {
 	  {
 	    DBG_ACT(" **************** cUserActionSaisie " );
 	    std::cout << " **************** cUserActionSaisie " << std::endl;
-	    userInputPoint( pEvent, true );
+	    userInputPoint(true );
 						
 	    return 1;
 	  }
@@ -1381,7 +1399,7 @@ namespace M3d {
 	      {
 		if(  Fl::event_ctrl() )
 		  { 
-		    userInputPoint( pEvent, false ); // just view th possible position of point
+		    userInputPoint( false ); // just view th possible position of point
 		  }
 		else
 		if( MyPref.cSelectPassOverLighting )

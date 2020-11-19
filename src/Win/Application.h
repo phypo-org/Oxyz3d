@@ -57,6 +57,8 @@ namespace M3d{
       ScaleNormal
       };
 
+  enum class InputPlaneType { X, Y, Z, Free };
+  
   //************************************
   // Application est un singleton 
 
@@ -74,7 +76,7 @@ namespace M3d{
     PP3d::Selection                       cSelect;
     PP3d::Selection                       cSelectTransform;
   protected:    
-     PP3d::ObjectLine *                    cCurrentAxis;
+    PP3d::ObjectLine *                    cCurrentAxis;
     
     M3d::ShapeLua*                        cLua=nullptr;
 
@@ -87,8 +89,13 @@ namespace M3d{
 		
     Transform       cCurrentTransform;
     PP3d::Transf3d  cCurrentTransf;
+
+
     
- 
+    InputPlaneType cInputPlaneType   = InputPlaneType::Y;
+    double         cInputPlaneHeight = 0;
+
+    double         cRoundingInput =0; // no rounding if 0
 
   public:
     static const int sIconBigSize = 64;
@@ -106,7 +113,16 @@ namespace M3d{
     Transform getCurrentTransformType()   { return cCurrentTransform;}
     PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
 
-		
+    InputPlaneType getInputPlane()              { return cInputPlaneType; }
+    void   setInputPlane(InputPlaneType iPt )   { cInputPlaneType = iPt; }
+    double getInputPlaneHeight()                 { return cInputPlaneHeight; }
+    void   setInputPlaneHeight( double iHeight ) { cInputPlaneHeight = iHeight; }
+    
+    double getRoundingInput()                        { return cRoundingInput; }
+    void   setRoundingInput( double iRoundingInput ) { cRoundingInput = iRoundingInput; }
+    void   round( PP3d::Point3d & ioPt ) { if( cRoundingInput !=0 ) ioPt.round( cRoundingInput ); }
+    
+    
     int init( int argc, char* argv[] );
 
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };

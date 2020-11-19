@@ -32,49 +32,48 @@
 //Tout mettre dans le Dialogue
 
 namespace M3d {
-
   
-#define MyDiag  M3d::DialogInputInt::Instance()
+#define MyDiag  M3d::DialogInputDouble::Instance()
 
   //************************
-  class DialogInputInt  : public virtual PPSingletonCrtp<DialogInputInt>{
+  class DialogInputDouble  : public virtual PPSingletonCrtp<DialogInputDouble>{
 
-    Fl_Double_Window*         cMyWindow = nullptr;
+    Canvas3d *cMyCanvas;
+    Fl_Double_Window* cMyWindow = nullptr;
+    
 
     std::unique_ptr<MySlider> cSliderPas;
-	
+
   public:
-    long     cVal=0;
-    bool     cRetVal=false;
+    double  cVal=0;
+    bool    cRetVal = false;
 
     //----------------------------------------
     static void CancelCB( Fl_Widget*, void* pUserData )
     {
-      Fl::delete_widget( MyDiag.cMyWindow );
+      Fl::delete_widget( MyDiag.cMyWindow);
       MyDiag.cMyWindow = nullptr;
       MyDiag.cRetVal = false;
     }
     //----------------------------------------
     static void OkCB( Fl_Widget*, void*pUserData )
     {
-      MyDiag.cVal = (long)MyDiag.cSliderPas->value();
-      
-      MyDiag.cRetVal = true;
+      MyDiag.cVal = MyDiag.cSliderPas->value();
+      MyDiag.cRetVal = true;   
+      //      std::cout << "CallDialogInputDouble OkCB ioVal:" << MyDiag.cVal << std::endl;
       
       Fl::delete_widget( MyDiag.cMyWindow);
       MyDiag.cMyWindow = nullptr;
-    }
+     }
     //----------------------------------------
     bool isAlreadyRunning() { return cMyWindow != nullptr; }
     //----------------------------------------
-    DialogInputInt()
-    {
-    }
-    //----------------------------------------
-    void init( const char* iLabel, long iVal  )
-    {
+    DialogInputDouble() {;}
+     //----------------------------------------
+    void init (  const char* iLabel, double iVal )   
+    {   
       int lX = 20;
-      int lY= 30;
+      int lY = 30;
       int lW = 400;
       int lH = 20;
       int lYStep = 40;
@@ -84,7 +83,7 @@ namespace M3d {
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
       cMyWindow->position( 100, 100) ;
    
-      cSliderPas =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "value", SliderCB, nullptr, 2, 100 ));
+      cSliderPas =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "value", SliderCB, this, 2, 100 ));
       cSliderPas->value( iVal );
     
       lY += lYStep;
@@ -104,24 +103,31 @@ namespace M3d {
       cMyWindow->end();
 		
       cMyWindow->show( 0, nullptr);
-       while( MyDiag.cMyWindow != nullptr );
-   }
-    //----------------------------------------
-    static  void SliderCB( Fl_Widget* iW, void*)
-    {
-    //   std::cout << "DialogInputInt::SliderCB "<< std::endl;
+      
+      
+      while( Fl::wait() && MyDiag.cMyWindow != nullptr );
     }
+    //----------------------------------------
+    static  void SliderCB( Fl_Widget*, void*pUserData )
+    {
+      //      std::cout << "DialogInputDouble::SliderCB " << std::endl;
+    }  
   };
   //************************
 }
+
   //************************
-extern bool CallDialogInputInt( const char* iLabel, int & ioVal)
+extern bool CallDialogInputDouble( const char* iLabel, double & ioVal )
   {
     if( MyDiag.isAlreadyRunning() == false )
       {
 	MyDiag.init( iLabel, ioVal);
 	
 	ioVal = MyDiag.cVal;
+
+	//	std::cout << "CallDialogInputDouble return ioVal:" << ioVal
+	//		  << " Ret:" <<   MyDiag.cRetVal << std::endl;
+	
 	return MyDiag.cRetVal;
       }
     return false;
