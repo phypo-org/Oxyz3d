@@ -41,13 +41,16 @@ namespace PP3d {
 				
 	case SelectType::Line:
 	  drawLineGL( pViewProps );					
+	  drawPointGL( pViewProps);					
 	  break;
 				
 	default:
 	  {
+	  drawLineGL( pViewProps );					
+	  drawPointGL( pViewProps);					
 	    //	    std::cout << ">>>>>>>>>>>>Polyline" << std::endl;
-	    VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
-	    execVisitor( lVisitL );			
+	  //	    VisitorDrawPolyline	lVisitL( pViewProps, cMyProps);
+	  //	    execVisitor( lVisitL );			
 	  }
 	}
     }
@@ -62,7 +65,7 @@ namespace PP3d {
 	  break;
 	case SelectType::Point:
 	  {
-	    drawLineGL( pViewProps );					
+	    //	    drawLineGL( pViewProps );					
 	    drawSelectPointGL( pViewProps);					
 	  }
 	  break;

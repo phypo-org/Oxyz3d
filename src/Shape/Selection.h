@@ -161,7 +161,8 @@ namespace PP3d {
 	    }
 	}
     }
-    };
+    //----------------------------
+  };
 }
 
 // #define TheSelect PP3d::Selection::Instance()

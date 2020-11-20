@@ -410,61 +410,80 @@ namespace PP3d {
     return cCurrentCreation;			
   }
   //-------------------------------------------------------------
-  void DataBase::drawGL(ViewProps& pViewProps, GLMode pSelectOrDrawMode, SelectType iSelectType)
+  void DataBase::drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType)
   {
-    pViewProps.cSelectType = iSelectType;
-    pViewProps.cGLMode     = pSelectOrDrawMode;
-
-    //		std::cout << "******************** DataBase::drawGL ********************** " << pViewProps.cSelectType << std::endl;
-    //		if( pViewProps.cDebugView )
+    iViewGen.cSelectType = iViewInputCursor.cSelectType = iViewInputPoly.cSelectType = iViewInputObject.cSelectType = iSelectType;
+    iViewGen.cGLMode = iViewInputCursor.cGLMode = iViewInputPoly.cGLMode = iViewInputObject.cGLMode = iSelectOrDrawMode;
+    
+    //		std::cout << "******************** DataBase::drawGL ********************** " << iViewGen.cSelectType << std::endl;
+    //		if( iViewGen.cDebugView )
     {
-      //						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	pViewProps.cSelectType) << std::endl;
+      //						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	iViewGen.cSelectType) << std::endl;
     }
-		
+    //======================================			
     for( Object* lObj : cContainerObject )
       {
-	if(  pSelectOrDrawMode == GLMode::Draw  )
+	if(  iSelectOrDrawMode == GLMode::Draw  )
 	  {
 	    //			std::cout << "draw lObj:" << lObj->getName() << std::endl;
-	    lObj->drawGL( pViewProps );
+	    lObj->drawGL( iViewGen );
 	  }
 	else
 	  {
-	    lObj->selectGL( pViewProps );
+	    lObj->selectGL( iViewGen );
 	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
 	  }
 	//	std::cout << " fin lObj:" << lObj->getName() << std::endl;
       }
 		
-		
+    //======================================
+ 
     if( cCurrentPoint != nullptr
-	&&  pSelectOrDrawMode == GLMode::Draw )
+	&&  iSelectOrDrawMode == GLMode::Draw )
       {
 	//		std::cout << "**************** draw currentline ****" << std::endl;
-	cCurrentPoint->drawGL( pViewProps );
+	cCurrentPoint->drawGL( iViewInputCursor );
       }	 
       
+    //======================================	
+    ColorRGBA l3( 0.7, 0.4, 0.1, 0.7 );
+    ColorRGBA l4( 0.6, 0.5, 0.2, 0.7 );
     
+    ViewProps lV2( iViewGen );
+
+    lV2.cColorPoint = l3 ;
+    lV2.cColorLine  = l4;
+
     if( cCurrentLine != nullptr )
       {
-	if( pSelectOrDrawMode == GLMode::Draw )
+	if( iSelectOrDrawMode == GLMode::Draw )
 	  {
 	    //		std::cout << "**************** draw currentline ****" << std::endl;
-	    cCurrentLine->drawGL( pViewProps );
+	    cCurrentLine->drawGL( iViewInputPoly );
 	  }
 	else
 	  {
-	    cCurrentLine->selectGL( pViewProps );
+	    cCurrentLine->selectGL( iViewGen );
 	  }	 
       }
 		
-		
+    //======================================	
+    ColorRGBA l5( 0.4, 1, 0.4, 0.7 );
+    ColorRGBA l6( 0.4, 0.8, 0.3, 0.6 );
+    ColorRGBA l7( 0.2, 0.4, 0.2, 0.5 );
+
+    ViewProps lV3( iViewGen );
+
+    lV3.cColorPoint = l5 ;
+    lV3.cColorLine  = l6;
+    lV3.cColorFacet = l7;
+	
     // on ne peut pas selectionner les saisies en cours !
-    if(  pSelectOrDrawMode == GLMode::Draw  )
+    if(  iSelectOrDrawMode == GLMode::Draw  )
       {		
 	if( cCurrentCreation != nullptr )
 	  {				
-	    cCurrentCreation->drawGL( pViewProps );						
+	    cCurrentCreation->drawGL( iViewInputObject );						
 	  }				
       }		
     //	std::cout << "******************** end DataBase::drawGL ********************** "  << std::endl;
@@ -658,6 +677,10 @@ namespace PP3d {
     return lTmp;
   }  
   //---------------------------------------------------------
+  //---------------------------------------------------------
+  //---------------------------------------------------------
+  // Les Free ne sont pas tr&s au point !!!
+  
   void DataBase::freePoint( PointPtr ioPt )
   {
     //   clearAllOwner();
@@ -671,10 +694,25 @@ namespace PP3d {
   //---------------------------------------------------------
   void DataBase::freeLine( LinePtr ioLine )
   {
+    if(ioLine == nullptr ) return;
+      
     //  clearAllOwner();
     if( removeEntityIfNoOwner( ioLine ))
       {
-	// pas de free des points car ils sont mutualisées ou alors compter les owners 
+	PointPtr lPt = ioLine->getFirst();
+	  {
+	    lPt->removeOwner( ioLine);
+	    if( lPt->howManyOwner() == 0 )
+	      freePoint( lPt );
+	  }
+	  lPt = ioLine->getSecond();
+	  {
+	    lPt->removeOwner( ioLine);
+	    if( lPt->howManyOwner() == 0 )
+	      freePoint( lPt );
+	  }
+
+	  
 	ioLine->razId();
 	ioLine->clear();
 	cFreeLines.push( ioLine );
@@ -683,9 +721,18 @@ namespace PP3d {
   //---------------------------------------------------------
   void DataBase::freeFacet( FacetPtr ioFacet)
   {
+    if(ioFacet == nullptr ) return;
+    
     //    clearAllOwner();
     if( removeEntityIfNoOwner( ioFacet ) )
       {
+	// les lignes appartiennet a la facette donc on peut les detruire aussi
+	for( LinePtr lLine : ioFacet->getLines() )
+	  {
+	    lLine->removeOwner( ioFacet );
+	    freeLine( lLine );
+	  }
+	
 	ioFacet->razId();
 	// faire un free des lignes 
 	ioFacet->clear();
@@ -695,9 +742,16 @@ namespace PP3d {
   //---------------------------------------------------------
   void DataBase::freePoly( PolyPtr ioPoly)
   {
+    if(ioPoly == nullptr ) return;
     //    clearAllOwner();
     if( removeEntityIfNoOwner( ioPoly ) )
       {
+	for( FacetPtr lFacet : ioPoly->getFacets() )
+	  {
+	    lFacet->removeOwner( ioPoly );
+	    freeFacet( lFacet );
+	  }
+
 	ioPoly->razId();
 	// faire un free des facettes 
 	ioPoly->clear();

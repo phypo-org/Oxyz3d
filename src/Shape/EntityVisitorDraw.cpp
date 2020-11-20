@@ -155,7 +155,7 @@ namespace PP3d {
 	glBegin( GL_POINTS );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glEnd();
-				
+				 
       }
     glBegin( GL_LINES );
     glVertex3dv( pLine->getFirst()->get().vectForGL() );
@@ -176,7 +176,8 @@ namespace PP3d {
   {
     //		cViewProps.dragMat( pFacet);
     //==================================
-    if( cViewProps.cFlagViewNormal == true )
+    if( cViewProps.cFlagViewNormal == true
+	&& cViewProps.cGLMode == GLMode::Draw )
       {
 	DrawNormalFacet( pFacet );
       }
@@ -235,7 +236,8 @@ namespace PP3d {
   void VisitorDrawPoly::execBeginFacet( FacetPtr pFacet )
   {
     //==================================
-    if( cViewProps.cFlagViewNormal == true )
+    if( cViewProps.cFlagViewNormal == true
+	&& cViewProps.cGLMode == GLMode::Draw )
       {
 	DrawNormalFacet( pFacet );
       }

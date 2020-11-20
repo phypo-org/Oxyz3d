@@ -297,11 +297,33 @@ namespace PP3d{
     }		
   };
   //*****************************************
-  //*****************************************
-  //*****************************************
-  // A OPTIMISER ce n'est pas la peine d'aller dans les facette, lines, point ...
-  // Ou remplacer par autre chose !
-  
+  class SortEntityVisitorPoly : public EntityVisitor {
+
+    bool cAcceptDoublon;
+  public:
+    std::vector<PolyPtr>   cVectPolys;
+    std::set<PolyPtr>      cSetPolys;
+    
+    //--------------------------------
+    SortEntityVisitorPoly ( bool iAcceptDoublon = false )
+      :cAcceptDoublon( iAcceptDoublon )
+    {
+    }
+    //--------------------------------
+    virtual void execBeginPoly ( Poly* pPoly )
+    {
+      //std::cout << 'p' << std::flush;
+      if( cAcceptDoublon == false )
+	{
+	  if( cSetPolys.find( pPoly) != cSetPolys.end() )
+	    return;
+	}
+      //std::cout << 'P' << std::flush;
+      cVectPolys.push_back( pPoly );
+      cSetPolys.insert( pPoly );
+    }				
+  };
+  //*****************************************  
   class SortEntityVisitorObject : public EntityVisitor {
 
     bool cAcceptDoublon;

@@ -91,7 +91,7 @@ namespace PP3d {
       Entity* lTmp = nullptr;
       for( Entity* lOwner  :  cOwners ) { return lOwner;}
       return lTmp;
-    }
+    }    
     
 
     //    void   addOwner     ( Entity* pOwner ) { cOwners.emplace( pOwner); }
@@ -485,7 +485,7 @@ namespace PP3d {
 	{
 	  if( cFacets[i] == pFacet )
 	    {
-	      cFacets.erase( cFacets.begin() + i);
+	      cFacets.erase( cFacets.begin() + i); 
 	      pFacet->removeOwner(this);
 	      break;
 	    }
@@ -538,7 +538,64 @@ namespace PP3d {
 	
       }
   };
+   //*********************************************
+  
+  inline EntityPtr GetOwnerWithType( EntityPtr iShape, ShapeType iSearchType ) {
+    
+    EntityPtr lOwner = iShape;
+    for( int i = 0; i< 8; i++ )
+      {
+	if( lOwner == nullptr )
+	  return nullptr;
+	
+	if(lOwner->getType() == iSearchType )
+	  return lOwner;
+	
+ 	lOwner = lOwner->firstOwner();
+     }
+    return nullptr;
+  }
 
+  //------------------------------------------------------
+  inline PolyPtr GetOwnerPolyFromFacet( EntityPtr iShape) {
+    if( iShape != nullptr && iShape->getType() ==  ShapeType::Facet )
+      {
+	EntityPtr lOwner =  iShape->firstOwner();
+	if( lOwner != nullptr && lOwner->getType() == ShapeType::Poly ) 
+	      {
+		return (PolyPtr) lOwner;
+	      }
+      }
+    return nullptr;
+  }
+ 
+  //------------------------------------------------------
+  inline FacetPtr GetOwnerFacetFromLine( EntityPtr iShape) {
+    if( iShape != nullptr && iShape->getType() ==  ShapeType::Line )
+      {
+	EntityPtr lOwner =  iShape->firstOwner();
+	if( lOwner != nullptr && lOwner->getType() == ShapeType::Facet ) 
+	      {
+		return (FacetPtr) lOwner;
+	      }
+      }
+    return nullptr;
+  }
+
+  // ATTENTION PLUSIEURS OWNERS !!!
+  /*  inline LinePtr getOwnerLineFromPoint( EntityPtr iShape) {
+    if( iShape != nullptr && iShape->getType() ==  ShapeType::Point )
+      {
+	EntityPtr lOwner =  iShape->firstOwner();
+	if( lOwner != nullptr && lOwner->getType() == ShapeType::Line ) 
+	      {
+		return (LinePtr) lOwner;
+	      }
+      }
+    return nullptr;
+  }
+  */
+    
 }
 
 #endif

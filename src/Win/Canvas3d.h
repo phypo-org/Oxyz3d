@@ -57,8 +57,12 @@ namespace M3d {
     bool    cFlagViewTransform = true;
     bool    cFlagCursor3d      = false;
 		
-    PP3d::ViewProps cViewProps;
+    PP3d::ViewProps cViewGen;
     PP3d::ViewProps cViewPropsTransform;
+    PP3d::ViewProps cViewInputCursor;
+    PP3d::ViewProps cViewInputPoly;
+    PP3d::ViewProps cViewInputObject;
+    
 
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
@@ -103,7 +107,7 @@ namespace M3d {
 
 
     void changeUserMode( ModeUser pMode ) { cMode = pMode; }
-    void setVisualMode( GLuint pMode ) { cViewProps.cViewMode = pMode; }
+    void setVisualMode( GLuint pMode ) { cViewGen.cViewMode = pMode; }
     //------------------------------
     int       cMouseInitPosX=-1;
     int       cMouseInitPosY=-1;
@@ -146,6 +150,9 @@ namespace M3d {
     static void MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );
+
+    static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
+ 
     //=========== MENUS =================
 
     void traceMode() const;

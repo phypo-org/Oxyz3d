@@ -64,6 +64,10 @@ namespace M3d {
 #define StrMenu_CreateShapeFacetP    StrMenu_CreateShape "FacetPoly"
 #define StrMenu_CreateShapeFacet2P   StrMenu_CreateShape "BiFacetPoly"
 
+#define  StrMenu_ModifyShape "Modify shape"
+#define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
+#define  StrMenu_DeleteShapeFacet "Delete facet to shape"
+
 
 #define StrMenu_Revol     "New Revol "
 #define StrMenu_RevolX    StrMenu_Revol "X ..."
@@ -193,7 +197,8 @@ namespace M3d {
   //
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
-    
+     int lMenuFlagActif=0;
+   
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
@@ -249,6 +254,22 @@ namespace M3d {
       {
 	pMenu.add( StrMenu_ConnectPoint, "", MyMenuCallbackConnectPoint, this);	
       }
+      
+    lMenuFlagActif = FL_MENU_INACTIVE;
+    if( TheSelect.getNbSelected() > 2 
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+      // && TheSelect.allHaveTheSameOwner()) 
+      lMenuFlagActif = 0;
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+    
+    lMenuFlagActif=FL_MENU_INACTIVE;
+    if( TheSelect.getNbSelected()
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
+      lMenuFlagActif = 0;
+
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
     
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
@@ -355,7 +376,7 @@ namespace M3d {
       {
 	lMenuFlagActif=0;
       }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this,lMenuFlagActif);
+    pMenu.add(StrMenu_ModifyShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this,lMenuFlagActif);
       
     
     lMenuFlagActif = FL_MENU_INACTIVE;
@@ -367,9 +388,9 @@ namespace M3d {
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "", MyMenuCallbackPrimitiv, this,lMenuFlagActif);
-   
     
-    lMenuFlagActif=0;
+    
+    lMenuFlagActif=FL_MENU_INACTIVE;
     if(TheAppli.getDatabase()->isCurrentPoints()
        &&TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
       {
@@ -385,10 +406,13 @@ namespace M3d {
     pMenu.add( StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
     pMenu.add( StrMenu_RevolZ, "^z", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
     
+    lMenuFlagActif = 0;
     if( TheAppli.isSelectAxis() ==false ) lMenuFlagActif=FL_MENU_INACTIVE; 
     pMenu.add( StrMenu_RevolAxis, "", MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
-    pMenu.add( StrMenu_CallDialoDiagSub, "^b",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER  );
+  
+
+    pMenu.add( StrMenu_CallDialoDiagSub, "",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER  );
 
   }
   //-------------------------------------------
@@ -1152,6 +1176,87 @@ namespace M3d {
     //    TheSelect.addGoodEntityFor(lNewFacets);
     PushHistory();
     TheAppli.redrawAll();
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackModifyShape( Fl_Widget* w, void* pUserData)
+  {
+    BEGINCALL  ;
+    if( strcmp( m->label(), StrMenu_DeleteShapeFacet ) == 0)
+      {	
+	PP3d::SortEntityVisitor lVisit;
+	TheSelect.execVisitorOnEntity( lVisit );
+
+	int lNbErr=0;
+	for( PP3d::FacetPtr lFacet :  lVisit.cVectFacets )
+	  {
+	    PP3d::PolyPtr lPoly = PP3d::GetOwnerPolyFromFacet( lFacet );
+	    if( lPoly != nullptr )
+	      {
+		lPoly->removeFacet( lFacet );
+		TheAppli.getDatabase()->freeFacet( lFacet );
+	      }
+	    else
+	      {
+		if(lNbErr == 0 )
+		  {		    
+		    fl_alert( "No polyedre found for select points ");
+		  }
+		lNbErr++;
+	      }
+	  }
+	TheSelect.removeAll();	
+	PushHistory();	    
+	TheAppli.redrawAll();
+      }
+    else
+    if( strcmp( m->label(), StrMenu_CreateShapeAddFacet ) == 0)
+      {
+	if( TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+	  {
+	    PP3d::OwnerEntityVisitor lVisit;
+	    TheSelect.execVisitorOnEntity( lVisit ); // on recupere les points du select
+
+	    std::cout << "CreateShapeAddFacet points:" << lVisit.cVectPoints.size() << std::endl;
+	    std::vector<PP3d::EntityPtr> &lVisitPt = (std::vector<PP3d::EntityPtr>&)lVisit.cVectPoints;
+	      
+	    lVisit.addOwnersOf( lVisitPt ); // on recupere les owners des points
+	    if( lVisit.cVectPolys.size() == 0)
+	      {
+		fl_alert( "No polyedre found for select points ");
+		return;
+	      }
+	    
+	    if( lVisit.cSetPolys.size() > 1)
+	      {
+		fl_alert( "Selected points have not the same owner");
+		cout << "Selected points have not the same owner" << endl;
+		for( PP3d::EntityPtr lEntity : lVisit.cVectPolys )
+		  {
+		    cout << "Entity : " << *lEntity << endl;
+		  }
+		return;
+	      }	    
+	    
+	    PP3d::PolyPtr  lPoly = lVisit.cVectPolys[0];
+	    
+	    PP3d::FacetPtr lFacet = TheBase.getNewFacet();
+	    
+	    size_t i;
+	    for( i=0; i< lVisit.cVectPoints.size() -1 ; i++ )
+	      {
+		PP3d::LinePtr lLine = TheBase.getNewLine( lVisit.cVectPoints[i], lVisit.cVectPoints[i+1]);
+		lFacet->addLine( lLine );
+	      }
+	    PP3d::LinePtr lLine = TheBase.getNewLine(lVisit.cVectPoints[i],  lVisit.cVectPoints[0] );
+	    lFacet->addLine( lLine);
+	    TheBase.validEntity( lFacet, true );
+		
+	    lPoly->addFacet( lFacet );
+	    TheSelect.removeAll();	
+	    PushHistory();	    
+	    TheAppli.redrawAll();
+	  }
+      }
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)

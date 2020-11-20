@@ -16,6 +16,9 @@ FAIT
   -> ajouter des removeFromOwners pour les lignes elinés -> OK
 
 Il s'agit bien d'un probeme liée au owner qui n'etait pas enlevés !
+
+xxxo facetisation des points 
+
 ============================================
 EN COURS
 
@@ -96,7 +99,6 @@ o Selection de la saisie ? base separé, id dans un interval donné ?
 -----------------------------------------------
 o Creation de surface avec plusieurs line ou polyline PPCD
 -----------------------------------------------
-o facetisation des points 
 -----------------------------------------------
 o Connexion entre deux facettes (Trous)
 o Connexion entre deux facettes (Ponts) -> fusion des objects

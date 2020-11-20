@@ -67,6 +67,26 @@ namespace M3d {
       //  lOstr << cStrLine << "/" <<  pPoint->get();
       // Fl_Tree_Item* lINode = cTree.add( lOstr.str().c_str() );
     }   
+    //-------------------------------------
+    void printOwner( std::ostringstream & lOstr, Entity & iEntity )
+    {
+      //===========
+      //      if( iEntity.howManyOwner() == 0 )
+      //	return ;
+      
+      
+      if(  iEntity.howManyOwner() > 2 )
+	{
+	  lOstr << '<' << iEntity.howManyOwner() << ">";
+	}
+      /*
+      for(  Entity * lOwner : iEntity.getOwners() )
+	{
+	      lOstr << *lOwner << " " ;
+	}
+      lOstr << '>';
+      */
+    }
     //-------------------------------------        
     virtual void execBeginLine ( Line* pLine) {
       
@@ -97,13 +117,19 @@ namespace M3d {
 	    }
 	}
       lOstr << "]  ";
-      
+
       //      lOstr << " o" << pLine->getOwners().size() ;
-      
+
+      printOwner( lOstr, *pLine);
+	
       lOstr << pLine->first()->get();
-      
+      printOwner( lOstr, *(pLine->first()));
+
       if( pLine->isPoint() == false )
-      	lOstr << " --- " <<  pLine->second()->get() ;
+	{
+	  lOstr << " --- " <<  pLine->second()->get() ;
+	  printOwner( lOstr, *(pLine->second()));
+	}
 
       //      cStrLine =  lOstr.str();
       Fl_Tree_Item* lNode = cTree.add( lOstr.str().c_str() );
@@ -126,7 +152,7 @@ namespace M3d {
 	{
 	  lOstr << 's';
 	}
-      
+
       lOstr  <<  " : " << pFacet->getNbLines() << "[ " ;
       
       for( Line* lLine: pFacet->getLines() )
@@ -139,6 +165,8 @@ namespace M3d {
 	  lOstr << "  ";
 	}
       lOstr << "]";
+      
+      printOwner( lOstr, *pFacet);
       
       cStrFacet = lOstr.str();
       Fl_Tree_Item* lNode = cTree.add( cStrFacet.c_str() );
@@ -163,8 +191,11 @@ namespace M3d {
 	    }
 	  lOstr << ", ";
 	}
-      lOstr << "]";
- 
+      lOstr << "] ";
+
+      printOwner( lOstr, *pPoly);
+
+      
       cStrPoly =lOstr.str();
       Fl_Tree_Item* lNode = cTree.add( cStrPoly.c_str() );
       

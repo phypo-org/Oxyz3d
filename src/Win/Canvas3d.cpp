@@ -106,6 +106,16 @@ namespace M3d {
     cViewPropsTransform.cLineWidth = 2; 
     cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
     
+    cViewInputCursor.cColorPoint.set( 1, 0.9, 0.1, 0.8);
+    cViewInputCursor.cColorLine.set( 0.9, 0.5, 0.3, 0.8);
+    
+    cViewInputPoly.cColorPoint.set( 0.7, 0.4, 0.1, 0.7);
+    cViewInputPoly.cColorLine.set( 0.6, 0.5, 0.2, 0.7 );    
+    
+    cViewInputObject.cColorPoint.set( 0.4, 1, 0.4, 0.7);
+    cViewInputObject.cColorLine.set( 0.4, 0.8, 0.3, 0.6);
+    cViewInputObject.cColorFacet.set( 0.2, 0.4, 0.2, 0.5 );
+
   }
   //---------------------------
   Canvas3d::~Canvas3d( )
@@ -150,14 +160,14 @@ namespace M3d {
 
     glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
     glLoadIdentity(); // Clear the model matrix
-    glEnable( GL_BLEND );
+    //    glEnable( GL_BLEND );
     glDisable(GL_DEPTH_TEST);
     
     glDepthFunc(GL_LESS); 
 
 
     glDepthMask( GL_FALSE );
-    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+    //    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 				
     glColor4f(0.9f, 0.1f, 0.1f, 0.1f);
     glDisable( GL_LIGHTING );
@@ -289,8 +299,15 @@ namespace M3d {
     PP3d::Light::DisableAll();
     PP3d::Light::AllGL();
     PP3d::Light::RazAll();
-    
 
+
+
+    // Transparence
+    glEnable(GL_BLEND) ;
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) ;  
+    // Transparence
+    //    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+ 
     if( cFlagLightColor )
       {		
 	PP3d::Light::RainbowOn();
@@ -328,19 +345,19 @@ namespace M3d {
 
 		
     //  cViewProps.cDebug = cDebug;
-    cViewProps.cFlagViewNormal = cFlagViewNormal;
+    cViewGen.cFlagViewNormal = cFlagViewNormal;
  
 
     // Draw the 3d view of object
     TheAppli.getDatabase()->recomputeAll();     
-    TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Draw  , TheSelect.getSelectType() );
+    TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly, cViewInputObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType() );
 
 
     // Draw transformation
     if( cFlagViewTransform )
       {
 	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
+	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
       }
 
     // draw rectangle selection if needed
@@ -386,21 +403,21 @@ namespace M3d {
     //===========================================================	
 		
     //  cViewProps.cDebug = cDebug;
-    cViewProps.cFlagViewNormal = cFlagViewNormal;
+    cViewGen.cFlagViewNormal = cFlagViewNormal;
  
 
     // Draw the 3d view of object
     if( TheSelectTransform.getSelectType() == PP3d::SelectType::Null )  // pour les transformations
       {
 	TheAppli.getDatabase()->recomputeAll();     
-	TheAppli.getDatabase()->drawGL( cViewProps, PP3d::GLMode::Select, TheSelect.getSelectType() );
+	TheAppli.getDatabase()->drawGL( cViewGen, cViewGen, cViewGen, cViewGen, PP3d::GLMode::Select, TheSelect.getSelectType() );
       }
-    else
+    /*   else
       {
 	TheAppli.getDatabaseTransform()->recomputeAll();
 	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() ); 
       }
-
+    */
     glFlush();
     //glFinish(); 
 
@@ -1110,7 +1127,7 @@ namespace M3d {
     PP3d::Line3dVect lLineV( lR0, lR1 );
 
 
-    cout <<"transform2Dto3D Plane Height:" << TheAppli.getInputPlaneHeight() << endl;
+    //  cout <<"transform2Dto3D Plane Height:" << TheAppli.getInputPlaneHeight() << endl;
     bool lOk = false;
     switch( TheAppli.getInputPlane() )
       {
