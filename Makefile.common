@@ -1,5 +1,5 @@
-include ${FLTK_PATH}/makeinclude
-
+# include ${FLTK_PATH}/makeinclude
+# include fltk-config --includedir
 
 
 
@@ -88,7 +88,7 @@ endif
 IGNORE=-Wno-format-nonliteral -Wno-unused-parameter -Wno-unused-variable -Wno-cast-function-type -Wno-error=cast-function-type -Wno-conversion -Wno-shadow
 
 
-CCFLAGS=-std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
+CCFLAGS= -D__GNU_VISIBLE -std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
 		-Wl,-z,relro,-z,now$(STRIP_LINK) -Wconversion -fPIE $(IGNORE) -Wpedantic -Wstack-protector -fstack-protector-all \
 		-D_REENTRANT $(OPTIM) \
 		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \

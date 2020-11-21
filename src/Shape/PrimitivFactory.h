@@ -1,6 +1,8 @@
 #ifndef H__PrimitivFactory__H
 #define H__PrimitivFactory__H
 
+#define _USE_MATH_DEFINES // for C++
+#include <cmath>
 
 #include "ObjectPoly.h"
 #include "PP3dType.h"
@@ -113,7 +115,7 @@ namespace PP3d{
       //			CYLINDER, CONE, DISK, PARTIAL_DISK, SPHERE, TORUS, WIRETORUS
 	};
 
-    static constexpr long double M_PIx2 = M_PI*2;
+    static constexpr long double M_PIx2 = 3.14159265358979323846*2;
 
     
     static long double sMinSz;

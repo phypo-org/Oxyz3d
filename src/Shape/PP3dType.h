@@ -6,7 +6,7 @@
 #include <GL/glut.h>
 #else
 #include <GL/gl.h>
-#include <GL/glx.h>
+//#include <GL/glx.h>
 #include <GL/glu.h>
 #endif
 

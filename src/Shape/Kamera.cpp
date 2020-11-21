@@ -1,6 +1,8 @@
 #include "Kamera.h"
 
 #include "MinMaxBox3d.h"
+#define _GNU_SOURCE
+#include <math.h>
 
 namespace PP3d{
 
