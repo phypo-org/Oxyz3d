@@ -61,7 +61,9 @@ namespace M3d {
     MyIntInput* cDbgDrw;
     MyIntInput* cDbgBaz;
     MyIntInput* cDbgSel;
+#ifdef USING_LUA    
     MyIntInput* cDbgLua;
+#endif    
     MyIntInput* cDbgTree;
     MyIntInput* cDbgFil;
     MyIntInput* cDbgIni;
@@ -99,7 +101,9 @@ namespace M3d {
       GET_INT_VALUE(cDbgDrw);
       GET_INT_VALUE(cDbgBaz);
       GET_INT_VALUE(cDbgSel);
+#ifdef USING_LUA    
       GET_INT_VALUE(cDbgLua);
+#endif
       GET_INT_VALUE(cDbgTree);
       GET_INT_VALUE(cDbgFil);
       GET_INT_VALUE(cDbgIni);
@@ -203,7 +207,9 @@ namespace M3d {
 	  INTPUT_INT( cDbgTree,"Debug Tree                      " );
 	  INTPUT_INT( cDbgFil, "Debug File (read write ...)     " );
 	  INTPUT_INT( cDbgIni, "Debug configuration (config.ini)" );
+#ifdef USING_LUA    
 	  INTPUT_INT( cDbgLua, "Debug Lua                       " );
+#endif	  
 	  /*
 
 	  

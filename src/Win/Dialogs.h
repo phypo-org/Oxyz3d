@@ -36,8 +36,12 @@ extern void CallDialogFile( const std::string & iTitle);
 
 Fl_Double_Window* CallConsolePython();
 Fl_Double_Window* CallConsoleSystem();
+
+#ifdef USING_LUA
 Fl_Double_Window* CallConsoleLua();
 void AppendConsoleLua( const char* iTxt );
+#endif
+
 
 #endif
 

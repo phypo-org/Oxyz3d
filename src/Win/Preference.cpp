@@ -29,7 +29,9 @@ namespace M3d {
   {
     INIT_DBG( Evt );
     INIT_DBG( Act );
+#ifdef USING_LUA        
     INIT_DBG( Lua );
+#endif    
     INIT_DBG( Tree );
     INIT_DBG( Drw );
     INIT_DBG( Baz );
@@ -52,7 +54,9 @@ namespace M3d {
   {
     INIT_DBG( Evt );
     INIT_DBG( Act );
+#ifdef USING_LUA        
     INIT_DBG( Lua );
+#endif    
     INIT_DBG( Tree );
     INIT_DBG( Drw );
     INIT_DBG( Baz );

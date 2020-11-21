@@ -46,11 +46,12 @@ int main(int argc, char **argv)
 	}
     }
   
+#ifdef USING_LUA
   if( lArgs.exist( "-lua" ) != -1 )
     {
       CallConsoleLua();     
     }
-  
+#endif  
   PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect );
 
  

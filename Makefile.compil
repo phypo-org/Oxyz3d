@@ -1,4 +1,3 @@
-
 # recuperation du nom des .cpp et des .o
 #---------------------------------------
 
@@ -20,7 +19,8 @@ endif
 
 WLIB=$(ROOT_POS)Win
 SLIB=$(ROOT_POS)Shape
-LLIB=$(ROOT_POS)Lua
+
+
 ULIB=$(ROOT_POS)Utils
 MLIB=$(ROOT_POS)Modif
 
@@ -33,9 +33,19 @@ SLIB_HDRS=$(wildcard $(SLIB)/*.h)
 SLIB_SRCS=$(wildcard $(SLIB)/*.cpp)
 SLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SLIB_SRCS) ) )
 
+ifdef NO_LUA
+
+LLIB=
+LLIB_OBJS=
+
+else
+
+LLIB=$(ROOT_POS)Lua
 LLIB_HDRS=$(wildcard $(LLIB)/*.h)
 LLIB_SRCS=$(wildcard $(LLIB)/*.cpp)
 LLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(LLIB_SRCS) ) )
+
+endif
 
 ULIB_HDRS=$(wildcard $(ULIB)/*.h)
 ULIB_SRCS=$(wildcard $(ULIB)/*.cpp)

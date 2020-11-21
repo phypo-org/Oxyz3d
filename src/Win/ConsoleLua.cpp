@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-
+#ifdef USING_LUA
 
 using namespace std;
 using namespace PLua;
@@ -177,3 +177,5 @@ extern void AppendConsoleLua( const char* iTxt )
       ConsoleLua::sConsolLua->append( iTxt );
     }
 }
+
+#endif

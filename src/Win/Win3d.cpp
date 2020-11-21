@@ -1,4 +1,4 @@
-#include "config.h"
+// #include "config.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -78,8 +78,9 @@ namespace M3d {
 #define StrMenu_ObjectTree      "Objects Tree"
 #define StrMenu_ConsolPython    "Console python"
 #define StrMenu_ConsolSystem    "Console system"
+#ifdef USING_LUA     
 #define StrMenu_ConsolLua       "Console lua"
-
+#endif
 
 #define StrMenu_Select          "&Select/"
 #define StrMenu_UnselectAll     "Unselect all"
@@ -957,7 +958,11 @@ namespace M3d {
     cMenubar.add("&Win/" StrMenu_ObjectTree, "^t", MyMenuCallback, this);
     //		cMenubar.add("&Win/" StrMenu_ConsolPython, nullptr, MyMenuCallback, this);
     cMenubar.add("&Win/" StrMenu_ConsolSystem, nullptr, MyMenuCallback, this);
+
+    
+#ifdef USING_LUA    
     cMenubar.add("&Win/" StrMenu_ConsolLua, "^l", MyMenuCallback, this);
+#endif
     //================================
 
     cMenubar.add("&Debug/" StrMenu_Demo1, nullptr, MyMenuCallback, this);
@@ -979,9 +984,10 @@ namespace M3d {
   void Win3d::MyMenuCallback(Fl_Widget* w, void* pUserData) {
 		
     static bool slFlagDialog=false; // C'est moche !!!!
+#ifdef USING_LUA        
     std::ostringstream lOsLuaCode;
     std::ostringstream lOsLuaOut;
-
+#endif
 
     PP3d::Mat4 lMatTran;
     lMatTran.Identity();
@@ -1385,8 +1391,8 @@ namespace M3d {
 		    TheAppli.createObjectTree( );
 		  }
 		else if( strcmp( m->label(), StrMenu_Create3dView ) == 0)
-		  {
-		    lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
+		  {		    
+		    Application::Instance().createNewWin3d( 1000, 800  );		    //		    lOsLuaCode << "WinNewCanvas3d( 1000, 800 )"<< std::endl;
 	
 		    //	      TheAppli.createNewWin3d( 1000, 800 );
 		  }
@@ -1399,10 +1405,13 @@ namespace M3d {
 		  {
 		    CallConsoleSystem( );
 		  }
+#ifdef USING_LUA
 		else if( strcmp( m->label(), StrMenu_ConsolLua ) == 0)
 		  {
+
 		    CallConsoleLua( );
 		  }
+#endif    
 		else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 		  {
 		    TheAppli.getDatabase()->demo1();
@@ -1417,6 +1426,7 @@ namespace M3d {
 		  }
 
 				 
+#ifdef USING_LUA
     if( lOsLuaCode.str().size() > 0 )
       {
 	// Ily a du lua a executer
@@ -1425,6 +1435,7 @@ namespace M3d {
 	    // ERREUR
 	  }
       }
+#endif
   }
   //-------------------------------------------
   void Win3d::QuitCallback(Fl_Widget*, void*) {exit(0);}

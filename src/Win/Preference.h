@@ -28,7 +28,9 @@ namespace M3d {
     //Dbg
     int cDbgEvt = 0;
     int cDbgAct = 0;
+#ifdef USING_LUA    
     int cDbgLua = 0;
+#endif    
     int cDbgTree = 0;
       
     int & cDbgDrw;

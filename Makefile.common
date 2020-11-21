@@ -1,6 +1,7 @@
 # include ${FLTK_PATH}/makeinclude
 # include fltk-config --includedir
 
+include ${FLTK_PATH}/makeinclude
 
 
 ifndef FLAGS_COMPIL_EXT
@@ -12,6 +13,22 @@ endif
 #------------------------------------------------------------------
 ifndef ROOT_POS
 ROOT_POS=
+endif
+
+
+
+
+ifdef NO_LUA
+
+INC_LUA=
+LIB_LUA=
+
+else
+
+INC_LUA= -I/usr/include/lua
+LIB_LUA= -llua
+FLAGS_COMPIL_EXT += -DUSING_LUA
+
 endif
 
 
@@ -88,13 +105,13 @@ endif
 IGNORE=-Wno-format-nonliteral -Wno-unused-parameter -Wno-unused-variable -Wno-cast-function-type -Wno-error=cast-function-type -Wno-conversion -Wno-shadow
 
 
-CCFLAGS= -D__GNU_VISIBLE -std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
+CCFLAGS= -std=c++17 -m64   -Wall -Werror -Wextra -Wformat=2 \
 		-Wl,-z,relro,-z,now$(STRIP_LINK) -Wconversion -fPIE $(IGNORE) -Wpedantic -Wstack-protector -fstack-protector-all \
 		-D_REENTRANT $(OPTIM) \
 		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \
 		$(FLAGS_COMPIL_EXT)
 
-# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6 -I/usr/include/lua
+# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6  $(INC_LUA)
 
 
 
@@ -107,12 +124,12 @@ LDFLAGS= -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  -I/usr/include/lua
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTKPATH} -I/usr/include/freetype2  $(INC_LUA)
 
 
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  -lXinerama -llua
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  -lXinerama $(LIB_LUA)
 
 # -lpython3.6m

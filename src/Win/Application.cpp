@@ -24,9 +24,10 @@ namespace M3d{
     std::cout << "========= Application::Application" << std::endl;
     
 		
-    M3d::ShapeLua::SetPrototype();
     cSelectTransform.changeSelectType( PP3d::SelectType::Null );
-    
+
+#ifdef USING_LUA
+    M3d::ShapeLua::SetPrototype();
     cLua = (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
 	
     cLua->doCode( "PPrintln(\"Hello it's C++\" )");
@@ -36,14 +37,17 @@ namespace M3d{
 
     cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
     cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
+#endif    
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
   //-----------------------------------
   Application::~Application()
   {
+#ifdef USING_LUA
     delete cLua;
     cLua = nullptr;
+#endif    
   }
   //-----------------------------------
   //-----------------------------------

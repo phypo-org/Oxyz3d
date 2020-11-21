@@ -10,8 +10,12 @@
 
 #include "WinObjTree.h"
 #include "Shape/PP3dType.h"
+
+#ifdef USING_LUA
 #include "Lua/PLua.h"
 #include "ShapeLua.h"
+#endif
+
 #include "Shape/UndoHistory.h"
 
 #include "Utils/PPSingletonCrtp.h"
@@ -78,8 +82,9 @@ namespace M3d{
   protected:    
     PP3d::ObjectLine *                    cCurrentAxis;
     
+#ifdef USING_LUA
     M3d::ShapeLua*                        cLua=nullptr;
-
+#endif
     PPu::PPConfig  cMyConfig;
 	
   private:			
@@ -136,6 +141,8 @@ namespace M3d{
       cuDatabase = std::move(iuBase);
     }
     PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }
+
+#ifdef USING_LUA
     
     M3d::ShapeLua&  getLua() { return *cLua; }
     const char*     execLuaHisto(const std::string& iLuaCode, std::ostream& iOut )
@@ -154,6 +161,7 @@ namespace M3d{
     {
       return execLua( iIn.str(), iOut );
     }
+#endif
 		
     Win3d & createNewWin3d( int pW, int pH );
     void    redrawAllCanvas3d();

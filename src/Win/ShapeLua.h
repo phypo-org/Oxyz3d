@@ -1,6 +1,7 @@
 #ifndef H__SHAPELUA__H
 #define H__SHAPELUA__H
 
+#ifdef USING_LUA
 
 #include "Shape/DataBase.h"
 
@@ -35,4 +36,6 @@ namespace M3d {
   //****************************************
 
 }
+#endif
+
 #endif

@@ -10,6 +10,8 @@
 
 #include <fstream>
 
+#ifdef USING_LUA    
+
 using namespace PLua;
 using namespace PP3d;
 
@@ -247,3 +249,4 @@ namespace M3d {
   //****************************************
 
 }// end namesapce
+#endif
