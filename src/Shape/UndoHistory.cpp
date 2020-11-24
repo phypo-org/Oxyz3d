@@ -2,6 +2,7 @@
 
 
 #include <ostream>
+#include <fstream>
 #include <istream>
 #include <sstream>
 
@@ -13,15 +14,28 @@ namespace PP3d {
 
 
   //*************************************
-  bool UndoHistory::sav(  DataBase & iDb, Selection *iSel )
+  bool UndoHistory::sav(  DataBase & iDb, Selection *iSel,  const char * iSavName )
   {
     std::ostringstream lOs;
     MySav lSav( lOs );
+    
     if( lSav.save( iDb, iSel ) == true )
-      {	  
+      {
+
+    if( iSavName != nullptr ){
+      
+      std::ofstream lOut;						
+      lOut.open( iSavName );
+      if( lOut.good() )
+      {
+	std::cout << "<<<" <<  lOs.str()  << ">>>" << std::endl;
+	lOut << lOs.str() << std::flush ;
+      }
+    }
+  	
 	if( cCurrent >= 0 && cHistoSav.size() && cCurrent != getLast() )
 	  {
-	    std::cout << "HISTO ERASE " << +cCurrent+1 << std::endl;
+	    //	    std::cout << "HISTO ERASE " << +cCurrent+1 << std::endl;
 	    cHistoSav.erase( cHistoSav.begin()+cCurrent+1, cHistoSav.end());
 	  }
 	  
@@ -55,11 +69,11 @@ namespace PP3d {
     
     cCurrent--;
 
-    std::cout << "###################################################" << std::endl;
-      std::cout <<  "UndoHistory::readPrev "<< cCurrent
-		<< "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>"
-		<< std::endl;
-      std::cout << "###################################################" << std::endl;
+    //    std::cout << "###################################################" << std::endl;
+    //      std::cout <<  "UndoHistory::readPrev "<< cCurrent
+    //		<< "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>"
+    //		<< std::endl;
+      //     std::cout << "###################################################" << std::endl;
 
     std::istringstream lIs( cHistoSav[cCurrent] );
       

@@ -679,7 +679,7 @@ namespace PP3d {
   //---------------------------------------------------------
   //---------------------------------------------------------
   //---------------------------------------------------------
-  // Les Free ne sont pas tr&s au point !!!
+  // Les Free ne sont pas trés au point !!!
   
   void DataBase::freePoint( PointPtr ioPt )
   {
@@ -688,7 +688,7 @@ namespace PP3d {
       {
 	ioPt->razId();
 	ioPt->clear();
-	cFreePoints.push( ioPt );
+	//	cFreePoints.push( ioPt );
       }
   }
   //---------------------------------------------------------
@@ -715,7 +715,7 @@ namespace PP3d {
 	  
 	ioLine->razId();
 	ioLine->clear();
-	cFreeLines.push( ioLine );
+	//	cFreeLines.push( ioLine );
       }
   }
   //---------------------------------------------------------
@@ -736,7 +736,7 @@ namespace PP3d {
 	ioFacet->razId();
 	// faire un free des lignes 
 	ioFacet->clear();
-	cFreeFacets.push( ioFacet );
+	//	cFreeFacets.push( ioFacet );
       }
   }
   //---------------------------------------------------------
@@ -755,7 +755,7 @@ namespace PP3d {
 	ioPoly->razId();
 	// faire un free des facettes 
 	ioPoly->clear();
-	cFreePolys.push( ioPoly );
+	//	cFreePolys.push( ioPoly );
       }
   }
   //************************************

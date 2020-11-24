@@ -1039,7 +1039,7 @@ namespace M3d {
       {
 	PP3d::Point3d lResult = TheAppli.getDatabase()->getCursorPosition();
 
-	TheAppli.round( lResult );
+	TheAppli.roundInput( lResult );
 	
 	if( iFinalize )
 	  TheAppli.getDatabase()->addPointToCurrentLine( lResult );

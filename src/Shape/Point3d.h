@@ -302,9 +302,9 @@ namespace PP3d {
     {
       if( iVal == 0 ) return;
 	
-      cX = cX - fmod(cX , iVal);      
-      cY = cY - fmod(cY , iVal);
-      cZ = cZ - fmod(cZ , iVal);
+      cX = cX - fmod(cX, iVal);      
+      cY = cY - fmod(cY, iVal);
+      cZ = cZ - fmod(cZ, iVal);
     }
   };
 	

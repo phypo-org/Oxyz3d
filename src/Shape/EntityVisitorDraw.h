@@ -83,7 +83,7 @@ namespace PP3d{
 
     GLuint cNumLineEnd;
     GLuint cNumLine;
-    
+    bool cNoDraw = false;
 			
     VisitorDrawFacet( ViewProps& pViewProps, ObjProps& pObjProps )
       :cViewProps( pViewProps)

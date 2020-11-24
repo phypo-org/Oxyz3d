@@ -24,6 +24,9 @@ namespace M3d {
     //Save
     const std::string sSaveDefault = "default.oxyz";
     std::string cLastSave = sSaveDefault;
+
+    bool cAutoSave = true;
+    int cAutoSaveFrequency= 5;
       
     //Dbg
     int cDbgEvt = 0;
@@ -45,12 +48,16 @@ namespace M3d {
     bool cSelectPassOverLighting = true ; // inlight entity when passing on
     int  cSelectPickingSize=10;
 
+    
+
      friend class PPSingletonCrtp;
       
     Preference();
     
     void initFromIni( PPu::PPConfig & iConfig );    
     void initFromArg( PPu::PPArgs   & iArgs );
+    void resetToDefault();
+    void resetToFile();
   };
   //*********************************
 

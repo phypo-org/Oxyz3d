@@ -64,8 +64,19 @@ AFAIRE
 
 o PORTAGE WINDOWS
 -----------------------------------------------
-o Saisie numerique pour les rotation/translation/scale TAB comme dans Wings
+o Prise en compte des facettes convexe !!!!
+  - Pour le tracé : utilisation du Stencil buffer (faire tourner des demos)
+  - Pour la triangulation (notament pour stl)  : la lib polytri2
 -----------------------------------------------
+o Triangulation d'un nuage de point
+  Algo de Delaunay - trouver une lib !
+----------------------------------------------
+o Subdivision Doo Sabatin
+-----------------------------------------------
+o Creer un composant pour la saisie de nombre avec utilsation de la
+roulette de la souris (comme pour Wings)
+-----------------------------------------------
+o Saisie numerique pour les rotation/translation/scale TAB comme dans Wings
 -----------------------------------------------
 o Inversion de la selection !
 o Regroupement d'objets en ensemble / posibilités de les selectionner
@@ -79,8 +90,6 @@ o Commande pour rejouer la derniére commande
 o Extrusion de points ?
 ----------------------------------------------
 o Pontage
-----------------------------------------------
-o Subdivision Doo Sabatin
 ----------------------------------------------
 o Intrude
 ----------------------------------------------

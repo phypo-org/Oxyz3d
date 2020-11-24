@@ -24,7 +24,7 @@
 #define TheSelect          TheAppli.cSelect
 #define TheSelectTransform TheAppli.cSelectTransform
    
-#define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect )
+#define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect, Application::Instance().autoSave() )
 #define TheAppli M3d::Application::Instance()
 #define TheBase  (*TheAppli.getDatabase())
 
@@ -125,7 +125,10 @@ namespace M3d{
     
     double getRoundingInput()                        { return cRoundingInput; }
     void   setRoundingInput( double iRoundingInput ) { cRoundingInput = iRoundingInput; }
-    void   round( PP3d::Point3d & ioPt ) { if( cRoundingInput !=0 ) ioPt.round( cRoundingInput ); }
+    void   roundInput( PP3d::Point3d & ioPt ) {
+      if( cRoundingInput !=0 )
+	ioPt.round( cRoundingInput );
+    }
     
     
     int init( int argc, char* argv[] );
@@ -227,6 +230,8 @@ namespace M3d{
 	}
       return false;
     }
+    //---------------------------
+   const char * autoSave();
     //---------------------------
     bool isSelectAxis() {
 

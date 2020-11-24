@@ -56,6 +56,13 @@ namespace M3d {
 
     MyIntInput     * cHistoMaxDept;
 
+
+    Fl_Light_Button * cAutoSave;
+    MyIntInput      * cAutoSaveFrequency;
+
+
+
+
     MyIntInput* cDbgEvt ;
     MyIntInput* cDbgAct ;
     MyIntInput* cDbgDrw;
@@ -75,6 +82,17 @@ namespace M3d {
       Fl::delete_widget( DiagPref.cMyWindow);
       DiagPref.cMyWindow = nullptr;
     }
+     //----------------------------------------
+    static void DefaultCB( Fl_Widget*, void*pUserData )
+    {
+      Preference::Instance().resetToDefault();
+    }
+     //----------------------------------------
+    static void ReloadCB( Fl_Widget*, void*pUserData )
+    {
+      Preference::Instance().resetToFile();
+    }
+    
     //----------------------------------------
 #undef  GET_INT_VALUE
 #define GET_INT_VALUE(A) MyPref.A = atoi( DiagPref.A->value())
@@ -82,7 +100,7 @@ namespace M3d {
 #undef  GET_BOOL_VALUE
 #define GET_BOOL_VALUE(A)  MyPref.A = DiagPref.A->value() == 1;
     
-    static void OkCB( Fl_Widget*, void*pUserData )
+ static void OkCB( Fl_Widget*, void*pUserData )
     {  
       Application::Instance().redrawAllCanvas3d();
 
@@ -95,6 +113,9 @@ namespace M3d {
       size_t lMaxHisto = atoi( DiagPref.cHistoMaxDept->value());
       PP3d::UndoHistory::Instance().setMaxHisto( lMaxHisto );
 	
+      GET_BOOL_VALUE( cAutoSave);
+      GET_INT_VALUE( cAutoSaveFrequency );
+      
       //Debug
       GET_INT_VALUE(cDbgEvt);
       GET_INT_VALUE(cDbgAct);
@@ -108,9 +129,7 @@ namespace M3d {
       GET_INT_VALUE(cDbgFil);
       GET_INT_VALUE(cDbgIni);
 
-	
-
-     
+	     
       Fl::delete_widget( DiagPref.cMyWindow);
       DiagPref.cMyWindow = nullptr;
     }
@@ -119,7 +138,8 @@ namespace M3d {
   public:
     //----------------------------------------
     bool isAlreadyRunning() { return DiagPref.cMyWindow != nullptr; }
-  
+
+    
 #define INTPUT_INT(A,B) { A = new MyIntInput( lX, lY, 50, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( std::to_string(MyPref.A).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 #define INTPUT_VAR_INT(A,V,B) { A = new MyIntInput( lX, lY, 50, lH, B, V ); lY += A->h() + lMarge; ; A->value( std::to_string(V).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 
@@ -138,6 +158,7 @@ namespace M3d {
       int lY  = lMarge;
       
       cMyWindow = new Fl_Double_Window(lWgroup + lMarge*4+100, lHgroup+lMarge*4+ 100, "Preferences");
+      cMyWindow->set_modal();
       cMyWindow->callback((Fl_Callback*)CancelCB, nullptr);
 
       {
@@ -146,8 +167,11 @@ namespace M3d {
 	//===================================
 	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "File");
-	  lX = lMarge;
+	  lX = lMarge+300;;
 	  lY = lMarge;
+	  INTPUT_BOOL( cAutoSave, "Auto save");
+	  INTPUT_INT( cAutoSaveFrequency, "Auto save frequency");
+	  
 	  lGr->end();
 	  Fl_Group::current()->resizable(lGr);
 	}
@@ -156,13 +180,16 @@ namespace M3d {
 	  lX  = lMarge+300;
 	  lX0 = lMarge;
 	  lY = lMarge;
-	  
+
+
 	  INTPUT_BOOL( cSelectPassOverLighting, "Inlight entity when pass over");
 	  //	  cSelectPassOverLighting->value( MyPref.cSelectPassOverLighting);
-
+      
 	  INTPUT_INT( cSelectPickingSize, "Precision of picking");
 	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
-
+ 
+	  INTPUT_VAR_INT( cHistoMaxDept, PP3d::UndoHistory::Instance().getMaxHisto(), "Undo level");
+	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
 	  
 	  lGr->end();
 	  lGr->hide();
@@ -173,10 +200,6 @@ namespace M3d {
 	  lX  = lMarge+300;
 	  lX0 = lMarge;
 	  lY = lMarge;
-	  
-
-	  INTPUT_VAR_INT( cHistoMaxDept, PP3d::UndoHistory::Instance().getMaxHisto(), "Undo level");
-	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
 
 	  
 	  lGr->end();
@@ -199,6 +222,8 @@ namespace M3d {
 	
 	  //	  cDbgEvt = new MyIntInput( lX, lY, 200, lH, "Debug Event", MyPref.cDbgEvt );
 	  //	  lY += cDbgEvt->h() + lMarge;
+
+
 	  INTPUT_INT( cDbgEvt, "Debug Event (windows events)    " );	  
 	  INTPUT_INT( cDbgAct, "Debug Action                    " );
 	  INTPUT_INT( cDbgDrw, "Debug Draw                      " );
@@ -210,6 +235,7 @@ namespace M3d {
 #ifdef USING_LUA    
 	  INTPUT_INT( cDbgLua, "Debug Lua                       " );
 #endif	  
+	  	  
 	  /*
 
 	  
@@ -227,17 +253,21 @@ namespace M3d {
 	lTabs->end();
 	Fl_Group::current()->resizable(lTabs);
       }
-      lY = lHgroup+lMarge*8;
-      
+      lY = lHgroup+lMarge*8;      
       Create<Fl_Button>( lMarge, lY, 75, 25, "OK", (Fl_Callback*)OkCB);     
       
       Create<Fl_Button>( lMarge+200, lY, 75, 25, "Cancel", (Fl_Callback*)CancelCB );
       
-     
+      Create<Fl_Button>( lMarge+400, lY, 75, 25, "Default", (Fl_Callback*)DefaultCB);     
+      
+      Create<Fl_Button>( lMarge+600, lY, 100, 25, "Reload file", (Fl_Callback*)ReloadCB );
+      
       
       cMyWindow->end();		
       cMyWindow->show( 0, nullptr);
-    }
+      
+      while( Fl::wait() && cMyWindow != nullptr );
+   }
   };
   //************************
 } // namespace

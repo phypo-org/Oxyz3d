@@ -9,7 +9,7 @@
 #include <sstream>
 #include <ostream>
 
-
+#include "Preference.h"
 
 namespace M3d{
 
@@ -115,5 +115,26 @@ namespace M3d{
   {
     WinObjTree::Instance().rebuild();		
   }
+  //----------------------------------------
+  const char * Application::autoSave()
+  {
+    static std::string cAutoSave="AutoSave.oxyz";
+    static int cNbSav=1;
+
+    if( Preference::Instance().cAutoSave )
+      {
+	if( cNbSav++ % Preference::Instance().cAutoSaveFrequency == 0 )
+	  {
+	    std::cout << "Application::autoSave return " << cAutoSave.c_str() << std::endl;
+	    return cAutoSave.c_str();
+	  }
+      }
+    std::cout << "Application::autoSave return NULL" << std::endl;
+
+    return nullptr;
+  }
+	 
+
+  
   //************************************
 }

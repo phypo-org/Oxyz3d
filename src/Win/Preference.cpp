@@ -5,6 +5,7 @@
 #include "Utils/ErrLog.h"
 
 #include "Shape/DebugVars.h"
+#include "Application.h"
 
 namespace M3d {
 
@@ -24,7 +25,23 @@ namespace M3d {
 #define INIT_DBG( VAR )  iConfig.get( "Debug", "Dbg ## VAR", cDbg ## VAR  )
 
 #define INIT_SEL( VAR )  iConfig.get( "Select", "## VAR", cSelect ## VAR  )
- 
+
+  void Preference::resetToDefault()
+  {
+    cLastSave = sSaveDefault;
+    cAutoSave = true;
+    cMouseWheel = 15;
+
+    cDbgEvt = cDbgAct = cDbgTree = cDbgDrw = cDbgBaz = cDbgSel = cDbgFil = cDbgIni = 0;
+    
+  }
+  //---------------------------------------
+  void Preference::resetToFile()
+  {
+    resetToDefault();
+    initFromIni( Application::Instance().getConfig() );    
+  }
+  //---------------------------------------
   void Preference::initFromIni( PPu::PPConfig & iConfig )
   {
     INIT_DBG( Evt );

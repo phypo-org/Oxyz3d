@@ -22,7 +22,7 @@ bool CallDialogInt( double & ioVal);
 
 enum class TypeRevol{ RevolX, RevolY, RevolZ, RevolAxis };
 
-void CallDialogRevol( TypeRevol pTypeRevol );
+extern void CallDialogRevol( TypeRevol pTypeRevol );
 
 extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
 extern bool CallDialogInputInt( const char* iLabel, int & ioVal);

@@ -34,7 +34,7 @@ namespace PP3d {
 
     int getLast() { return ((int)cHistoSav.size())-1; }
     
-    bool sav(  DataBase & iDb, Selection * iSel );
+    bool sav(  DataBase & iDb, Selection * iSel, const char * iSavFile = nullptr);
     bool readPrev( DataBase & oDb, Selection * ioSel );
     bool readNext( DataBase & oDb, Selection * ioSel );
     void cancelLastSav();
