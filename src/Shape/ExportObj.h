@@ -1,5 +1,5 @@
-#ifndef  H__ExportObj__H
-#define  H__ExportOb__H
+#ifndef  H__EXPORTOBJ__H
+#define  H__EXPORTOBJ__H
 
 #include <ostream>
 #include <istream>
