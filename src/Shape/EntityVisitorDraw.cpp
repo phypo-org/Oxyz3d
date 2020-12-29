@@ -13,7 +13,7 @@ namespace PP3d {
 
   void DrawConcavFacet( Facet* pFacet ){
 
-    // REGUPERER TOUT LES POINTS DE LA FACETTES : A OPTIMISER !
+    // A FAIRE : OPTIMISER la recuperation des points !
 	
 	SortEntityVisitorPoint lVisit;
 	pFacet->execVisitor( lVisit );
