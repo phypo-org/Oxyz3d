@@ -11,6 +11,62 @@ namespace PP3d {
 
   //*********************************************
 
+  void DrawConcavFacet( Facet* pFacet ){
+
+    // REGUPERER TOUT LES POINTS DE LA FACETTES : A OPTIMISER !
+	
+	SortEntityVisitorPoint lVisit;
+	pFacet->execVisitor( lVisit );
+	//	std::cout << "Points:" << lVisit.cVectPoints.size()  << std::endl;
+	
+	glDepthMask( GL_FALSE );  // disable depth testing SINON ça donne n'importe quoi !!!!!!!!!!!!!!!!
+	// disable writing to color buffer
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	
+ 
+	glEnable(GL_STENCIL_TEST);
+	glClear(GL_STENCIL_BUFFER_BIT);
+    
+	// set stencil buffer to invert value on draw, 0 to 1 and 1 to 0
+	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilOp(GL_KEEP, GL_INVERT, GL_INVERT);
+	   
+  
+	// We draw all triangles possible from 0 to other point two by two
+	// use GL_TRIANGLE_FAN
+	
+	glBegin( GL_TRIANGLES );
+	for( size_t i = 1; i+1 < lVisit.cVectPoints.size(); ++i )
+	  {
+	//	std::cout << "\t" << 0 <<" " << i <<" "<< i+1  << sFL_DOUBLEtd::endl;
+	    glVertex3dv( lVisit.cVectPoints[0]->get().vectForGL() );	  
+	    glVertex3dv( lVisit.cVectPoints[ i ]->get().vectForGL() );
+	    glVertex3dv( lVisit.cVectPoints[ i+1]->get().vectForGL() );
+	  }
+	glEnd();
+	
+	// enable color again
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);	
+	glDepthMask( GL_TRUE );  // !!!!!!!!!!!!!!!!!!!!!
+
+	// set stencil buffer to only keep pixels when value in buffer is 1
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	
+ 	
+	glBegin( GL_TRIANGLES );
+	for( size_t i = 1; i+1 < lVisit.cVectPoints.size(); ++i )
+	  {
+	    glVertex3dv( lVisit.cVectPoints[ 0]->get().vectForGL() );	  
+	    glVertex3dv( lVisit.cVectPoints[ i ]->get().vectForGL() );
+	    glVertex3dv( lVisit.cVectPoints[i+1 ]->get().vectForGL() );
+	  }
+	glEnd();
+
+	glDisable(GL_STENCIL_TEST);
+  }
+  //---------------------------	
+
   void DrawNormalFacet( Facet* pFacet )
   {
 
@@ -194,120 +250,17 @@ namespace PP3d {
 	glBegin(GL_TRIANGLES);
 	execAfterBegin(pFacet);	
       }
-    	
+    /*	
     else if(  pFacet->getLines().size() == 4 )
       {   
 	glBegin(GL_QUADS);
 	execAfterBegin(pFacet);				       
       }
-    
-    /*
-     else 
-      {
-		glBegin( GL_POLYGON );
-		execAfterBegin(pFacet);
-	    }
-    */
-
-    //	cNoDraw =
-    /*
-    else{
-      // prepare stencil buffer
-      glEnable(GL_STENCIL_TEST);
-      glClear(GL_STENCIL_BUFFER_BIT);
-    
-      // set stencil buffer to invert value on draw, 0 to 1 and 1 to 0
-      glStencilFunc(GL_ALWAYS, 0, 1);
-      glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
-    
-      // disable writing to color buffer
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-      SortEntityVisitorPoint lVisit;
-      pFacet->execVisitor( lVisit );
-      std::cout << "Points:" << lVisit.cVectPoints.size()  << std::endl;
-
-      // draw polygon into stenci      glDisable(GL_STENCIL_TEST);
-l buffer  drawVertices(GL_TRIANGLE_FAN, vertices, n_vertices);
-      glBegin( GL_TRIANGLE_FAN);
-      for( Point * lPt : lVisit.cVectPoints )
-	{
-	  glVertex3dv( lPt->get().vectForGL() );
-	}
-     
-      // set stencil buffer to only keep pixels when value in buffer is 
-      glStencilFunc(GL_EQUAL, 1, 1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    
-      // enable color again
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    
-      glBegin( GL_TRIANGLE_FAN);
-      for( Point * lPt : lVisit.cVectPoints )
-	{
-	  glVertex3dv( lPt->get().vectForGL() );
-	}
-      glDisable(GL_STENCIL_TEST);
-    }
     */
    else 
       {
-	// REGUPERER TOUT LES POINTS DE LA FACETTES
-	
-	SortEntityVisitorPoint lVisit;
-	pFacet->execVisitor( lVisit );
-	//	std::cout << "Points:" << lVisit.cVectPoints.size()  << std::endl;
-	
-	//    	glClearStencil(0);
-	glEnable(GL_STENCIL_TEST);
-	glClear(GL_STENCIL_BUFFER_BIT);
-    
-	// set stencil buffer to invert value on draw, 0 to 1 and 1 to 0
-	glStencilFunc(GL_ALWAYS, 1, 1);
-	glStencilOp(GL_KEEP, GL_INVERT, GL_INVERT);
-	
-	//	glStencilFunc(GL_ALWAYS, 0, 1);
-	//	glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
-   
-	// disable writing to color buffer
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  
-	// On trace tout les triangles entre le premier point et les autres
-	
-	glBegin( GL_TRIANGLES );
-	for( size_t i = 1; i+1 < lVisit.cVectPoints.size()/2; ++i )
-	  {
-	//	std::cout << "\t" << 0 <<" " << i <<" "<< i+1  << sFL_DOUBLEtd::endl;
-	    glVertex3dv( lVisit.cVectPoints[ 0]->get().vectForGL() );
-	    glVertex3dv( lVisit.cVectPoints[ i ]->get().vectForGL() );
-	    glVertex3dv( lVisit.cVectPoints[i+1]->get().vectForGL() );	  
-	  }
-	glEnd();
-	
-	// enable color again
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	
-	
-	// set stencil buffer to only keep pixels when value in buffer is 1
-	glStencilFunc(GL_EQUAL, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	
-	glColor3f(0.1, 0.8, 0.1);
-	
-	glBegin( GL_TRIANGLES );
-	for( size_t i = 1; i+1 < lVisit.cVectPoints.size(); ++i )
-	  {
-	    glVertex3dv( lVisit.cVectPoints[ 0 ]->get().vectForGL() );
-	    glVertex3dv( lVisit.cVectPoints[ i ]->get().vectForGL() );
-	    glVertex3dv( lVisit.cVectPoints[i+1]->get().vectForGL() );	  
-	  }
-	glEnd();
-	
-	//	glClear(GL_STENCIL_BUFFER_BIT);	  
-
-	glDisable(GL_STENCIL_TEST);
-	//	  glBegin( GL_POLYGON );
-	//	execAfterBegin(pFacet);
+	execAfterBegin(pFacet);
+	DrawConcavFacet( pFacet );    
       }
   }
 
@@ -358,7 +311,11 @@ l buffer  drawVertices(GL_TRIANGLE_FAN, vertices, n_vertices);
 	glBegin(GL_TRIANGLES);
 	execAfterBegin(pFacet);
       }
-			
+    else {
+  	execAfterBegin(pFacet);
+	DrawConcavFacet( pFacet );
+  }
+    /*
     else if(  pFacet->getLines().size() == 4 )
       {   
 	glBegin(GL_QUADS);
@@ -369,6 +326,7 @@ l buffer  drawVertices(GL_TRIANGLE_FAN, vertices, n_vertices);
 	glBegin( GL_POLYGON );
 	execAfterBegin(pFacet);
       }					
+    */
   }
   void VisitorDrawPoly::execEndFacet( FacetPtr pFacet )
   {

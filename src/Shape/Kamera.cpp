@@ -42,11 +42,9 @@ namespace PP3d{
   }
   //------------------------------------------------
   void Kamera::initGL()
-  {	
-    glClearDepth(1.0f);
-    glDepthFunc(GL_LEQUAL);
+  {    
     glEnable( GL_DEPTH_TEST );
-    glDepthFunc(GL_LESS); // PHIPO 20201114 ???
+    glDepthFunc(GL_LESS);
 		
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		
@@ -61,6 +59,7 @@ namespace PP3d{
 
     if( cSmooth )		
       {
+	
 	glShadeModel( GL_SMOOTH );
 	glEnable( GL_POINT_SMOOTH );
 	glEnable( GL_LINE_SMOOTH);
