@@ -77,4 +77,13 @@ namespace PP3d {
 	 return;
        }  
   }		
+  //*********************************************
+  void VisitorConcaveFacet::execBeginFacet( Facet* pFacet )
+  {
+    //   std::cout << "    VisitorConcaveFacet::execBeginFacet" << std::endl;
+   
+    if(  pFacet->computeConcave() ){
+      cCpt++;
+    }
+  }		
  }// namespace

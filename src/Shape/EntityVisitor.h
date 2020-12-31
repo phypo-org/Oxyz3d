@@ -115,6 +115,15 @@ namespace PP3d{
     virtual void execBeginLine( Line* pLine ) override;
   };
   //*********************************************
+  // calcule et stocke la normale pour chaque facette
+  struct VisitorConcaveFacet : public EntityVisitor	{
+  protected:
+    int cCpt=0;
+  public:
+    virtual void execBeginFacet( Facet* pFacet )override;
+    int count() { return cCpt; }
+  };
+  //*********************************************
   struct VisitorTrace : public EntityVisitor{
 
     std::ostream & cOs;

@@ -42,7 +42,8 @@ int main(int argc, char **argv)
       if( PP3d::MyRead::Read(lVal.c_str(),
 			     *Application::Instance().getDatabase(), &TheSelect ))
 	{
-	  Application::Instance().redrawAll();
+	  Application::Instance().redrawAll(PP3d::Compute::FacetAll
+					    );
 	}
     }
   

@@ -25,6 +25,18 @@
 
 namespace PP3d {
 
+
+  
+
+  enum class Compute{
+    Nothing,
+      FacetNormal,
+      FacetConcave,
+      FacetAll
+      };
+    
+  
+
   class Entity;
   class Point;
   class Line;
@@ -356,6 +368,7 @@ namespace PP3d {
 
     Point3d cNorm;
     Point3d cNoNorm;
+    bool    cIsConcave = false;
 
   public:
     Facet() {;}
@@ -454,6 +467,8 @@ namespace PP3d {
     void         execVisitor( EntityVisitor& pVisit )override;
     void         inverseLines();
     Point3d      getCenter();
+    bool         computeConcave();
+    bool         isConcave() { return cIsConcave; }
 
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;

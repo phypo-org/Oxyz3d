@@ -61,6 +61,8 @@ namespace M3d{
       ScaleNormal
       };
 
+
+
   enum class InputPlaneType { X, Y, Z, Free };
   
   //************************************
@@ -167,18 +169,24 @@ namespace M3d{
 #endif
 		
     Win3d & createNewWin3d( int pW, int pH );
-    void    redrawAllCanvas3d();
+    void    redrawAllCanvas( PP3d::Compute iCompute);
     Win3d*  findCanvas3d( int iId );
     void    changeAllSelectType( PP3d::SelectType pType );
 		
     void    createObjectTree( );
     void    redrawObjectTree();
 	  
-    void redrawAll()
+    void redrawAll( PP3d::Compute iCompute )
     {
-      redrawAllCanvas3d();
+      redrawAllCanvas( iCompute   );
       redrawObjectTree();
     }
+    
+    void recomputeAll( PP3d::Compute iCompute ) {
+      getDatabase()->recomputeAll( iCompute );
+      getDatabaseTransform()->recomputeAll( iCompute );
+    }
+      
 	
     void setCursorPosition( PP3d::Point3d& pPos);
 

@@ -31,6 +31,7 @@
 #include "Shape/SavRead.h"
 #include "Shape/PP3dUtils.h"
 #include "Shape/ViewProps.h"
+#include "Shape/DataBase.h"
 
 #include "Modif/Modif.h"
 
@@ -529,7 +530,7 @@ namespace M3d {
 	  {
 	    //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
 	    PushHistory();	    
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll( PP3d::Compute::FacetAll);
 	  }
       }
     //===================== Revolution ==============
@@ -571,7 +572,7 @@ namespace M3d {
       {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);  
-	TheAppli.redrawAll();	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	
 	//============== TRANSFORMATION ====================
@@ -619,7 +620,7 @@ namespace M3d {
 	    lPtr->get().x() =  lAvg.x();
 	  }
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);
 
       }
     else if( strcmp( m->label(), StrMenu_FlattenY ) == 0)
@@ -638,7 +639,7 @@ namespace M3d {
 	    lPtr->get().y() =  lAvg.y();
 	  }
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	
       }
     else if( strcmp( m->label(), StrMenu_FlattenZ ) == 0)
@@ -657,7 +658,7 @@ namespace M3d {
 	    lPtr->get().z() =  lAvg.z();
 	  }
 	PushHistory();
-	TheAppli.redrawAll();	 	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
       }
     else if( strcmp( m->label(), StrMenu_FlattenAvg ) == 0)
       {
@@ -691,7 +692,7 @@ namespace M3d {
 	      }
 	  }
 	PushHistory();
-	TheAppli.redrawAll();	 	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
       }
     else if( strcmp( m->label(), StrMenu_FlattenAxis ) == 0)
       {
@@ -734,7 +735,7 @@ namespace M3d {
 	  }
 	
 	PushHistory();
-	TheAppli.redrawAll();	 	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
       }
   }
   //-------------------------------------------
@@ -832,7 +833,7 @@ namespace M3d {
       }
 	
     PushHistory();
-    TheAppli.redrawAll();	 	
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
   }
   //-------------------------------------------
   static bool DuplicateSelection()
@@ -878,7 +879,7 @@ namespace M3d {
 	  TheSelect.execVisitorOnEntity( lVisitInv );
 	
 	  PushHistory();	    
-	  TheAppli.redrawAll();
+	  TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	}
       else
 	//============== TRANSFORMATION ====================
@@ -995,47 +996,47 @@ namespace M3d {
 	  {	
 	    DuplicateSelection();
 	    PushHistory();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	  }
 	else if( strcmp( m->label(), StrMenu_DupMoveX ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::MoveX);
 	  }
 	else if( strcmp( m->label(), StrMenu_DupMoveY ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::MoveY);
 	  }
 	else if( strcmp( m->label(), StrMenu_DupMoveZ ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::MoveZ);
 	  }
 	else if( strcmp( m->label(), StrMenu_DupRotX ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::CenterRotX);
 	  }
 	else if( strcmp( m->label(), StrMenu_DupRotY ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::CenterRotY);
 	  }
 	else if( strcmp( m->label(), StrMenu_DupRotZ ) == 0)
 	  {	
 	    DuplicateSelection();
-	    TheAppli.redrawAll();	
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
 	  }
@@ -1051,7 +1052,7 @@ namespace M3d {
     if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() ))
       {
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);
       }
   }
   //-------------------------------------------
@@ -1074,7 +1075,8 @@ namespace M3d {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll
+			   );
       }    
   }
   //-------------------------------------------
@@ -1092,7 +1094,7 @@ namespace M3d {
 	TheSelectTransform.changeSelectType( PP3d::SelectType::Facet );       
 	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
-	TheAppli.redrawAll();	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	
 	//	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	//	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
       }  
@@ -1112,7 +1114,7 @@ namespace M3d {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
-	TheAppli.redrawAll();       	    
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);       	    
       }  
   }
   //-------------------------------------------
@@ -1141,7 +1143,7 @@ namespace M3d {
 	TheSelect.removeAll();
 	TheSelect.addGoodEntityFor(lNewFacets);
 	PushHistory();
-	TheAppli.redrawAll();       	    
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);       	    
       }  
   }
   //-------------------------------------------
@@ -1175,7 +1177,7 @@ namespace M3d {
     TheSelect.removeAll();
     //    TheSelect.addGoodEntityFor(lNewFacets);
     PushHistory();
-    TheAppli.redrawAll();
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackModifyShape( Fl_Widget* w, void* pUserData)
@@ -1206,7 +1208,7 @@ namespace M3d {
 	  }
 	TheSelect.removeAll();	
 	PushHistory();	    
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);
       }
     else
     if( strcmp( m->label(), StrMenu_CreateShapeAddFacet ) == 0)
@@ -1254,7 +1256,7 @@ namespace M3d {
 	    lPoly->addFacet( lFacet );
 	    TheSelect.removeAll();	
 	    PushHistory();	    
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	  }
       }
   }
@@ -1323,7 +1325,7 @@ namespace M3d {
 	//Attention au lignes inverses doubles des facettes !
 	PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
 	PushHistory();
-	TheAppli.redrawAll();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);
       } 
   }
   

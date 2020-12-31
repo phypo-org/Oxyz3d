@@ -541,7 +541,7 @@ namespace M3d {
 	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
 	    TheAppli.setDatabase( luBase ); // on prend la nlle base
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	  }
       }
     else    //========================================
@@ -650,7 +650,7 @@ namespace M3d {
 		    TheSelect.removeAll();
 		    TheSelectTransform.removeAll();
 		    
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), StrMenu_DeleteSelect) == 0)
@@ -658,7 +658,7 @@ namespace M3d {
 		    cout << "Select menu :" << StrMenu_DeleteSelect << endl;
 		    TheSelect.deleteAllFromDatabase( *TheAppli.getDatabase());
 		    PushHistory();			    
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), StrMenu_AddSelectCopyToInput) == 0)
@@ -666,7 +666,7 @@ namespace M3d {
 		    cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
 		    TheSelect.addSelectionToInput( *TheAppli.getDatabase(), false);
 		    PushHistory();
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
     //=================== UTILS ====================    
@@ -790,7 +790,7 @@ namespace M3d {
 		      {
 			lPoint->get() -=  lVisitMinMax.getMin().y();
 		      }				
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
 		else if(  strcmp( m->label(), StrMenu_PutUnderGround	) == 0)
 		  {		    
@@ -803,7 +803,7 @@ namespace M3d {
 		      {
 			lPoint->get() -=  lVisitMinMax.getMax().y();
 		      }				
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
 		else if(  strcmp( m->label(), StrMenu_Recenter	) == 0)
 		  {		    
@@ -819,7 +819,7 @@ namespace M3d {
 		      {
 			lPoint->get() -=  lCenter;
 		      }				
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
 		else if(  strcmp( m->label(), StrMenu_InputPlaneX ) == 0)
 		  {
@@ -868,44 +868,44 @@ namespace M3d {
 		    lKamera.reset(); 
 		    lKamera.raz45(); 
 		    lKamera.scaleTo(1.0);
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongX ) == 0)
 		  {
 		    lKamera.razX(); 
- 		    TheAppli.redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongY ) == 0)
 		  {
 		    lKamera.razY(); 
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlongZ ) == 0)
 		  {
 		    lKamera.razZ(); 
- 		    TheAppli.redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
   		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_X ) == 0)
 		  {
 		    lKamera.razXInv(); 
- 		    TheAppli.redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_Y ) == 0)
 		  {
 		    lKamera.razYInv(); 
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
    		  }
 		else if( strcmp( m->label(), StrMenu_ViewAlong_Z ) == 0)
 		  {
 		    lKamera.razZInv(); 
- 		    TheAppli.redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
   		  }
     		else if( strcmp( m->label(), StrMenu_ViewRecenterOnSelection ) == 0)
 		  {
 		    PP3d::VisitorMinMax lVisitMinMax;
 		    TheSelect.execVisitorOnEntity ( lVisitMinMax );
 		    lKamera.zoomTo( lVisitMinMax ); 
- 		    TheAppli.redrawAllCanvas3d();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
     //================= WINDOWS ===================
 		else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
@@ -937,13 +937,13 @@ namespace M3d {
 		else if( strcmp( m->label(), 	StrMenu_Demo1 ) == 0)
 		  {
 		    TheAppli.getDatabase()->demo1();
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
 		else if( strcmp( m->label(), 	StrMenu_Demo2 ) == 0)
 		  {
 		    TheAppli.getDatabase()->demo2();
-		    TheAppli.redrawAllCanvas3d();
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
 

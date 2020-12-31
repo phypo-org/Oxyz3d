@@ -62,13 +62,13 @@ namespace M3d {
 
   CLUA_OPEN_CODE( LUA_RedrawAllCanvas3d, 0);
   
-  Application::Instance().redrawAllCanvas3d();
+  Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_RedrawAll, 0);
   
-  Application::Instance().redrawAll();
+  Application::Instance().redrawAll(PP3d::Compute::FacetAll);
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
@@ -132,7 +132,7 @@ namespace M3d {
       if( PP3d::MyRead::Read( lua_tostring(pLua, 1),
 			      *Application::Instance().getDatabase(), &TheSelect ))
 	{
-	  Application::Instance().redrawAll();
+	  Application::Instance().redrawAll(PP3d::Compute::FacetAll);
 	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "read ok");
 	}
@@ -195,7 +195,7 @@ namespace M3d {
 	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "import ok");
 	  //	  Application::Instance().getLua().append("OK");
-	  Application::Instance().redrawAll();
+	  Application::Instance().redrawAll(PP3d::Compute::FacetAll);
 	}
       else
 	{

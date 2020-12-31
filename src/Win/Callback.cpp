@@ -194,7 +194,7 @@ namespace M3d {
 	    //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;
 	    
 	    MyPref.cLastSave = lFilename;
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	  }
 	else
 	  {
@@ -218,7 +218,7 @@ namespace M3d {
 	if( OpenBase( TheAppli.getDatabase(), lFilename, false)) // On change les ID !!!!!!!!!!!!!!!!!!!!!
 	  {
 	    MyPref.cLastSave = lFilename;
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	  }
 	else
 	  {
@@ -280,7 +280,7 @@ namespace M3d {
 	std::string lFilename = cFc->value();
 	if( ImportD3dObj(  TheAppli.getDatabase(), lFilename ) ) // On change les ID !!!!!!!!!!!!!!!!!!!!!
 	  {
-	    TheAppli.redrawAll();
+	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
 	  }
 	else
 	  {
@@ -315,7 +315,7 @@ namespace M3d {
       TheSelectTransform.removeAll();
    }
 
-    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
     TheAppli.redrawObjectTree();
   }  //-------------------------------------------
   void RedoCB(Fl_Widget*w, void*pData)
@@ -340,7 +340,7 @@ namespace M3d {
     }
       
  	
-    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
     TheAppli.redrawObjectTree();
   }
   //-------------------------------------------
@@ -410,7 +410,7 @@ namespace M3d {
 
     //    std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
 
-    TheAppli.redrawAll();
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
   //-------------------------------------------
   // Change view mode

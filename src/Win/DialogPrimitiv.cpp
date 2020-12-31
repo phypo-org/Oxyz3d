@@ -176,7 +176,7 @@ namespace M3d {
       lMatTran.initMove( cSliderPosX->value(), cSliderPosY->value(), cSliderPosZ->value() );
       lShape->modify( lMatTran );
 
-      Application::Instance().redrawAllCanvas3d();
+      Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
     }
 
     //----------------------------------------
@@ -431,7 +431,7 @@ namespace M3d {
 
       TheAppli.getDatabase()->cancelCurrentCreation();
 
-      TheAppli.redrawAllCanvas3d();
+      TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 
       Fl::delete_widget( Diag.cMyWindow );
       Diag.cMyWindow = nullptr;
@@ -447,7 +447,7 @@ namespace M3d {
 	  lObj->rename( Diag.cName.c_str() );
 	}
     
-      TheAppli.redrawAll();
+      TheAppli.redrawAll(PP3d::Compute::FacetAll);
       PushHistory();
     
       Fl::delete_widget(Diag.cMyWindow); 

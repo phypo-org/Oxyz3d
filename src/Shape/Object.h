@@ -16,6 +16,7 @@
 
 #include "Utils/PPDate.h"
 
+
 // Cet objet a pour role de chapeauter les Shape
 // il va s'occuper de tout ce qui n'est pas vraiment du graphique 3D
 // nom, id, couleur, texture ...
@@ -98,7 +99,8 @@ namespace PP3d {
     virtual EntityPtr getShape()=0;
 		
 
-    virtual void recomputeAll(ObjProps&pProps);
+    virtual int recomputeAll(ObjProps&pProps,
+			      Compute iCompute);
 
 
     virtual void drawGL( ViewProps& pViewProps );

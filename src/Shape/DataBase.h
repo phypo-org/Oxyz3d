@@ -66,7 +66,7 @@ namespace PP3d {
     //		void add( O3dObj* pObj );
     void addObject( Object* pObj );
     void drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType);
-    void recomputeAll();
+    void recomputeAll( Compute iCompute );
     const std::set<Object*> & getAllObject()  const { return  cContainerObject;}
     const std::unordered_map<EntityId, Entity*>& getEntities() const { return  cEntities;}
 

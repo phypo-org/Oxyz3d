@@ -361,14 +361,14 @@ namespace M3d {
  
 
     // Draw the 3d view of object
-    TheAppli.getDatabase()->recomputeAll();     
+    ///////////    TheAppli.getDatabase()->recomputeAll( );      // AFAIRE : optimiser c'est couteux de le faire a chaque fois
     TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly, cViewInputObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType() );
 
 
     // Draw transformation
     if( cFlagViewTransform )
       {
-	TheAppli.getDatabaseTransform()->recomputeAll();
+	////////	TheAppli.getDatabaseTransform()->recomputeAll();
 	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
       }
 
@@ -421,7 +421,8 @@ namespace M3d {
     // Draw the 3d view of object
     if( TheSelectTransform.getSelectType() == PP3d::SelectType::Null )  // pour les transformations
       {
-	TheAppli.getDatabase()->recomputeAll();     
+	////////
+	TheAppli.getDatabase()->recomputeAll(PP3d::Compute::Nothing);     
 	TheAppli.getDatabase()->drawGL( cViewGen, cViewGen, cViewGen, cViewGen, PP3d::GLMode::Select, TheSelect.getSelectType() );
       }
     /*   else
@@ -464,7 +465,7 @@ namespace M3d {
 	////	    cout << " processHits after Select" <<endl;
 	
 	if( lFlagRedraw )	    
-	  TheAppli.redrawAllCanvas3d();
+	  TheAppli.redrawAll(PP3d::Compute::Nothing);
       }
     return lFlagRedraw;
   }  
@@ -1059,7 +1060,7 @@ namespace M3d {
 	  TheAppli.getDatabase()->viewCurrentPoint( lResult );
 	
 	
-	TheAppli.redrawAllCanvas3d();
+	TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
       }
   }
   /*
@@ -1117,7 +1118,7 @@ namespace M3d {
 	TheAppli.getDatabase()->addPointToCurrentLine( lPt->get() );	
       }
 
-    TheAppli.redrawAllCanvas3d();
+    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
   }
   //---------------------------
   bool Canvas3d::transform2Dto3D(  int pX, int pY,  PP3d::Point3d & iResult )
@@ -1272,7 +1273,7 @@ namespace M3d {
 	    cMode = ModeUser::MODE_SELECT_RECT;
 
 	    userPrepareAction( pEvent );
-	    TheAppli.redrawAllCanvas3d();
+	    TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
 	    return 1;
 	  }
 
@@ -1367,7 +1368,7 @@ namespace M3d {
 	  {
 	    userTransformSelection(pEvent, true );
 	    userTerminateAction( pEvent );
-	    TheAppli.redrawAllCanvas3d();
+	    TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
 	  }
 				
 	if( cMode == ModeUser::MODE_SELECT_RECT )
@@ -1403,11 +1404,10 @@ namespace M3d {
 		      cMouseLastPosX = Fl::event_x();
 		      cMouseLastPosY = Fl::event_y();
 		      userSelectionRectangle(pEvent);			
-		      TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
 		    }	    
 	  }
 	setCursor3dPosition( Fl::event_x(), Fl::event_y());			 					
-	TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;
+	TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou 				break;
 	break;
       				
 	//==============================
@@ -1420,7 +1420,7 @@ namespace M3d {
 	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
 		{
 		  userChangeKameraView( pEvent );
-		  TheAppli.redrawAllCanvas3d(); // a cause du curseur ou du rectangel etc
+		  TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou du rectangel etc
 		}
 	    }
 	  else
@@ -1439,7 +1439,7 @@ namespace M3d {
 
 					
 		setCursor3dPosition( Fl::event_x(), Fl::event_y());
-		TheAppli.redrawAllCanvas3d(); // a cause du curseur ou 				break;
+		TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou 				break;
 		
 	
 		//			cout << " Move : x="<< lX << " y=" << lY <<  std::endl;

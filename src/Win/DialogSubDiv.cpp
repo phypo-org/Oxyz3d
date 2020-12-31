@@ -158,7 +158,7 @@ namespace M3d {
     lShape->move(lCenter );
 		
 
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
 		
   }
   //---------------------------------------- 
@@ -398,7 +398,7 @@ namespace M3d {
     DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     Application::Instance().getDatabase()->cancelCurrentCreation();
 
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
 
     Fl::delete_widget( lDialog->myWindow );
     lDialog->cContinue = false;
@@ -449,7 +449,7 @@ namespace M3d {
     //    DialogSubDiv* lDialog = reinterpret_cast<DialogSubDiv*>(pUserData);
     //  lDialog->cMyCanvas->getDataBase().cancelCurrentCreation();
 
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
   }
   //----------------------------------------
   void DialogSubDiv::OkCB( Fl_Widget*, void*pUserData )
@@ -465,7 +465,7 @@ namespace M3d {
     PushHistory();
 
 
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
     Application::Instance().redrawObjectTree();
 
     Fl::delete_widget(lDialog->myWindow);  // Normly if I am understand the documentation, it will destroy all the children

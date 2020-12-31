@@ -65,7 +65,7 @@ AFAIRE
 o PORTAGE WINDOWS
 -----------------------------------------------
 o Prise en compte des facettes convexe !!!!
-  - Pour le tracé : utilisation du Stencil buffer (faire tourner des demos)
+OK     - Pour le tracé : utilisation du Stencil buffer (faire tourner des demos)
   - Pour la triangulation (notament pour stl)  : la lib polytri2
 -----------------------------------------------
 o Triangulation d'un nuage de point

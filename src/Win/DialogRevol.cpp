@@ -297,7 +297,7 @@ namespace M3d {
 	  }
       }
 	
-      TheAppli.redrawAllCanvas3d();
+      TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
     }
 
     //----------------------------------------
@@ -307,7 +307,7 @@ namespace M3d {
       DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
       Application::Instance().getDatabase()->cancelCurrentCreation();
 
-      TheAppli.redrawAllCanvas3d();
+      TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll );
 
       Fl::delete_widget( lDialog->cMyWindow );
       Diag.cMyWindow = nullptr;
@@ -359,7 +359,7 @@ namespace M3d {
       PushHistory();
 
 
-      TheAppli.redrawAll();
+      TheAppli.redrawAll(PP3d::Compute::FacetAll);
 
 
       Fl::delete_widget(lDialog->cMyWindow);  // Normly if I am understand the documentation, it will destroy all the children

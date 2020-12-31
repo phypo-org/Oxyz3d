@@ -95,7 +95,7 @@ namespace M3d {
     DialogKeepFloat* lDialog = reinterpret_cast<DialogKeepFloat*>(pUserData);
     Application::Instance().getDatabase()->cancelCurrentCreation();
 
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
 
     Fl::delete_widget( lDialog->myWindow );
   }
@@ -103,7 +103,7 @@ namespace M3d {
   void DialogKeepFloat::OkCB( Fl_Widget*, void*pUserData )
   {  
     DialogKeepFloat* lDialog = reinterpret_cast<DialogKeepFloat*>(pUserData);
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
 
     Fl::delete_widget(lDialog->myWindow);
   }

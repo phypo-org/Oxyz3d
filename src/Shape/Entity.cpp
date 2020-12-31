@@ -2,6 +2,7 @@
 #include "SortVisitor.h"
 #include "DataBase.h"
 
+#include <cmath>
 
 
 
@@ -204,6 +205,93 @@ namespace PP3d {
 			      cLines[0]->getFirst() );
     cLines.push_back( lLine);
   }
+  //-------------------------------------
+  // il suffit d'un seul angle superieur ou egal a 180 pour que la facette soit concave
+  /*
+  bool Facet::computeConcave()
+  {
+  if( cLines.size() <= 3 )
+      return false;
+
+    std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
+    size_t i;
+    for(  i = 0 ; i<  cLines.size()-1; i++ )
+      {
+	Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
+	Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
+
+	
+	std::cout <<  cLines[i]->second()->get() << " - "  cLines[i]->first()->get()
+		  << " -> " << A << std::endl;
+	
+	std::cout <<  cLines[i+1]->second()->get() << " - "  cLines[i+1]->first()->get()
+		  << " -> " << B << std::endl;
+
+	double lResult =  Point3d::GetAngleRadBetween( A, B) ;
+	
+	std::cout << lResult << std::endl;
+	if( lResult >  M_PIl)
+	  {
+	    std::cout << "Facet::computeConcave  CONCAVE !  sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl << std::endl;
+	    cIsConcave = true;
+	    return true;
+	  }
+      }
+    Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
+    Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
+    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
+    if( lResult >  M_PIl)
+      {
+	std::cout << "Facet::computeConcave2   sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl<< std::endl;
+	cIsConcave = true;
+	return true;
+      }
+    
+    
+    cIsConcave = false;
+    return false;
+  }
+  */
+  bool Facet::computeConcave()
+  {
+    if( cLines.size() <= 3 )
+      return false;
+
+    //   std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
+    size_t i;
+    for(  i = 0 ; i<  cLines.size()-1; i++ )
+      {
+	Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
+	Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
+
+	
+	std::cout <<  cLines[i]->second()->get() << " - "  <<cLines[i]->first()->get()
+		  << " -> " << A << std::endl;
+	
+	std::cout <<  cLines[i+1]->second()->get() << " - "  <<cLines[i+1]->first()->get()
+		  << " -> " << B << std::endl;
+
+	if( Point3d::isNegAngle( A, B, cNorm )) // On prend la normale comme repere
+	  {
+	    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
+	    cIsConcave = true;
+	    return true;
+	  }
+      }
+    Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
+    Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
+    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
+	if( Point3d::isNegAngle( A, B, cNorm )) // On prend la normale comme repere
+	  {
+	    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
+	    cIsConcave = true;
+	    return true;
+	  }
+
+    
+    cIsConcave = false;
+    return false;
+  }
   //*********************************************
   void Poly::execVisitor( EntityVisitor& pVisit )
   {
@@ -227,6 +315,7 @@ namespace PP3d {
       }
     pVisit.execEndNode( this, nullptr );
   }
+ 
 	
   //*********************************************
   //*********************************************

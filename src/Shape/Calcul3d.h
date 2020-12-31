@@ -10,6 +10,11 @@
 #include <set>
 
 
+#define _USE_MATH_DEFINES // for C++
+#define ___USE_GNU
+#include <cmath>
+
+
 namespace PP3d{
 
 
@@ -33,6 +38,13 @@ namespace PP3d{
     
     static void GetMinMaxAndCenter( PP3d::ObjProps&pProps,
 				    const  std::vector<PP3d::Point3d> & pPoints );
+    
+    static constexpr long double Rad2Deg =180/M_PIl;
+    static constexpr long double Deg2Rad =M_PIl/180;
+    static constexpr long double M_PIx2 = M_PIl*2;
+
+    static double Rad2Degre( double iRad ) { return iRad * Rad2Deg;}
+    static double Degre2Rad( double iDeg ) { return iDeg * Deg2Rad;}
   };
   //*******************************************
 

@@ -76,8 +76,10 @@ namespace M3d{
 	
   }
   //-----------------------------------	
-  void Application::redrawAllCanvas3d()
+  void Application::redrawAllCanvas(   PP3d::Compute iCompute  )
   {
+    recomputeAll( iCompute );
+    
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
 	lWin->canvasRedraw();
@@ -95,6 +97,7 @@ namespace M3d{
   //-----------------------------------	
   Win3d* Application::findCanvas3d( int iId )
   {
+    
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
 	if( lWin->getId() == iId )

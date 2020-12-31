@@ -180,22 +180,80 @@ namespace PP3d {
     //-----------------------------------------	
     //--------------- Vecteur -----------------
     //-----------------------------------------	
-
+    TFLOAT square(){
+      return  cX*cX + cY*cY +  cZ*cZ;
+    }
+  
+    
     // si c'est une distance entre deux point
     TFLOAT distanceSquare()
     {
-      return cX*cX + cY*cY +  cZ*cZ;
+      return square();
     }
+
     //--------------------------------
     // si c'est une distance entre deux point
     TFLOAT distance()
     {
       return std::sqrt( distanceSquare() );
-    } 		
+    }
+    TFLOAT mag()
+    {
+      return distance();
+    }
     //--------------------------------	
     static TFLOAT Dot(  TPoint3d a, TPoint3d b ) // produit scalaire
     {
       return a.cX * b.cX + a.cY * b.cY + a.cZ * b.cZ;
+    }
+    //--------------------------------
+    // cos a = (XaXb+YaYb+ZaZb) / sqrt((Xa²+Ya²+Za²)(Xb²+Yb²+Zb² ))
+    // sqrt(a*b) = sqrt(a)*sqrt(b)
+    // O to PI 
+    
+    static double GetAngleRadBetween( TPoint3d a, TPoint3d b )
+    {
+      long double lProduitScalaire = Dot( a, b );
+      long double lProduitNorme = std::sqrt( a.square()*b.square() );
+      if( lProduitNorme != 0 )
+	{
+	  long double lResult  = lProduitScalaire/lProduitNorme;
+	  std::cout << "Dot:" << lProduitScalaire << " Norm:" << lProduitNorme << " -> "
+		    << lResult << std::endl;
+	  
+	  if( ! std::isnan(lResult) && !std::isinf(lResult) )
+	    {
+	      double lAngleRad = std::acos( lResult );
+	      if( ! std::isnan(lAngleRad) && !std::isinf(lAngleRad) )
+		{
+		  return lAngleRad;
+		}
+	    }
+	}
+      return std::nan("");
+    }
+    //--------------------------------
+    static double GetSignedAngleRadBetween( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {
+      double lAngle = GetAngleRadBetween(from, to);
+      
+      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
+      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
+      float cross_z = from.cX * to.cY - from.cY * to.cX;
+
+      if( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z < 0 )
+	return lAngle*-1;
+     
+      return lAngle;
+    }
+    //--------------------------------
+    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
+    static bool isNegAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {       
+      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
+      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
+      float cross_z = from.cX * to.cY - from.cY * to.cX;
+      return ( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z) < 0;
     }
     //--------------------------------	
     TFLOAT dot( TPoint3d b )
@@ -288,7 +346,7 @@ namespace PP3d {
     //--------------------------------	
     void normalize( PDouble pVal=1.0)
     {				
-      PDouble d = (PDouble) std::sqrt(cX*cX+cY*cY+cZ*cZ);
+      PDouble d = (PDouble) std::sqrt(cX*cX+cY*cY+cZ*cZ);  // norme 
       if (d == 0.0f) {
 	d = 1.0f;
       }

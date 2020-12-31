@@ -97,7 +97,7 @@ namespace PP3d{
     if( pViewProps.cGLMode != GLMode::Select  )
       {
 	//  CHANGER DE PLACE : a ne faire quand cas de changement de l'objet 
-	recomputeAll( cMyProps );
+	///////	recomputeAll( cMyProps,  );
       }
 
     switch( pViewProps.cSelectType )
@@ -261,11 +261,43 @@ namespace PP3d{
     //	drawInfoGL( pViewProps, cMyProps );
   }
   //---------------------------
-  void Object::recomputeAll(ObjProps&pProps)
+  int Object::recomputeAll(ObjProps&pProps, Compute iCompute)
   {
-    VisitorNormalFacet lVisit;
 
-    execVisitor( lVisit );
+    switch( iCompute ){
+    case Compute::Nothing :
+      break;
+      
+    case Compute::FacetNormal:
+      {
+	//    std::cout << "   Object::recomputeAll Normal" << std::endl;
+    VisitorNormalFacet lVisitN;
+	execVisitor( lVisitN );
+      }
+      break;
+      
+    case  Compute::FacetConcave:
+      {
+	VisitorConcaveFacet lVisitC;
+	//    std::cout << "   Object::recomputeAll Cancav" << std::endl;
+	execVisitor( lVisitC );
+	return lVisitC.count();
+      }
+      break;
+      
+    case  Compute::FacetAll:
+      {
+	VisitorNormalFacet lVisitN;
+	execVisitor( lVisitN );
+	VisitorConcaveFacet lVisitC;
+	//    std::cout << "   Object::recomputeAll All" << std::endl;
+	execVisitor( lVisitC );
+	return lVisitC.count();
+      }
+      break;
+    }
+    
+    return 0;
   }
 
  //********************************

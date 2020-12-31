@@ -277,7 +277,7 @@ namespace M3d {
     //	std::cout << "Box:"  << (lCheck->value() != 0) << std::endl;
     if( lObj != nullptr && TheSelect.addToSelection( lObj ) )
       {
-	Application::Instance().redrawAllCanvas3d();
+	Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
       }
   }
   //--------------------------------------------
@@ -289,7 +289,7 @@ namespace M3d {
     PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lCheck->cUserData2);
 
     lObj->setVisible( (lCheck->value() != 0) );
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
   }
   //--------------------------------------------
   static void	CB_RenameObject(Fl_Widget*w, void*pData)
@@ -301,7 +301,7 @@ namespace M3d {
 		
     DBG_TREE( "Rename " << lInput->value() );
     lObj->rename( (lInput->value()) );
-    Application::Instance().redrawAllCanvas3d();
+    Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
   }
   //--------------------------------------------
   void WinObjTree::draw()

@@ -489,13 +489,17 @@ namespace PP3d {
     //	std::cout << "******************** end DataBase::drawGL ********************** "  << std::endl;
   }
   //------------------------------------------
-  void DataBase::recomputeAll( )
+  void DataBase::recomputeAll( Compute iCompute )
   {
-    //		std::cout << "******************** RecomputeAll **********************" << std::endl;
+    long lCpt=0;
+    //    std::cout << "******************** RecomputeAll ********************** " << (int)iCompute << std::endl;
     for( auto iter = cContainerObject.begin(); iter != cContainerObject.end(); ++iter )
       {
-	(*iter)->recomputeAll( (*iter)->cMyProps );
+	lCpt += (*iter)->recomputeAll( (*iter)->cMyProps, iCompute);
       }
+
+    if( iCompute != Compute::Nothing && lCpt > 0 )
+      std::cout << "DataBase::recomputeAll Concav count:" << lCpt << " " << (int)iCompute << std::endl;
   }
   //------------------------------------------
   Object* DataBase::findObjectById( PP3dId pId ) const

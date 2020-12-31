@@ -250,17 +250,22 @@ namespace PP3d {
 	glBegin(GL_TRIANGLES);
 	execAfterBegin(pFacet);	
       }
-    /*	
+    else
+      if( pFacet->isConcave() )
+      {
+	std::cout << "VisitorDrawPoly::execBeginFacet Concav:" <<  pFacet->getLines().size() << std::endl;
+	execAfterBegin(pFacet);
+	DrawConcavFacet( pFacet );    
+      }      
     else if(  pFacet->getLines().size() == 4 )
       {   
 	glBegin(GL_QUADS);
 	execAfterBegin(pFacet);				       
       }
-    */
    else 
       {
+	glBegin(GL_POLYGON);
 	execAfterBegin(pFacet);
-	DrawConcavFacet( pFacet );    
       }
   }
 
@@ -311,11 +316,13 @@ namespace PP3d {
 	glBegin(GL_TRIANGLES);
 	execAfterBegin(pFacet);
       }
-    else {
-  	execAfterBegin(pFacet);
-	DrawConcavFacet( pFacet );
-  }
-    /*
+    else
+      if( pFacet->isConcave() )
+      {
+	//	std::cout << "VisitorDrawPoly::execBeginFacet Concav:" <<  pFacet->getLines().size() << std::endl;
+	execAfterBegin(pFacet);
+	DrawConcavFacet( pFacet );    
+      }         
     else if(  pFacet->getLines().size() == 4 )
       {   
 	glBegin(GL_QUADS);
@@ -326,7 +333,6 @@ namespace PP3d {
 	glBegin( GL_POLYGON );
 	execAfterBegin(pFacet);
       }					
-    */
   }
   void VisitorDrawPoly::execEndFacet( FacetPtr pFacet )
   {
