@@ -469,6 +469,7 @@ namespace PP3d {
     Point3d      getCenter();
     bool         computeConcave();
     bool         isConcave() { return cIsConcave; }
+    bool         testFlat();
 
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;

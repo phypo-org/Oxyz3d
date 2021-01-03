@@ -150,7 +150,34 @@ namespace PP3d {
     //    std::cout << *this << std::endl;
     //    std::cout << "======================================="<< std::endl;
   }
+  //--------------------------------
+  void Selection::invertSelection( DataBase & iBase )
+  {
+    std::vector<EntityPtr>  lTmpVect;
 
+    // get all the unselect object into lTmpVect
+    for( auto  lPair : iBase.getEntities() )
+      {
+	if( lPair.second->getType() != ConvertToShapeType( getSelectType() ))
+	  {
+	    continue;
+	  }
+	  
+	auto lSearch = cSelectObj.emplace( lPair.second);
+	if( lSearch.second == false )
+	  {
+	    continue; 
+	  }
+	lTmpVect.push_back(  lPair.second );
+     }
+    
+    removeAll();
+
+    for( EntityPtr lEntity : lTmpVect )
+      {
+	addEntity( lEntity, true );
+      } 
+  }
   //--------------------------------
   void Selection::removeEntity( EntityPtr ioEntity, bool iSelectAll )
   {
@@ -165,7 +192,6 @@ namespace PP3d {
 		cSelectObjVect.erase( cSelectObjVect.begin() + i );
 		break;
 	      }
-
 	  }
 	
 	if( iSelectAll && ioEntity->getType() == ShapeType::Line )
@@ -356,6 +382,7 @@ namespace PP3d {
     
     return SelectType::Null;
   }
+
   //--------------------------------
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )
   {

@@ -699,6 +699,28 @@ namespace M3d {
 		
     PP3d::Mat4 lMatTran;
     lMatTran.Identity();
+
+    if( TheAppli.getCurrentDeformType() != TypeDeform::Nothing )
+      {
+	/*
+	  std::cout << "======== Grab Deform " << std::endl;
+ 
+	  
+	  if(cVisitModifSelect == nullptr )
+	    {
+	      cVisitModifSelect = new PP3d::VisitorDeform(TheSelect, TheAppli.getCurrentDeformType(), TheAppli.getCurrentTransformType()  );// DIFFERENCE !!!
+	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
+	    }
+	  
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
+	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );// DIFFERENCE !!!
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
+	  
+	  if( pFlagFinalize)
+	    validDragSelect( lMatTran );
+	*/
+	  return;    //////////// ATTENTION 
+      }
     
   
     switch( TheAppli.getCurrentTransformType() )
@@ -1219,7 +1241,6 @@ namespace M3d {
   {
     return pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
-
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent ) 
   {

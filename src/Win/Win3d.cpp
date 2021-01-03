@@ -19,7 +19,7 @@ namespace M3d {
 #define StrMenu_Export           "Export/"
 #define StrMenu_ExportD3dObj     "-> d3d file (.obj) ..."
 #define StrMenu_ExportSelectD3dObj "Selection -> d3d file (.obj) ..."
-#define StrMenu_ExportStl    "-> stl file (.stl) ..."
+#define StrMenu_ExportStl        "-> stl file (.stl) ..."
 #define StrMenu_ExportSelectStl "Selection -> stl file (.stl) ..."
 #define StrMenu_Import          "Import/"
 #define StrMenu_ImportD3dObj     "d3d file (.obj) ..." // blanc au debut voulu pour <> export
@@ -37,7 +37,9 @@ namespace M3d {
 
 #define StrMenu_Select          "&Select/"
 #define StrMenu_UnselectAll     "Unselect all"
+#define StrMenu_InvertSelect    "Invert selection"
 #define StrMenu_DeleteSelect    "Delete object selection"
+ 
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
   
 #define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
@@ -392,6 +394,8 @@ namespace M3d {
     cMenubar.add("&Edit/&Paste", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
     cMenubar.add( StrMenu_Select StrMenu_UnselectAll, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_InvertSelect, "", MyMenuCallback, this);
+    
     cMenubar.add( StrMenu_Select StrMenu_DeleteSelect, "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
     //================================
@@ -644,7 +648,14 @@ namespace M3d {
 		if( strcmp( m->label(), StrMenu_Preferences ) == 0)
 		  {
 		    CallDialogPref();
-		  }		
+		  }
+		else if( strcmp( m->label(),StrMenu_InvertSelect ) == 0)
+		  {
+		    TheSelect.invertSelection( *TheAppli.getDatabase() );
+		    		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
 		else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 		  {
 		    TheSelect.removeAll();

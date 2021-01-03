@@ -1,4 +1,3 @@
-
 #ifndef H__PP3dType__H
 #define H__PP3dType__H
 
@@ -65,7 +64,9 @@ namespace PP3d {
     return pOs;
   }
 
-  enum class ShapeType  {  Point, Line, Facet, Poly, Object, Null};
+
+  enum class ShapeType  {  Null, Point, Line, Facet, Poly, Object};
+  
   inline static const char* GetStrShapeType( ShapeType pType )
   {
     switch( pType )
@@ -92,6 +93,20 @@ namespace PP3d {
       return ShapeType::Poly;
     else		if( ::strcmp( pStr, "Object" ) == 0 )
       return ShapeType::Object;
+    return ShapeType::Null;
+  }
+  
+  inline static ShapeType ConvertToShapeType( SelectType iSelect )
+  {
+    switch( iSelect ){
+    case SelectType::Null:   return ShapeType::Null;
+    case SelectType::Point:  return ShapeType::Point;
+    case SelectType::Line:   return ShapeType::Line;
+    case SelectType::Facet:  return ShapeType::Facet;
+    case SelectType::Poly:   return ShapeType::Poly;
+    case SelectType::Object: return ShapeType::Object;
+    default: ;
+    }
     return ShapeType::Null;
   }
 	

@@ -87,34 +87,41 @@ namespace PP3d {
 	    writeFacetEnd();
 	  }
 	else if( lFacet->getLines().size() > 3 )
-	  {	  
-	    PP3d::SortEntityVisitorPoint lVisit;
-	    lFacet->execVisitor( lVisit );
+	  {
+	    if( lFacet->isConcave() == false )
+	      {	  
+		PP3d::SortEntityVisitorPoint lVisit;
+		lFacet->execVisitor( lVisit );
 	      
-	    Float3   lMiddle;           
-	    for( PointPtr lPt:  lVisit.cVectPoints )
-	      {
-		lMiddle += lPt->get();
-	      }
-	    lMiddle /= lVisit.cVectPoints.size();
-	    std::vector<PointPtr> & lPoints = lVisit.cVectPoints;
+		Float3   lMiddle;           
+		for( PointPtr lPt:  lVisit.cVectPoints )
+		  {
+		    lMiddle += lPt->get();
+		  }
+		lMiddle /= lVisit.cVectPoints.size();
+		std::vector<PointPtr> & lPoints = lVisit.cVectPoints;
 
-	    size_t lSz = lPoints.size();
-	    size_t lN = lSz;
-	    for( size_t i=0; i < lSz; i++ )
-	      {
-		PP3d::Point3d& Pt1 = lPoints[i]->get(); 
-		PP3d::Point3d& Pt2 = lPoints[(i+1)%lN]->get();		  				  
-		PP3d::Point3d lNorm;
+		size_t lSz = lPoints.size();
+		size_t lN = lSz;
+		for( size_t i=0; i < lSz; i++ )
+		  {
+		    PP3d::Point3d& Pt1 = lPoints[i]->get(); 
+		    PP3d::Point3d& Pt2 = lPoints[(i+1)%lN]->get();		  				  
+		    PP3d::Point3d lNorm;
 		  
-		Calcul3d::Normal( Pt1, Pt2, lMiddle, lNorm);
+		    Calcul3d::Normal( Pt1, Pt2, lMiddle, lNorm);
 		
-		writeFacetBegin( lNorm );		  		  
-		writeVertex( Pt1 );
-		writeVertex( Pt2 );
-		writeVertex( lMiddle );
-		writeFacetEnd();
-	      }	      
+		    writeFacetBegin( lNorm );		  		  
+		    writeVertex( Pt1 );
+		    writeVertex( Pt2 );
+		    writeVertex( lMiddle );
+		    writeFacetEnd();
+		  }
+	      }
+	    else
+	      { //
+		
+	      }
 	  }	  
       }
     //==================================

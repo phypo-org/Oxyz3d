@@ -137,6 +137,7 @@ namespace M3d {
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
   
+  
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
   
 #define StrMenu_Align     "Align"  

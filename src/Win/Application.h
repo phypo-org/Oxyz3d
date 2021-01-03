@@ -58,10 +58,14 @@ namespace M3d{
       ScaleRY,
       ScaleRZ,
       ScaleAxis,
-      ScaleNormal
+      ScaleNormal,      
       };
 
+  enum class TypeDeform {
+    Nothing,
+      DeformProportinal,
 
+      };
 
   enum class InputPlaneType { X, Y, Z, Free };
   
@@ -97,7 +101,7 @@ namespace M3d{
     Transform       cCurrentTransform;
     PP3d::Transf3d  cCurrentTransf;
 
-
+    TypeDeform      cCurrentDeform = TypeDeform::Nothing;
     
     InputPlaneType cInputPlaneType   = InputPlaneType::Y;
     double         cInputPlaneHeight = 0;
@@ -110,6 +114,10 @@ namespace M3d{
     static const int sIconSmallSize = 16;
 
     PPu::PPConfig & getConfig() { return cMyConfig; }
+
+    TypeDeform      getCurrentDeformType() { return cCurrentDeform ; }
+    void           setCurrentDeformType( TypeDeform iCurrentDeform) { cCurrentDeform= iCurrentDeform;}
+    
     
     void setCurrentTransformType( Transform lTrans)
     {	

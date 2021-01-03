@@ -255,6 +255,23 @@ namespace PP3d {
       float cross_z = from.cX * to.cY - from.cY * to.cX;
       return ( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z) < 0;
     }
+     //--------------------------------
+    // Mettre un epsilon !!!
+    static bool isPositifAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {       
+      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
+      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
+      float cross_z = from.cX * to.cY - from.cY * to.cX;
+      return ( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z) > 0;
+    }
+     //--------------------------------
+    static double signedAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {       
+      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
+      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
+      float cross_z = from.cX * to.cY - from.cY * to.cX;
+      return axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z;
+    }
     //--------------------------------	
     TFLOAT dot( TPoint3d b )
     {

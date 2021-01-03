@@ -254,8 +254,10 @@ namespace PP3d {
   */
   bool Facet::computeConcave()
   {
-    if( cLines.size() <= 3 )
+    if( cLines.size() <= 3 ){
+      cIsConcave = false;
       return false;
+    }
 
     //   std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
     size_t i;
@@ -265,15 +267,15 @@ namespace PP3d {
 	Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
 
 	
-	std::cout <<  cLines[i]->second()->get() << " - "  <<cLines[i]->first()->get()
-		  << " -> " << A << std::endl;
+	//	std::cout <<  cLines[i]->second()->get() << " - "  <<cLines[i]->first()->get()
+	//	  << " -> " << A << std::endl;
 	
-	std::cout <<  cLines[i+1]->second()->get() << " - "  <<cLines[i+1]->first()->get()
-		  << " -> " << B << std::endl;
+	//	std::cout <<  cLines[i+1]->second()->get() << " - "  <<cLines[i+1]->first()->get()
+	//		  << " -> " << B << std::endl;
 
 	if( Point3d::isNegAngle( A, B, cNorm )) // On prend la normale comme repere
 	  {
-	    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
+	    //	    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
 	    cIsConcave = true;
 	    return true;
 	  }
@@ -291,6 +293,35 @@ namespace PP3d {
     
     cIsConcave = false;
     return false;
+  }
+  //----------------------------------------------
+  // Mettre un Epsiloon !
+  
+  bool Facet::testFlat(){
+  
+    //   std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
+    size_t i;
+    for(  i = 0 ; i<  cLines.size()-1; i++ )
+      {     
+	Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
+	Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
+
+	if( Point3d::isPositifAngle( A, B, cNorm )) // On prend la normale comme repere
+	  {
+	    //    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
+	    return false;
+	  }
+      }
+    Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
+    Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
+  
+    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
+	if( Point3d::isPositifAngle( A, B, cNorm )) // On prend la normale comme repere
+	  {
+	    return false;
+	  }
+
+    return true;
   }
   //*********************************************
   void Poly::execVisitor( EntityVisitor& pVisit )
