@@ -78,11 +78,14 @@ namespace M3d{
   //-----------------------------------	
   void Application::redrawAllCanvas(   PP3d::Compute iCompute  )
   {
+    //    std::cout <<  "Application::redrawAllCanvas" << std::endl;
+
     recomputeAll( iCompute );
     
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
       {
-	lWin->canvasRedraw();
+	//	std::cout <<  "      Application::redrawAllCanvas canvas" << std::endl;
+	lWin->canvasRedraw();  
 	lWin->setUndoRedoState();
       }
   }

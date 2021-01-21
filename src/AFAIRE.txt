@@ -17,12 +17,8 @@ FAIT
 
 Il s'agit bien d'un probeme liée au owner qui n'etait pas enlevés !
 
-xxxo facetisation des points 
+xxxo facetisation des points
 
-============================================
-EN COURS
-
------------------------------------------------
 xxxo Saisie avec cadre elastique // ne selectionne que les visible ????
 -----------------------------------------------
 xxxo Dialogues fixes ? / bloquant / ou interdiction d'en ouvrir un autre
@@ -35,17 +31,24 @@ xxxo Aplatir celon un  axe
 -----------------------------------------------
 xxxo grille 2D /3D qui s'adapte à l'echelle ? il faudrait que la grille
  semble remplir tout le plan 
+xxxo optimisation  1) specialisation des visiteurs plus specialisé (ou mettre des
+xxxo pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
+  intersections de la grille)
+xxxxxx    Prise en compte des facettes convexe - Pour le tracé :
+utilisation du Stencil buffer
+
+xxxxxxxxx Inversion de la selection !
+
+============================================
+EN COURS
+
+-----------------------------------------------
+- saisie dans un plan libre
+
 -----------------------------------------------
 xo export STL binaire (texte fait)
 -----------------------------------------------
 
-xxxo optimisation
-      1) specialisation des visiteurs plus specialisé (ou mettre des
-      flags pour les types d'objets)
-  
-xxxo pouvoir saisie des points sur une grille 2D/3D (avec arrondi sur les
-  intersections de la grille)
-    
 ============================================
 OPTIMISATION
 ============================================
@@ -55,18 +58,16 @@ OPTIMISATION
   - smooth tres lent !!!
 
 - Passez certain algo (decoupage) en MT
-- Utilisez des Visiteurs plus spécifique
-
 
 ============================================
 AFAIRE
 ============================================
 
-o PORTAGE WINDOWS
+O PORTAGE WINDOWS
 -----------------------------------------------
-o Prise en compte des facettes convexe !!!!
-OK     - Pour le tracé : utilisation du Stencil buffer (faire tourner des demos)
-  - Pour la triangulation (notament pour stl)  : la lib polytri2
+O  Prise en compte des facettes convexe pour la triangulation et stl (Delaunay)
+   Pour la triangulation (notament pour stl)  : la lib polytri2 2D !
+   MAL PARTI !!!!
 -----------------------------------------------
 o Triangulation d'un nuage de point
   Algo de Delaunay - trouver une lib !
@@ -78,14 +79,16 @@ roulette de la souris (comme pour Wings)
 -----------------------------------------------
 o Saisie numerique pour les rotation/translation/scale TAB comme dans Wings
 -----------------------------------------------
-o Inversion de la selection !
 o Regroupement d'objets en ensemble / posibilités de les selectionner
 o Touche pour etendre la selection au plus proches ou le contraire
+(comme pour le changement de type de selection pour le +
+-----------------------------------------------
+o Roue dentée, spirale ...  
 -----------------------------------------------
 o Mettre d'autres parametres dans les preferences
 o Sauvegarder les preferences
 -----------------------------------------------
-o Commande pour rejouer la derniére commande
+o Commande pour rejouer la derniére commande -  Ctrl D (pas si facile que ça )
 -----------------------------------------------
 o Extrusion de points ?
 ----------------------------------------------
@@ -93,12 +96,16 @@ o Pontage
 ----------------------------------------------
 o Intrude
 ----------------------------------------------
+o Extraction
+----------------------------------------------
 o Couper par un axe des objets/facette/lignes
 ----------------------------------------------
 o Selection en fonction de la normale/surface/les deux ...
+o Selection des points, lignes, facette à proximité (et deselection)
 o Fenetre avec memoriseration de la selection dans des groupes
 ----------------------------------------------
-o Aimant - deformation
+o Aimant - deformation de la selection avec des effets <> et en
+fonction de la distance du point d'application (+une limite d'action)
 ----------------------------------------------
 o Selection de la saisie ? base separé, id dans un interval donné ?
   constituant avec de vrai id et destruction s'il y a lieu?
@@ -106,7 +113,7 @@ o Selection de la saisie ? base separé, id dans un interval donné ?
 
 - BUG :  avec le focus - clavier
 -----------------------------------------------
-o Creation de surface avec plusieurs line ou polyline PPCD
+O00 Creation de surface avec plusieurs line ou polyline PPCD
 -----------------------------------------------
 -----------------------------------------------
 o Connexion entre deux facettes (Trous)

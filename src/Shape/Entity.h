@@ -93,7 +93,7 @@ namespace PP3d {
   public:
     bool isSelect()                 { return   cIsSelected;}
     void setSelect( bool pFlag )    { cIsSelected  = pFlag;}		
-    bool& isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche !
+    bool isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche ! du coup ca marche mal ! un seul canvas le dessinne !
     
     void setHighlight( bool pFlag ) { cIsHighlight =  pFlag;}
 

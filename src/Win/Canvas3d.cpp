@@ -293,6 +293,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::draw() 
   {
+    //    cout << "        " << this << " draw " << endl;
     if( sDrawColorSelect  )
       {
 	drawForSelect();
@@ -454,7 +455,7 @@ namespace M3d {
 	    lSelect = &TheSelectTransform;
 	    lBase   = TheAppli.getDatabaseTransform();		
 	  }
-	////    cout <<" processHits before Select" <<endl;
+	////    cout <<" processHits before Select" <<endl; 
 	
 	//	PP3d::SelectMode lSelectMode = 	PP3d::SelectMode::Select;
 	
@@ -587,9 +588,6 @@ namespace M3d {
       {
 	getKamera().position()[0] += (cMouseLastPosX	-lX)/10.0;
 	getKamera().position()[1] += (lY-cMouseLastPosY)/10.0;
-	redraw();
-	cMouseLastPosX = lX;
-	cMouseLastPosY = lY;
       }
     else
       //			if( Fl::event_button1() )
@@ -613,10 +611,10 @@ namespace M3d {
 								
 	//	cout << "angle X: " <<	getKamera().angle()[0]  
 	//	     << "angle Y: " <<	getKamera().angle()[1] ;
-	redraw();
-	cMouseLastPosX = lX;
-	cMouseLastPosY = lY;
       }
+    redraw();
+    cMouseLastPosX = lX;
+    cMouseLastPosY = lY;      
   }
   //---------------------------
   bool Canvas3d::initDragSelect()
@@ -1206,6 +1204,7 @@ namespace M3d {
     //   cout << "userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
     //	 << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
 
+    TheAppli.currentTransform().raz();
     int lLastY = pixel_h()-cMouseLastPosY;
     int lInitY = pixel_h()-cMouseInitPosY;
       
@@ -1244,8 +1243,12 @@ namespace M3d {
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent ) 
   {
+     TheSelect.removeHightLightEntity( TheBase );
+   
     //		cout << endl;
     if( pEvent == FL_NO_EVENT ) return 1;
+    
+    bool lFlagRedrawAll = false;
     
     traceMode();
     
@@ -1508,6 +1511,7 @@ namespace M3d {
 		case FL_BackSpace:
 		case FL_Delete:
 		  TheAppli.getDatabase()->delPointToCurrentLine();
+		  lFlagRedrawAll = true;
 		  break;
 
 		case FL_Up:
@@ -1640,7 +1644,6 @@ namespace M3d {
 		      sDrawColorSelect= false;
 		    else
 		      sDrawColorSelect = true;
-		    redraw();		
 		  }
 	    
 	      /*
@@ -1650,8 +1653,11 @@ namespace M3d {
 		}
 	      */
 	    }
+	if( lFlagRedrawAll )
+	  TheAppli.redrawAll(  PP3d::Compute::Nothing );
+	else
+	  redraw();
 	}
-	redraw();
 	break;
 
       case FL_KEYUP:

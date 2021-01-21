@@ -287,8 +287,15 @@ namespace PP3d {
 
 	pVect[j+1] = key; 
       } 
-  } 
-
+  }  
+  //--------------------------------
+  void Selection::removeHightLightEntity( DataBase & cBase )
+  {
+   EntityPtr lLastHightEntity =  cBase.findEntity( cLastHightLightEntityId  );
+    if( lLastHightEntity != nullptr ){
+      lLastHightEntity->setHighlight( false );
+    }
+  }
   //--------------------------------
   bool Selection::selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode & pSelectMode, bool pFlagOnlyHightlight )
   {		  			
@@ -296,13 +303,18 @@ namespace PP3d {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #endif
+
+ 
+    removeHightLightEntity( cBase );
     
     if(pFlagOnlyHightlight)
-      {
+      {	
 	iEntity->setHighlight( true );
 	cLastHightLightEntityId = iEntity->getId();
 	return true;
       }
+
+    
 	
     if( isSelected( iEntity ) )
       {

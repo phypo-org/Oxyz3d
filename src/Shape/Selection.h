@@ -127,6 +127,7 @@ namespace PP3d {
 
     Point3d getCenter( DataBase& pDatabase );
 
+    void removeHightLightEntity( DataBase& cBase );
     bool selectPickingColor( EntityPtr iEntity, DataBase& cBase, SelectMode & pSelectMode, bool pFlagOnlyHightlight );
     void deleteAllFromDatabase(DataBase& pDatabase);
     

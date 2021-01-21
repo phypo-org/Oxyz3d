@@ -253,7 +253,7 @@ namespace PP3d {
     else
       if( pFacet->isConcave() )
       {
-	std::cout << "VisitorDrawPoly::execBeginFacet Concav:" <<  pFacet->getLines().size() << std::endl;
+	//////////	std::cout << "VisitorDrawPoly::execBeginFacet Concav:" <<  pFacet->getLines().size() << std::endl;
 	execAfterBegin(pFacet);
 	DrawConcavFacet( pFacet );    
       }      

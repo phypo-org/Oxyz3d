@@ -74,14 +74,14 @@ namespace PP3d {
       if( cGLMode == GLMode::Draw )	cColorPointHighlight.GL();
       glPointSize( cPointSizeHighlight );				
     }
-    void pointGL( bool pSelect, bool& pHighlight)
+    void pointGL( bool pSelect, bool pHighlight)
     {
       if(  pSelect || pHighlight )
 	{
 	  if( pHighlight )
 	    {
 	      pointHighlightGL();
-	      pHighlight = false ; // argh ...
+	      //	      pHighlight = false ; // argh ...
 	    }
 	  else
 	    if( pSelect )
@@ -107,14 +107,14 @@ namespace PP3d {
       if( cGLMode == GLMode::Draw )	cColorLineHighlight.GL() ;
       glLineWidth( cLineWidthHighlight );
     }
-    void lineGL( bool pSelect, bool& pHighlight)
+    void lineGL( bool pSelect, bool pHighlight)
     {
       if( pSelect || pHighlight )
 	{
 	  if( pHighlight )
 	    {
 	      lineHighlightGL();
-	      pHighlight = false ; // argh ...
+	      //	      pHighlight = false ; // argh ...
 	    }
 	  else if( pSelect )
 	    lineSelectGL();
@@ -135,7 +135,7 @@ namespace PP3d {
     {
       if( cGLMode == GLMode::Draw )	cColorFacetHighlight.materialGL();
     }
-    void facetGL( bool pSelect, bool& pHighlight )
+    void facetGL( bool pSelect, bool pHighlight )
     {
       if( pSelect || pHighlight )
 	{
@@ -143,7 +143,7 @@ namespace PP3d {
 	    {
 							
 	      facetHighlightGL();
-	      pHighlight = false ; // argh ...
+	      //	      pHighlight = false ; // argh ...
 	    }
 	  else if( pSelect )
 	    facetSelectGL();
