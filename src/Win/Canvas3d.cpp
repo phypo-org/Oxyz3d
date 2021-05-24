@@ -1170,7 +1170,16 @@ namespace M3d {
 	break;
       case InputPlaneType::Z : lOk = lLineV.intersectPlanZ( iResult, TheAppli.getInputPlaneHeight() );
 	break;  
-      case InputPlaneType::Free : ;
+      case InputPlaneType::Free : {
+	    double lH = pixel_h();
+	    double lX = ((double )Fl::event_x());
+	    double lY = lH-((double) Fl::event_y());
+	    PP3d::Point3d lPt0;
+	    PP3d::Point3d lResult0;
+	    getKamera().projectObjectToWin( lPt0, lResult0, true);
+	    getKamera().projectWinToObject( PP3d::Point3d( lX, lY, lResult0.cZ), iResult, true);
+	return true;
+      }
       }
 
     return lOk;

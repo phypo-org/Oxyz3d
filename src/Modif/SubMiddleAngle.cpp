@@ -113,16 +113,16 @@ bool Modif::SubDivAngle( DataBase * iBase,
 	  lPoly->removeFacet( lOldFacet );
 	}
       
-      for( LinePtr lLine : lOldFacet->getLines() )
+      /*    for( LinePtr lLine : lOldFacet->getLines() )
 	{
 	  lLine->removeFromOwners();
 	  iBase->freeLine( lLine );	  
 	}      
+      */
       //     lOldFacet->removeFromOwners();
       iBase->freeFacet( lOldFacet );
     }
   
-  //  ici toutes les nouveaux points des nlles facettes sont crees dans la structure de travail !
   return true;
 }
 //--------------------------------------------------------

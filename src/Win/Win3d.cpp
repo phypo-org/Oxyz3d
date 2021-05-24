@@ -59,7 +59,7 @@ namespace M3d {
 #define StrMenu_InputPlaneX    " : X plane"
 #define StrMenu_InputPlaneY    " : Y plane"
 #define StrMenu_InputPlaneZ    " : Z plane"
-#define StrMenu_InputPlaneFree " : Free plane (3 points or 2 lines needed)"
+#define StrMenu_InputPlaneFree " : Free plane " // (3 points or 2 lines needed)"
 #define StrMenu_PlaneHeight    " : Plane height ..."
 
   
@@ -464,6 +464,7 @@ namespace M3d {
   cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneY, "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZ, "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneFree, "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_PlaneHeight, "", MyMenuCallback, this,   FL_MENU_DIVIDER );
   cMenubar.add("&Utils/" StrMenu_RoundInput, "", MyMenuCallback, this );
     //================================
@@ -843,6 +844,10 @@ namespace M3d {
 		else if(  strcmp( m->label(), StrMenu_InputPlaneZ ) == 0)
 		  {
 		    TheAppli.setInputPlane( InputPlaneType::Z );
+		  }
+		else if(  strcmp( m->label(), StrMenu_InputPlaneFree ) == 0)
+		  {
+		    TheAppli.setInputPlane( InputPlaneType::Free );
 		  }
 		else if(  strcmp( m->label(), StrMenu_PlaneHeight ) == 0)
 		  {

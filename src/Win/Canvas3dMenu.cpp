@@ -1220,7 +1220,11 @@ namespace M3d {
 	    TheSelect.execVisitorOnEntity( lVisit ); // on recupere les points du select
 
 	    std::cout << "CreateShapeAddFacet points:" << lVisit.cVectPoints.size() << std::endl;
-	    std::vector<PP3d::EntityPtr> &lVisitPt = (std::vector<PP3d::EntityPtr>&)lVisit.cVectPoints;
+	    
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+	    std::vector<PP3d::EntityPtr> &lVisitPt = (std::vector<PP3d::EntityPtr>& ) lVisit.cVectPoints;
+#pragma GCC diagnostic pop
 	      
 	    lVisit.addOwnersOf( lVisitPt ); // on recupere les owners des points
 	    if( lVisit.cVectPolys.size() == 0)
