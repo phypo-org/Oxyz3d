@@ -48,34 +48,10 @@ namespace PP3d {
       //	<< " Facets:" << pPoly->getFacets().size()
       //	<< std::endl;
   }		
- 
-
   //*********************************************
   void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
   {
-    std::vector<LinePtr> & lLines = pFacet->getLines();
-    
-    size_t lNb = lLines.size();
-    
-    if( lNb ==  3 || lNb == 2 )
-      {
-	Calcul3d::Normal( lLines[0]->first()->get(),
-			  lLines[0]->second()->get(),
-			  lLines[1]->second()->get(), // pas first !!!	
-			  pFacet->getNormal() );
-	return;
-      }
-    
-     if( lNb > 3 )
-       {
-	 int i = lNb/3;
-	 int j = (lNb*2)/3;
-	 Calcul3d::Normal( lLines[0]->first()->get(),
-			   lLines[i]->second()->get(),
-			   lLines[j]->second()->get(), // pas first !!!		
-			   pFacet->getNormal() );
-	 return;
-       }  
+    pFacet->computeNormal();
   }		
   //*********************************************
   void VisitorConcaveFacet::execBeginFacet( Facet* pFacet )

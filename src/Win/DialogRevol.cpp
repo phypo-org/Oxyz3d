@@ -289,11 +289,11 @@ namespace M3d {
 			
 	PP3d::Mat4 lMatTran = lMatRecenter * lMatRot *  lMatZero;					
 
-	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( Application::Instance().getDatabase()->getCurrentLine(), lNbPas, lMatTran, lFlagClose,
+	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, lFlagClose,
 								   lFlagCloseSeg, lFlagCloseSegEnd, lFlagCloseHight, lFlagCloseLow );
 	if( lShape != nullptr )
 	  {
-	    Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
+	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
 	  }
       }
 	
@@ -305,7 +305,7 @@ namespace M3d {
     static void CancelCB( Fl_Widget*, void* pUserData ) {
  
       DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      Application::Instance().getDatabase()->cancelCurrentCreation();
+      TheInput.cancelCurrentCreation();
 
       TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll );
 
@@ -350,7 +350,7 @@ namespace M3d {
     {
       DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
       lDialog->maj();
-      PP3d::Object* lObj = Application::Instance().getDatabase()->validCurrentCreation();
+      PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
       if( lObj != nullptr )
 	{
 	  lObj->rename(  "Revol"  );

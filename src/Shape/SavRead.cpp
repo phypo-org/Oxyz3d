@@ -160,7 +160,7 @@ namespace PP3d {
     cOut << std::endl;
 
     
-    FacetPtr lSaiseFacet = pData.getCurrentLine();
+    FacetPtr lSaiseFacet = pData.getInput().getCurrentLine();
     
     if( lSaiseFacet != nullptr )
       {
@@ -329,7 +329,7 @@ namespace PP3d {
 		      {
 			PDouble  lX,lY,lZ;						
 			cIn >> lX >> lY >> lZ;
-			pData.addPointToCurrentLine( Point3d( lX, lY, lZ ) );
+			pData.getInput().addPointToCurrentLine( Point3d( lX, lY, lZ ) );
 		      }
 		  }
 		else

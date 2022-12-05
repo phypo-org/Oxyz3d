@@ -96,7 +96,13 @@ namespace PP3d {
 		
   public:
 		
-    void addEntitys( std::vector<EntityPtr> & iVect,  bool iSelectAll=true );	
+    template <class CONTAINER> void addEntitys( CONTAINER  & iVect,  bool iSelectAll=true )
+    { for( EntityPtr lEntity : iVect) addEntity( lEntity, iSelectAll ); }
+
+    template <class CONTAINER> void removeEntitys( CONTAINER  & iVect,  bool iSelectAll=true )
+    { for( EntityPtr lEntity : iVect) removeEntity( lEntity, iSelectAll ); }
+
+    
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();

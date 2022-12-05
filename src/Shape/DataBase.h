@@ -21,6 +21,11 @@
 
 #include "SubDiv.h"
 
+
+#include "CurrentInput.h"
+
+
+
 namespace PP3d {
 
   class Kamera;
@@ -33,18 +38,16 @@ namespace PP3d {
     static TUniqueId<EntityId, 1>         sUniqueId;
     std::unordered_map<EntityId, Entity*> cEntities;        // contient tout sauf cCurrentLine et cCurrentCreation !
     std::set<Object*>                     cContainerObject; // ne contient que les object
+  
+    CurrentInput        cCurrent;
 
-    Object               *cCurrentCreation=nullptr; 
-    ObjectPolylines      *cCurrentLine=nullptr;  
-
+  public:
+    CurrentInput   &    getInput() { return cCurrent;}
+    
+   private:
+    
     Point3d              cCursor;
 
-
-    ObjectPolylines*     cCurrentPoint = nullptr;
-    ObjectPolylines*     cCurrentPointObject = nullptr;
-
-    
-  
 
   private:
     static void resetUniqueId(EntityId iResetVal=1) {
@@ -69,12 +72,6 @@ namespace PP3d {
     void recomputeAll( Compute iCompute );
     const std::set<Object*> & getAllObject()  const { return  cContainerObject;}
     const std::unordered_map<EntityId, Entity*>& getEntities() const { return  cEntities;}
-
-    Object*   getCurrentCreation();
-    Object*   validCurrentCreation();
-    void      cancelCurrentCreation( );
-    void      swapCurrentCreation( Object* pCurrentCreation );
-
 		
     void     setCursorPosition( Point3d pPt ) { cCursor=pPt; }
     Point3d  getCursorPosition() { return cCursor; }
@@ -85,50 +82,13 @@ namespace PP3d {
   public:
     EntityId validOneEntityLevel(  Entity* pEntity );
     EntityId validEntity( Entity* lEntitiy, bool iTotalScan = false );
-
-		
-    void             viewCurrentPoint( Point3d & pPt );
-    void             hideCurrentPoint();
-    void             addPointToCurrentLine( Point3d pPt );
-    void             delPointToCurrentLine( );
-    GLuint           getNbCurrentPoints();
-    ObjectFacet *    convertCurrentLineToFacet();
-    ObjectPoly *     convertCurrentLineToFacetPoly();
-    ObjectPoly *     convertCurrentLineToBiFacetPoly();
-    ObjectPolylines* convertCurrentLineToPolylines();
-    ObjectLine *     convertCurrentLineToLine();
-
-    bool isCurrentPoints()    { return cCurrentLine     != nullptr; }
-    bool isCurrentCreation() { return cCurrentCreation != nullptr; }
-    FacetPtr getCurrentLine()
-    {
-      if( cCurrentLine != nullptr)
-	return  cCurrentLine->getFacet();
-      return nullptr;
-    }
-
-    bool execVisitorOnCurrentLine( EntityVisitor & iVisit ){    
-      if( cCurrentLine != nullptr)
-	{
-	  cCurrentLine->getShape()->execVisitor( iVisit );
-	  return true;
-	}
-      return false;
-    }
-    
-    ObjectPolylines* getObjectCurrentLine()
-    {
-      return cCurrentLine;
-    }
-
-
+  
 
     Object* findObjectById( PP3dId pId ) const ;
     Object* findObjectByGLNameId( GLuint pNameId ) const;
 		
     //================================
     bool deleteEntity( EntityPtr );
-    void addToInput( EntityPtr, bool pFlagLink );
     //================================
 		
     //		EntityId   addEntity( Entity* pEntity );		

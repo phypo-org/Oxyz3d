@@ -93,7 +93,7 @@ namespace M3d {
   void DialogKeepFloat::CancelCB( Fl_Widget*, void* pUserData ) {
  
     DialogKeepFloat* lDialog = reinterpret_cast<DialogKeepFloat*>(pUserData);
-    Application::Instance().getDatabase()->cancelCurrentCreation();
+    Application::Instance().getInput().cancelCurrentCreation();
 
     Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
 

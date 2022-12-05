@@ -6,6 +6,7 @@
 
 #include "Shape/PP3dType.h"
 #include "Shape/DataBase.h"
+#include "Shape/CurrentInput.h"
 #include "Shape/Selection.h"
 
 #include "WinObjTree.h"
@@ -21,13 +22,15 @@
 #include "Utils/PPSingletonCrtp.h"
 #include "Utils/PPConfig.h"
 
-#define TheSelect          TheAppli.cSelect
-#define TheSelectTransform TheAppli.cSelectTransform
-   
+
+  
 #define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect, Application::Instance().autoSave() )
 #define TheAppli M3d::Application::Instance()
 #define TheBase  (*TheAppli.getDatabase())
-
+#define TheInput (M3d::Application::Instance().getInput())
+#define TheSelect          TheAppli.cSelect
+#define TheSelectTransform TheAppli.cSelectTransform
+ 
 
 
 namespace M3d{
@@ -122,8 +125,7 @@ namespace M3d{
     void setCurrentTransformType( Transform lTrans)
     {	
       cCurrentTransf.raz();
-      cCurrentTransform= lTrans;
-			
+      cCurrentTransform= lTrans;			
     }
     Transform getCurrentTransformType()   { return cCurrentTransform;}
     PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
@@ -145,6 +147,7 @@ namespace M3d{
 
     std::vector< std::unique_ptr<Win3d> >& getWinVector()  { return cAllWin3d; };
 		
+    PP3d::CurrentInput& getInput() { return cuDatabase->getInput(); }
     PP3d::DataBase* getDatabase() { return cuDatabase.get(); }
     void setDatabase(std::unique_ptr<PP3d::DataBase>&iuBase, bool iRazSelect = true )
     {
@@ -259,9 +262,12 @@ namespace M3d{
 	      && ((PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0])->getObjType() == PP3d::ObjectType::ObjLine);
     }
     //---------------------------
+    void info( const std::string & iStr );  
+    
  };
   //************************************
 
 }
 
+   
 #endif

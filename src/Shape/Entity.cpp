@@ -146,7 +146,34 @@ namespace PP3d {
       {
 	lLine->inversePoint();
       }		
-  } 
+  }
+  //-------------------------------------
+  void Facet::computeNormal()
+  {
+    std::vector<LinePtr> & lLines = getLines();
+    
+    size_t lNb = lLines.size();
+    
+    if( lNb ==  3 || lNb == 2 )
+      {
+	Calcul3d::Normal( lLines[0]->first()->get(),
+			  lLines[0]->second()->get(),
+			  lLines[1]->second()->get(), // pas first !!!	
+			 cNorm );
+	return;
+      }
+    
+     if( lNb > 3 )
+       {
+	 int i = lNb/3;
+	 int j = (lNb*2)/3;
+	 Calcul3d::Normal( lLines[0]->first()->get(),
+			   lLines[i]->second()->get(),
+			   lLines[j]->second()->get(), // pas first !!!		
+			   cNorm );
+	 return;
+       }
+  }
   //-------------------------------------
   Facet* Facet::duplicate( DataBase & lBase )
   {
@@ -157,8 +184,8 @@ namespace PP3d {
       {
 	lNew->addLine( lBase.getNewLine( cLines[i]->first(), cLines[i]->second())); 
       }
-     return lNew;
-   }
+    return lNew;
+  }
   //-------------------------------------
   Point3d Facet::getCenter( )
   {		 	
@@ -170,10 +197,124 @@ namespace PP3d {
 	lCenter += lLine->second()->get();
       }
     
-   lCenter /= cLines.size()*2;
+    lCenter /= cLines.size()*2;
    
-   return lCenter;
-  } 
+    return lCenter;
+  }
+  //-------------------------------------
+  PointPtr Facet::getPoint( int iPos )
+  {
+    PointPtr lPt = nullptr;
+    if( iPos >= 0 && cLines.size() >= (size_t) iPos )
+      {    
+	if( iPos == 0 )
+	  {
+	    lPt = cLines[0]->getFirst();
+	  }
+	else
+	  {
+	    lPt = cLines[iPos-1]->getSecond();
+	  }
+      }
+    return lPt;
+  }
+   
+  //-------------------------------------
+  void Facet::insertPoint( int iPos, PointPtr lPt, DataBase & iBase )
+  {
+    if( lPt == nullptr )
+      return;
+
+    if(((size_t)iPos) > cLines.size() )
+      {
+	iPos = cLines.size();
+      }
+
+    if( iPos < 0 )
+      iPos = 0;
+      
+    //============== No point ============
+    if( cLines.size() == 0)
+      {
+	LinePtr lNewLine = iBase.getNewLine( lPt, lPt);
+	cLines.push_back( lNewLine );
+	return;
+      }
+    //============== Along one point ============
+    if( cLines.size() == 1 && cLines[0]->isPoint() )
+      {
+	cLines[0]->first() = lPt;
+	return;
+      }
+
+    //============== Other case ================
+    LinePtr lNewLine = iBase.getNewLine( lPt, cLines[iPos]->first() );
+    
+    if( iPos > 0 )
+      cLines[iPos-1]->second() = lPt;
+    cLines.insert( cLines.begin()+iPos, lNewLine );
+  }
+  //-------------------------------------
+  void Facet::insertPoint( int iPos, Point3d & lPt, DataBase & iBase )
+  {    
+    insertPoint( iPos, iBase.getNewPoint( lPt ), iBase );
+  }
+  //-------------------------------------
+  bool Facet::delPoint( int iPos, DataBase & iBase )
+  {
+    if( iPos < 0 ||  ((size_t)iPos) >= cLines.size() )
+      {
+	return false;
+      }
+
+    //=========== Along one line ==========
+    if( cLines.size() == 1 ) 
+      {
+	if( cLines[0]->isPoint() )
+	  {
+	    return true;   // the void !  must perhap delete the line ?
+	  }
+	
+	if( iPos == 0 )
+	  {
+	    iBase.freePoint( cLines[0]->first() );
+	    cLines[0]->first() = cLines[0]->second();	    
+	  }
+	else // iPos == 1
+	  {
+	    iBase.freePoint( cLines [0]->second() );
+	    cLines[0]->second() = cLines[0]->first();
+	  }
+	return false;
+      }		   
+
+
+    //=========== The last point ==========   
+    if( ((size_t)iPos) == cLines.size()-1 ) 
+      {
+	iBase.freePoint( cLines[iPos]->second() );
+	iBase.freeLine( cLines.back() );
+	cLines.pop_back();
+	return false;
+      }
+
+    //============= First Point ============
+    if( iPos == 0 )
+      {
+	iBase.freePoint( cLines[0]->first() );
+	iBase.freeLine( cLines[0] );
+	cLines.erase( cLines.begin() );
+	return false;
+      }
+    
+    //============ General case ============
+    cLines[iPos-1]->second() =  cLines[iPos]->second();
+    iBase.freeLine( cLines[iPos] );
+    cLines.erase( cLines.begin()+iPos );
+    
+    return false;
+ }
+   
   //-------------------------------------
   void Facet::execVisitor( EntityVisitor& pVisit )
   {
@@ -201,56 +342,59 @@ namespace PP3d {
   //-------------------------------------
   void Facet::closeFacet()
   {
-    LinePtr lLine = new Line( cLines[ getNbLines() -1 ]->getSecond(),
-			      cLines[0]->getFirst() );
-    cLines.push_back( lLine);
+    if( isClosable() )
+      {
+	LinePtr lLine = new Line( cLines[ getNbLines() -1 ]->getSecond(),
+				  cLines[0]->getFirst() );
+	cLines.push_back( lLine);
+      }
   }
   //-------------------------------------
   // il suffit d'un seul angle superieur ou egal a 180 pour que la facette soit concave
   /*
-  bool Facet::computeConcave()
-  {
-  if( cLines.size() <= 3 )
-      return false;
+    bool Facet::computeConcave()
+    {
+    if( cLines.size() <= 3 )
+    return false;
 
     std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
     size_t i;
     for(  i = 0 ; i<  cLines.size()-1; i++ )
-      {
-	Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
-	Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
+    {
+    Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
+    Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
 
 	
-	std::cout <<  cLines[i]->second()->get() << " - "  cLines[i]->first()->get()
-		  << " -> " << A << std::endl;
+    std::cout <<  cLines[i]->second()->get() << " - "  cLines[i]->first()->get()
+    << " -> " << A << std::endl;
 	
-	std::cout <<  cLines[i+1]->second()->get() << " - "  cLines[i+1]->first()->get()
-		  << " -> " << B << std::endl;
+    std::cout <<  cLines[i+1]->second()->get() << " - "  cLines[i+1]->first()->get()
+    << " -> " << B << std::endl;
 
-	double lResult =  Point3d::GetAngleRadBetween( A, B) ;
+    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
 	
-	std::cout << lResult << std::endl;
-	if( lResult >  M_PIl)
-	  {
-	    std::cout << "Facet::computeConcave  CONCAVE !  sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl << std::endl;
-	    cIsConcave = true;
-	    return true;
-	  }
-      }
+    std::cout << lResult << std::endl;
+    if( lResult >  M_PIl)
+    {
+    std::cout << "Facet::computeConcave  CONCAVE !  sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl << std::endl;
+    cIsConcave = true;
+    return true;
+    }
+    }
     Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
     Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
     double lResult =  Point3d::GetAngleRadBetween( A, B) ;
     if( lResult >  M_PIl)
-      {
-	std::cout << "Facet::computeConcave2   sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl<< std::endl;
-	cIsConcave = true;
-	return true;
-      }
+    {
+    std::cout << "Facet::computeConcave2   sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl<< std::endl;
+    cIsConcave = true;
+    return true;
+    }
     
     
     cIsConcave = false;
     return false;
-  }
+    }
   */
   bool Facet::computeConcave()
   {
@@ -283,12 +427,12 @@ namespace PP3d {
     Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
     Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
     double lResult =  Point3d::GetAngleRadBetween( A, B) ;
-	if( Point3d::isNegAngle( A, B, cNorm )) // On prend la normale comme repere
-	  {
-	    std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
-	    cIsConcave = true;
-	    return true;
-	  }
+    if( Point3d::isNegAngle( A, B, cNorm )) // On prend la normale comme repere
+      {
+	std::cout << "Facet::computeConcave  CONCAVE ! " << std::endl;
+	cIsConcave = true;
+	return true;
+      }
 
     
     cIsConcave = false;
@@ -316,10 +460,10 @@ namespace PP3d {
     Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
   
     double lResult =  Point3d::GetAngleRadBetween( A, B) ;
-	if( Point3d::isPositifAngle( A, B, cNorm )) // On prend la normale comme repere
-	  {
-	    return false;
-	  }
+    if( Point3d::isPositifAngle( A, B, cNorm )) // On prend la normale comme repere
+      {
+	return false;
+      }
 
     return true;
   }

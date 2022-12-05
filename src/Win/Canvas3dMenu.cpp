@@ -136,7 +136,9 @@ namespace M3d {
 #define StrMenu_ExtrudeZ    StrMenu_Extrude  " Z"
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
-  
+#define StrMenu_ExtrudePath StrMenu_Extrude  " path"
+#define StrMenu_ExtrudePathNorm StrMenu_Extrude  " path norm"
+
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
   
@@ -320,7 +322,14 @@ namespace M3d {
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "", MyMenuCallbackExtrude, this);
-	  
+
+
+	  if(TheInput.getCurrentLine()  != nullptr && TheSelect.getNbSelected() > 0 )
+	    {
+	    pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePath, "", MyMenuCallbackExtrudePath, this);
+  	    pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", MyMenuCallbackExtrudePathNorm, this);
+	    }
+
 	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenX, "", MyMenuCallbackFlatten, this);
 	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenY, "", MyMenuCallbackFlatten, this);
 	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenZ, "", MyMenuCallbackFlatten, this);
@@ -373,8 +382,8 @@ namespace M3d {
     
     lMenuFlagActif = FL_MENU_INACTIVE;
     
-    if(TheAppli.getDatabase()->isCurrentPoints() 
-       &&TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
+    if(TheInput.isCurrentPoints() 
+       &&TheInput.getNbCurrentPoints() == 2 )
       {
 	lMenuFlagActif=0;
       }
@@ -382,8 +391,8 @@ namespace M3d {
       
     
     lMenuFlagActif = FL_MENU_INACTIVE;
-    if(TheAppli.getDatabase()->isCurrentPoints()
-       &&TheAppli.getDatabase()->getNbCurrentPoints()  >= 3 )
+    if(TheInput.isCurrentPoints()
+       &&TheInput.getNbCurrentPoints()  >= 3 )
       {
  	lMenuFlagActif=0;
       }
@@ -393,8 +402,8 @@ namespace M3d {
     
     
     lMenuFlagActif=FL_MENU_INACTIVE;
-    if(TheAppli.getDatabase()->isCurrentPoints()
-       &&TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
+    if(TheInput.isCurrentPoints()
+       &&TheInput.getNbCurrentPoints() >= 2 )
       {
  	lMenuFlagActif=0;
       }
@@ -402,7 +411,7 @@ namespace M3d {
       
 
     lMenuFlagActif = 0;
-    if( TheBase.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
+    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
     
     pMenu.add( StrMenu_RevolX, "^x", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
     pMenu.add( StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
@@ -491,39 +500,39 @@ namespace M3d {
 	//-----------------
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
 	  {
-	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
+	    if( TheInput.getNbCurrentPoints() >= 3 )
 	      {
-		lShape =TheAppli.getDatabase()->convertCurrentLineToFacet();
+		lShape =TheInput.convertCurrentLineToFacet(TheBase);
 	      }
 	  }
 	if( strcmp( m->label(), StrMenu_CreateShapeFacetP ) == 0)
 	  {
-	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
+	    if( TheInput.getNbCurrentPoints() >= 3 )
 	      {
-		lShape =TheAppli.getDatabase()->convertCurrentLineToFacetPoly();
+		lShape =TheInput.convertCurrentLineToFacetPoly(TheBase);
 	      }
 	  }
 	if( strcmp( m->label(), StrMenu_CreateShapeFacet2P ) == 0)
 	  {
-	    if( TheAppli.getDatabase()->getNbCurrentPoints() >= 3 )
+	    if( TheInput.getNbCurrentPoints() >= 3 )
 	      {
-		lShape =TheAppli.getDatabase()->convertCurrentLineToBiFacetPoly();
+		lShape =TheInput.convertCurrentLineToBiFacetPoly(TheBase);
 	      }
 	  }
 	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
 	  {
-	    if(TheAppli.getDatabase()->getNbCurrentPoints() >= 2 )
+	    if(TheInput.getNbCurrentPoints() >= 2 )
 	      {
-		lShape =TheAppli.getDatabase()->convertCurrentLineToPolylines();
+		lShape =TheInput.convertCurrentLineToPolylines(TheBase);
 	      }
 	  } 
 	//-----------------
 	else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
 	  {
-	    if( TheAppli.getDatabase()->getNbCurrentPoints() == 2 )
+	    if( TheInput.getNbCurrentPoints() == 2 )
 	      {
-		lShape =TheAppli.getDatabase()->convertCurrentLineToLine();
+		lShape =TheInput.convertCurrentLineToLine(TheBase);
 	      }
 	  }
 	
@@ -559,6 +568,50 @@ namespace M3d {
       {
 	CallDialogSubDiv( slFlagDialog, lCanvas );
       }    
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackExtrudePath(Fl_Widget* w, void* pUserData)
+  {
+    BEGINCALL ;
+
+    std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePath" << std::endl;
+    PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+
+    if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+      {
+	std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  1" << std::endl;
+	PP3d::Point3d lPtZero;
+	PP3d::Point3d lAxis(1,0,0);
+	TheAppli.getAxis( lPtZero, lAxis );
+	std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  2" << std::endl;
+
+	PP3d::Modif::ExtrudePath( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+
+	PushHistory();	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+      }
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackExtrudePathNorm(Fl_Widget* w, void* pUserData)
+  {
+    BEGINCALL ;
+
+    std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
+    PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+
+    if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+      {
+	std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  1" << std::endl;
+	PP3d::Point3d lPtZero;
+	PP3d::Point3d lAxis(1,0,0);
+	TheAppli.getAxis( lPtZero, lAxis );
+	std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  2" << std::endl;
+
+	PP3d::Modif::ExtrudePathNorm( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+
+	PushHistory();	
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+      }
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
@@ -597,7 +650,9 @@ namespace M3d {
 	  {
 	    Application::Instance().setCurrentTransformType(Transform::MoveAxis);
 	  }
-      }
+	PushHistory();
+	TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+       }
   }
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData)
@@ -909,7 +964,7 @@ namespace M3d {
 	  {
 	    lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
 	    Application::Instance().setCurrentTransformType(Transform::MoveAxis);
-	  }
+	  }    
     // ROTATE
 	else if( strcmp( m->label(), StrMenu_RotX ) == 0)
 	  {

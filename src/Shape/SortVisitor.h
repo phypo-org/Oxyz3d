@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <set>
+#include <iostream>
 
 namespace PP3d{
 
@@ -34,6 +35,11 @@ namespace PP3d{
     std::vector<Entity*>   cVectAllEntity; // contient tout
     std::set<Entity*>      cSetAllEntity; // contient tout
    
+    //--------------------------------
+    friend std::ostream & operator << (  std::ostream & iOs, SortEntityVisitor & iVisit )
+    {
+      return iVisit.trace( iOs );
+    }
     //--------------------------------
     SortEntityVisitor( bool iAcceptDoublon = false)
       :cAcceptDoublon( iAcceptDoublon )
@@ -113,7 +119,20 @@ namespace PP3d{
       cSetObjects.insert( pObject );
       cVectAllEntity.push_back( pObject  );
       cSetAllEntity.insert(pObject  );
-    }    
+    }
+
+ 
+    std::ostream & trace( std::ostream & iOs ){
+      iOs
+	<< "Points\t:"  << cVectPoints.size()   << "\t" << cSetPoints.size()    << "\t" 
+	<< "Lines\t:"   << cVectLines.size()    << "\t" << cSetLines.size()     << "\t"
+	<< "Facets\t:"  << cVectFacets.size()   << "\t" << cSetFacets.size()    << "\t"
+	<< " Polys\t:"   << cVectPolys.size()    << "\t" << cSetPolys.size()     << "\t"
+	<< "Objects\t:" << cVectObjects.size()  << "\t" << cSetObjects.size()   << "\t"
+	<< "Entity\t:"  << cVectAllEntity.size()<< "\t" << cSetAllEntity.size() << "\t"
+	;
+      return iOs;
+    }
   };
   //*****************************************
   //*****************************************

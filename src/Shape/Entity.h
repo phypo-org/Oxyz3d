@@ -75,7 +75,7 @@ namespace PP3d {
   public:
     virtual ShapeType getType() const=0;
 		
-    Entity()
+    Entity()	 	      
     {
     }
     virtual ~Entity();
@@ -151,6 +151,7 @@ namespace PP3d {
     static Object* FindMyObject();
 
     friend class DataBase;
+    friend class CurrentInput;
     friend class MyRead;
     friend class Line;
     friend class Facet;
@@ -184,10 +185,29 @@ namespace PP3d {
     Point3d cPt;
 
   public:
-    Point( const Point3d & p )
+    Point( PDouble iX=0, PDouble iY=0,  PDouble iZ=0 )
+      :cPt( iX, iY, iZ )
+    {
+    }
+    
+   Point( const Point3d & p )
       :cPt( p )
     {			
-    }		
+    }
+    
+    Point( const Point & iPt )
+      :cPt( iPt.x(), iPt.y(), iPt.z() )
+    {
+    }
+  
+    PDouble x() const { return cPt.x(); }
+    PDouble y() const { return cPt.y(); }
+    PDouble z() const { return cPt.z(); }
+
+    void set( PDouble iX=0, PDouble iY=0,  PDouble iZ=0 )
+    {
+      cPt.set( iX, iY, iZ );
+    }
 		
     ShapeType getType() const override { return ShapeType::Point;}
 
@@ -217,6 +237,7 @@ namespace PP3d {
   using PointPtrSet  = std::set<PP3d::Point*>;
   using PointPtrHash = std::unordered_set<PP3d::Point*>;
 
+  
 
   inline static void operator *= (PointPtrSet pSet, const Mat4& pMat )
   {
@@ -231,8 +252,7 @@ namespace PP3d {
   inline static PointPtrPair Reverse(const PointPtrPair& iPair ) {  return PointPtrPair( iPair.second, iPair.first); }
 
   //*********************************************
-
-  class Line  :  public Entity {
+   class Line  :  public Entity {
 
     PointPtrPair cPoints={nullptr,nullptr};
 		
@@ -253,6 +273,7 @@ namespace PP3d {
     ShapeType   getType() const override { return ShapeType::Line;}
 		
     PointPtrPair& getPoints() { return cPoints; }
+    
     //    PointPtrPair  getInversedPoints(){ cPoints.PointPtrPair lPair( second(), first(); }
     PointPtr      getFirst()  const { return cPoints.first;}
     PointPtr      getSecond() const { return cPoints.second;}
@@ -260,6 +281,8 @@ namespace PP3d {
     PointPtr      second() const { return cPoints.second;}
     PointPtr&     first() { return cPoints.first;}
     PointPtr&     second(){ return cPoints.second;}
+
+    Point3d       getVector3d() { return (second()->get() - first()->get()); }
     
     void set( PointPtr lA, PointPtr lB )
     {
@@ -304,6 +327,10 @@ namespace PP3d {
       pOs << ((Entity&)pEntity) <<  " " << pEntity.first() << " " << pEntity.second() ;
       return pOs;
     }
+
+    
+    Facet* myFacet() { return (Facet*) firstOwner(); }
+     
   };
 	
   using LinePtr     = Line*;
@@ -354,8 +381,9 @@ namespace PP3d {
       //		<< cPtPair.first << "  :  " << cPtPair.second
       //		<<  std::endl
       ;}
-  };								 
-
+   
+  };
+  
   inline Line * MakeLine( const Point3d & iA,   const Point3d & iB )
   {
     return new Line( new Point( iA ), new Point (iB ));
@@ -381,6 +409,23 @@ namespace PP3d {
 	
     void closeFacet();
     
+    bool isClose()
+    {
+      if( cLines.size() <= 1 )
+	return false;
+      
+      return cLines[0]->first() == cLines[ cLines.size()-1]->second();
+    }
+    bool isClosable()
+    {
+      if( cLines.size() <= 1 )
+	return false;
+      
+      return cLines[0]->first() != cLines[ cLines.size()-1]->second();
+    }
+   
+    void computeNormal();
+
 
     bool addTrueLine( LinePtr iLine )
     {
@@ -461,9 +506,14 @@ namespace PP3d {
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
+    PointPtr     getPoint( int iPos );
 
-    Point3d &    getNormal()     { return cNorm; }
-		
+    const Point3d &    getNormal()     { return cNorm; }
+
+    void         insertPoint( int iPos, Point3d & lPt, DataBase & iBase );
+    void         insertPoint( int iPos, PointPtr lPt, DataBase & iBase );
+    bool         delPoint( int iPos, DataBase & iBase );
+
     void         execVisitor( EntityVisitor& pVisit )override;
     void         inverseLines();
     Point3d      getCenter();
@@ -471,10 +521,14 @@ namespace PP3d {
     bool         isConcave() { return cIsConcave; }
     bool         testFlat();
 
+    Poly* myPoly() { return (Poly*) firstOwner(); }
+
+    
   protected:
     void execVisitor( EntityVisitorNode& pVisit )override;
     friend class Poly;
     friend class Maker;
+     friend class VisitorNormalFacet;
   };
 	
   using FacetPtr     = Facet*;

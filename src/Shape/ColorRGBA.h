@@ -68,7 +68,7 @@ namespace PP3d {
 
     static GLuint GetId( unsigned char iData[4]  )
     { 
-      return 	iData[0] + (iData[1]<<8)  + (iData[2]<<16); // + (iData[3]<<24); 
+      return 	iData[0] + (iData[1]<<8)  + (iData[2]<<16) ; ////// + (iData[3]<<24); 
     }
 
  

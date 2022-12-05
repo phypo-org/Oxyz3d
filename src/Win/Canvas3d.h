@@ -33,7 +33,7 @@ struct Fl_Menu_Item;
 
 namespace M3d {
  
-  enum class ModeUser { MODE_BASE, MODE_SELECT, MODE_SELECT_RECT, MODE_MOVE_CAMERA, MODE_TRANSFORM };
+  enum class ModeUser { MODE_BASE, MODE_SELECT, MODE_SELECT_RECT, MODE_MOVE_CAMERA, MODE_TRANSFORM, MODE_DRAG_INPUT_PT };
   enum class ModeGrid { NO_GRID=0, GRID_2D=1, GRID_3D=2 };
 
   class Win3d;
@@ -123,6 +123,7 @@ namespace M3d {
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
     bool userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     bool userSelectionPointColor(int	pEvent, bool cFlagMove);
+    bool userDragInputPt(int  pEvent, bool iFinalize );
     bool setCursor3dPosition( int pX, int pY );
 		
     bool transform2Dto3D(  int pX, int pY, PP3d::Point3d & iResult );
@@ -152,7 +153,9 @@ namespace M3d {
     static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );
 
     static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
- 
+    static void MyMenuCallbackExtrudePath(Fl_Widget* w, void* pUserData);
+    static void MyMenuCallbackExtrudePathNorm(Fl_Widget* w, void* pUserData);
+
     //=========== MENUS =================
 
     void traceMode() const;

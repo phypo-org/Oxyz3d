@@ -26,7 +26,8 @@ int main(int argc, char **argv)
     }
   
 
-  MyPref.initFromIni( TheAppli.getConfig() );    
+  MyPref.initFromIni( TheAppli.getConfig() );
+  
   PPu::PPArgs lArgs( argc, argv );
   MyPref.initFromArg( lArgs );
   
@@ -37,7 +38,7 @@ int main(int argc, char **argv)
   //  M3d::Application::Instance().redrawObjectTree();	
 
   std::string lVal;
-  if( (lVal = lArgs.getValue(  "-load" )).size() != 0 )
+  if( lArgs.get(  "-load", lVal ) )
     {
       if( PP3d::MyRead::Read(lVal.c_str(),
 			     *Application::Instance().getDatabase(), &TheSelect ))

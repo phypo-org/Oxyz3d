@@ -147,7 +147,7 @@ namespace M3d {
 	  std::cout << "Shape is null" << std::endl;
 	  return;
 	}
-      Application::Instance().getDatabase()->swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
+      TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
 
       //  lShape->move(lPos );
       		
@@ -156,22 +156,22 @@ namespace M3d {
 
      
       PP3d::Mat4 lMatRot;
-      lMatRot.Identity();
+      lMatRot.identity();
  
       lMatRot.initRotX( M_PI*cSliderRotX->value()/180.0 );
       lShape->modify( lMatRot );
 
-      lMatRot.Identity();
+      lMatRot.identity();
       lMatRot.initRotY( M_PI*cSliderRotY->value()/180.0 );
       lShape->modify( lMatRot );
       
-      lMatRot.Identity();
+      lMatRot.identity();
       lMatRot.initRotZ( M_PI*cSliderRotZ->value()/180.0 );
       lShape->modify( lMatRot );
 		  
      
       PP3d::Mat4 lMatTran;
-      lMatTran.Identity();
+      lMatTran.identity();
  
       lMatTran.initMove( cSliderPosX->value(), cSliderPosY->value(), cSliderPosZ->value() );
       lShape->modify( lMatTran );
@@ -429,7 +429,7 @@ namespace M3d {
 
       std::cout << "CANCEL" << std::endl;
 
-      TheAppli.getDatabase()->cancelCurrentCreation();
+      TheInput.cancelCurrentCreation();
 
       TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 
@@ -441,7 +441,7 @@ namespace M3d {
     {
       Diag.maj();
       
-      PP3d::Object* lObj = TheAppli.getDatabase()->validCurrentCreation();
+      PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
       if( lObj != nullptr )
 	{
 	  lObj->rename( Diag.cName.c_str() );

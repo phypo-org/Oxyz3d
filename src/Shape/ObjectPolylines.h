@@ -57,6 +57,7 @@ namespace PP3d {
     //---------------------------		
     void selectGL( ViewProps& pViewProps ) override
     {
+      // std::cout << ">>>>>>>>>>>>SelectPolyline" << std::endl; 
       switch( pViewProps.cSelectType )
 	{
 	case SelectType::All:

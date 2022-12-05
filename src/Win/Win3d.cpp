@@ -3,6 +3,7 @@
 
 
 #include "Callback.h"
+#include "SelFunct.h"
 
 
 namespace M3d {
@@ -34,10 +35,22 @@ namespace M3d {
 #ifdef USING_LUA     
 #define StrMenu_ConsolLua       "Console lua"
 #endif
+  
+#define StrMenu_Edit            "&Edit/"
+#define StrMenu_Undo            "Undo  Ctrl+Z"
+#define StrMenu_Redo            "Redo  Shift+Ctrl+Z"
 
 #define StrMenu_Select          "&Select/"
+#define StrMenu_SelectMore      "Select more"
+#define StrMenu_SelectLess      "Select Less"
+#define StrMenu_SelectEdgeLoop01  "Select edge loop01"
+#define StrMenu_SelectEdgeLoop001  "Select edge loop001"
+#define StrMenu_SelectEdgeLoop0001  "Select edge loop0001"
+
 #define StrMenu_UnselectAll     "Unselect all"
 #define StrMenu_InvertSelect    "Invert selection"
+#define StrMenu_InvertSelect    "Invert selection"
+
 #define StrMenu_DeleteSelect    "Delete object selection"
  
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
@@ -112,6 +125,8 @@ namespace M3d {
     static int slWinId=1;
     cWinId=slWinId++;
 
+    int lSzOutputInfo = 20;
+
   		
     // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
     //sw.mode(FL_RGB);
@@ -144,7 +159,7 @@ namespace M3d {
     lH =  Application::sIconSize+4;
 
     int lXCanvas = lY+lH+2;
-    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, lXCanvas, this->w()-10, (this->h()-lXCanvas)-16 , "1" );
+    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, lXCanvas, this->w()-10, (this->h()-lXCanvas)-lSzOutputInfo , "1" );
     
      this->resizable( cuCanvas3d.get() );
    lX += lW;
@@ -357,7 +372,7 @@ namespace M3d {
 
 
 		
-    cInfoOutput = new Fl_Output( 1, this->h() -16 , this->w()-2, 16, "Fl_InfoOutput");
+    cInfoOutput = new Fl_Output( 1, this->h() -lSzOutputInfo , this->w()-2, lSzOutputInfo, "Fl_InfoOutput");
     cInfoOutput->align(FL_ALIGN_BOTTOM);
     cInfoOutput->value("Welcome ...");
 
@@ -389,14 +404,19 @@ namespace M3d {
     cMenubar.add(StrMenu_File    StrMenu_Preferences,  "^p", MyMenuCallback, this, FL_MENU_DIVIDER);
     cMenubar.add(StrMenu_File "&Quit",                     "^q", QuitCallback,   this);
 									       
+    //================================ 
+    cMenubar.add( StrMenu_Edit   StrMenu_DeleteSelect, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Edit   StrMenu_Undo,         "", UndoCB, this, FL_MENU_DIVIDER);
+    cMenubar.add( StrMenu_Edit   StrMenu_Redo,         "", RedoCB, this, FL_MENU_DIVIDER);
     //================================
-    cMenubar.add("&Edit/&Copy",  "", MyMenuCallback, this);
-    cMenubar.add("&Edit/&Paste", "", MyMenuCallback, this, FL_MENU_DIVIDER);
-
     cMenubar.add( StrMenu_Select StrMenu_UnselectAll, "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_SelectMore,   "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_SelectLess,   "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_SelectEdgeLoop01,   "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_SelectEdgeLoop001,   "", MyMenuCallback, this);
+    cMenubar.add( StrMenu_Select StrMenu_SelectEdgeLoop0001,   "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_InvertSelect, "", MyMenuCallback, this);
     
-    cMenubar.add( StrMenu_Select StrMenu_DeleteSelect, "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
     //================================
 
@@ -517,7 +537,7 @@ namespace M3d {
 #endif
 
     PP3d::Mat4 lMatTran;
-    lMatTran.Identity();
+    lMatTran.identity();
 
 										
     Fl_Menu_* mw = (Fl_Menu_*)w;
@@ -665,6 +685,34 @@ namespace M3d {
 		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
+		else if( strcmp( m->label(),StrMenu_SelectMore	) == 0)
+		  {
+		    SelFunct::SelectMore( TheSelect, TheBase );
+		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
+		else if( strcmp( m->label(),StrMenu_SelectEdgeLoop01	) == 0)
+		  {
+		    SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.1 );
+		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
+		else if( strcmp( m->label(),StrMenu_SelectEdgeLoop001	) == 0)
+		  {
+		    SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.01 );
+		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
+		else if( strcmp( m->label(),StrMenu_SelectEdgeLoop0001	) == 0)
+		  {
+		    SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.001 );
+		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
 		else if( strcmp( m->label(), StrMenu_DeleteSelect) == 0)
 		  {
 		    cout << "Select menu :" << StrMenu_DeleteSelect << endl;
@@ -752,7 +800,7 @@ namespace M3d {
 		else if( strcmp( m->label(), StrMenu_SetAxeInput) == 0)
 		  {
 		    PP3d::SortEntityVisitorPoint lVisit;
-		    if( TheBase.execVisitorOnCurrentLine( lVisit ) && lVisit.cVectPoints.size() >= 2 )
+		    if( TheInput.execVisitorOnCurrentLine( lVisit ) && lVisit.cVectPoints.size() >= 2 )
 		      {
 			PP3d::Point3d lCenter = lVisit.cVectPoints[0]->get();
 			PP3d::Point3d lNorm   = lVisit.cVectPoints[1]->get();
@@ -1013,6 +1061,11 @@ namespace M3d {
   double  Win3d::getCurrentVal()
   {
     return strtod(cCurrentInput1->value(), nullptr);
+  }
+  //-------------------------------------------
+  void Win3d::setInfo( const std::string & iStr )
+  {
+    cInfoOutput->value(iStr.c_str());
   }
   //****************************************
 }

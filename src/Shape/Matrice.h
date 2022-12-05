@@ -70,7 +70,7 @@ namespace PP3d {
       ::memset( cMat, 0, sizeof( cMat ) );
     }
     //-----------------------------
-    void Identity()
+    void identity()
     {
       for ( int j = 0; j < 4; j++ )
 	{
@@ -95,7 +95,7 @@ namespace PP3d {
     //-----------------------------
     void initMove( PDouble pX, PDouble pY, PDouble pZ )
     {
-      Identity();
+      identity();
       cMat[0][3] += pX;
       cMat[1][3] += pY;
       cMat[2][3] += pZ;
@@ -105,7 +105,7 @@ namespace PP3d {
     //-----------------------------
     void initScale( PDouble pX, PDouble pY, PDouble pZ )
     {
-      Identity();
+      identity();
       cMat[0][0] *= pX;
       cMat[1][1] *= pY;
       cMat[2][2] *= pZ;			

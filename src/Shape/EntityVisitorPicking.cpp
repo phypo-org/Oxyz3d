@@ -22,6 +22,8 @@ namespace PP3d {
   void VisitorDrawSelectPoints::execPoint( PointPtr iVar )
   {	
     ColorRGBA::Id( iVar->getId());
+
+    // std::cout << " VisitorDrawSelectPoints::execPoint " << iVar->getId() << std::endl;
     VisitorDrawPoints::execPoint( iVar );
     ColorRGBA::Zero();			
   }
