@@ -101,8 +101,14 @@ namespace PP3d {
     void addY( TFLOAT pY) { cY += pY; }
     void addZ( TFLOAT pZ) { cZ += pZ; }
 
-    TPoint3d  operator - ()	{	return TPoint3d( -cX, -cY, -cZ );	}
-		
+    TPoint3d  operator - () const	{	return TPoint3d( -cX, -cY, -cZ );	}
+    //--------------------------------------------
+     bool isZero ( ) const
+    {
+      if( cX == 0 && cY == 0 && cZ == 0 )
+	return true;
+      return false;
+    }		
     //--------------------------------------------
     bool sameEpsi ( long double iEpsi, const TPoint3d & B )
     {
@@ -153,7 +159,6 @@ namespace PP3d {
 	return true;
       return false;
     }
-
    //--------------------------------------------
     friend bool operator != ( const TPoint3d & A, const TPoint3d &  B )
     {
@@ -218,8 +223,8 @@ namespace PP3d {
       if( lProduitNorme != 0 )
 	{
 	  long double lResult  = lProduitScalaire/lProduitNorme;
-	  std::cout << "Dot:" << lProduitScalaire << " Norm:" << lProduitNorme << " -> "
-		    << lResult << std::endl;
+	  //	  std::cout << "Dot:" << lProduitScalaire << " Norm:" << lProduitNorme << " -> "
+	  //		    << lResult << std::endl;
 	  
 	  if( ! std::isnan(lResult) && !std::isinf(lResult) )
 	    {

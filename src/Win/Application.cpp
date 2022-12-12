@@ -122,14 +122,22 @@ namespace M3d{
     WinObjTree::Instance().rebuild();		
   }
   //----------------------------------------
+  void Application::info( const std::string & iStr )      
+  {
+    for( std::unique_ptr<Win3d> &lWin :cAllWin3d )
+      {
+	lWin->setInfo( iStr);
+      }
+  } 
+  //----------------------------------------
   const char * Application::autoSave()
   {
     static std::string cAutoSave="AutoSave.oxyz";
     static int cNbSav=1;
 
-    if( Preference::Instance().cAutoSave )
+    if( Preference::Instance().cFileAutoSave )
       {
-	if( cNbSav++ % Preference::Instance().cAutoSaveFrequency == 0 )
+	if( cNbSav++ % Preference::Instance().cFileAutoSaveFrequency == 0 )
 	  {
 	    std::cout << "Application::autoSave return " << cAutoSave.c_str() << std::endl;
 	    return cAutoSave.c_str();

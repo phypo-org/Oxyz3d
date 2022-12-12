@@ -362,7 +362,20 @@ namespace PPu {
 	  }
       }
     return lRet;
-  }    
+  }
+ 
+  //--------------------------------------
+  //--------------------------------------
+  //--------------------------------------
+  bool PPConfig::set ( const char* iSection, const char* iVariable, const std::string & iValue )
+  {
+    std::string lKey = iSection;
+    lKey += kSep +iVariable;
+    cData[ lKey ] = iValue;
+    
+    return true; 
+  }
+
   //--------------------------------------
   //--------------------------------------
   //--------------------------------------

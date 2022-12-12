@@ -434,7 +434,7 @@ namespace PP3d {
   {
     for(  EntityPtr lEntity : cSelectObjVect )
       {
-	pDatabase.addToInput( lEntity, pFlagLink );				
+	pDatabase.getInput().addToInput( lEntity, pFlagLink );				
       }	
   }
 

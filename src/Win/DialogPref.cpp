@@ -15,7 +15,7 @@
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Light_Button.H>
-
+#include <FL/Fl_File_Input.H>
 
 #include <sstream>
 #include <stdlib.h>
@@ -57,9 +57,10 @@ namespace M3d {
     MyIntInput     * cHistoMaxDept;
 
 
-    Fl_Light_Button * cAutoSave;
-    MyIntInput      * cAutoSaveFrequency;
-
+    Fl_Light_Button * cFileAutoSave;
+    MyIntInput      * cFileAutoSaveFrequency;
+    Fl_File_Input   * cFileDefaultDir;
+ 
 
 
 
@@ -99,7 +100,8 @@ namespace M3d {
     
 #undef  GET_BOOL_VALUE
 #define GET_BOOL_VALUE(A)  MyPref.A = DiagPref.A->value() == 1;
-    
+#define GET_FILE_VALUE(A)  MyPref.A = DiagPref.A->value();
+  
  static void OkCB( Fl_Widget*, void*pUserData )
     {  
       Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
@@ -113,8 +115,10 @@ namespace M3d {
       size_t lMaxHisto = atoi( DiagPref.cHistoMaxDept->value());
       PP3d::UndoHistory::Instance().setMaxHisto( lMaxHisto );
 	
-      GET_BOOL_VALUE( cAutoSave);
-      GET_INT_VALUE( cAutoSaveFrequency );
+      GET_BOOL_VALUE( cFileAutoSave);
+      GET_INT_VALUE(  cFileAutoSaveFrequency );
+      GET_FILE_VALUE( cFileDefaultDir );
+
       
       //Debug
       GET_INT_VALUE(cDbgEvt);
@@ -141,6 +145,9 @@ namespace M3d {
 
     
 #define INTPUT_INT(A,B) { A = new MyIntInput( lX, lY, 50, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( std::to_string(MyPref.A).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
+
+#define INTPUT_FILE(A,B) { A = new MyFileInput( lX, lY, 50, lH, B, MyPref.A ); lY += A->h() + lMarge; ; A->value( MyPref.A.c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
+    
 #define INTPUT_VAR_INT(A,V,B) { A = new MyIntInput( lX, lY, 50, lH, B, V ); lY += A->h() + lMarge; ; A->value( std::to_string(V).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 
 #define INTPUT_BOOL(A,B) { A =  new Fl_Light_Button( lX0, lY, 250, lH, B ); lY += A->h() + lMarge; A->value( MyPref.A ); }
@@ -169,8 +176,9 @@ namespace M3d {
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "File");
 	  lX = lMarge+300;;
 	  lY = lMarge;
-	  INTPUT_BOOL( cAutoSave, "Auto save");
-	  INTPUT_INT( cAutoSaveFrequency, "Auto save frequency");
+	  INTPUT_BOOL( cFileAutoSave,          "Auto save");
+	  INTPUT_INT(  cFileAutoSaveFrequency, "Auto save frequency");
+	  INTPUT_FILE( cFileDefaultDir,        "Default base path" );
 	  
 	  lGr->end();
 	  Fl_Group::current()->resizable(lGr);

@@ -66,15 +66,15 @@ namespace PP3d {
   };
   //**************************
 
-// ATTENTION si un point appartient a plusieurs facettes, les transformations s'additionnent
-// Ce n'est pas forcement un effet voulu !!!
-// Comment faire autrement ?
-// compter precocement le nombre de owners actifs pour chaque points, stocker le nombre et
-// lors des transformation diviser la transformation par ce nombre ?
+  // ATTENTION si un point appartient a plusieurs facettes, les transformations s'additionnent
+  // Ce n'est pas forcement un effet voulu !!!
+  // Comment faire autrement ?
+  // compter precocement le nombre de owners actifs pour chaque points, stocker le nombre et
+  // lors des transformation diviser la transformation par ce nombre ?
 
   struct VisitorModifPoints : public VisitorModifSelect
   {	
-   // Memorize les coordonnees des points des entites selectionnes
+    // Memorize les coordonnees des points des entites selectionnes
     
     std::unordered_map<EntityId, Point3d> lSavPt;
     std::unordered_map<EntityId, int> lNbOwner;
@@ -114,7 +114,7 @@ namespace PP3d {
       cCoef = iCoef;
     }   
     //---------------------------------			  
-     void execPoint( Point* pPoint ) override
+    void execPoint( Point* pPoint ) override
     {
       switch( cMode )
 	{
@@ -165,19 +165,19 @@ namespace PP3d {
       std::cout << "========  modifSelection " << iSelect.getSelection().size()  <<std::endl;
 
       /*
-      for( EntityPtr lEntity : Selection::Instance().getSelection() )
+	for( EntityPtr lEntity : Selection::Instance().getSelection() )
 	{	
-      std::cout << "========  modifSelection execVisitor1"  <<std::endl;
-	  lEntity->execVisitor( *this );	  	
-      std::cout << "========  modifSelection exelEntity != nullptr &&cVis		r2"  <<std::endl;
+	std::cout << "========  modifSelection execVisitor1"  <<std::endl;
+	lEntity->execVisitor( *this );	  	
+	std::cout << "========  modifSelection exelEntity != nullptr &&cVis		r2"  <<std::endl;
 	} 	}
       */
     
       for( EntityPtr lEntity : cOwners )
 	{	
-      std::cout << "========  modif execVisitor1"  <<std::endl;
+	  std::cout << "========  modif execVisitor1"  <<std::endl;
 	  lEntity->execVisitor( *this );	  	
-      std::cout << "========  modif execVisitor2"  <<std::endl;
+	  std::cout << "========  modif execVisitor2"  <<std::endl;
 	}
     }
   };
@@ -194,8 +194,8 @@ namespace PP3d {
     void execEndFacet( Facet* pEntity) override
     {
       // 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
-     VisitorModifPoints::execEndFacet(pEntity); 
-     //	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+      VisitorModifPoints::execEndFacet(pEntity); 
+      //	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
 
       if( cMode == Mode::MODIF )
 	{
@@ -213,7 +213,7 @@ namespace PP3d {
 	    }
 	  cModifPt.clear(); 
 	}        
-   }
+    }
  
   };
   //**************************
@@ -254,7 +254,7 @@ namespace PP3d {
 	    }
 	  cModifPt.clear(); 
 	}        
-   }
+    }
  
   };
   //*************************************
@@ -289,7 +289,6 @@ namespace PP3d {
 	  lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
 
-
 	  for( Point* lPt:cModifPt )
 	    {
 	      double lNb=1;
@@ -301,14 +300,76 @@ namespace PP3d {
 	      lMatRot.initRotAxis( lNorm, cCoef/lNb );
 
 	      PP3d::Mat4 lMatTran;
-	      lMatTran.Identity();
+	      lMatTran.identity();
 	      lMatTran = lMatRecenter * lMatRot *  lMatZero;					
       	      
 	      lPt->get()  = lPt->get() * lMatTran;	      
 	    }
 	  cModifPt.clear(); 
 	}        
-   }
+    }
+ 
+  };
+  //*************************************
+  struct VisitorChgMat : public  VisitorModifPoints
+  {
+    PP3d::Vector3d     cVector0;
+    const PP3d::Mat4       & cMatTran;
+
+    //---------------------------------			  
+    VisitorChgMat( PP3d::Selection & iSelect,  const Vector3d  & iVector0,  const PP3d::Mat4 & iMatTran)
+      :VisitorModifPoints( iSelect )
+      ,cVector0( iVector0 )
+      ,cMatTran( iMatTran )
+    {
+
+    }
+    //---------------------------------		
+    void execEndFacet( Facet* pEntity) override
+    {
+      // 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
+      VisitorModifPoints::execEndFacet(pEntity); 
+      //
+      std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
+
+ 
+      if( cMode == Mode::MODIF )
+	
+	{
+	  //	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
+	  
+	  if( pEntity->getNormal().isZero() )
+	    pEntity->computeNormal();
+	  
+	  PP3d::Vector3d lNormToMove = pEntity->getNormal(); 
+	  PP3d::Vector3d lNormDest   = cVector0;
+
+	  std::cout << "execEndFacet " << lNormDest<< " " <<  lNormToMove << " " << pEntity->getNormal() << std::endl;
+	 
+	  PP3d::Mat4 lMatAlign;
+	  PP3d::Mat4 lMatAlignInv;
+	  
+	  lMatAlign.rotateAlign( lNormDest, lNormToMove  );
+	  lMatAlignInv.rotateAlign( lNormToMove, lNormDest );
+
+	  //lMatAlignInv.rotateAlignInv( lNormDest, lNormToMove  );
+	  
+	  PP3d::Point3d lCenter = pEntity->getCenter();
+	  
+
+	  for( Point* lPt:cModifPt )
+	    {
+	      lPt->get() -= lCenter;  // Deplacement en zero
+	      lPt->get() *= lMatAlign;  // Rotation alignement
+	    
+	      lPt->get() *= cMatTran;   // transform
+	    
+	      lPt->get() *= lMatAlignInv; // anti rotation
+	      lPt->get() += lCenter;  // Remise en place
+	      // On doit pouvoir combiner tout ca dans une seul matrice pour eviter des calculs inutiles
+	    }	  
+	}        
+    }
  
   };
   //*************************************

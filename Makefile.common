@@ -26,7 +26,7 @@ LIB_LUA=
 else
 
 INC_LUA= -I/usr/include/lua
-LIB_LUA= -L/usr/lib/x86_64-linux-gnu -llua5.3
+LIB_LUA= -L/usr/lib/x86_64-linux-gnu -llua5.4
 FLAGS_COMPIL_EXT += -DUSING_LUA
 
 endif
@@ -74,12 +74,13 @@ ifdef USE_CC
 CC=$(USE_CC)bin/g++ -g
 # exemple make USE_CC=$GCC8
 # exemple make USE_CC=$GCC9
-else
-CC=g++ -g
 
 INCLUDE_CC=-I$(USE_CC)include
 LIB_CC=-L$(USE_CC)/lib64
 
+else
+CC=g++ -g
+LIB_CC=-L/usr/lib/x86_64-linux-gnu 
 endif
 
 
@@ -127,7 +128,7 @@ LDFLAGS= -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTKPATH} -I/usr/include/freetype2  $(INC_LUA) $(INC_P2T)
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH}/include -I/usr/include/freetype2  $(INC_LUA) $(INC_P2T)
 
 
 

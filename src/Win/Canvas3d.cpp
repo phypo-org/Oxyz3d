@@ -37,8 +37,10 @@
 #include "Win3d.h"
 
 #include "Preference.h"
+#include "Callback.h"
 
 
+#include "SelFunct.h"
 
 
 using namespace std;
@@ -75,6 +77,8 @@ namespace M3d {
   const char * const RESET_VIEW_SCALE_4="4";
   const char * const RESET_VIEW_SCALE_5="5";
   const char * const RESET_VIEW_SCALE_6="6";
+  
+  const char * const KEY_UNDO="/7a";
 
   
   const char * const STR_CURSOR_3D="c";
@@ -153,6 +157,9 @@ namespace M3d {
 	    break;
 	  case ModeUser::MODE_TRANSFORM :
 	    std::cout << "MODE_TRANSFORM  " ;
+	    break;
+	  case ModeUser::MODE_DRAG_INPUT_PT :
+	    std::cout << "MODE_DRAG_INPUT_PT  " ;
 	    break;
 	  }
       }
@@ -433,7 +440,7 @@ namespace M3d {
       }
     */
     glFlush();
-    //glFinish(); 
+    //glFinish();  
 
     //Faire ce qu'il faut pour trouver la selection
   }  
@@ -442,7 +449,7 @@ namespace M3d {
   {
     bool lFlagRedraw = false;
     
-    ////	cout << "Find Id : " << lId << endl;
+    //    cout << "Find Id : " << iId << endl;
     PP3d::EntityPtr lEntity = TheAppli.getDatabase()->findEntity( iId );
     if( lEntity != nullptr )
       {
@@ -473,7 +480,7 @@ namespace M3d {
   //---------------------------
   bool Canvas3d::pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
   {
-    //      cout << ":pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl;
+    // cout << ":pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl; 
   
     drawForSelect(); // AJOUTER LA TAILLE
     glFinish(); 
@@ -487,12 +494,45 @@ namespace M3d {
 
 
 	PP3d::EntityId lId = PP3d::ColorRGBA::GetId( lData );
-
+	//	cout << "Canvas3d::pickingColor " << lId << endl; // AAAAAAAAAAAAAAAAAAA
+	
 	if( lId == 0 )
 	  {
 	    return false;
 	  }
-	
+
+	int lMem = TheAppli.getInput().getCurrentLineSelectPoint();
+	// Est ce l'un des points de la saisie courante
+	if( TheInput.testAndSelectCurrentLinePoint( lId ) )
+	  {
+	    if( TheInput.getCurrentLineSelectPoint() == lMem )
+		  {
+		    cout << "Same Point !!!" << endl;
+		    
+		    TheInput.editCurrentLineSelectPoint();
+		    if( cMode == ModeUser::MODE_BASE
+			&& Fl::event_button() == FL_LEFT_MOUSE  )
+			  {
+			    cout << "MODE_DRAG_INPUT_PT !!!" << endl;
+			    cMode = ModeUser::MODE_DRAG_INPUT_PT;			
+			  }		    
+		  }
+	    /*
+	    if( Fl::event_shift() )
+	      {
+		cout << "Shif" << endl;
+		if( TheInput.getCurrentLineSelectPoint() == lMem )
+		  {
+		    TheInput.editCurrentLineSelectPoint();
+		      
+		    cout << "Same Point !!!" << endl;
+		  }
+	      }
+	    */	   
+	    //	    cout << "pickingColor testAndSelectCurrentLinePoint return true " << endl; //AAAAAAAAAAA
+	    return true;
+	  }
+
 	selectEntity( lId, pFlagMove); 
       }
     else
@@ -696,7 +736,7 @@ namespace M3d {
 
 		
     PP3d::Mat4 lMatTran;
-    lMatTran.Identity();
+    lMatTran.identity();
 
     if( TheAppli.getCurrentDeformType() != TypeDeform::Nothing )
       {
@@ -773,7 +813,7 @@ namespace M3d {
 	  return;    //(double)/////////// ATTENTI suricata.yamlON 
 	}
 	//================
-	// Chaque facette tourne autor de sa normale
+	// Chaque facette tourne autour de sa normale
       case Transform::CenterRotFacetNorm:
 	{
 	 
@@ -1066,6 +1106,7 @@ namespace M3d {
       }
   }
   //---------------------------
+  // nouveau point venant de la position de la souris (ctrl)
   void Canvas3d::userInputPoint( bool iFinalize )
   {     
     if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
@@ -1075,70 +1116,80 @@ namespace M3d {
 	TheAppli.roundInput( lResult );
 	
 	if( iFinalize )
-	  TheAppli.getDatabase()->addPointToCurrentLine( lResult );
+	  TheInput.addPointToCurrentLine( lResult );
 	else
-	  TheAppli.getDatabase()->viewCurrentPoint( lResult );
+	  TheInput.viewCurrentPoint( lResult );
 	
 	
 	TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
       }
   }
-  /*
-    //    cout << "---------------------------------------" << endl;
-    
-    //    cout << "P0 :" << lPt0 << " P1 :" << lPt1 << "-> R0:" << lR0 << " R1:" << lR1 	 <<  " Vn" << lVn << endl;
-    //    cout << "P0W:" << lPt0W << " P1W:" << lPt1W << endl; 
-    
-
-    // On cherche l'intersection sur le plan xz, donc y==0
-    // En parametrique l'equation de la droite : A=lR0+lVn * t
-    // Pour y donc lR.cY+lVn.cY*t = 0 donc t = -lPT.cY/lVn.cY; il faut que lVn.cY!=0
-
- 
-    double lX = lR0.cX+lVn.cX*t;      
-    double lY = lR0.cY+lVn.cY*t; // normalemnet 0 !
-    double lZ = lR0.cZ+lVn.cZ*t;
-
-    
-    PP3d::Point3d lResult( lX, lY, lZ );
-    PP3d::Point3d lResultW( lX, lY, lZ );
-    getKamera().projectObjectToWin( lResult, lResultW , true);
-    cout << "==>lResult:" << lResult <<  " W:" <<lResultW  << endl;
-
-		 	
-    TheAppli.getDatabase()->setCursorPosition (	lResult );
-    TheAppli.setCursorPosition( lResult );
- 
-    if( iFinalize )
-      TheAppli.getDatabase()->addPointToCurrentLine( lResult );
-    else
-      TheAppli.getDatabase()->viewCurrentPoint( lResult );
-
-				
-    TheAppli.redrawAllCanvas3d();
-  }
-  */
   //---------------------------
+  // recuperation d'un point d'un objet (shift)
   void Canvas3d::userInputPoint( PP3d::Entity* iEntity )
   {
+    AINFO( "Point input mode (ESC to cancel)");
+    
     if( iEntity == nullptr)
       {
 	DBG_ACT(" **************** userInputPoint Hightlight NOT FOUND" );
-	std::cout << " **************** userInputPoint Hightlight NOT FOUND" << std::endl;
 	return;
       }
     DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getType() );
-    std::cout << " **************** userInputPoint Hightlight " << iEntity->getType() << std::endl;
     
     PP3d::SortEntityVisitorPoint  lVisit;
     iEntity->execVisitor( lVisit );
 
     for( PP3d::PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
       {
-	TheAppli.getDatabase()->addPointToCurrentLine( lPt->get() );	
+	TheInput.addPointToCurrentLine( lPt->get() );	
       }
 
     TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+  }
+  //---------------------------------------------------------
+  bool Canvas3d::userDragInputPt(int  pEvent, bool iFinalize )
+  {
+    cout << "Canvas3d::userDragInputPt " << iFinalize << endl;
+
+    AINFO( "Drag input mode (ESC to quit)");
+    
+    if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
+      {
+	PP3d::Point3d lResult; 
+	if(  Fl::event_shift()  )
+	  {
+	    PP3d::EntityId lId =TheSelect.getLastHightLightEntityId();
+	    PP3d::Entity* iEntity = TheAppli.getDatabase()->findEntity( lId);
+	    if( iEntity != nullptr)
+	      {
+		PP3d::SortEntityVisitorPoint  lVisit;
+		iEntity->execVisitor( lVisit );
+		
+		for( PP3d::PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
+		  {
+		    lResult = lPt->get();	
+		  }
+	      }
+	  }
+	else
+	  {
+	    lResult = TheAppli.getDatabase()->getCursorPosition();
+	    TheAppli.roundInput( lResult );
+	  }
+		
+	if( iFinalize )
+	  {
+	    TheInput.changeCurrentLineSelectPoint( lResult );
+	    cMode = ModeUser::MODE_BASE;
+	  }
+	else	  
+	  TheInput.viewCurrentPoint( lResult );
+	
+	
+	TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
+      }
+    return true;
   }
   //---------------------------
   bool Canvas3d::transform2Dto3D(  int pX, int pY,  PP3d::Point3d & iResult )
@@ -1249,6 +1300,7 @@ namespace M3d {
   {
     return pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
+
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent ) 
   {
@@ -1267,7 +1319,7 @@ namespace M3d {
 	     << " shift:" <<  Fl::event_shift()
 	     << " alt:" <<  Fl::event_alt());
     
-    TheAppli.getDatabase()->hideCurrentPoint();
+    TheInput.hideCurrentPoint();
     
     switch( pEvent )
       {
@@ -1324,6 +1376,8 @@ namespace M3d {
 	    userPrepareAction( pEvent );
 	    return 1;
 	  }
+	
+
 
 	// FIN DEPLACEMENT CAMERA OU SELECTION
 	if( Fl::event_button() == FL_LEFT_MOUSE )
@@ -1373,7 +1427,9 @@ namespace M3d {
 						
 			
 	break;
-	//==============================
+	//========================================
+	//========================================
+	//========================================
 
       case FL_RELEASE:
 	DBG_EVT( "******** Button Release ");
@@ -1385,7 +1441,15 @@ namespace M3d {
 	      {
 		userTerminateAction( pEvent );
 	      }
+	    else
+	    if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+	      {
+		cout << "MODE_DRAG_INPUT_PT - RELEASE " << endl;
 
+		userDragInputPt(pEvent, true );
+		userTerminateAction( pEvent );
+		cMode = ModeUser::MODE_BASE;
+	      }
 	    DBG_EVT(  "LEFT ");
 	    break;
 	  case FL_MIDDLE_MOUSE :
@@ -1410,13 +1474,21 @@ namespace M3d {
 	    userTerminateAction( pEvent );
 	  }		
 	break;
-	//==============================
+	//========================================
+	//========================================
+	//========================================
 
       case FL_DRAG:
 	Fl::focus(this);
 	DBG_EVT( " <DRAG> " << cMouseLastPosX );
+	
 	if( cMouseLastPosX != -1 )
 	  {
+	    if( cMode == ModeUser::MODE_DRAG_INPUT_PT)
+	      {
+		userDragInputPt(pEvent, false);
+	      }
+	    else
 	    if( cMode == ModeUser::MODE_TRANSFORM )
 	      {
 		userTransformSelection(pEvent);
@@ -1443,7 +1515,9 @@ namespace M3d {
 	TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou 				break;
 	break;
       				
-	//==============================
+	//====================================
+	//====================================
+	//====================================
 				
       case FL_MOVE:
 	{
@@ -1480,7 +1554,9 @@ namespace M3d {
 	      }
 	  break;
 	}
-	//==============================
+	//====================================
+	//====================================
+	//====================================
 			
       case FL_ENTER:
 	DBG_EVT( " ENTER " << Fl::belowmouse());
@@ -1497,35 +1573,104 @@ namespace M3d {
 	DBG_EVT( " UNFOCUS " );
 	break;
 	
-			
+	//====================================
+	//====================================
+	//====================================
+				
       case FL_KEYDOWN:
 	{
-	  DBG_EVT_NL( " CTRL :" << Fl::event_ctrl() << " " );
+	  DBG_EVT_NL( " CTRL :" << Fl::event_ctrl() );
+	  DBG_EVT_NL( " SHIFT :" << Fl::event_shift() );
 	  DBG_EVT_NL( " KEYDOW " <<  Fl::event_key()  );
 
+	  cout << " <" << Fl::event_key() << "> " ;
+	  
 	  if(  Fl::event_key() >= 256 )
 	    {
 	      switch(  Fl::event_key() )
 		{
+		  //=======================
 		case FL_Escape:
-		  userCancelAction( pEvent );								
+		  userCancelAction( pEvent );
 		  break;
+		  //=======================
 		case	FL_Tab:
 		  DBG_EVT_NL( " TAB" );
 		  if( cMode == ModeUser::MODE_TRANSFORM )
 		    {
-		      userTransformSelection(pEvent);			
+		      userTransformSelection(pEvent);
 		    }		  
 		  break;
+		  //=======================
+		case FL_Insert:
+		  if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+		    {
+		      DBG_ACT( "Canvas3d::handle FL_Insert" );
+		      
+		      PP3d::Point3d lResult;
+		      if(  Fl::event_shift()  )
+			{
+			  PP3d::EntityId lId =TheSelect.getLastHightLightEntityId();
+			  PP3d::Entity* iEntity = TheAppli.getDatabase()->findEntity( lId);
+			  if( iEntity != nullptr)
+			    {
+			      PP3d::SortEntityVisitorPoint  lVisit;
+			      iEntity->execVisitor( lVisit );
+
+			      for( PP3d::PointPtr lPt : lVisit.cVectPoints) // les points sont uniques
+				{
+				  TheInput.insertCurrentLineSelectPoint( lPt->get(), TheBase );	
+				}
+			      lFlagRedrawAll = true;
+			    }
+	  
+			}
+		      else
+			{		      
+			  if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
+			    {
+			      PP3d::Point3d lResult = TheAppli.getDatabase()->getCursorPosition();			
+			      TheAppli.roundInput( lResult );
+			      TheInput.insertCurrentLineSelectPoint( lResult, TheBase); 
+			      lFlagRedrawAll = true;
+			    }
+			}
+		    }
+		  break;
+		  //=======================
 		case FL_BackSpace:
 		case FL_Delete:
-		  TheAppli.getDatabase()->delPointToCurrentLine();
+		  if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+		    {
+		      TheInput.delCurrentLineSelectPoint(TheBase); 
+		    }
+		  else if( cMode == ModeUser::MODE_BASE )
+		    {		      
+		      TheInput.delLastPointToCurrentLine();
+		    }
+		  
 		  lFlagRedrawAll = true;
 		  break;
-
+		  //=======================
 		case FL_Up:
-		case FL_Down:;
-		}
+		case FL_Down:
+		  break;
+
+		case 0xffab:
+		  SelFunct::SelectMore( TheSelect, TheBase );
+		    
+		  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		  TheAppli.redrawObjectTree();
+		  break;
+		
+		case 0xffad:
+		  SelFunct::SelectLess( TheSelect, TheBase );
+		    
+		  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		  TheAppli.redrawObjectTree();
+		  break;
+		  
+		} // end case
 	    }
 	  else
 	    //			if( Fl::event_ctrl() != 0 )
@@ -1576,13 +1721,32 @@ namespace M3d {
 		  else
 		    cKamera.razY(); 
 		}
+	      else if( strcmp( lStr, KEY_UNDO)==0)
+		{
+		  cout << "UNDO" << endl;
+		  if(  Fl::event_ctrl()  )
+		    {
+		      cout << "CTRL" << endl;
+		      if( Fl::event_shift() )
+			{
+			  cout << "Shift" << endl;
+			  RedoCB( &cMyWin3d, nullptr ); 
+			}
+		      else
+			{
+			  UndoCB( &cMyWin3d, nullptr  ); 
+			  
+			}
+		    }
+		}
 	      else if( strcmp( lStr, RESET_VIEW_TO_Z )==0
 		       || strcmp( lStr, RESET_VIEW_TO_Z2 )==0)
-		{
+		{		
 		  if( Fl::event_shift() )
 		    cKamera.razZInv(); 
 		  else
-		    cKamera.razZ(); 
+		    cKamera.razZ();
+
 		} 
 	      else if( strcmp( lStr, RESET_VIEW )==0)
 		{

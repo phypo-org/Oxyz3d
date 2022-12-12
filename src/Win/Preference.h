@@ -25,8 +25,12 @@ namespace M3d {
     const std::string sSaveDefault = "default.oxyz";
     std::string cLastSave = sSaveDefault;
 
-    bool cAutoSave = true;
-    int cAutoSaveFrequency= 5;
+    
+    bool cFileAutoSave = true;
+    int  cFileAutoSaveFrequency= 5;
+    std::string cFileDefaultDir="Base";
+    
+    
       
     //Dbg
     int cDbgEvt = 0;
@@ -55,6 +59,7 @@ namespace M3d {
     Preference();
     
     void initFromIni( PPu::PPConfig & iConfig );    
+    void saveInIni( PPu::PPConfig & iConfig );    
     void initFromArg( PPu::PPArgs   & iArgs );
     void resetToDefault();
     void resetToFile();

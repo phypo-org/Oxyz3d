@@ -40,21 +40,21 @@ namespace M3d {
 	
   //  std::cout << "************ lX:" << lX <<  " lY:" << lY << " lZ:" << lZ << std::endl;
   
-  Application::Instance().getDatabase()->addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
+  TheInput.addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
   //lua_pushinteger( pLua, lWin.getId() );
 	
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToFacet, 0);
   
-  PP3d::ObjectFacet* lObj = Application::Instance().getDatabase()->convertCurrentLineToFacet();
+  PP3d::ObjectFacet* lObj = TheInput.convertCurrentLineToFacet(TheBase);
   lua_pushinteger( pLua, lObj->getId() );
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
   
-  PP3d::ObjectPolylines* lObj= Application::Instance().getDatabase()->convertCurrentLineToPolylines();
+  PP3d::ObjectPolylines* lObj= TheInput.convertCurrentLineToPolylines(TheBase);
   lua_pushinteger( pLua, lObj->getId() );
 
   CLUA_CLOSE_CODE(0)

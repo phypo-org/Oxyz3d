@@ -107,15 +107,15 @@ namespace PP3d{
   void Mat4::set( Transf3d& T)
   {
     Mat4 lTmp;
-    lTmp.Identity();
+    lTmp.identity();
     lTmp.initMove( T.position().x(), T.position().y(), T.position().z() );
     *this *= lTmp;
 
-    lTmp.Identity();
+    lTmp.identity();
     lTmp.initRot( T.angle().x(), T.angle().y(), T.angle().z() );
     *this *= lTmp;
 
-    lTmp.Identity();
+    lTmp.identity();
     lTmp.initScale( T.scale().x(), T.scale().y(), T.scale().z() );
     *this *= lTmp;
   }

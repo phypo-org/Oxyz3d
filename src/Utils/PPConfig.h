@@ -60,6 +60,7 @@ namespace PPu {
 
     protected:
       bool internalReadString( const char* iSection, const char* iVariable, std::string & ioValue );
+      bool internalWriteString( const char* iSection, const char* iVariable, std::string & ioValue );
 
     public:    
       bool get ( const char* iSection, const char* iVariable, std::string &oValue );
@@ -73,7 +74,14 @@ namespace PPu {
       bool get ( const char* iSection, const char* iVariable, long double & oValue );
       bool get ( const char* iSection, const char* iVariable, bool & oValue );
 
- 
+      bool set ( const char* iSection, const char* iVariable, const std::string &  oValue );
+      
+      template <class TYPE>
+      bool set( const char* iSection, const char* iVariable, const TYPE iValue )
+      {
+	return  set( iSection, iVariable, std::to_string( iValue ) );
+      }
+
       void print( std::ostream& iOs ) const ;
       //
       friend inline std::ostream & operator << (std::ostream& iOs, const PPConfig&iConf ) { iConf.print( iOs); return iOs; }
