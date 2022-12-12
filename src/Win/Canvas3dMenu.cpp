@@ -419,7 +419,7 @@ namespace M3d {
     //===== Revol
     lMenuFlagActif = 0;
     if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
-    
+
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolX, "^x", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolY, "^y", MyMenuCallbackPrimitiv, this, lMenuFlagActif);
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z", MyMenuCallbackPrimitiv, this, lMenuFlagActif);

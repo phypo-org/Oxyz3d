@@ -8,6 +8,7 @@
 #include "Shape/SubDiv.h"
 #include "Shape/EntityVisitor.h"
 #include "Shape/Maker.h"
+#include "Shape/Selection.h"
 
 #include <map>
 
@@ -100,8 +101,14 @@ namespace PP3d{
 			     double iMargeFactor=sInvGoldNumber );
 
     static bool DeletePoints( DataBase * iBase, std::vector<PointPtr>& iPoints, bool iCreateFacet);
-    static bool DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet );
-    static bool DeletePointFromFacet( DataBase * iBase, PointPtr iPoint , FacetPtr ioFacet, std::vector<PointPtr> &oPoints  );  };
+    static bool DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet );   
+    static bool DeletePointFromFacet( DataBase * iBase, PointPtr iPoint , FacetPtr ioFacet, std::vector<PointPtr> &oPoints  );
+
+    
+    static void ExtrudePath( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
+    static void ExtrudePathNorm( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
+
+  };
   //**************************************************
   // Calcule les coordonnees du milieu d"une facette
   class VisitorComputeMiddleFacet : public EntityVisitor	{
@@ -135,7 +142,9 @@ namespace PP3d{
     return lSearchPt;
   }
 
-  
+
+
+    
 #define DBG_MODIF( A )    if( Modif::sDbgModif > 0 ) std::cout << "DbgModif0> " << A << std::endl;
 #define DBG_MODIF1( A )   if( Modif::sDbgModif > 1 ) std::cout << "DbgModif1> " << A << std::endl;
 #define DBG_MODIF2( A )   if( Modif::sDbgModif > 2 ) std::cout << "DbgModif0> " << A << std::endl;
