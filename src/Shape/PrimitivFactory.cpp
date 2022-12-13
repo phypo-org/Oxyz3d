@@ -350,11 +350,11 @@ namespace PP3d{
     
     if( iParam->cCheckHole )
       {
+	Point lTop2   ( Point3d( iParam->cTop - iParam->cThickness,    iParam->cHeight/2, 0) );
 	Point lBottom2( Point3d( iParam->cBottom - iParam->cThickness, -iParam->cHeight/2, 0) );
 	Line  lLineBB2( &lBottom, &lBottom2);
 	lFacet.addLine( &lLineBB2 );
 	  
-	Point lTop2   ( Point3d( iParam->cTop - iParam->cThickness,    iParam->cHeight/2, 0) );
 	Line  lLineB2T2( &lBottom2, &lTop2);
 	lFacet.addLine( &lLineB2T2 );
 	iName = "Tube";
@@ -383,8 +383,9 @@ namespace PP3d{
       
   
     if( iParam->cCheckHole == false )
-      return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  true, false, false, true, true );
+       return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+    					  true, false, false, true, true );
+    
 
     return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
 					true, true, false, false, false );

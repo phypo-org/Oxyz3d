@@ -98,13 +98,27 @@ namespace M3d {
       if( cSliderWidth )     lParam.cWidth     = cSliderWidth->value();
       if( cSliderTop )       lParam.cTop       = cSliderTop->value();
       if( cSliderBottom )    lParam.cBottom    = cSliderBottom->value();
-      if( cSliderThickness ) lParam.cThickness = cSliderThickness->value();
+      if( cSliderThickness )
+        {
+          lParam.cThickness = cSliderThickness->value();
+          
+          if( cMyType ==  PP3d::PrimitivFactory::Type::CYLINDER
+              && ( lParam.cThickness     >  lParam.cTop
+                   || lParam.cThickness  > lParam.cBottom )
+              )
+            {
+              lParam.cThickness = std::min(  lParam.cTop,    lParam.cBottom );
+              cSliderThickness->value(lParam.cThickness );
+            }            
+        }
 
 
       if( cCheckInvRotation) lParam.cCheckInvRot = (cCheckInvRotation->value() != 0 );;
       if( cCheckDouble)      lParam.cCheckDouble = (cCheckDouble->value() != 0 );
-      if( cCheckHole)        lParam.cCheckHole   = (cCheckHole->value() != 0 );
 
+      
+      if( cCheckHole)        lParam.cCheckHole   = (cCheckHole->value() != 0 );
+      
       
       
       //======================

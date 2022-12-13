@@ -355,7 +355,7 @@ namespace M3d {
     drawGrid();
 
     if( cAxisFlag )
-      PP3d::GLUtility::DrawOrtho( (float)8/cKamera.scale().x(), 1, 2 );  
+      PP3d::GLUtility::DrawOrtho( (float)8/cKamera.scale().x(), 1, 3 );  
 		
 		
     if( cFlagCursor3d )
