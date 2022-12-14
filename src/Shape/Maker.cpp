@@ -62,7 +62,7 @@ namespace PP3d {
 	    PointPtr lTmpPt = nullptr;	    
 
 	    // Ou essaye de detecte si le point existe deja !!!
-	    // PAS EFFICACE DU TOUT : A FAIRE 
+	    // PAS EFFICACE DU TOUT : A REFAIRE 
 	    for( PointPtr lSearch : lPointsPtr )
 	      {
 		if( lSearch->get().sameEpsi( iEpsilon, lPt3d ) )

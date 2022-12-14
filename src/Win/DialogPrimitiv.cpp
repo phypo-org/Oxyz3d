@@ -56,6 +56,7 @@ namespace M3d {
     MySlider *      cSliderU          = nullptr;
     MySlider *      cSliderV          = nullptr;
     MySlider *      cSliderW          = nullptr;
+    MySlider *      cSliderLength     = nullptr;
     MySlider *      cSliderWidth      = nullptr;
     MySlider *      cSliderHeight     = nullptr;
     MySlider *      cSliderTop        = nullptr;
@@ -94,8 +95,9 @@ namespace M3d {
       if( cSliderU )         lParam.cNbU       = cSliderU->value();
       if( cSliderV )         lParam.cNbV       = cSliderV->value();
       if( cSliderW )         lParam.cNbW       = cSliderW->value();
-      if( cSliderHeight )    lParam.cHeight    = cSliderHeight->value();
+      if( cSliderLength )    lParam.cLength    = cSliderLength->value();
       if( cSliderWidth )     lParam.cWidth     = cSliderWidth->value();
+      if( cSliderHeight )    lParam.cHeight    = cSliderHeight->value();
       if( cSliderTop )       lParam.cTop       = cSliderTop->value();
       if( cSliderBottom )    lParam.cBottom    = cSliderBottom->value();
       if( cSliderThickness )
@@ -219,6 +221,8 @@ namespace M3d {
       
       if( pType == PP3d::PrimitivFactory::Type::FACET_N )
 	lMul += 4;
+      else if(  pType == PP3d::PrimitivFactory::Type::PLANE )
+	lMul += 6;
       else if(  pType == PP3d::PrimitivFactory::Type::CYLINDER )
 	lMul += 6;
       else if(  pType == PP3d::PrimitivFactory::Type::SPHERE )
@@ -255,6 +259,47 @@ namespace M3d {
 	      cCheckDouble = new MyCheckbutton( lX, lY, 30, 15, "Two Faces", MajCB, this, 0 ); 
 	      lY += lYStep;
 	      cGroupExt->end();	      
+	    }
+	  //============================================
+	  else if(  pType == PP3d::PrimitivFactory::Type::PLANE )
+	    {
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*6,
+					 PP3d::PrimitivFactory::GetTypeName(cMyType));
+	      cGroupExt->box(FL_ENGRAVED_FRAME);
+	      lY += lYStep;
+	      
+	      cSliderLength = new MySlider( lX_SL, lY, lW, lH, "Length", MajCB, this, 0.1, 100 );
+	      cSliderLength->value( 4 );
+	      lY += lYStep;	  
+	      cSliderWidth = new MySlider( lX_SL, lY, lW, lH, "Width", MajCB, this, 0.1, 100 );
+	      cSliderWidth->value( 4 );
+	      lY += lYStep;
+	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.1, 100 );
+	      cSliderHeight->value( 0 );
+	      lY += lYStep;
+              
+             
+	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Div Length", MajCB, this, 1, 128 );
+	      cSliderU->value( 4 );
+	      lY += lYStep;              
+	      cSliderV = new MySlider( lX_SL, lY, lW, lH, "Div Width", MajCB, this, 1, 128 );
+	      cSliderV->value( 4 );
+	      lY += lYStep;
+
+
+	      /*
+		cSliderV = = new MySlider( lX_SL, lY, lW, lH, "V", MajCB, this, -50, 50 );
+		  cSliderV->value( 1 );
+		  lY += lYStep;
+	      */
+	      
+	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Grid", MajCB, this, 0 ); 
+	   
+	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Thickness", MajCB, this, 0.0001, 100 );
+	      cSliderThickness->value( 0.1 );
+	      lY += lYStep;
+
+	      cGroupExt->end();	      	      
 	    }
 	  //============================================
 	  else if(  pType == PP3d::PrimitivFactory::Type::CYLINDER )

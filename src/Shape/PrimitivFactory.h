@@ -81,9 +81,10 @@ namespace PP3d{
     int cNbW=1;
 
     bool cCheckInvRot=false;
-    bool cCheckDouble=false;
+    bool cCheckDouble=false;  // doubleface
     bool cCheckHole=false;
 
+    long double cLength=0;
     long double cWidth=0;
     long double cHeight=0;
     long double cTop=0;
@@ -125,8 +126,11 @@ namespace PP3d{
 		
     static Poly * Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam=nullptr  );
     static Poly * CreatePoly( Point3d * pPoints, size_t pSzPt, PrimFacet * pFacets, size_t pSzFac );
+    static Facet * CreateFacet( std::vector<Point3d> & pPoints,  PrimFacet & pFacet, bool pClose );
+    static Facet & SetFacet( Facet & pCurFacet, std::vector<Point3d> & pPoints, PrimFacet & pPrimFacet, bool pClose );
 
     static Poly * CreateFacet(     PrimitivParam * iParam );
+    static Poly * CreatePlane(  PrimitivParam * iParam, std::string & iName );
     static Poly * CreateCylinder(  PrimitivParam * iParam, std::string & iName );
     static Poly * CreateSphere(  PrimitivParam * iParam, std::string & iName );
   };
