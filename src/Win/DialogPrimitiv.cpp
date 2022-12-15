@@ -275,7 +275,7 @@ namespace M3d {
 	      cSliderWidth->value( 4 );
 	      lY += lYStep;
 	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.1, 100 );
-	      cSliderHeight->value( 0 );
+	      cSliderHeight->value( 1 );
 	      lY += lYStep;
               
              

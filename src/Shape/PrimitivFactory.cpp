@@ -395,11 +395,8 @@ namespace PP3d{
   {
     if( iParam == nullptr
 	|| iParam->cNbU < 1 || iParam->cNbU > 4096
-	|| iParam->cThickness < sMinSz
-	|| (iParam->cBottom ==0 && iParam->cHeight ==0)
-	|| (iParam->cBottom ==0 && iParam->cCheckHole )
-	|| (iParam->cTop ==0 && iParam->cCheckHole )
-	)
+	|| iParam->cNbV < 1 || iParam->cNbV > 4096
+ 	)
       {
 	std::cout << "PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
 	return nullptr;
@@ -416,29 +413,30 @@ namespace PP3d{
     std::vector<Point3d> lPoints;
   
     
-    double lA = iParam->cLength/2;   
-    for( int u = 0; u< lNbU+1; u++ )
+    double lA = -iParam->cLength/2;
+    int u = 0;
+    for( ; u< lNbU+1; u++ )
       {
        Point3d lPt( lA, iParam->cHeight/2,  iParam->cWidth/2 );
        lPoints.push_back( lPt );
        lPrimFacet.push_back( u );
 
-       lA -= lDU;
+       lA += lDU;
       }
     
-    /*    lA =  - iParam->cLength/2;
-    //  if( iParam->cHeight != 0 )
+    lA =  + iParam->cLength/2;
+    if( iParam->cHeight != 0 )
       {
-        for( int u = 0; u< lNbU; u++ )
+        for(; u< (lNbU+1)*2; u++ )
           {
             Point3d lPt( lA, -iParam->cHeight/2,  iParam->cWidth/2 );
             lPoints.push_back( lPt );
-            lPrimFacet.push_back( lNbU + u );      
-            lA += lDU;
+            lPrimFacet.push_back( u );      
+            lA -= lDU;
           }
       }
-    */
-       
+    
+        
     Facet  lFacet;    
     SetFacet( lFacet, lPoints, lPrimFacet, false );
 
@@ -446,14 +444,14 @@ namespace PP3d{
     PP3d::Mat4 lMat;
     lMat.initMove( 0, 0, -lDV );
 
-    //  if( iParam->cHeight == 0 )
-      {
-        return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
-                                            false, false, false, false, false );
-      }
+    if( iParam->cHeight == 0 )
+         {
+           return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
+                                               false, false, false, false, false );
+         }
 
-      //    return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV, lMat,
-      //                                       true, false, true, false, false );
+         return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
+                                            false, true, true, true, false );
 
   }
  //************************

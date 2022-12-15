@@ -54,11 +54,10 @@ namespace M3d {
     MySlider* cSliderPosX;
     MySlider* cSliderPosY;
     MySlider* cSliderPosZ;
-	
-    MyCheckbutton* cCheckTore; 
-    MyCheckbutton* cCheckSeal; 
-    //	MyCheckbutton* cCheckCloseLow; 
-    //	MyCheckbutton* cCheckCloseSeg;
+
+    
+    MyCheckbutton* cCheckCloseSeg ; 
+    MyCheckbutton* cCheckCloseSegEnd; 
 
 	
   public:
@@ -104,10 +103,19 @@ namespace M3d {
       cSliderTurn->value( 0 );
       lY += lYStep;
 
-
-
+      cCheckCloseSeg= new MyCheckbutton( lX, lY, 30,15, "Close U", CheckCB, this, 0 );
+      cCheckCloseSeg->callback((Fl_Callback*)CheckCB, this );
+      cCheckCloseSeg->value( false );
+      lY += lYStep;
       
-	 
+      
+      cCheckCloseSegEnd= new MyCheckbutton( lX, lY, 30,15, "Close V", CheckCB, this, 0 );
+      cCheckCloseSegEnd->callback((Fl_Callback*)CheckCB, this );
+      cCheckCloseSegEnd->value( false );
+      lY += lYStep;;
+   
+      
+      /*
       cCheckTore = new MyCheckbutton( lX, lY, 30,15, "Tore", CheckCB, this, 0 );
       cCheckTore->callback((Fl_Callback*)CheckCB, this );
       cCheckTore->value( false );
@@ -117,7 +125,7 @@ namespace M3d {
 
       cCheckSeal->value( false );
       lY += lYStep;;
- 
+      */
 
       
       if( cMyType != TypeRevol::RevolAxis )	
@@ -206,45 +214,20 @@ namespace M3d {
       double  lGrow       = cSliderGrow->value()/360.0; // for a rotation of one degre
       double  lMove       = cSliderMove->value()/360.0;
     
-      bool lFlagTore         = (cCheckTore->value() != 0 );
-      bool lFlagSeal         = (cCheckSeal->value() != 0 );
     
     
-      bool lFlagClose        = false;
       bool lFlagCloseSeg     = false;        
-      bool lFlagCloseLow     = false;
-      bool lFlagCloseHight   = false;
       bool lFlagCloseSegEnd  = false;
-    
+   	
 
-      if(lFlagSeal )
-	{
-	  lFlagCloseLow = true;
-	  lFlagCloseHight = true;
-	  lFlagClose = true;
-	}
-		
-      //     if( lAngleTotal == 360 )
-      //	{				
-      //	  lFlagClose = true;
-          //	}
-			
-      if( lFlagTore )
-	{
-	  lFlagCloseSeg = true;
-	  lFlagCloseLow = false;
-	  lFlagCloseHight = false;
-				
-	  if( lAngleTotal != 360  && lFlagSeal)
-	    {
-	      lFlagCloseSegEnd = true;
-	      lFlagClose = false;
-	    }
-	}
- 
-			
+      lFlagCloseSeg = (cCheckCloseSeg->value() != 0 );
+      lFlagCloseSegEnd = (cCheckCloseSegEnd->value() != 0 );
 
-      std::cout << "lFlagCloseHight:" << lFlagCloseHight <<  std::endl;
+
+
+
+      
+
       
       //	int lNbPas = 30 ; // pour les tests
 
@@ -338,15 +321,18 @@ namespace M3d {
             lMatGrow.initScale( lGrow, lGrow, lGrow );
           }
 
+
+        // A FAIRE sauvegarder les parametere au format json avec un nom !
+        // et pouvoir les recuperer dans le dialogue
         
 			
 	PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;					
 
-	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, lFlagClose,
-								   lFlagCloseSeg, lFlagCloseSegEnd, lFlagCloseHight, lFlagCloseLow );
+	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
+								   lFlagCloseSeg, lFlagCloseSegEnd, false, false );
 	if( lShape != nullptr )
 	  {
-	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
+	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Spiral", lShape ) );  
 	  }
       }
 	
