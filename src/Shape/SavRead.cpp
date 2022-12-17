@@ -279,7 +279,7 @@ namespace PP3d {
 		      cIn >> lLineId ;
 		      lFacet->addLine( static_cast<LinePtr>(lLocalDico.at(lLineId)) );
 														
-		      SAVCOUT<< "    "  << i << ":" << lLineId <<  std::endl;														
+		      SAVCOUT<< "- Read  "  << i << ":" << lLineId <<  std::endl;														
 		    }
 		  if( pConserveOldId )
 		    {
@@ -306,7 +306,7 @@ namespace PP3d {
 		      {
 			cIn >> lFacetId;
 
-			SAVCOUT<< "   " <<  i << ":" << lFacetId <<  std::endl;
+			SAVCOUT<< " - Read   " <<  i << ":" << lFacetId <<  std::endl;
 			lPoly->addFacet( static_cast<FacetPtr>(lLocalDico.at(lFacetId)));
 
 			if( pConserveOldId )
