@@ -30,7 +30,7 @@ namespace PP3d {
   class SubSelect;
 
 		
-  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjNull};
+  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
   inline static const char* GetStrObjectType( ObjectType pType )
   {
     switch( pType )
@@ -40,6 +40,8 @@ namespace PP3d {
       case ObjectType::ObjFacet:  return "ObjFacet";
       case ObjectType::ObjPoly:   return "ObjPoly";
       case ObjectType::ObjPolyline: return "ObjPolyline";
+
+      case ObjectType::ObjBSpline: return "ObjBSpline";
       case ObjectType::ObjNull: return "Unknown";
       }
     return "ObjectType::unknown";
@@ -57,6 +59,8 @@ namespace PP3d {
       return ObjectType::ObjPoly;
     else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
       return ObjectType::ObjPolyline;
+    else		if( strcmp( pStr, "ObjBSpline" ) == 0 )
+      return ObjectType::ObjBSpline;
     return ObjectType::ObjNull;
   }
   

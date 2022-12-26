@@ -22,31 +22,20 @@ namespace PP3d {
     PDouble cVect[3];
 
   public:
-    Double3()
-    {		
-      for( int i=0; i<3; i++)			cVect[i] = 0;		
+    Double3(){		
     }
 
-    Double3( PDouble A, PDouble B=0, PDouble C = 0  )
-    {
-      cVect[0] = A;
-      cVect[1] = B;
-      cVect[2] = C;
-			
+    Double3( PDouble A, PDouble B=0, PDouble C = 0  ){
+      set( A, B, C);			
     }
 	
-    Double3(PDouble pVect[ 3 ])
-    {
-      for( int i=0; i<3; i++)			cVect[i] = pVect[i];
-    }
-
-    Double3( const Double3&  pVal )
-    {
+    Double3( const Double3&  pVal ) {
       *this = pVal;
     }
-    Double3( const Point3d&  pVal );
+    Double3( const Point3d&  pVal ) {
+      set( pVal);
+    }
   
-
     PDouble x() const { return cVect[0]; }
     PDouble y() const { return cVect[1]; }
     PDouble z() const { return cVect[2]; }
@@ -60,6 +49,15 @@ namespace PP3d {
       cVect[ 0 ] = pX;
       cVect[ 1 ] = pY;
       cVect[ 2 ] = pZ;
+    }
+    void set( Double3 pVal ) {
+      *this = pVal;
+    }
+
+    void set( Point3d pVal ) {
+      x() = pVal.x();
+      y() = pVal.y();
+      z() = pVal.z();
     }
 		
     PDouble* getVect() { return &cVect[0]; }
@@ -168,7 +166,103 @@ namespace PP3d {
       pOs << pPt.cVect[0] << ',' << pPt.cVect[1]  << ',' << pPt.cVect[2]; 
       return pOs;
     }
+
+    friend class VectDouble3;
   };
+  //*********************************************
+  class VectDouble3
+  {
+  protected:
+    std::vector<PDouble> cVect[3];
+
+  public:
+    VectDouble3()
+    {		
+    }
+
+    VectDouble3( PDouble iA, PDouble iB=0, PDouble iC = 0  )
+    {
+      add( iA, iB, iC );
+    }
+    VectDouble3( Double3 iPt )
+    {
+      add( iPt );
+    }
+    VectDouble3( const Point3d & iPt)
+    {
+      add( iPt );
+    }  
+    
+    VectDouble3( const VectPoint3d & iVectPt)
+    {    
+      add( iVectPt );
+    }
+    
+    const std::vector<PDouble> & operator [] (size_t pos) const 
+    {
+      return cVect[pos];
+    }
+    std::vector<PDouble> & operator [] (size_t pos)  
+    {
+      return cVect[pos];
+    }
+   
+
+    size_t size() { return cVect[0].size(); }
+    void resize( size_t iSz ) {  for( int i = 0; i < 3; i++ ) cVect[i].resize( iSz ); }
+      
+    void reset(){ for( int i = 0; i < 3; i++ )cVect[i].clear(); }
+
+
+    const std::vector<PDouble> & X() const { return cVect[0]; }
+    const std::vector<PDouble> & Y() const { return cVect[1]; }
+    const std::vector<PDouble> & Z() const { return cVect[2]; }
+	
+    std::vector<PDouble> & X() { return cVect[0]; }
+    std::vector<PDouble> & Y() { return cVect[1]; }
+    std::vector<PDouble> & Z() { return cVect[2]; }
+    
+    PDouble  x( int iPos ) const { return cVect[0][iPos]; }
+    PDouble  y( int iPos ) const { return cVect[1][iPos]; }
+    PDouble  z( int iPos ) const { return cVect[2][iPos]; }
+    
+    PDouble & x( int iPos )  { return cVect[0][iPos]; }
+    PDouble & y( int iPos )  { return cVect[1][iPos]; }
+    PDouble & z( int iPos )  { return cVect[2][iPos]; }
+
+    Point3d  getPoint3d( int iPos ) const { return Point3d( x(iPos), y(iPos), z(iPos) ); }
+
+    void add(  PDouble iA, PDouble iB, PDouble iC  ){
+      cVect[0].push_back( iA );
+      cVect[1].push_back( iB );
+      cVect[2].push_back( iC );			 
+    }
+    
+    void add( Double3 iPt ){
+      cVect[0].push_back( iPt.x() );
+      cVect[1].push_back( iPt.y() );
+      cVect[2].push_back( iPt.z() );			 
+    }
+    
+    void add( const Point3d & iPt) {
+      cVect[0].push_back( iPt.x() );
+      cVect[1].push_back( iPt.y() );
+      cVect[2].push_back( iPt.z() );			 
+    }
+    
+    void add( const VectPoint3d & iVectPt) {
+      for( const Point3d & lPt :iVectPt.getVector() )
+        {
+          add( lPt );
+        }
+    }
+    void set( const VectPoint3d & iVectPt) {
+      reset();
+      add( iVectPt );     
+    }
+
+  };
+  //*********************************************
 }
 
 

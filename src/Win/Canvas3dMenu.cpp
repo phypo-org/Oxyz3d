@@ -67,6 +67,7 @@ namespace M3d {
 #define StrMenu_CreateShapeFacet      "Facet"
 #define StrMenu_CreateShapeFacetP     "FacetPoly"
 #define StrMenu_CreateShapeFacet2P    "BiFacetPoly"
+#define StrMenu_CreateShapeBSpline    "BSpline"
 
 #define  StrMenu_ModifyShape "Modify shape"
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
@@ -418,8 +419,9 @@ namespace M3d {
       {
  	lMenuFlagActif=0;
       }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
-      
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "", MyMenuCallbackShape,this,   lMenuFlagActif);
+        pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
+  
     //===== Revol
     lMenuFlagActif = 0;
     if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
@@ -505,6 +507,13 @@ namespace M3d {
         if(TheInput.getNbCurrentPoints() >= 2 )
           {
            lShape =TheInput.convertCurrentLineToPolylines(TheBase);
+          }
+      }
+    else if( strcmp( m->label(), StrMenu_CreateShapeBSpline ) == 0)
+      {
+        if(TheInput.getNbCurrentPoints() >= 2 )
+          {
+           lShape =TheInput.convertCurrentLineToBSpline(TheBase);
           }
       }
     

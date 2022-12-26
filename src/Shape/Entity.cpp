@@ -197,26 +197,19 @@ namespace PP3d {
 	lCenter += lLine->second()->get();
       }
     
-    lCenter /= cLines.size()*2;
-   
-    return lCenter;
-  }
-  //-------------------------------------
-  PointPtr Facet::getPoint( int iPos )
+    lCenter /= cLines.size()*2;VectPoint3d & oPts )
   {
-    PointPtr lPt = nullptr;
-    if( iPos >= 0 && cLines.size() >= (size_t) iPos )
-      {    
-	if( iPos == 0 )
-	  {
-	    lPt = cLines[0]->getFirst();
-	  }
-	else
-	  {
-	    lPt = cLines[iPos-1]->getSecond();
-	  }
+    if(  cLines.size() > 0 )
+      {
+        oPts.add( *(cLines[0]->getFirst()) );
+        
+        for( size_t i=1; i < cLines.size(); i++ )
+        {
+          oPts.add( *(cLines[i -1 ]->getSecond()));
+        }
       }
-    return lPt;
+    
+    return  cLines.size();
   }
    
   //-------------------------------------

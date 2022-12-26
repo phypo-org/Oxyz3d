@@ -507,6 +507,9 @@ namespace PP3d {
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
     PointPtr     getPoint( int iPos );
+    int          getPoints( VectDouble3 & oPts );
+    int          getPoints( VectPoint3d & oPts );
+
 
     const Point3d &    getNormal()     { return cNorm; }
 

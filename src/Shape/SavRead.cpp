@@ -365,7 +365,9 @@ namespace PP3d {
 			case ObjectType::ObjPolyline:;
 			  lObj = new ObjectPolylines( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
 			  break;
-			case ObjectType::ObjNull: break;								
+			case ObjectType::ObjBSpline:;
+			  lObj = new ObjectPolylines( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
+			  break;			case ObjectType::ObjNull: break;								
 			}
 
 

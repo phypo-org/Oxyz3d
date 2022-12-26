@@ -23,6 +23,7 @@ SLIB=$(ROOT_POS)Shape
 
 ULIB=$(ROOT_POS)Utils
 MLIB=$(ROOT_POS)Modif
+SPLIB=$(ROOT_POS)Spline
 
 
 WLIB_HDRS=$(wildcard $(WLIB)/*.h)
@@ -55,13 +56,17 @@ MLIB_HDRS=$(wildcard $(MLIB)/*.h)
 MLIB_SRCS=$(wildcard $(MLIB)/*.cpp)
 MLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(MLIB_SRCS) ) )
 
+SPLIB_HDRS=$(wildcard $(SPLIB)/*.h)
+SPLIB_SRCS=$(wildcard $(SPLIB)/*.cpp)
+SPLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SPLIB_SRCS) ) )
+
 # L'ensemble des .o pour le repertoires objs
-OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS))
+OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS) $(SPLIB_OBJS))
 
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
-vpath %.cpp $(WLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB) 
+vpath %.cpp $(WLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)  $(SPLIB)
 
 
 

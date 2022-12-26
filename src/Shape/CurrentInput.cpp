@@ -21,7 +21,6 @@
 
 
 
-
 namespace PP3d {
   //***********************************
   
@@ -262,6 +261,23 @@ namespace PP3d {
     resetCurrentLine();
 	
     return lObjPoly;
+  }
+  //------------------------------------------		
+  ObjBSpline* CurrentInput::convertCurrentLineToBSpline(DataBase & iBase)
+  {
+    if( cCurrentLine == nullptr )
+      return nullptr;
+
+    FacetPtr lFacet1 = cCurrentLine->giveFacet();
+	
+    
+    ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFacet1 );
+    iBase.addObject( lObjBSpline );			
+			
+    delete cCurrentLine;
+    resetCurrentLine();
+	
+    return lObjBSpline;
   }
   //------------------------------------------		
   ObjectPoly* CurrentInput::convertCurrentLineToBiFacetPoly(DataBase & iBase)

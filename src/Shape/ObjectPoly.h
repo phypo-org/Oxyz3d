@@ -30,10 +30,10 @@ namespace PP3d {
       pPoly->addOwner( this );
     }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		
-    EntityPtr getShape() override { return cShape; }
-    Poly*     getPoly()           { return cShape; }
+    EntityPtr  getShape() override { return cShape; }
+    Poly*      getPoly()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjPoly; }
-    ShapeType getSubType() const override { return ShapeType::Poly; };
+    ShapeType  getSubType() const override { return ShapeType::Poly; };
 
   };
   //******************************

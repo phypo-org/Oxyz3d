@@ -24,6 +24,7 @@ namespace PP3d {
 
     TPoint3d()	:cX(0), cY(0), cZ(0) {}
     TPoint3d( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	:cX(pX), cY(pY), cZ(pZ) {}
+    //    TPoint3d(  const TFLOAT &pX, const TFLOAT& pY, const TFLOAT& pZ)	:cX(pX), cY(pY), cZ(pZ) {}
     void set ( TFLOAT pX, TFLOAT pY, TFLOAT pZ)	{ cX = pX;	cY = pY;	cZ = pZ; }
     void zero(){ cX=	cY=	cZ=0;	}
     void raz() { zero();}
@@ -397,7 +398,7 @@ namespace PP3d {
   class VectPoint3d{
     
   protected:
-    std::vector<Point3d> cVect;
+    ²std::vector<Point3d> cVect;
   
 
   public:
@@ -432,7 +433,7 @@ namespace PP3d {
     void clear()                 { cVect.clear(); }
     //--------------------------------    
 
-    void  operator += ( const Point3d& pVar ) //  ne pas mettre de & a pVar
+    void  operator += ( const Point3d pVar ) //  ne pas mettre de & a pVar
     {
       for( Point3d& lPt : cVect )
 	{
