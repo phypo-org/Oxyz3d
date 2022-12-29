@@ -66,7 +66,7 @@ OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJ
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
-vpath %.cpp $(WLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)  $(SPLIB)
+vpath %.cpp $(WLIB)  $(SPLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
 
 
 

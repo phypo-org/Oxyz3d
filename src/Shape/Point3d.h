@@ -398,7 +398,7 @@ namespace PP3d {
   class VectPoint3d{
     
   protected:
-    ²std::vector<Point3d> cVect;
+    std::vector<Point3d> cVect;
   
 
   public:

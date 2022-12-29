@@ -197,19 +197,23 @@ namespace PP3d {
     {    
       add( iVectPt );
     }
-    
-    const std::vector<PDouble> & operator [] (size_t pos) const 
+    /*
+    const std::vector<PDouble> & operator [] (PIndex pos) const 
     {
       return cVect[pos];
     }
-    std::vector<PDouble> & operator [] (size_t pos)  
+    std::vector<PDouble> & operator [] (PIndex pos)  
     {
       return cVect[pos];
     }
-   
+    */
+    void clear() {
+      for( int i=0; i<3; i++ )
+        cVect[i].clear();
+    }
 
-    size_t size() { return cVect[0].size(); }
-    void resize( size_t iSz ) {  for( int i = 0; i < 3; i++ ) cVect[i].resize( iSz ); }
+    PIndex size() { return cVect[0].size(); }
+    void resize( PIndex iSz ) {  for( int i = 0; i < 3; i++ ) cVect[i].resize( iSz ); }
       
     void reset(){ for( int i = 0; i < 3; i++ )cVect[i].clear(); }
 
@@ -222,13 +226,13 @@ namespace PP3d {
     std::vector<PDouble> & Y() { return cVect[1]; }
     std::vector<PDouble> & Z() { return cVect[2]; }
     
-    PDouble  x( int iPos ) const { return cVect[0][iPos]; }
-    PDouble  y( int iPos ) const { return cVect[1][iPos]; }
-    PDouble  z( int iPos ) const { return cVect[2][iPos]; }
+    PDouble  x( PIndex iPos ) const { return cVect[0][iPos]; }
+    PDouble  y( PIndex iPos ) const { return cVect[1][iPos]; }
+    PDouble  z( PIndex iPos ) const { return cVect[2][iPos]; }
     
-    PDouble & x( int iPos )  { return cVect[0][iPos]; }
-    PDouble & y( int iPos )  { return cVect[1][iPos]; }
-    PDouble & z( int iPos )  { return cVect[2][iPos]; }
+    PDouble & x( PIndex iPos )  { return cVect[0][iPos]; }
+    PDouble & y( PIndex iPos )  { return cVect[1][iPos]; }
+    PDouble & z( PIndex iPos )  { return cVect[2][iPos]; }
 
     Point3d  getPoint3d( int iPos ) const { return Point3d( x(iPos), y(iPos), z(iPos) ); }
 
@@ -260,7 +264,30 @@ namespace PP3d {
       reset();
       add( iVectPt );     
     }
+    void set( PIndex iPos,  const Point3d & iPt) {
+      reset();
+      x( iPos ) = iPt.x();
+      y( iPos ) = iPt.y();
+      z( iPos ) = iPt.z();
+    }
+   void set( PIndex iPos,  const Double3 & iPt) {
+      reset();
+      x( iPos ) = iPt.x();
+      y( iPos ) = iPt.y();
+      z( iPos ) = iPt.z();
+    }
 
+
+    Double3 operator []( PIndex iPos  ) {
+      
+      return Double3( x( iPos ),  y( iPos ), z( iPos ));
+    }
+    
+    std::vector<PDouble> &  getAxePoint( PIndex iPos  ) {
+    
+      return cVect[iPos];
+    }
+  
   };
   //*********************************************
 }

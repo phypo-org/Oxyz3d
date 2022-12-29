@@ -2,10 +2,15 @@
 
 namespace PP3d {
   //******************************
-
-  int SplineCalcul::Maille   = 8;
-  int SplineCalcul::UMmaille = 1;
-  int SplineCalcul::VMaille  = 1;
+  long SplineCalcul::Yam1[MAX_YAM_MAILLE+1];
+  long SplineCalcul::Yam2[MAX_YAM_MAILLE+1];
+  long SplineCalcul::UYam1[MAX_YAM_MAILLE+1];
+  long SplineCalcul::VYam1[MAX_YAM_MAILLE+1];
+  long SplineCalcul::UYam2[MAX_YAM_MAILLE+1];
+  long SplineCalcul::VYam2[MAX_YAM_MAILLE+1];
+  size_t SplineCalcul::Maille   = 8;
+  size_t SplineCalcul::UMaille = 1;
+  size_t SplineCalcul::VMaille  = 1;
 
   //--------------------------------------
   void
@@ -17,25 +22,24 @@ namespace PP3d {
   }
   //--------------------------------------
   void
-  SplineCalcul::InitYamaguchi (int iMaille, long ya1[], long ya2[])
+  SplineCalcul::InitYamaguchi (size_t iMaille, long ya1[], long ya2[])
 
   {
-    int i;
-    long int m, m3;
 
-    M  = maille;
-    M3 = M*M*M;
+    long M  = iMaille;
+    long M3 = M*M*M;
  
-    for ( i=0; i< iMaille+1; i++ )
+    for ( size_t i=0; i< iMaille+1; i++ )
       {
         long I2 = i*i;
         ya1[i] = I2*i;
-        ya2[i] =(3 * ( ( I2 * (-2) * M ) + ya1[i] ) + 4* M3);
+        ya2[i] = (3 * ( ( I2 * (-2) * M ) + ya1[i] ) + 4* M3);
       }
   }
   //--------------------------------------
 
   void 
+  //  SplineCalcul::Thomas ( const std::vector<PDouble> & iNodes,  std::vector<PDouble> & oPoles )
   SplineCalcul::Thomas ( const std::vector<PDouble> & iNodes,  std::vector<PDouble> & oPoles )
   {
     static const long sHi[ 10 ] = {1l, 5l, 19l, 71l, 265l, 989l, 3691l, 13775l, 51409l, 191861l};
@@ -88,16 +92,19 @@ namespace PP3d {
   }
   //--------------------------------------
 
-  void CalculBSpline(int iMaille, VectDouble3 & iPts, VectDouble3 oResult )
+  void SplineCalcul::CalculBSpline(size_t iMaille, VectDouble3 & iPts, VectDouble3 & oResult )
   {
+    InitYamaguchi( Maille,  Yam1, Yam2 );
+    
+    
     size_t lNb = iPts.size();;
 
 
-    PDouble lDivis = 1/(6 * Yam1[iIMaille]);
+    PDouble lDiv = (6 * Yam1[iMaille]);
   
-    const std::vector<PDouble> & CX iPts.X();
-    const std::vector<PDouble> & CY iPts.Y();
-    const std::vector<PDouble> & CZ iPts.Z();
+    const std::vector<PDouble> & CX = iPts.X();
+    const std::vector<PDouble> & CY = iPts.Y();
+    const std::vector<PDouble> & CZ = iPts.Z();
 
  
 
@@ -109,7 +116,7 @@ namespace PP3d {
     oResult.add( x, y, z );
  
     /* calcul des autres points et trace       */
-    for (size_t int k=0; k< lNb-3; k++ )
+    for (size_t  k=0; k< lNb-3; k++ )
       {
         PDouble x0 = CX[k];
 	PDouble x1 = CX[k+1];
@@ -121,26 +128,26 @@ namespace PP3d {
 	PDouble y2 = CY[k+2];
 	PDouble y3 = CY[k+3];
         
-	PDouble z0 = CY[k];
-	PDouble z1 = CY[k+1];
-	PDouble z2 = CY[k+2];
-	PDouble z3 = CY[k+3];
+	PDouble z0 = CZ[k];
+	PDouble z1 = CZ[k+1];
+	PDouble z2 = CZ[k+2];
+	PDouble z3 = CZ[k+3];
 
-	for (size_t int j=1; j<iMaille+1; j++ )
+	for (size_t  j=1; j<iMaille+1; j++ )
           {
-            jm = iMaille-j;
+           size_t jm = iMaille-j;
             x = 	((Yam1[jm] * x0 +
                           Yam2[j] * x1 +
                           Yam2[jm] * x2 +
-                          Yam1[j] * x3     	 )  *  lDiv );
+                          Yam1[j] * x3     	 )  /  lDiv );
             y =  	((Yam1[jm] * y0 +
                           Yam2[j] * y1  +
                           Yam2[jm] * y2 +
-                          Yam1[j] * y3     	 )  *  lDiv );
+                          Yam1[j] * y3     	 )  /  lDiv );
             z =  	((Yam1[jm] * z0 +
                           Yam2[j] * z1  +
                           Yam2[jm] * z2 +
-                          Yam1[j] * z3     	 )  *  lDiv );
+                          Yam1[j] * z3     	 )  /  lDiv );
             oResult.add( x, y, z );
           }
 

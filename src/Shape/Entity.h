@@ -466,12 +466,12 @@ namespace PP3d {
       cLines.push_back( iLine );
       iLine->addOwner( this );
     }
-    void setLine( size_t iPos, LinePtr iLine )
+    void setLine( PIndex iPos, LinePtr iLine )
     {
       cLines[iPos] =  iLine ;
       iLine->addOwner( this );
     }
-    void insertLine( size_t iPos, LinePtr iLine )
+    void insertLine( PIndex iPos, LinePtr iLine )
     {
       cLines.insert( cLines.begin()+iPos, iLine );
       iLine->addOwner( this );
@@ -490,10 +490,10 @@ namespace PP3d {
       addLine( iNewLine );
     }
 
-    LinePtr      getLine(  size_t iPos ) { return cLines[iPos]; }
-    LinePtr      getLineModulo(  size_t iPos ) { return cLines[iPos%cLines.size()]; }
-    void         removeLineModulo(  size_t iPos ) { cLines.erase( cLines.begin()+(iPos%cLines.size())); }
-    LinePtr      swapLine(  size_t iPos,  LinePtr iLine )
+    LinePtr      getLine(  PIndex iPos ) { return cLines[iPos]; }
+    LinePtr      getLineModulo(  PIndex iPos ) { return cLines[iPos%cLines.size()]; }
+    void         removeLineModulo( PIndex iPos ) { cLines.erase( cLines.begin()+(iPos%cLines.size())); }
+    LinePtr      swapLine( PIndex iPos,  LinePtr iLine )
     {
       LinePtr lTmp =  cLines[iPos];
       iLine->addOwner( this );
@@ -506,16 +506,16 @@ namespace PP3d {
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
-    PointPtr     getPoint( int iPos );
+    PointPtr     getPoint( PIndex iPos );
     int          getPoints( VectDouble3 & oPts );
     int          getPoints( VectPoint3d & oPts );
 
 
     const Point3d &    getNormal()     { return cNorm; }
 
-    void         insertPoint( int iPos, Point3d & lPt, DataBase & iBase );
-    void         insertPoint( int iPos, PointPtr lPt, DataBase & iBase );
-    bool         delPoint( int iPos, DataBase & iBase );
+    void         insertPoint( PIndex iPos, Point3d & lPt, DataBase & iBase );
+    void         insertPoint( PIndex iPos, PointPtr lPt, DataBase & iBase );
+    bool         delPoint( PIndex iPos, DataBase & iBase );
 
     void         execVisitor( EntityVisitor& pVisit )override;
     void         inverseLines();

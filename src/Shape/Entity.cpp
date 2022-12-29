@@ -1,6 +1,6 @@
 #include "Entity.h"
 #include "SortVisitor.h"
-#include "DataBase.h"
+#include "Shape/DataBase.h"
 
 #include <cmath>
 
@@ -159,20 +159,20 @@ namespace PP3d {
 	Calcul3d::Normal( lLines[0]->first()->get(),
 			  lLines[0]->second()->get(),
 			  lLines[1]->second()->get(), // pas first !!!	
-			 cNorm );
+                          cNorm );
 	return;
       }
     
-     if( lNb > 3 )
-       {
-	 int i = lNb/3;
-	 int j = (lNb*2)/3;
-	 Calcul3d::Normal( lLines[0]->first()->get(),
-			   lLines[i]->second()->get(),
-			   lLines[j]->second()->get(), // pas first !!!		
-			   cNorm );
-	 return;
-       }
+    if( lNb > 3 )
+      {
+        int i = lNb/3;
+        int j = (lNb*2)/3;
+        Calcul3d::Normal( lLines[0]->first()->get(),
+                          lLines[i]->second()->get(),
+                          lLines[j]->second()->get(), // pas first !!!		
+                          cNorm );
+        return;
+      }
   }
   //-------------------------------------
   Facet* Facet::duplicate( DataBase & lBase )
@@ -197,34 +197,68 @@ namespace PP3d {
 	lCenter += lLine->second()->get();
       }
     
-    lCenter /= cLines.size()*2;VectPoint3d & oPts )
+    lCenter /= cLines.size()*2;
+    return lCenter;
+  }
+ //-------------------------------------
+  PointPtr Facet::getPoint( PIndex iPos )
+  {
+    PointPtr lPt = nullptr;
+    if( cLines.size() >= (size_t) iPos )
+      {    
+	if( iPos == 0 )
+	  {
+	    lPt = cLines[0]->getFirst();
+	  }
+	else
+	  {
+	    lPt = cLines[iPos-1]->getSecond();
+	  }
+      }
+    return lPt;
+  }
+
+  //-------------------------------------
+   int  Facet::getPoints( VectDouble3 & oPts )
+   {
+    if(  cLines.size() > 0 )
+      {
+        oPts.add( *(cLines[0]->getFirst()) );
+        
+        for( LinePtr lLine : cLines )
+          {
+            oPts.add( *(lLine->getSecond()));
+          }
+      }
+    
+    return  oPts.size();
+  }
+  //-------------------------------------
+  int  Facet::getPoints( VectPoint3d & oPts )
   {
     if(  cLines.size() > 0 )
       {
         oPts.add( *(cLines[0]->getFirst()) );
         
-        for( size_t i=1; i < cLines.size(); i++ )
-        {
-          oPts.add( *(cLines[i -1 ]->getSecond()));
-        }
+        for( LinePtr lLine : cLines )
+          {
+            oPts.add( *(lLine->getSecond()));
+          }
       }
     
-    return  cLines.size();
+    return  oPts.size();
   }
-   
   //-------------------------------------
-  void Facet::insertPoint( int iPos, PointPtr lPt, DataBase & iBase )
+  void Facet::insertPoint( PIndex iPos, PointPtr lPt, DataBase & iBase )
   {
     if( lPt == nullptr )
       return;
 
-    if(((size_t)iPos) > cLines.size() )
+    if(iPos > cLines.size() )
       {
 	iPos = cLines.size();
       }
 
-    if( iPos < 0 )
-      iPos = 0;
       
     //============== No point ============
     if( cLines.size() == 0)
@@ -248,14 +282,14 @@ namespace PP3d {
     cLines.insert( cLines.begin()+iPos, lNewLine );
   }
   //-------------------------------------
-  void Facet::insertPoint( int iPos, Point3d & lPt, DataBase & iBase )
+  void Facet::insertPoint( PIndex iPos, Point3d & lPt, DataBase & iBase )
   {    
     insertPoint( iPos, iBase.getNewPoint( lPt ), iBase );
   }
   //-------------------------------------
-  bool Facet::delPoint( int iPos, DataBase & iBase )
+  bool Facet::delPoint( PIndex iPos, DataBase & iBase )
   {
-    if( iPos < 0 ||  ((size_t)iPos) >= cLines.size() )
+    if( iPos >= cLines.size() )
       {
 	return false;
       }
@@ -306,7 +340,7 @@ namespace PP3d {
     cLines.erase( cLines.begin()+iPos );
     
     return false;
- }
+  }
    
   //-------------------------------------
   void Facet::execVisitor( EntityVisitor& pVisit )

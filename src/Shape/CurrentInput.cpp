@@ -272,8 +272,10 @@ namespace PP3d {
 	
     
     ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFacet1 );
-    iBase.addObject( lObjBSpline );			
-			
+    iBase.addObject( lObjBSpline );
+    
+    lObjBSpline->makePtsFromPoles( iBase );
+ 			
     delete cCurrentLine;
     resetCurrentLine();
 	

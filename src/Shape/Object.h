@@ -124,7 +124,7 @@ namespace PP3d {
 
     //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ); 
 
-		
+  		
     //virtual void drawSelectionGL( ViewProps& pViewProps );
     const std::string&   getName()      const     { return cName; }
     void                 rename( const char* pName) { cName = pName; }

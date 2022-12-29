@@ -168,7 +168,10 @@ namespace PP3d{
       }
     //	drawInfoGL( pViewProps, cMyProps );
   }
-  //---------------------------
+ 
+  //------------------------------------------------------
+  //------------------------------------------------------
+  //------------------------------------------------------
   void Object::drawSelectPointGL(ViewProps& pViewProps )
   {
     VisitorDrawSelectPoints	lVisitS( pViewProps, cMyProps);
