@@ -91,6 +91,19 @@ namespace PP3d {
 	pointGL();
     }
     //------------------
+    float setPointSize( float iVal ) {
+      float lTmp =  cPointSize;
+      cPointSize = iVal;
+      return lTmp;
+    }
+   float deflatePointSize() {
+      float lTmp =  cPointSize;
+      cPointSize -= std::max( cPointSize / 4.0, 1.0);
+      return lTmp;
+    }
+
+    
+    //------------------
     void lineGL()
     {
       if( cGLMode == GLMode::Draw )	cColorLine.GL() ;

@@ -27,7 +27,6 @@ namespace PP3d {
   //************************************
   class CurrentInput {
 
-    
     Object               * cCurrentCreation=nullptr;
     
     ObjectPolylines      * cCurrentLine=nullptr;
@@ -56,6 +55,8 @@ namespace PP3d {
       cCurrentLine=nullptr;
       cCurrentLineId = kMinCurrentLineId;
       cCurrentLineSelectPoint = -1;
+      cCurrentPoint = nullptr;
+      cCurrentPointObject = nullptr;
     }
      //-------------------------------------
     void  renumberPoints();   

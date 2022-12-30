@@ -30,12 +30,13 @@ namespace PP3d {
 	  ObjectType getObjType() const override { return ObjectType::ObjFacet; }
 		ShapeType  getSubType() const override { return ShapeType::Facet; };
 
-		FacetPtr giveFacet()
-		{
-			Facet *lTmp = cShape;
-			cShape = nullptr;
-			return lTmp;
-		};
+          FacetPtr giveFacet()
+          {            
+            Facet *lTmp = cShape;
+            lTmp->clearOwner(this );
+            cShape = nullptr;
+            return lTmp;
+          };
 
 	};
   //******************************

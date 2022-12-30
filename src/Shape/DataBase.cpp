@@ -233,8 +233,8 @@ namespace PP3d {
   //******************************************
   class VisitValid : public EntityVisitorNode
   {
-    DataBase& cBase;
-    bool cTotalScan;
+    DataBase & cBase;
+    bool cTotalScan = false;
   public:
     VisitValid( DataBase& pBase, bool iTotalScan = false )
       :cBase( pBase )
@@ -264,7 +264,7 @@ namespace PP3d {
     return lEntity->getId();
   }	
   //------------------------------------------
-  void DataBase::addObject( Object* pObj )
+  void DataBase::addObject( Object* pObj)
   {
     validEntity( pObj );
     cContainerObject.emplace( pObj );			
@@ -324,45 +324,45 @@ namespace PP3d {
   //---------------------------------------------------------
   PointPtr DataBase::getNewPoint(const Point3d & iPt)
   {
-    if( cFreePoints.empty() )
+    // if( cFreePoints.empty() )
       return new Point(iPt);
 
-    PointPtr lTmp = cFreePoints.top();
-    cFreePoints.pop();
-    lTmp->set( iPt);
+      // PointPtr lTmp = cFreePoints.top();
+      // cFreePoints.pop();
+    // lTmp->set( iPt);
     
-    return lTmp;
+    //return lTmp;
   }
   //---------------------------------------------------------
   LinePtr  DataBase::getNewLine(PointPtr lA, PointPtr lB)
   {
-    if( cFreeLines.empty() )
+    //  if( cFreeLines.empty() )
       return new Line( lA, lB );
 
-    LinePtr lTmp = cFreeLines.top();
-    cFreeLines.pop();
-    lTmp->set( lA, lB );
-    return lTmp;
+      // LinePtr lTmp = cFreeLines.top();
+      //cFreeLines.pop();
+      //lTmp->set( lA, lB );
+      //return lTmp;
   }
   //---------------------------------------------------------
   FacetPtr DataBase::getNewFacet()
   {
-    if( cFreeFacets.empty() )
+    // if( cFreeFacets.empty() )
       return new Facet();
     
-    FacetPtr lTmp = cFreeFacets.top();
-    cFreeFacets.pop();
-    return lTmp;
+      //  FacetPtr lTmp = cFreeFacets.top();
+    //  cFreeFacets.pop();
+      //  return lTmp;
   }  
   //---------------------------------------------------------
   PolyPtr DataBase::getNewPoly()
   {
-    if( cFreePolys.empty() )
+    //   if( cFreePolys.empty() )
       return new Poly();
     
-    PolyPtr lTmp = cFreePolys.top();
-    cFreePolys.pop();
-    return lTmp;
+    // PolyPtr lTmp = cFreePolys.top();
+    // cFreePolys.pop();
+    //  return lTmp;
   }  
   //---------------------------------------------------------
   //---------------------------------------------------------

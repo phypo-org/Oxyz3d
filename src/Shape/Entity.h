@@ -261,11 +261,9 @@ namespace PP3d {
     
     Line( PointPtr lA, PointPtr lB )
     {		 
-      cPoints = { lA, lB };
-      lA->addOwner( this );
-      if( lA != lB )
-	lB->addOwner( this );			
+      set( lA, lB );			
     }
+ 
     bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette
     bool isSamePointXYZ() { return cPoints.first->get() == cPoints.second->get(); } // Meme coordonnes xyz de deux points
     bool isSamePointEpsi(long double iEpsi ) { return cPoints.first->get().sameEpsi(iEpsi, cPoints.second->get() ); } // Meme coordonnes xyz de deux points
@@ -310,7 +308,8 @@ namespace PP3d {
  
   public:
     void execVisitor( EntityVisitorNode& pVisit )override;
-		
+
+     
     void inversePoint() {
       PointPtr lTmp = cPoints.first;
       cPoints.first = cPoints.second;

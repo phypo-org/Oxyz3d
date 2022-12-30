@@ -15,28 +15,31 @@ namespace PP3d {
 	case SelectType::All:
 	case SelectType::Point:
 	  {
-	    drawLineGL( pViewProps );					
+          drawSplinePointGL( pViewProps);
+          
+          drawLineGL( pViewProps );					
            
             //   drawSplineLineGL( pViewProps);
-            drawSplinePointGL( pViewProps);
-            
+             
           drawPointGL( pViewProps);
    	  }
 	  break;
 				
 	case SelectType::Line:
-	  drawLineGL( pViewProps );					
-          drawPointGL( pViewProps);
+         
           drawSplineLineGL( pViewProps);
          
+ 	  drawLineGL( pViewProps );					
+          drawPointGL( pViewProps);
  	  break;
 				
 	default:
-	  {
+	  {       
+          drawSplineLineGL( pViewProps);
+          
 	  drawLineGL( pViewProps );					
           drawPointGL( pViewProps);
-          
-          drawSplineLineGL( pViewProps);
+  
 	    //	    std::cout << ">>>>>>>>>>>>Polyline" << std::endl;
 	  //	    VisitorDrawBSpline	lVisitL( pViewProps, cMyProps);
 	  //	    execVisitor( lVisitL );			
@@ -44,25 +47,31 @@ namespace PP3d {
 	}
     }
   //------------------------------------------------------
-  void ObjBSpline::drawSplinePointGL( ViewProps& pViewProps )
+  void ObjBSpline::drawSplinePointGL( ViewProps & pViewProps )
   {
-    //  std::cout << "  ObjBSpline::drawSplinePointGL" << std::endl;
+     std::cout << "  ObjBSpline::drawSplinePointGL" << std::endl;
    if( cSplinePts != nullptr )
       {
         std::cout << "    ObjBSpline::drawSplinePointGL OK" << std::endl;
         VisitorDrawPoints	lVisitP( pViewProps, cMyProps);
+
+        auto lMemo = pViewProps.deflatePointSize();
         cSplinePts->execVisitor( lVisitP );
+        pViewProps.setPointSize(lMemo);
       }
   }
   //---------------------------
   void ObjBSpline::drawSplineLineGL ( ViewProps& pViewProps )
   {
-    //    std::cout << "  ObjBSpline::drawSplineLineGL" << std::endl;
+       std::cout << "  ObjBSpline::drawSplineLineGL" << std::endl;
     if( cSplinePts != nullptr )
       {
         std::cout << "    ObjBSpline::drawSplineLineGL OK" << std::endl;
-        VisitorDrawPoly	lVisitY( pViewProps, cMyProps);
-        cSplinePts->execVisitor( lVisitY );
+        VisitorDrawLine	lVisitL( pViewProps, cMyProps);
+       
+        auto lMemo = pViewProps.deflatePointSize();
+        cSplinePts->execVisitor( lVisitL );
+        pViewProps.setPointSize(lMemo);
       }
   }	 
 
