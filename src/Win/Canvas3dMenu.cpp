@@ -62,7 +62,7 @@ namespace M3d {
 #define StrMenu_CreateIcosahe   "Icosaedre  ..."
 	
 #define StrMenu_CreateShape          "New Shape "
-#define StrMenu_CreateShapeLine       "Line"
+#define StrMenu_CreateShapeLine       "xxxxxxx Line"
 #define StrMenu_CreateShapePolyline   "Polyline"
 #define StrMenu_CreateShapeFacet      "Facet"
 #define StrMenu_CreateShapeFacetP     "FacetPoly"
@@ -522,7 +522,7 @@ namespace M3d {
       {
         if( TheInput.getNbCurrentPoints() == 2 )
           {
-            lShape =TheInput.convertCurrentLineToLine(TheBase);
+            //            lShape =TheInput.convertCurrentLineToLine(TheBase);
           }
       }
 	

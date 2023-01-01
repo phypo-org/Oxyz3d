@@ -148,7 +148,7 @@ namespace PP3d {
     ObjectPoly *     convertCurrentLineToFacetPoly(DataBase & iBase);
     ObjectPoly *     convertCurrentLineToBiFacetPoly(DataBase & iBase);
     ObjectPolylines* convertCurrentLineToPolylines(DataBase & iBase);
-    ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
+    //    ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
     ObjBSpline*      convertCurrentLineToBSpline(DataBase & iBase);
 
     bool isCurrentPoints()   { return cCurrentLine     != nullptr; }

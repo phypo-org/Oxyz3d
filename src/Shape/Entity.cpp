@@ -174,20 +174,59 @@ namespace PP3d {
         return;
       }
   }
-  //-------------------------------------
-  Facet* Facet::duplicate( DataBase & lBase )
-  {
-    FacetPtr lNew = lBase.getNewFacet();
-    
-    size_t i =0;
-    for( size_t i=0; i< cLines.size(); i++ )
-      {
-	lNew->addLine( lBase.getNewLine( cLines[i]->first(), cLines[i]->second())); 
+  //------------------------------------
+  void Facet::addPoint( const  Point3d & pPt )
+  {    
+     LinePtrVect& lLines = getLines();
+     
+     if( lLines.size() == 0 )
+       {
+         PointPtr lPoint= new Point( pPt );
+         LinePtr lLine = new Line( lPoint, lPoint ); // Un point 
+         lLines.push_back( lLine );
       }
-    return lNew;
+     else if(lLines.size() == 1 && lLines[0]->isPoint() )  // Un  point !
+      {
+	if( lLines[0]->getFirst()->get() == pPt )
+	  {
+	    std::cerr << "*** ERROR : same point " << std::endl;
+	    return ;
+	  }
+	//	std::cout << " is Point  "  << std::endl;	
+        PointPtr lPoint= new Point( pPt );
+	lLines[0]->getPoints().second = lPoint;  // on change le second point
+      }
+    else
+      {
+	if( lLines[lLines.size()-1]->getSecond()->get() == pPt )
+	  {
+	    std::cerr << "*** ERROR : same point " << std::endl;
+	    return ;
+	  }
+	    
+	//	std::cout << " new line   "  << std::endl;	
+        PointPtr lPoint= new Point( pPt );
+	LinePtr	lLine = new Line(  lLines[lLines.size()-1]->getPoints().second, lPoint);
+	lLines.push_back( lLine );
+      }		
+  }
+  //-------------------------------------  
+  Facet* Facet::duplicate() const
+  {
+    VectPoint3d lPts;    
+    if( getPoints( lPts ) > 0 )
+      {
+        FacetPtr lNewFac = new Facet();
+        for( Point3d & lPt : lPts.getVector() )
+          {
+            lNewFac->addPoint( lPt );
+          }      
+        return lNewFac;
+      }
+    return nullptr;
   }
   //-------------------------------------
-  Point3d Facet::getCenter( )
+  Point3d Facet::getCenter()
   {		 	
     PP3d::Point3d  lCenter;
     
@@ -201,7 +240,7 @@ namespace PP3d {
     return lCenter;
   }
  //-------------------------------------
-  PointPtr Facet::getPoint( PIndex iPos )
+  PointPtr Facet::getPoint( PIndex iPos ) 
   {
     PointPtr lPt = nullptr;
     if( cLines.size() >= (size_t) iPos )
@@ -219,7 +258,7 @@ namespace PP3d {
   }
 
   //-------------------------------------
-   int  Facet::getPoints( VectDouble3 & oPts )
+   int  Facet::getPoints( VectDouble3 & oPts ) const
    {
     if(  cLines.size() > 0 )
       {
@@ -234,7 +273,7 @@ namespace PP3d {
     return  oPts.size();
   }
   //-------------------------------------
-  int  Facet::getPoints( VectPoint3d & oPts )
+  int  Facet::getPoints( VectPoint3d & oPts ) const
   {
     if(  cLines.size() > 0 )
       {
@@ -517,7 +556,6 @@ namespace PP3d {
       }
     pVisit.execEndNode( this, nullptr );
   }
- 
 	
   //*********************************************
   //*********************************************

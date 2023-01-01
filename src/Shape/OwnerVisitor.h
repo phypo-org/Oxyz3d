@@ -20,8 +20,10 @@ namespace PP3d{
     //--------------------------------
     virtual void addOwnersOf( EntityPtr iEntity )
     {
-      if( iEntity  )
+      std::cout << "addOwnersOf 1 Entity ptr:" << (void*) iEntity  << std::endl;
+     if( iEntity  )
 	{
+          std::cout << "  addOwnersOf 1 Entity ptr:" << (void*) iEntity << " Id:" << iEntity->getId() << " type:" <<  iEntity->getType() << std::endl;
 	  switch( iEntity->getType() )
 	    {
 	    case ShapeType::Point:  execPoint( (Point*)iEntity);break;
@@ -35,17 +37,20 @@ namespace PP3d{
 	}
     }
     //--------------------------------  
-   virtual void addOwnersOf( const std::set<Entity*> & Entitys )
+   virtual void addOwnersOf( const std::set<Entity*> & iEntitys )
     {
-      for( EntityPtr lEntity : Entitys )
+      std::cout << "addOwnersOf 2 Owners:"<<  iEntitys.size() << std::endl; 
+      for( EntityPtr lEntity : iEntitys )
 	{
 	  addOwnersOf( lEntity );
 	}
     }
     //--------------------------------  
-    virtual void addOwnersOf( const std::vector<Entity*> & Entitys )
+    virtual void addOwnersOf( const std::vector<Entity*> & iEntitys )
     {
-      for( EntityPtr lEntity : Entitys )
+      std::cout << "addOwnersOf 3 Owners:"<<  iEntitys.size() << std::endl;
+      
+      for( EntityPtr lEntity : iEntitys )
 	{
 	  if( lEntity  )
 	    {
@@ -59,7 +64,8 @@ namespace PP3d{
 
     virtual void execNode    ( Entity* pEntity, Entity* pOwner )
     {
-      pEntity->removeOwner( pOwner );
+      if( pEntity!=nullptr ) 
+        pEntity->removeOwner( pOwner );
     }
   };
    //*****************************************

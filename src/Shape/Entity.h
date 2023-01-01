@@ -424,6 +424,8 @@ namespace PP3d {
     }
    
     void computeNormal();
+    
+    void addPoint( const  Point3d & pPt );
 
 
     bool addTrueLine( LinePtr iLine )
@@ -501,13 +503,13 @@ namespace PP3d {
     }
     bool         clear() override { cLines.clear(); return Entity::clear(); }
     
-    Facet*       duplicate( DataBase & lBase );
+    Facet*       duplicate() const;
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
     PointPtr     getPoint( PIndex iPos );
-    int          getPoints( VectDouble3 & oPts );
-    int          getPoints( VectPoint3d & oPts );
+    int          getPoints( VectDouble3 & oPts ) const;
+    int          getPoints( VectPoint3d & oPts ) const;
 
 
     const Point3d &    getNormal()     { return cNorm; }

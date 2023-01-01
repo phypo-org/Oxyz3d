@@ -125,7 +125,8 @@ namespace PP3d {
 	LinePtr	lLine = new Line(  lLines[lLines.size()-1]->getPoints().second, lPoint);
 	lLines.push_back( lLine );
       }		
-  }  //------------------------------------------
+  }
+  //------------------------------------------
   void CurrentInput::delLastPointToCurrentLine( )
   {
     if( cCurrentLine == nullptr )
@@ -206,6 +207,7 @@ namespace PP3d {
     }
   };
   //------------------------------------------
+  /*
   ObjectLine* CurrentInput::convertCurrentLineToLine(DataBase & iBase)
   {
     PP3d::SortEntityVisitorPoint lVisit;
@@ -224,28 +226,27 @@ namespace PP3d {
     VisitorDestroy lVisitDestroy(iBase);
     cCurrentLine->execVisitor( lVisitDestroy );
 			
-    cCurrentLine= nullptr;
+    //  cCurrentLine= nullptr;
 			
 	
     return lLine;
   }
+  */
   //------------------------------------------		
   ObjectFacet* CurrentInput::convertCurrentLineToFacet(DataBase & iBase)
   {
     if( cCurrentLine == nullptr )
       return nullptr;
-
-    FacetPtr lFac =  cCurrentLine->giveFacet();
-    lFac->clearAllOwner();
-			
-    ObjectFacet* lFacet = new ObjectFacet( "Facet", lFac);
     
-    // il faut creer une nouvelle ligne pour fermer la facette
-    lFacet->getFacet()->closeFacet();
-    iBase.addObject( lFacet );			
+    FacetPtr lFacInput = cCurrentLine->getFacet();
+    FacetPtr lFac    =  lFacInput->duplicate();    
+    lFac->closeFacet();
+ 
+    ObjectFacet* lFacet = new ObjectFacet( "Facet", lFac);    
+    iBase.addObject( lFacet ); 
 			
-    delete cCurrentLine;
-    resetCurrentLine();
+    //  delete cCurrentLine;
+    //  resetCurrentLine();
     
     return lFacet;
   }
@@ -254,19 +255,19 @@ namespace PP3d {
   {
     if( cCurrentLine == nullptr )
       return nullptr;
-
-    PolyPtr  lPoly   = iBase.getNewPoly();
-    FacetPtr lFac = cCurrentLine->giveFacet();
-    lFac->clearAllOwner();
     
+    FacetPtr lFacInput = cCurrentLine->getFacet();
+    FacetPtr lFac    =  lFacInput->duplicate();    
     lFac->closeFacet();
-    lPoly->addFacet( lFac );
-	
+ 
+    PolyPtr  lPoly   = iBase.getNewPoly();
+    lPoly->addFacet( lFac );	
     
     ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
-    iBase.addObject( lObjPoly );			
-    delete cCurrentLine;
-    resetCurrentLine();
+    iBase.addObject( lObjPoly );
+    
+    // delete cCurrentLine;
+    //  resetCurrentLine(); // DESALLOUER LES OBJETS !!!!!!!
 	
     return lObjPoly;
   }
@@ -276,44 +277,43 @@ namespace PP3d {
     if( cCurrentLine == nullptr )
       return nullptr;
 
-    FacetPtr lFac = cCurrentLine->giveFacet();
-    lFac->clearAllOwner();
-	
+    FacetPtr lFacInput = cCurrentLine->getFacet();
+    FacetPtr lFac      = lFacInput->duplicate();	
     
     ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFac );
-    iBase.addObject( lObjBSpline );
-    //  iBase.validEntity( lObjBSpline->cSplinePts );
-
     lObjBSpline->makePtsFromPoles( iBase );
- 			
-    delete cCurrentLine;
-    resetCurrentLine();
+    
+    iBase.addObject( lObjBSpline );
+
+ //   delete cCurrentLine;
+    //  resetCurrentLine();  // DESALLOUER LES OBJETS !!!!!!!
 	
     return lObjBSpline;
   }
   //------------------------------------------		
   ObjectPoly* CurrentInput::convertCurrentLineToBiFacetPoly(DataBase & iBase)
   {
-    if( cCurrentLine == nullptr )
+    if( cCurrentLine == nullptr  )
       return nullptr;
 
-    PolyPtr  lPoly   = iBase.getNewPoly();
-    FacetPtr lFac1 = cCurrentLine->giveFacet();
-    lFac1->clearAllOwner();
-     
-    lFac1->closeFacet();
-    lPoly->addFacet( lFac1 );
-		    
-    FacetPtr lFac2 = lFac1->duplicate( iBase);
-    lFac2->inverseLines();
-    lPoly->addFacet( lFac2 );
-
     
+    FacetPtr lFacInput = cCurrentLine->getFacet();  
+    FacetPtr lFac1 = lFacInput->duplicate();
+    lFac1->closeFacet();
+    
+		    
+    FacetPtr lFac2 = lFac1->duplicate();
+    lFac2->inverseLines();
+   
+    PolyPtr  lPoly = iBase.getNewPoly();
+    lPoly->addFacet( lFac1 );
+    lPoly->addFacet( lFac2 );
+     
     ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
     iBase.addObject( lObjPoly );			
 			
-    delete cCurrentLine;
-    resetCurrentLine();
+    //   delete cCurrentLine;
+    //   resetCurrentLine(); // DESALLOUER LES OBJETS !!!!!!!
 
     
     return lObjPoly;
@@ -324,18 +324,16 @@ namespace PP3d {
     if( cCurrentLine == nullptr )
       return nullptr;
 
-    FacetPtr lFac = cCurrentLine->giveFacet();
-    lFac->clearAllOwner();
-    
-    lFac->closeFacet();	
-    
-    ObjectPolylines* lObjPoly = new ObjectPolylines( "Polylines", lFac );
-    iBase.addObject( lObjPoly );
-    
-    delete cCurrentLine;
-    resetCurrentLine();
-	
-    return lObjPoly;
+     FacetPtr lFacInput = cCurrentLine->getFacet();
+     FacetPtr lFac = lFacInput->duplicate();	
+     
+     ObjectPolylines* lObjPoly = new ObjectPolylines( "Polylines", lFac );
+     iBase.addObject( lObjPoly );
+     
+     //  delete cCurrentLine; // DESALLOUER LES OBJETS !!!!!!!
+     //  resetCurrentLine();
+     
+     return lObjPoly;
   }
   //------------------------------------------
 	
