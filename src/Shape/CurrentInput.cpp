@@ -34,7 +34,7 @@ namespace PP3d {
   {
     while( cCurrentLine != nullptr )
       {
-	delLastPointToCurrentLine();
+	delAllPoint();
       }
   }
   //------------------------------------------
@@ -127,11 +127,10 @@ namespace PP3d {
       }		
   }
   //------------------------------------------
-  void CurrentInput::delLastPointToCurrentLine( )
+  void CurrentInput::delLastPoint( )
   {
     if( cCurrentLine == nullptr )
-      return;
-		
+      return;		
 		
     Facet* lFacet= cCurrentLine->getFacet();
     LinePtrVect& lLines = lFacet->getLines();
@@ -140,7 +139,9 @@ namespace PP3d {
 	LinePtr lLine = lFacet->getLines()[0];
 	if( lLine->isPoint() )
 	  {
+            delete lLine->first();
 	    delete lLine;
+            delete lFacet;
 	    delete cCurrentLine;
 	    resetCurrentLine();
 	  }
@@ -156,6 +157,28 @@ namespace PP3d {
       delete lTmp;
     }
     renumberPoints();
+  }
+  //------------------------------------------
+  void CurrentInput::delAllPoint( )
+  {
+    if( cCurrentLine == nullptr )
+      return;
+		    
+    Facet* lFacet= cCurrentLine->getFacet();
+    for( size_t i=0; i< lFacet->getLines().size(); i++  )
+      {
+        LinePtr lLine = lFacet->getLines()[i];
+        if( i == 0 && lLine->isPoint() == false )
+          {
+            delete lLine->first();
+          }
+        delete lLine->second();
+        delete lLine;
+      }
+    
+    delete lFacet;
+    delete cCurrentLine;
+    resetCurrentLine();
   }
   //------------------------------------------
   GLuint CurrentInput::getNbCurrentPoints()
@@ -207,31 +230,34 @@ namespace PP3d {
     }
   };
   //------------------------------------------
-  /*
+  
   ObjectLine* CurrentInput::convertCurrentLineToLine(DataBase & iBase)
   {
-    PP3d::SortEntityVisitorPoint lVisit;
-    if( execVisitorOnCurrentLine( lVisit ) == false ||  lVisit.cVectPoints.size() < 2 )
-      return nullptr;
-
-
-    VisitorTrace lVtrace( std::cout );
-    cCurrentLine->execVisitor( lVtrace );
-			
-    ObjectLine* lLine = new ObjectLine( "Line",
-					new Line( cCurrentLine->getFacet()->getLines()[0]->getFirst(),
-						  cCurrentLine->getFacet()->getLines()[0]->getSecond()) );
-    iBase.addObject( lLine );
-
-    VisitorDestroy lVisitDestroy(iBase);
-    cCurrentLine->execVisitor( lVisitDestroy );
-			
-    //  cCurrentLine= nullptr;
-			
-	
-    return lLine;
+    LinePtrVect& lLines =  cCurrentLine->getFacet()->getLines();     
+    ObjectLine* lObjLine = nullptr;
+    
+    if( lLines.size() == 1 )
+      {
+         LinePtr lLineInput = lLines[0];
+         if( lLineInput->isPoint() )
+           {
+             PointPtr lPt = new Point( lLineInput->getFirst()->get() );
+             
+             LinePtr lNewLine = new Line( lPt );
+             lObjLine = new ObjectLine( "Line",  new Line( lPt ));                                              
+           }
+         else
+           {
+             lObjLine = new ObjectLine( "Line",  new Line(  new Point( lLineInput->getFirst()->get()),
+                                                                        new Point( lLineInput->getSecond()->get())));
+           }
+         
+         iBase.addObject( lObjLine );
+      }
+    
+    			 	
+    return lObjLine;
   }
-  */
   //------------------------------------------		
   ObjectFacet* CurrentInput::convertCurrentLineToFacet(DataBase & iBase)
   {
@@ -245,8 +271,7 @@ namespace PP3d {
     ObjectFacet* lFacet = new ObjectFacet( "Facet", lFac);    
     iBase.addObject( lFacet ); 
 			
-    //  delete cCurrentLine;
-    //  resetCurrentLine();
+  
     
     return lFacet;
   }
@@ -265,9 +290,7 @@ namespace PP3d {
     
     ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
     iBase.addObject( lObjPoly );
-    
-    // delete cCurrentLine;
-    //  resetCurrentLine(); // DESALLOUER LES OBJETS !!!!!!!
+  
 	
     return lObjPoly;
   }
@@ -312,9 +335,7 @@ namespace PP3d {
     ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
     iBase.addObject( lObjPoly );			
 			
-    //   delete cCurrentLine;
-    //   resetCurrentLine(); // DESALLOUER LES OBJETS !!!!!!!
-
+   
     
     return lObjPoly;
   }
@@ -330,9 +351,7 @@ namespace PP3d {
      ObjectPolylines* lObjPoly = new ObjectPolylines( "Polylines", lFac );
      iBase.addObject( lObjPoly );
      
-     //  delete cCurrentLine; // DESALLOUER LES OBJETS !!!!!!!
-     //  resetCurrentLine();
-     
+  
      return lObjPoly;
   }
   //------------------------------------------

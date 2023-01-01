@@ -263,7 +263,11 @@ namespace PP3d {
     {		 
       set( lA, lB );			
     }
- 
+     Line( PointPtr lA )
+    {		 
+      set( lA, lA );			
+    }
+
     bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette
     bool isSamePointXYZ() { return cPoints.first->get() == cPoints.second->get(); } // Meme coordonnes xyz de deux points
     bool isSamePointEpsi(long double iEpsi ) { return cPoints.first->get().sameEpsi(iEpsi, cPoints.second->get() ); } // Meme coordonnes xyz de deux points

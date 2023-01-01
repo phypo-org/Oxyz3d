@@ -142,13 +142,14 @@ namespace PP3d {
     void             viewCurrentPoint( Point3d & pPt );
     void             hideCurrentPoint();
     void             addPointToCurrentLine( Point3d pPt );
-    void             delLastPointToCurrentLine( );
+    void             delLastPoint();
+    void             delAllPoint();
     GLuint           getNbCurrentPoints();
     ObjectFacet *    convertCurrentLineToFacet(DataBase & iBase);
     ObjectPoly *     convertCurrentLineToFacetPoly(DataBase & iBase);
     ObjectPoly *     convertCurrentLineToBiFacetPoly(DataBase & iBase);
     ObjectPolylines* convertCurrentLineToPolylines(DataBase & iBase);
-    //    ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
+    ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
     ObjBSpline*      convertCurrentLineToBSpline(DataBase & iBase);
 
     bool isCurrentPoints()   { return cCurrentLine     != nullptr; }

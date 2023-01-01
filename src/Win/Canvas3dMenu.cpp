@@ -62,7 +62,7 @@ namespace M3d {
 #define StrMenu_CreateIcosahe   "Icosaedre  ..."
 	
 #define StrMenu_CreateShape          "New Shape "
-#define StrMenu_CreateShapeLine       "xxxxxxx Line"
+#define StrMenu_CreateShapeLine       "Line"
 #define StrMenu_CreateShapePolyline   "Polyline"
 #define StrMenu_CreateShapeFacet      "Facet"
 #define StrMenu_CreateShapeFacetP     "FacetPoly"
@@ -70,6 +70,7 @@ namespace M3d {
 #define StrMenu_CreateShapeBSpline    "BSpline"
 
 #define  StrMenu_ModifyShape "Modify shape"
+  
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
 #define  StrMenu_DeleteShapeFacet "Delete facet to shape"
 
@@ -270,12 +271,6 @@ namespace M3d {
 	pMenu.add( StrMenu_ConnectPoint, "", MyMenuCallbackConnectPoint, this);	
       }
       
-    lMenuFlagActif = FL_MENU_INACTIVE;
-    if( TheSelect.getNbSelected() > 2 
-	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
-      // && TheSelect.allHaveTheSameOwner()) 
-      lMenuFlagActif = 0;
-    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
     
     lMenuFlagActif=FL_MENU_INACTIVE;
@@ -394,12 +389,22 @@ namespace M3d {
     
     lMenuFlagActif = FL_MENU_INACTIVE;
     
+ 
+    
+    lMenuFlagActif = FL_MENU_INACTIVE;
+    if( TheSelect.getNbSelected() > 2 
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+      // && TheSelect.allHaveTheSameOwner()) 
+      lMenuFlagActif = 0;
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+
     if(TheInput.isCurrentPoints() 
        &&TheInput.getNbCurrentPoints() == 2 )
       {
 	lMenuFlagActif=0;
       }
-    pMenu.add(StrMenu_ModifyShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackPrimitiv,this,lMenuFlagActif);
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackShape,this,lMenuFlagActif);
       
     
     lMenuFlagActif = FL_MENU_INACTIVE;
@@ -411,7 +416,7 @@ namespace M3d {
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "", MyMenuCallbackShape , this,lMenuFlagActif);
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "", MyMenuCallbackShape, this,lMenuFlagActif);
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "", MyMenuCallbackShape, this,lMenuFlagActif);
-    
+
     
     lMenuFlagActif=FL_MENU_INACTIVE;
     if(TheInput.isCurrentPoints()
@@ -522,14 +527,15 @@ namespace M3d {
       {
         if( TheInput.getNbCurrentPoints() == 2 )
           {
-            //            lShape =TheInput.convertCurrentLineToLine(TheBase);
+           lShape =TheInput.convertCurrentLineToLine(TheBase);
           }
       }
 	
     if( lShape != nullptr )
       {
         //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
-        PushHistory();	    
+        PushHistory();
+        TheInput.delAllPoint();
         TheAppli.redrawAll( PP3d::Compute::FacetAll);
       }
   }

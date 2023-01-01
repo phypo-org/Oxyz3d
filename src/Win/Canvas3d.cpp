@@ -1323,7 +1323,7 @@ namespace M3d {
 		    }
 		  else if( cMode == ModeUser::MODE_BASE )
 		    {		      
-		      TheInput.delLastPointToCurrentLine();
+		      TheInput.delLastPoint();
 		    }
 		  
 		  lFlagRedrawAll = true;
