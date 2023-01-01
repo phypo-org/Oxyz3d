@@ -127,7 +127,9 @@ namespace PP3d {
 	  }
       }
     return nullptr;
-  }		
+  }
+   //--------------------------------
+  
 
   //*********************************************
   void Facet::inverseLines( )
@@ -543,6 +545,21 @@ namespace PP3d {
 	lFacet->execVisitor( pVisit );
       }
     pVisit.execEndPoly( this );
+  }
+  //-------------------------------------
+  // ATTENTION NE FAIT RIEN POUR LES OWNERS
+  void Facet::deleteAll()
+  {		    
+    for( size_t i=0; i< getLines().size(); i++  )
+      {
+        LinePtr lLine = getLines()[i];
+        if( i == 0 && lLine->isPoint() == false )
+          {
+            delete lLine->first();
+          }
+        delete lLine->second();
+        delete lLine;
+      }   
   }
   //-------------------------------------
   void Poly::execVisitor( EntityVisitorNode& pVisit )

@@ -994,8 +994,7 @@ namespace M3d {
 	     << " button:" << Fl::event_button() 
 	     << " ctrl: " << Fl::event_ctrl()
 	     << " shift:" <<  Fl::event_shift()
-	     << " alt:" <<  Fl::event_alt());
-    
+	     << " alt:" <<  Fl::event_alt());    
     TheInput.hideCurrentPoint();
     
     switch( pEvent )
@@ -1323,7 +1322,7 @@ namespace M3d {
 		    }
 		  else if( cMode == ModeUser::MODE_BASE )
 		    {		      
-		      TheInput.delLastPoint();
+		      TheInput.delLastPoint ();
 		    }
 		  
 		  lFlagRedrawAll = true;

@@ -10,6 +10,9 @@ namespace PP3d {
     {
       //   std::cout << ">>>>>>>>>>>>> ObjBSpline::drawGL" << std::endl;
       
+      remakeAll(); // PAS TRES ECONOMIQUE !!!!!!!!
+
+      
       switch( pViewProps.cSelectType )
 	{
 	case SelectType::All:
@@ -80,7 +83,6 @@ namespace PP3d {
  {
       if( getFacet() == nullptr )
         return ;
-
      
       VectDouble3 lNodes;
       getFacet()->getPoints( lNodes ); // get the originals points
@@ -116,10 +118,9 @@ namespace PP3d {
     }
   
   //---------------------------		
-  void ObjBSpline::makePtsFromPoles( DataBase & iBase, size_t iMaille  ) {
+  void ObjBSpline::makePtsFromPoles( size_t iMaille  ) {
 
     if( iMaille == 0 ) iMaille = SplineCalcul::Maille;
-
       
     if( cPoles.size() == 0 )
       {
@@ -129,31 +130,53 @@ namespace PP3d {
     VectDouble3 oResult;
         std::cout << "BSpline makePtsFromPoles  call CalculBSpline poles:" << cPoles.size() << std::endl;
     SplineCalcul::CalculBSpline( SplineCalcul::Maille, cPoles, oResult );
-    std::cout << "BSpline makePtsFromPoles  call CalculBSpline result:" << oResult.size() << std::endl;
-            
+    std::cout << "BSpline makePtsFromPoles  call CalculBSpline result:" << oResult.size() << std::endl;            
  
     if( oResult.size() > 1 ) {
       
       if( cSplinePts != nullptr ) {
-        iBase.freeFacet( cSplinePts );
+        cSplinePts->deleteAll();
       }
       
-      cSplinePts =iBase.getNewFacet();
+      cSplinePts = new Facet();
        
-      PointPtr lPt0 = iBase.getNewPoint( oResult.getPoint3d( 0 )  );     
+      PointPtr lPt0 = new Point( oResult.getPoint3d( 0 )  );     
   
       for( size_t p =1; p< oResult.size();  p++){
         
         //     std::cout <<  p << "  =--> " <<  oResult.getPoint3d( p )  << "   ";
         
-        PointPtr lPt   = iBase.getNewPoint( oResult.getPoint3d( p ) );
-        LinePtr  lLine = iBase.getNewLine( lPt0, lPt );
+        PointPtr lPt   = new Point( oResult.getPoint3d( p ) );
+        LinePtr  lLine = new Line( lPt0, lPt );
         //       std::cout << (*lPt0) << " " << (* lPt) << std::endl;
         cSplinePts->addLine( lLine );
         lPt0 = lPt;
       }
     }
   }
+  //---------------------------		
+  ObjectPolylines* ObjBSpline::CreatePolyline( ObjBSpline * iSpline)
+    {
+      //      std::cout << "*********** ObjBSpline::CreatePolyline" << std::endl;
+      ObjectPolylines* lPoly = nullptr;
+      
+      if( iSpline != nullptr )
+        {
+          if( iSpline->cSplinePts == nullptr ) {
+            iSpline->makePtsFromPoles();
+          }
+       
+          lPoly = new ObjectPolylines( "Poly from BSpline", iSpline->cSplinePts );
+          iSpline->cSplinePts = nullptr;
+          
+          iSpline->makePtsFromPoles(); 
+        }
+
+      return lPoly;
+    }  
+    //---------------------------		
+
+
   //******************************
 
 }

@@ -213,6 +213,7 @@ namespace PP3d {
     cSelectObj.clear();
     cSelectObjVect.clear();
   }
+
   //--------------------------------
   bool Selection::addToSelection( EntityPtr lEntity)
   {
@@ -394,7 +395,17 @@ namespace PP3d {
     
     return SelectType::Null;
   }
-
+   //--------------------------------
+   bool Selection::isOnlyObject( ObjectType iObjType )
+   {
+     for( EntityPtr lEntity :  cSelectObjVect)
+       {
+         if( lEntity->getType() != ShapeType::Object
+             || ((Object*)lEntity)->getObjType() != iObjType )
+           return false;
+       }
+     return true;
+   }
   //--------------------------------
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )
   {

@@ -30,7 +30,14 @@ namespace PP3d {
     virtual void drawSplineLineGL ( ViewProps& pViewProps );
     //---------------------------		
     void makePoles();
-    void makePtsFromPoles( DataBase & iBase, size_t iMaille = 0 );   
+    void makePtsFromPoles( size_t iMaille = 0 );   
+    //---------------------------		
+    void remakeAll(size_t iMaille  = 0 ) {
+      cPoles.clear();
+      makePtsFromPoles( iMaille  );
+    }
+    //---------------------------		
+    static ObjectPolylines* CreatePolyline( ObjBSpline * iSpline);
 
   };
   //******************************

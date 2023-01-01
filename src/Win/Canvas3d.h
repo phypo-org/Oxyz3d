@@ -137,7 +137,8 @@ namespace M3d {
     void makeMenu( Fl_Menu_Button& pMenu);
     void makeMenuSelect( Fl_Menu_Button& pMenu);
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
-		
+
+    static void MyMenuCallbackSpline(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData );

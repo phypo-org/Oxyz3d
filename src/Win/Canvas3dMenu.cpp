@@ -69,10 +69,15 @@ namespace M3d {
 #define StrMenu_CreateShapeFacet2P    "BiFacetPoly"
 #define StrMenu_CreateShapeBSpline    "BSpline"
 
+
+#define StrMenu_Spline "Splines"
+#define StrMenu_MuteBSplineToPolyline    "Mute BSpline to Polyline"
+#define StrMenu_CreatPolylineFromBSpline "Generate Polyline from BSpline"
+
 #define  StrMenu_ModifyShape "Modify shape"
   
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
-#define  StrMenu_DeleteShapeFacet "Delete facet to shape"
+#define  StrMenu_DeleteShapeFacet "facet to shape"
 
 
 #define StrMenu_Revol     "New Revolution "
@@ -280,7 +285,18 @@ namespace M3d {
 
     pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
-    
+
+    if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
+        && TheSelect.getNbSelected() > 0
+        && TheSelect.isOnlyObject( PP3d::ObjectType::ObjBSpline ) )
+      {
+          
+        pMenu.add( StrMenu_Spline "/" StrMenu_MuteBSplineToPolyline , "", MyMenuCallbackSpline, this);
+        pMenu.add( StrMenu_Spline "/" StrMenu_CreatPolylineFromBSpline , "", MyMenuCallbackSpline, this);
+      }
+
+
+   
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
       {
@@ -362,7 +378,8 @@ namespace M3d {
       default:;
       }
   }
-  //-------------------------------------------
+
+//-------------------------------------------
   // If no entity is selected
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
   {
@@ -474,7 +491,51 @@ namespace M3d {
 									\
   printf("%s\n", m->label());						\
   M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);	\
-  
+
+
+  //-------------------------------------------
+void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
+  {
+   
+    BEGINCALL
+    //-----------------
+      bool lFlagMakeAnything = false;
+    
+    for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
+        {
+       std::cout << "*********** MENU FOR CALL ObjBSpline::CreatePolyline" << std::endl;
+         if( lEntity->getType() ==  PP3d::ShapeType::Object
+              && (( PP3d::Object*)lEntity)->getObjType() ==   PP3d::ObjectType::ObjBSpline )
+            {
+              PP3d::Object* lObj = nullptr;
+                 
+              if( strcmp( m->label(), StrMenu_MuteBSplineToPolyline ) == 0)
+                {
+                  lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity) );
+                  TheBase.deleteEntity( lEntity );
+                }
+              else
+                if( strcmp( m->label(), StrMenu_CreatPolylineFromBSpline ) == 0)
+                  {
+                    lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity) );
+                  }
+              
+              if( lObj != nullptr )
+                {
+                  TheBase.addObject(lObj  );
+                  lFlagMakeAnything = true;
+                }
+            }
+        }
+    
+    if( lFlagMakeAnything )
+      {
+        PushHistory();
+        TheAppli.redrawAll( PP3d::Compute::FacetAll);                
+      }
+    //-----------------
+  }
+ 
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackShape(Fl_Widget* w, void* pUserData)
   {

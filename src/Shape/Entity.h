@@ -25,7 +25,6 @@
 
 namespace PP3d {
 
-
   
 
   enum class Compute{
@@ -176,7 +175,6 @@ namespace PP3d {
     for( Entity * lEntity : ioSet )
       lEntity->execVisitor( pVisit );
   }
-
   
   //*********************************************
   class Point :  public Entity {
@@ -521,7 +519,8 @@ namespace PP3d {
     void         insertPoint( PIndex iPos, Point3d & lPt, DataBase & iBase );
     void         insertPoint( PIndex iPos, PointPtr lPt, DataBase & iBase );
     bool         delPoint( PIndex iPos, DataBase & iBase );
-
+    void         deleteAll();
+    
     void         execVisitor( EntityVisitor& pVisit )override;
     void         inverseLines();
     Point3d      getCenter();

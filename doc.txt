@@ -1,0 +1,78 @@
+============================================
+Select Mode (default):
+============================================
+there are 4 select modes defined by radio buttons in the top bar of application:
+- point   : point is represented by green cube, hightligh when mouse
+pass over it
+- line    : the line is  hightligh when mouse pass over it
+- facet   : the facet is hightligh when mouse pass over it
+- object  : the object is  hightligh when mouse pass over it
+
+clik on highlight entity select them, reclick deselect then, you can
+move the mouse with pressed button for select or deselect multiple
+entity.
+
+You can create a rectangular zone of selection/deselection by click on void space
+and drag them, only the visible entity are selected.
+
+Space bar deselect all entities.
+
+
+============================================
+Change view mode :
+============================================
+Middle click : enter in roll mode : mouse move turn the view
+
+Middle mouse wheel  : zoom / unzoom
+Midlle push and move mouse : move  x/y of screen
+
+click mouse return in gloabal mode
+
+
+x view from x axe +
+y view from y axe +
+z view from z axe +
+
+X view from x axe -
+Y view from y axe -
+Z view from z axe -
+
+Shift O return to original view
+
+Shift 0,1,2,3,4,5 change size of view
+
+
+============================================
+Point entry mode (default) :
+============================================
+
+In the point entry mode, you can enter x y z point with mouse.
+
+Ctrl mouse left :  create a new point at the mouse position into the
+     select plane (default XZ plane).
+
+     You can change the plane in menu : Utils/Define input plane.
+     With free plane you can choose an elevation.
+     
+     
+     You can round input value to defined value in menu : Utils/Round input value
+
+
+Delete key : delete the last entry point.
+
+Shift mouse left : capture the nearest points coordinates of existing object into
+entry according to the select mode, the nearest point for select
+point mode, the 2 points of the nearest line for select line mode, all the point
+of the nearest facet for select facet mode, all the point of the nearest
+object for object select mode.
+If you select a point of the entry (point passing in res) you cas move
+it by clicking elsewhere, you can also move it to another by shif
+clicking left, you can delete it with del key, you can also insert
+point at the mouse position with insert key(int the keypad), quit this
+mode with Escape key.
+
+
+
+
+============================================
+Right button call the context menu.

@@ -165,18 +165,9 @@ namespace PP3d {
       return;
 		    
     Facet* lFacet= cCurrentLine->getFacet();
-    for( size_t i=0; i< lFacet->getLines().size(); i++  )
-      {
-        LinePtr lLine = lFacet->getLines()[i];
-        if( i == 0 && lLine->isPoint() == false )
-          {
-            delete lLine->first();
-          }
-        delete lLine->second();
-        delete lLine;
-      }
-    
+    lFacet->deleteAll();        
     delete lFacet;
+    
     delete cCurrentLine;
     resetCurrentLine();
   }
@@ -304,7 +295,7 @@ namespace PP3d {
     FacetPtr lFac      = lFacInput->duplicate();	
     
     ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFac );
-    lObjBSpline->makePtsFromPoles( iBase );
+    lObjBSpline->makePtsFromPoles();
     
     iBase.addObject( lObjBSpline );
 

@@ -264,7 +264,7 @@ namespace M3d {
 	for( PP3d::PointPtr lPoint : cDragPoints )
 	  {
 	    lPoint->get() = cDragSavPoints[lP++] * pMat;  // 
-	  }				
+	  } 			
       }
   }
   //---------------------------

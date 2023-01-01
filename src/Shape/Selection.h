@@ -129,6 +129,9 @@ namespace PP3d {
     static const char* GetStrSelectType(SelectType);
     static SelectType  GetSelectTypeFromStr( const char* pStr );
 
+    bool isOnlyObject( ObjectType iObjType );
+    
+
     //	void drawGL( DataBase& pDatabase, ViewProps& pViewProps );
 
     Point3d getCenter( DataBase& pDatabase );
@@ -169,9 +172,10 @@ namespace PP3d {
 	    }
 	}
     }
-    //----------------------------
-  };
-}
+
+    //--------------------------------
+  }; // Class
+}  // Namespace
 
 // #define TheSelect PP3d::Selection::Instance()
 
