@@ -25,7 +25,7 @@ LIB_LUA=
 
 else
 
-INC_LUA= -I/usr/include/lua
+INC_LUA= -I/usr/include/lua5.4
 LIB_LUA= -L/usr/lib/x86_64-linux-gnu -llua5.4
 FLAGS_COMPIL_EXT += -DUSING_LUA
 
