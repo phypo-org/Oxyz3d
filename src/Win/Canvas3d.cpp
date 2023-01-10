@@ -379,6 +379,13 @@ namespace M3d {
 	////////	TheAppli.getDatabaseTransform()->recomputeAll();
 	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
       }
+    
+    // Draw transformation
+    if( TheAppli.getDatabaseTmp() != nullptr )
+      {
+	////////	TheAppli.getDatabaseTransform()->recomputeAll();
+	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType()  ); 
+      }
 
     // draw rectangle selection if needed
     if( cMode == ModeUser::MODE_SELECT_RECT )

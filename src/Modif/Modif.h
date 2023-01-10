@@ -108,6 +108,10 @@ namespace PP3d{
     static void ExtrudePath( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
     static void ExtrudePathNorm( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
 
+
+#ifdef  USING_CGAL  
+    static void CGAL_DuoSabin();
+#endif    
   };
   //**************************************************
   // Calcule les coordonnees du milieu d"une facette

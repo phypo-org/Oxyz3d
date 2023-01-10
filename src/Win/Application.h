@@ -85,6 +85,9 @@ namespace M3d{
 
     
     std::unique_ptr<PP3d::DataBase>       cuDatabaseTransform; // les axes, plans etc
+    std::unique_ptr<PP3d::DataBase>       cuDatabaseTmp; // Objects temporaires !!!!!!!!!!!
+    
+    
   public:
     PP3d::Selection                       cSelect;
     PP3d::Selection                       cSelectTransform;
@@ -157,6 +160,12 @@ namespace M3d{
       cuDatabase = std::move(iuBase);
     }
     PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }
+    
+    PP3d::DataBase* getDatabaseTmp() { return cuDatabaseTmp.get(); }
+    void clearDatabaseTmp() { return cuDatabaseTmp.reset(); }
+    void setDatabaseTmp(std::unique_ptr<PP3d::DataBase>&iuBase ) { cuDatabaseTmp = std::move(iuBase);}
+    void validateDatabaseTmp();
+
 
 #ifdef USING_LUA
     
@@ -196,6 +205,8 @@ namespace M3d{
     void recomputeAll( PP3d::Compute iCompute ) {
       getDatabase()->recomputeAll( iCompute );
       getDatabaseTransform()->recomputeAll( iCompute );
+      if( getDatabaseTmp() )
+        getDatabaseTmp()->recomputeAll( iCompute );
     }
       
 	

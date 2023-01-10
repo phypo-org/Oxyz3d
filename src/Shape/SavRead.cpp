@@ -39,7 +39,7 @@ namespace PP3d {
   //*************************************
   bool MySav::save( DataBase& pData, Selection * iSel, std::set<Entity*> * iFilter)
   {
-    auto lEntities = pData.getEntities();
+    const std::unordered_map<EntityId, Entity*>& lEntities = pData.getEntities();
 
     //	for( auto lPairEntity :  lEntities )
     //		{

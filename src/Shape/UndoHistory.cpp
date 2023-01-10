@@ -22,16 +22,16 @@ namespace PP3d {
     if( lSav.save( iDb, iSel ) == true )
       {
 
-    if( iSavName != nullptr ){
+        if( iSavName != nullptr ){
       
-      std::ofstream lOut;						
-      lOut.open( iSavName );
-      if( lOut.good() )
-      {
-	std::cout << "<<<" <<  lOs.str()  << ">>>" << std::endl;
-	lOut << lOs.str() << std::flush ;
-      }
-    }
+          std::ofstream lOut;						
+          lOut.open( iSavName );
+          if( lOut.good() )
+            {
+              std::cout << "<<<" <<  lOs.str()  << ">>>" << std::endl;
+              lOut << lOs.str() << std::flush ;
+            }
+        }
   	
 	if( cCurrent >= 0 && cHistoSav.size() && cCurrent != getLast() )
 	  {
@@ -73,7 +73,7 @@ namespace PP3d {
     //      std::cout <<  "UndoHistory::readPrev "<< cCurrent
     //		<< "<<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>"
     //		<< std::endl;
-      //     std::cout << "###################################################" << std::endl;
+    //     std::cout << "###################################################" << std::endl;
 
     std::istringstream lIs( cHistoSav[cCurrent] );
       

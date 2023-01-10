@@ -10,6 +10,7 @@
 #include <ostream>
 
 #include "Preference.h"
+#include "Utils.h"
 
 namespace M3d{
 
@@ -55,6 +56,12 @@ namespace M3d{
   int Application::init( int argc, char* argv[] )
   {
     return 0;
+  }
+  //-----------------------------------
+  void Application::validateDatabaseTmp()
+  {
+    Utils::DuplicateObject( *getDatabaseTmp(), getDatabaseTmp()->getAllObject(), TheBase );
+    clearDatabaseTmp();
   }
   //-----------------------------------
   Win3d & Application::createNewWin3d( int pW, int pH )

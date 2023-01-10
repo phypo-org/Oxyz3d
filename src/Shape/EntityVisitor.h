@@ -71,7 +71,7 @@ namespace PP3d{
   };
 
   template <class SET_ENTITY, class SET_PT>
-  void GetPoints( const SET_ENTITY & pEntities, SET_PT & pPoints)
+  static void GetPoints( const SET_ENTITY & pEntities, SET_PT & pPoints)
   {
     VisitorGetPoints<SET_PT> lVisit( pPoints );
     for( auto lIter = pEntities.cbegin(); lIter != pEntities.cend(); ++lIter) 

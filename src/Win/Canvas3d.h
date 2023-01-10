@@ -133,6 +133,7 @@ namespace M3d {
 
     void drawSelectRect();
 
+    
     //=========== MENUS =================
     void makeMenu( Fl_Menu_Button& pMenu);
     void makeMenuSelect( Fl_Menu_Button& pMenu);
@@ -147,7 +148,8 @@ namespace M3d {
     static void MyMenuCallbackShape(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackRevol(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackSpiral(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackSpiralInput(Fl_Widget* w, void* pUserData);
+    static void MyMenuCallbackSpiralSelObj(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackInset(Fl_Widget* w, void* pUserData );

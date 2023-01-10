@@ -27,6 +27,8 @@
 #include "Shape/Object.h"
 #include "Shape/Maker.h"
 
+#include "Utils.h"
+
 //Tout mettre dans le Dialogue
 
 using namespace std;
@@ -39,17 +41,20 @@ namespace M3d {
   //************************
   class DialogSpiral  : public virtual PPSingletonCrtp<DialogSpiral>{
 
-    TypeRevol cMyType;
-
+    TypeRevol    cMyTypeRevol;
+    TypeOfInput  cMyTypeInput;
+    
     Fl_Double_Window* cMyWindow=nullptr;
 
     MySlider* cSliderPas;
     MySlider* cSliderAngle;
 
-    MySlider* cSliderMove;
+    MySlider* cSliderMoveX;
+    MySlider* cSliderMoveY;
+    MySlider* cSliderMoveZ;
+    
     MySlider* cSliderGrow;
     MySlider* cSliderTurn;
-	
 	
     MySlider* cSliderPosX;
     MySlider* cSliderPosY;
@@ -61,17 +66,18 @@ namespace M3d {
 
 	
   public:
-    DialogSpiral() {;}
+    DialogSpiral(  ) {;}
     bool isAlreadyRunning() { return Diag.cMyWindow != nullptr; }
 
 
 
     //----------------------------------------
 
-    void init(  TypeRevol pType )
+    void init(  TypeRevol iType, TypeOfInput iTypeInput )
     {
-       std::cout << "*********************************** init  **************************" << std::endl;
-     cMyType = pType;
+      std::cout << "*********************************** init  **************************" << std::endl;
+      cMyTypeRevol      = iType;
+      cMyTypeInput = iTypeInput;
 
       int lX = 20;
       int lY= 30;
@@ -90,9 +96,16 @@ namespace M3d {
       cSliderAngle =  new MySlider(lX+5, lY, lW, lH, "Angle", SliderCB, this, 0.1, 360 );
       cSliderAngle->value( 360 );
       lY += lYStep;
-     
-      cSliderMove =  new MySlider(lX+5, lY, lW, lH, "Move each turn", SliderCB, this, -20, 20 );
-      cSliderMove->value( 0 );
+
+      
+      cSliderMoveX =  new MySlider(lX+5, lY, lW, lH, "Move each turn X", SliderCB, this, -20, 20 );
+      cSliderMoveX->value( 0 );
+      lY += lYStep;
+      cSliderMoveY =  new MySlider(lX+5, lY, lW, lH, "Move each turn Y", SliderCB, this, -20, 20 );
+      cSliderMoveY->value( 0 );
+      lY += lYStep;
+      cSliderMoveZ =  new MySlider(lX+5, lY, lW, lH, "Move each turn Z", SliderCB, this, -20, 20 );
+      cSliderMoveZ->value( 0 );
       lY += lYStep;
 	 
       cSliderGrow =  new MySlider(lX+5, lY, lW, lH, "Grow each turn", SliderCB, this, 0, 5 );
@@ -116,39 +129,39 @@ namespace M3d {
    
       
       /*
-      cCheckTore = new MyCheckbutton( lX, lY, 30,15, "Tore", CheckCB, this, 0 );
-      cCheckTore->callback((Fl_Callback*)CheckCB, this );
-      cCheckTore->value( false );
-      lY += lYStep;;
-      cCheckSeal = new MyCheckbutton( lX, lY, 30,15, "Seal", CheckCB, this, 0 );
-      cCheckSeal->callback((Fl_Callback*)CheckCB, this );
+        cCheckTore = new MyCheckbutton( lX, lY, 30,15, "Tore", CheckCB, this, 0 );
+        cCheckTore->callback((Fl_Callback*)CheckCB, this );
+        cCheckTore->value( false );
+        lY += lYStep;;
+        cCheckSeal = new MyCheckbutton( lX, lY, 30,15, "Seal", CheckCB, this, 0 );
+        cCheckSeal->callback((Fl_Callback*)CheckCB, this );
 
-      cCheckSeal->value( false );
-      lY += lYStep;;
+        cCheckSeal->value( false );
+        lY += lYStep;;
       */
 
       
-      if( cMyType != TypeRevol::RevolAxis )	
-      {  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
-	o->box(FL_ENGRAVED_FRAME);
-	lY += lYStep; 
+      if( cMyTypeRevol != TypeRevol::RevolAxis )	
+        {  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
+          o->box(FL_ENGRAVED_FRAME);
+          lY += lYStep; 
 
-	o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+          o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
-	cSliderPosX->value( 0 );
-	lY += lYStep;
+          cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
+          cSliderPosX->value( 0 );
+          lY += lYStep;
  
-	cSliderPosY = new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
-	cSliderPosY->value( 0 );
-	lY += lYStep;
+          cSliderPosY = new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
+          cSliderPosY->value( 0 );
+          lY += lYStep;
  
-	cSliderPosZ = new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
-	cSliderPosZ->value( 0 );
-	lY += lYStep;
+          cSliderPosZ = new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
+          cSliderPosZ->value( 0 );
+          lY += lYStep;
 
-	o->end();
-      } // Fl_Group* o
+          o->end();
+        } // Fl_Group* o
 
       //		lY += lYStep;
 
@@ -184,13 +197,12 @@ namespace M3d {
     
     void maj()
     {
-
       std::cout << "DialogSpiral::maj " << this << std::endl;
      
       PP3d::Point3d lCenter;
 
       
-      if( cMyType == TypeRevol::RevolAxis )
+      if( cMyTypeRevol == TypeRevol::RevolAxis )
 	{
 	  PP3d::Point3d lPtZero;
 	  PP3d::Point3d lAxis;
@@ -212,8 +224,10 @@ namespace M3d {
       
       double  lNbTurn     = cSliderTurn->value();
       double  lGrow       = cSliderGrow->value()/360.0; // for a rotation of one degre
-      double  lMove       = cSliderMove->value()/360.0;
-    
+      double  lMoveX      = cSliderMoveX->value()/360.0;
+      double  lMoveY      = cSliderMoveY->value()/360.0;
+      double  lMoveZ      = cSliderMoveZ->value()/360.0;
+
     
     
       bool lFlagCloseSeg     = false;        
@@ -240,7 +254,9 @@ namespace M3d {
       
       double lAngle  = lAngleTotal / lNbPas;
 
-      lMove *= lAngle;  // Move for each rotation
+      lMoveX *= lAngle;  // Move for each rotation
+      lMoveY *= lAngle;  // Move for each rotation
+      lMoveZ *= lAngle;  // Move for each rotation
       lGrow *= lAngle;  // Grow for each rotation
       lGrow = 1+lGrow;
 		
@@ -279,20 +295,20 @@ namespace M3d {
 	PP3d::Mat4 lMatGrow;
         lMatGrow.identity();
 
-	switch( cMyType )
+	switch( cMyTypeRevol )
 	  {
 	  case TypeRevol::RevolX :
-            lMatTrans.initMove( lMove, 0, 0 );
+            lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotX( -M_PI*lAngle/180 );
   	    break;
 		
 	  case TypeRevol::RevolY :
-            lMatTrans.initMove( 0, lMove, 0 );
+            lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotY( -M_PI*lAngle/180 );
   	    break;
 					
 	  case TypeRevol::RevolZ :
-            lMatTrans.initMove( 0, 0, lMove );
+             lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotZ( -M_PI*lAngle/180 );
   	    break;
 
@@ -302,7 +318,7 @@ namespace M3d {
 	      PP3d::Point3d lAxis;
 	      if( TheAppli.getAxis( lPtZero, lAxis ))
 		{
-                  lMatTrans.initMove( lMove, lMove, lMove );  // A FAIRE lMove/Norme ???
+                  lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );  // A FAIRE lMove/Norme ???
                   
 		  lAxis -= lPtZero;
 		  lAxis.normalize();
@@ -326,17 +342,56 @@ namespace M3d {
         // et pouvoir les recuperer dans le dialogue
         
 			
-	PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;					
+	PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;
 
-	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
-								   lFlagCloseSeg, lFlagCloseSegEnd, false, false );
-	if( lShape != nullptr )
-	  {
-	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Spiral", lShape ) );  
-	  }
+
+        //=============================
+        if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+          {        
+            
+            PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
+                                                                       lFlagCloseSeg, lFlagCloseSegEnd, false, false );
+            if( lShape != nullptr )
+              {
+                TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Spiral", lShape ) );  
+              }
+          }
+        else
+          if( cMyTypeInput == TypeOfInput::INPUT_OBJECT )            
+            {
+
+              std::cout << "SPIRAL OBJECT Select " << TheSelect.getNbSelected() <<":" <<  TheSelect.getSelectionVect().size() << std::endl;
+              std::unique_ptr<PP3d::DataBase> luTmpBase( new PP3d::DataBase() );
+
+              // On duplique la selection dans la base temporaire
+              Utils::DuplicateObject( TheBase,  TheSelect.getSelectionVect(), *luTmpBase );
+
+              std::cout << "SPIRAL OBJECT " << luTmpBase->getAllObject().size() <<  std::endl;
+ 
+
+              // On duplique lNbPas les objets en les multipliant par la matrice a chaque fois.
+              // Les premiers dupliqué sont multiplié plusieurs fois.
+              for( int i=1; i< lNbPas; i++ )
+                {
+                  // on reduplique tout les objets 
+                  Utils::DuplicateObject(TheBase, TheSelect.getSelectionVect(), *luTmpBase );
+
+                  std::cout << "SPIRAL OBJECT Pas:" << i << " ==> " << luTmpBase->getAllObject().size() <<  std::endl;
+
+                  PP3d::SortEntityVisitorPoint lSortPoint;
+                  luTmpBase->execVisitorOnObject( lSortPoint );
+                  std::cout << "SPIRAL OBJECT Points:" <<  lSortPoint.cVectPoints.size() <<   std::endl;
+                  for( PP3d::PointPtr lPoint : lSortPoint.cVectPoints )
+                    {
+                      lPoint->get() *= lMatTran; 
+                    }
+                }
+              TheAppli.setDatabaseTmp( luTmpBase ); 
+            }
+        //=============================
+ 	
+        TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
       }
-	
-      TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
     }
 
     //----------------------------------------
@@ -344,7 +399,20 @@ namespace M3d {
     static void CancelCB( Fl_Widget*, void* pUserData ) {
  
       DialogSpiral* lDialog = reinterpret_cast<DialogSpiral*>(pUserData);
-      TheInput.cancelCurrentCreation();
+
+      
+      //=============================
+      if( lDialog->cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {        
+          TheInput.cancelCurrentCreation();
+        }
+      else if( lDialog->cMyTypeInput == TypeOfInput::INPUT_OBJECT )
+        {
+          TheAppli.clearDatabaseTmp();
+        }
+      
+      //=============================
+   
 
       TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll );
 
@@ -389,18 +457,32 @@ namespace M3d {
     {
       DialogSpiral* lDialog = reinterpret_cast<DialogSpiral*>(pUserData);
       lDialog->maj();
-      PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
-      if( lObj != nullptr )
-	{
-	  lObj->rename(  "Revol"  );
-	}
-    
-      PushHistory();
 
+      //=============================
+      if(  lDialog->cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
+          PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
+   
+          if( lObj != nullptr )
+            {
+              lObj->rename(  "Revol"  );
+            }
+
+        }
+      else
+        if(  lDialog->cMyTypeInput == TypeOfInput::INPUT_OBJECT )
+          {
+            TheAppli.validateDatabaseTmp();
+          }
+      //=============================
+
+          
+      PushHistory();
+      
 
       TheAppli.redrawAll(PP3d::Compute::FacetAll);
 
-
+          
       Fl::delete_widget(lDialog->cMyWindow);  // Normly if I am understand the documentation, it will destroy all the children
       Diag.cMyWindow = nullptr;
     }
@@ -409,13 +491,13 @@ namespace M3d {
 } // namespace M3d
 
 //************************
-extern void CallDialogSpiral( TypeRevol pType )
+extern void CallDialogSpiral( TypeRevol iTypeRevol, TypeOfInput iTypeInput )
 {
-  cout << "CallDialogSpiral" << endl;
+  cout << "CallDialogSpiral " <<  endl;
   
   if( Diag.isAlreadyRunning() == false )
     {
-      Diag.init(pType);
+      Diag.init( iTypeRevol, iTypeInput  );     
       std::cout << "*************** After init **************" << std::endl;
     }
 }

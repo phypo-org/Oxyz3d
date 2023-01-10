@@ -87,7 +87,8 @@ namespace M3d {
 #define StrMenu_RevolAxis StrMenu_Revol "Revol current axis..."
 
   
-#define StrMenu_Spiral     "New Spiral "
+#define StrMenu_Spiral_Input     "New Spiral from Input"
+#define StrMenu_Spiral_SelObjects     "New Spiral select's objects"
 #define StrMenu_SpiralX     "Spiral X ..."
 #define StrMenu_SpiralY     "Spiral Y ..."
 #define StrMenu_SpiralZ     "Spiral Z ..."
@@ -296,6 +297,21 @@ namespace M3d {
       }
 
 
+
+
+    // ======= SPIRAL ========
+    if(  TheSelect.getNbSelected() > 0 && TheSelect.getSelectType() == PP3d::SelectType::Object   )
+      {
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralX, "^x", MyMenuCallbackSpiralSelObj, this );
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralSelObj, this );
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralSelObj, this );
+    
+        if( TheAppli.isSelectAxis() )
+          pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralSelObj, this, FL_MENU_DIVIDER );
+      }
+        // ======= SPIRAL ========
+
+
    
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
@@ -336,6 +352,7 @@ namespace M3d {
       case PP3d::SelectType::Point :	
       case PP3d::SelectType::Line :
       case PP3d::SelectType::Object :
+        
 	break;
       case PP3d::SelectType::Facet :	
 	{
@@ -461,13 +478,12 @@ namespace M3d {
     lMenuFlagActif = 0;
     if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
       
-    pMenu.add( StrMenu_Spiral "/" StrMenu_SpiralX, "^x", MyMenuCallbackSpiral, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Spiral "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiral, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Spiral "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiral, this, lMenuFlagActif);
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralX, "^x", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
  
-    lMenuFlagActif = 0;
     if( TheAppli.isSelectAxis() ==false ) lMenuFlagActif=FL_MENU_INACTIVE; 
-    pMenu.add( StrMenu_SpiralAxis, "", MyMenuCallbackSpiral, this, FL_MENU_DIVIDER | lMenuFlagActif);
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralInput, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
 
     //==============
@@ -677,25 +693,47 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
         }									
   }
   //-------------------------------------------
-  void Canvas3d::MyMenuCallbackSpiral(Fl_Widget* w, void* pUserData)
+  void Canvas3d::MyMenuCallbackSpiralInput(Fl_Widget* w, void* pUserData)
   {		
     BEGINCALL  
 
       if( strcmp( m->label(), StrMenu_SpiralX )  == 0)
         {
-          CallDialogSpiral( TypeRevol::RevolX  );
+          CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_ENTRY );
         }
       else if( strcmp( m->label(), StrMenu_SpiralY )  == 0)
         {
-          CallDialogSpiral( TypeRevol::RevolY  );
+          CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_ENTRY  );
         }
       else if( strcmp( m->label(), StrMenu_SpiralZ)  == 0)
         {
-          CallDialogSpiral( TypeRevol::RevolZ  );
+          CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_ENTRY  );
         }									
       else if( strcmp( m->label(), StrMenu_SpiralAxis)  == 0)
         {
-          CallDialogSpiral( TypeRevol::RevolAxis  );
+          CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_ENTRY  );
+        }									           
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSpiralSelObj(Fl_Widget* w, void* pUserData)
+  {		
+    BEGINCALL  
+
+      if( strcmp( m->label(), StrMenu_SpiralX )  == 0)
+        {
+          CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_OBJECT  );
+        }
+      else if( strcmp( m->label(), StrMenu_SpiralY )  == 0)
+        {
+          CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_OBJECT  );
+        }
+      else if( strcmp( m->label(), StrMenu_SpiralZ)  == 0)
+        {
+          CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_OBJECT  );
+        }									
+      else if( strcmp( m->label(), StrMenu_SpiralAxis)  == 0)
+        {
+          CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );
         }									           
   }
   //-------------------------------------------

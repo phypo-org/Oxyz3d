@@ -34,6 +34,16 @@ endif
 
 
 
+ifdef    USING_CGAL
+
+FLAGS_COMPIL_EXT += -DUSING_CGAL
+#INC_CGAL= -I/usr/include/CGA
+LIB_CGAL= -lCGAL -lboost_thread
+
+endif
+
+
+
 
 DBG_DIR=Debug
 REL_DIR=Release
@@ -134,6 +144,6 @@ INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH}
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA)
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_CGAL)
 
 # -lpython3.6m
