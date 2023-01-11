@@ -34,6 +34,18 @@ namespace PP3d {
     Poly*      getPoly()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjPoly; }
     ShapeType  getSubType() const override { return ShapeType::Poly; };
+    
+    Poly* setPoly( Poly* pPoly ) {
+      Poly * lTmp = cShape;
+      if( lTmp != nullptr )
+        {
+          lTmp->removeOwner( this );
+        }
+      cShape = pPoly;
+      cShape->addOwner( this );
+
+      return lTmp;
+    }
 
   };
   //******************************

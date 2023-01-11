@@ -18,7 +18,7 @@ namespace M3d{
    
   public:
     template <class SET_ENTITY>
-    static bool DuplicateObject(  PP3d::DataBase   & iSrcBase,
+    static bool DuplicateObjects(  PP3d::DataBase   & iSrcBase,
                                   SET_ENTITY & iInVectObj, //std::vector<PP3d::EntityPtr>
                                   PP3d::DataBase   & oDestBase )
     {
@@ -40,9 +40,32 @@ namespace M3d{
           lRet = lRead.read( oDestBase, nullptr, false );
         }
     
+    return lRet;
+    }
+    //------------------------------------------------------------
+    static bool WriteObjectFromStream( std::istream & iStr,  PP3d::DataBase  & oDestBase , std::vector<PP3d::EntityPtr> & oNewObjs)
+    {
+      PP3d::MyRead lRead( iStr, &oNewObjs );
+          
+     return lRead.read( oDestBase, nullptr, false );
+   }
+    //------------------------------------------------------------
+    template <class SET_ENTITY>
+    static bool SaveObjectsInStream(  PP3d::DataBase   & iSrcBase,
+                                      SET_ENTITY & iInVectObj, //std::vector<PP3d::EntityPtr>
+                                      std::ostream & oDupStr )
+    {
+      PP3d::SortVisitorEntity  lVisit;    
+      for(  PP3d::EntityPtr lEntity : iInVectObj )
+	{
+          lEntity->execVisitor( lVisit );
+	}
+      
+      PP3d::MySav lSav( oDupStr );      
+      bool lRet = lSav.save( iSrcBase, nullptr, &lVisit.cSetAllEntity );
+      
     return lRet;   }
   };
-
   //************************************
 
 }  // namespace

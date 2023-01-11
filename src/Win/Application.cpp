@@ -60,7 +60,7 @@ namespace M3d{
   //-----------------------------------
   void Application::validateDatabaseTmp()
   {
-    Utils::DuplicateObject( *getDatabaseTmp(), getDatabaseTmp()->getAllObject(), TheBase );
+    Utils::DuplicateObjects( *getDatabaseTmp(), getDatabaseTmp()->getAllObject(), TheBase );
     clearDatabaseTmp();
   }
   //-----------------------------------

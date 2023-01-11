@@ -133,12 +133,20 @@ namespace M3d {
 
       //      cStrLine =  lOstr.str();
       Fl_Tree_Item* lNode = cTree.add( lOstr.str().c_str() );
-      if( pLine->isTreeOpen() )
-	cTree.open( lNode , 0 );
-      else
-	cTree.close( lNode , 0 );
-      
-      lNode->user_data( pLine );	    
+      if( lNode == nullptr )
+        {
+          std::cerr << "WinObjTree::execBeginLine  cTree.add for " <<  lOstr.str() << "return null" << std::endl;
+          lNode = cTree.add( "no name" );         
+        }
+      if( lNode != nullptr )
+        {
+          if( pLine->isTreeOpen() )
+            cTree.open( lNode , 0 );
+          else
+            cTree.close( lNode , 0 );
+          
+          lNode->user_data( pLine );
+        }
     }    
     //-------------------------------------    
     virtual void execBeginFacet( Facet* pFacet )
@@ -170,11 +178,20 @@ namespace M3d {
       
       cStrFacet = lOstr.str();
       Fl_Tree_Item* lNode = cTree.add( cStrFacet.c_str() );
-      lNode->user_data( pFacet );
-      if( pFacet->isTreeOpen() )
-	cTree.open( lNode , 0 );
-      else
-	cTree.close( lNode , 0 );
+      if( lNode == nullptr )
+        {
+          std::cerr << "WinObjTree::execBeginFacet  cTree.add for " << cStrFacet << "return null" << std::endl;
+          lNode = cTree.add( "no name" );         
+        }
+      if( lNode != nullptr )
+        {
+          lNode->user_data( pFacet );
+        
+          if( pFacet->isTreeOpen() )
+            cTree.open( lNode , 0 );
+          else
+            cTree.close( lNode , 0 );
+        }
     }    
     //-------------------------------------
     virtual void execBeginPoly ( Poly* pPoly )
@@ -203,12 +220,20 @@ namespace M3d {
 
       //	lInput->value( lOstr.tr().c_str() );
       //      std::cout << "TreeVisitor " << "Facet " << lOstr.str().c_str() << std::endl;
-      lNode->user_data( pPoly );
-      
-      if( pPoly->isTreeOpen() )
-	cTree.open( lNode , 0 );
-      else
-	cTree.close( lNode , 0 );
+      if( lNode == nullptr )
+        {
+          std::cerr << "WinObjTree::execBeginPolyt  cTree.add for " << cStrPoly << "return null" << std::endl;
+          lNode = cTree.add( "no name" );         
+        }
+      if( lNode != nullptr )
+        {
+          lNode->user_data( pPoly );
+              
+          if( pPoly->isTreeOpen() )
+            cTree.open( lNode , 0 );
+          else
+            cTree.close( lNode , 0 );
+        }
     }
 
   };

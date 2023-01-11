@@ -342,13 +342,12 @@ namespace M3d {
         // et pouvoir les recuperer dans le dialogue
         
 			
-	PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;
-
+        
 
         //=============================
         if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
-          {        
-            
+          {                    
+            PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;
             PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
                                                                        lFlagCloseSeg, lFlagCloseSegEnd, false, false );
             if( lShape != nullptr )
@@ -359,35 +358,46 @@ namespace M3d {
         else
           if( cMyTypeInput == TypeOfInput::INPUT_OBJECT )            
             {
-
-              std::cout << "SPIRAL OBJECT Select " << TheSelect.getNbSelected() <<":" <<  TheSelect.getSelectionVect().size() << std::endl;
+              std::cout << ">>>>>>>>SPIRAL OBJECT Select " << TheSelect.getNbSelected() <<":" <<  TheSelect.getSelectionVect().size() << std::endl;
               std::unique_ptr<PP3d::DataBase> luTmpBase( new PP3d::DataBase() );
 
               // On duplique la selection dans la base temporaire
-              Utils::DuplicateObject( TheBase,  TheSelect.getSelectionVect(), *luTmpBase );
+              //       Utils::DuplicateObject( TheBase,  TheSelect.getSelectionVect(), *luTmpBase );
 
-              std::cout << "SPIRAL OBJECT " << luTmpBase->getAllObject().size() <<  std::endl;
- 
+              
+              std::stringstream  lDupStr0;
+              Utils::SaveObjectsInStream( TheBase, TheSelect.getSelectionVect(), lDupStr0);
 
               // On duplique lNbPas les objets en les multipliant par la matrice a chaque fois.
               // Les premiers dupliqué sont multiplié plusieurs fois.
+              
+              PP3d::Mat4 lMatCurrent = lMatRecenter ;
+              PP3d::Mat4 lMatTran =  lMatTrans * lMatGrow * lMatRot ;
+              PP3d::Mat4 lMatTran0;
+              
               for( int i=1; i< lNbPas; i++ )
                 {
-                  // on reduplique tout les objets 
-                  Utils::DuplicateObject(TheBase, TheSelect.getSelectionVect(), *luTmpBase );
+                  std::stringstream lDupStr( lDupStr0.str() );
+                  
+                  lMatCurrent = lMatCurrent * lMatTran;
+                  lMatTran0 = lMatCurrent * lMatZero;
 
-                  std::cout << "SPIRAL OBJECT Pas:" << i << " ==> " << luTmpBase->getAllObject().size() <<  std::endl;
+                  //      lDupStr.seekg (0, lDupStr.beg);
+                  std::vector<PP3d::EntityPtr> lNewObjs;
+                  Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );                 
 
-                  PP3d::SortEntityVisitorPoint lSortPoint;
-                  luTmpBase->execVisitorOnObject( lSortPoint );
-                  std::cout << "SPIRAL OBJECT Points:" <<  lSortPoint.cVectPoints.size() <<   std::endl;
-                  for( PP3d::PointPtr lPoint : lSortPoint.cVectPoints )
+                  PP3d::VisitorGetPoints<PP3d::PointPtrSet> lVisit;
+                  for( PP3d::EntityPtr lObjPtr : lNewObjs )
+                       lObjPtr->execVisitor( lVisit );
+
+                  for( PP3d::PointPtr lPoint : lVisit.getPoints() )
                     {
-                      lPoint->get() *= lMatTran; 
+                      lPoint->get() *= lMatTran0;
                     }
-                }
+               }
               TheAppli.setDatabaseTmp( luTmpBase ); 
-            }
+              std::cout << "<<<<<<<<<<<<< SPIRAL OBJECT END" << std::endl;
+          }
         //=============================
  	
         TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);

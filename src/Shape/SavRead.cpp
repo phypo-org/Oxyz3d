@@ -212,8 +212,9 @@ namespace PP3d {
     try {
       std::unordered_map<EntityId, Entity*> lLocalDico;
 				
-      std::string lEndOfLine; // pour lire la fin de ligne 
-				
+      std::string lEndOfLine; // pour lire la fin de ligne
+      
+      //=============================		
       while( cIn.good() )
 	{
 	  std::string lToken;
@@ -438,7 +439,7 @@ namespace PP3d {
     }	catch( const std::exception & lEx ) {				
       std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;
     }
-					
+   					
     return true;
   }	
   //*************************************

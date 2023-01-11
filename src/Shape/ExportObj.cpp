@@ -131,7 +131,8 @@ namespace PP3d {
       std::string lName;
       Poly * lPoly = nullptr;
       EntityId lCurrentPointId =1;
-				
+      
+      //=================================================
       while( cIn.good() )
 	{
 	  std::string lToken;
@@ -146,21 +147,22 @@ namespace PP3d {
 	    }
 	  if( lToken == "g" )
 	    {
-	      cIn >> lNameObj;
+           // On ecrit l'ancien objet dans la base
 	      if( lPoly != nullptr )
 		{
 		  ObjectPoly * lObj = new ObjectPoly( lNameObj, lPoly );				
 		  pData.addObject( lObj );
 		  //	lPoly = nullptr;
 		}
+	      lPoly = new Poly();
+	      cIn >> lNameObj;
 	      std::cout << "NameObj=" << lNameObj << std::endl;
 	      ReadEndLine;
 	    }
 	  else	if( lToken == "o")
 	    {
-	      cIn >> lName;
+   	      cIn >> lName;
 	      ReadEndLine;
-	      lPoly = new Poly();
 	      std::cout << "Name=" << lName << std::endl;
 	    }															
 	  else	if( lToken == "v")
@@ -251,10 +253,12 @@ namespace PP3d {
 	      ReadEndLine;
 	      std::cerr << "unknown command : " << lToken	<< ":" << lEndOfLine << std::endl;
 	    }
-	}
- 	  
-      Object* lObj = new ObjectPoly( cName.c_str(), lPoly );
-      pData.addObject( lObj );
+	}  //===================== while( cIn.good() ) ================
+      if( lPoly != nullptr )
+        {
+          Object* lObj = new ObjectPoly( lNameObj.c_str(), lPoly );
+          pData.addObject( lObj );
+        }
     }
     catch( const std::exception & lEx ) {				
       std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;
