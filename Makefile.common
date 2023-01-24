@@ -37,8 +37,8 @@ endif
 ifdef    USING_CGAL
 
 FLAGS_COMPIL_EXT += -DUSING_CGAL
-#INC_CGAL= -I/usr/include/CGA
-LIB_CGAL= -lCGAL -lboost_thread
+INC_CGAL= -I/home/phipo/Bin/CGAL
+LIB_CGAL=  -lboost_thread  -lgmp
 
 endif
 
@@ -139,7 +139,7 @@ LDFLAGS= -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA) 
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA) $(INC_CGAL)
  
 
 # Les libbrairies externes

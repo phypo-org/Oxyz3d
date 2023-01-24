@@ -16,7 +16,7 @@
 
 #include <sstream>
 #include <stdlib.h>
-
+#include <cmath>    
 #include <stdlib.h>
 #include <math.h>
 
@@ -46,24 +46,34 @@ namespace M3d {
     
     Fl_Double_Window* cMyWindow=nullptr;
 
-    MySlider* cSliderPas;
-    MySlider* cSliderAngle;
+    MySlider* cSliderPas= nullptr;
+    MySlider* cSliderAngle= nullptr;
 
-    MySlider* cSliderMoveX;
-    MySlider* cSliderMoveY;
-    MySlider* cSliderMoveZ;
+    MySlider* cSliderMoveX= nullptr;
+    MySlider* cSliderMoveY= nullptr;
+    MySlider* cSliderMoveZ= nullptr;
     
-    MySlider* cSliderGrow;
-    MySlider* cSliderTurn;
+    MySlider* cSliderGrow= nullptr;
+    MySlider* cSliderTurn= nullptr;
 	
-    MySlider* cSliderPosX;
-    MySlider* cSliderPosY;
-    MySlider* cSliderPosZ;
+    MySlider* cSliderSpin= nullptr;
+
+
+    
+    MySlider* cSliderCenterPosX= nullptr;
+    MySlider* cSliderCenterPosY= nullptr;
+    MySlider* cSliderCenterPosZ= nullptr;
+
+
+    
 
     
     MyCheckbutton* cCheckCloseSeg ; 
     MyCheckbutton* cCheckCloseSegEnd; 
 
+    MyCheckbutton* cCheckRotLeft = nullptr;
+    MyCheckbutton* cCheckDecrease = nullptr;
+    
 	
   public:
     DialogSpiral(  ) {;}
@@ -115,17 +125,36 @@ namespace M3d {
       cSliderTurn =  new MySlider(lX+5, lY, lW, lH, "Number of turn", SliderCB, this, 0, 20 );
       cSliderTurn->value( 0 );
       lY += lYStep;
-
-      cCheckCloseSeg= new MyCheckbutton( lX, lY, 30,15, "Close U", CheckCB, this, 0 );
-      cCheckCloseSeg->callback((Fl_Callback*)CheckCB, this );
-      cCheckCloseSeg->value( false );
+      
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
+          cCheckCloseSeg= new MyCheckbutton( lX, lY, 30,15, "Close U", CheckCB, this, 0 );
+          cCheckCloseSeg->callback((Fl_Callback*)CheckCB, this );
+          cCheckCloseSeg->value( false );
+          lY += lYStep;          
+          
+          cCheckCloseSegEnd= new MyCheckbutton( lX, lY, 30,15, "Close V", CheckCB, this, 0 );
+          cCheckCloseSegEnd->callback((Fl_Callback*)CheckCB, this );
+          cCheckCloseSegEnd->value( false );
+          lY += lYStep;;
+        }
+      
+      cCheckRotLeft= new MyCheckbutton( lX, lY, 30,15, "Clockwise", CheckCB, this, 0 );
+      cCheckRotLeft->callback((Fl_Callback*)CheckCB, this );
+      cCheckRotLeft->value( false );
       lY += lYStep;
       
+      cCheckDecrease= new MyCheckbutton( lX, lY, 30,15, "Decrease", CheckCB, this, 0 );
+      cCheckDecrease->callback((Fl_Callback*)CheckCB, this );
+      cCheckDecrease->value( false );
+      lY += lYStep;          
+
+
       
-      cCheckCloseSegEnd= new MyCheckbutton( lX, lY, 30,15, "Close V", CheckCB, this, 0 );
-      cCheckCloseSegEnd->callback((Fl_Callback*)CheckCB, this );
-      cCheckCloseSegEnd->value( false );
-      lY += lYStep;;
+      cSliderSpin =  new MySlider(lX+5, lY, lW, lH, "Spin", SliderCB, this, 0, 360*10 );
+      cSliderSpin->value( 0 );
+      lY += lYStep;
+    
    
       
       /*
@@ -144,20 +173,20 @@ namespace M3d {
       if( cMyTypeRevol != TypeRevol::RevolAxis )	
         {  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
           o->box(FL_ENGRAVED_FRAME);
-          lY += lYStep; 
+          lY += lYStep;
 
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-          cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
-          cSliderPosX->value( 0 );
+          cSliderCenterPosX = new MySlider(lX+5, lY, lW, lH, "Center X", SliderCB, this, -100, 100 );
+          cSliderCenterPosX->value( 0 );
           lY += lYStep;
  
-          cSliderPosY = new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
-          cSliderPosY->value( 0 );
+          cSliderCenterPosY = new MySlider(lX+5, lY, lW, lH, "Center Y", SliderCB, this, -100, 100 );
+          cSliderCenterPosY->value( 0 );
           lY += lYStep;
  
-          cSliderPosZ = new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
-          cSliderPosZ->value( 0 );
+          cSliderCenterPosZ = new MySlider(lX+5, lY, lW, lH, "Center Z", SliderCB, this, -100, 100 );
+          cSliderCenterPosZ->value( 0 );
           lY += lYStep;
 
           o->end();
@@ -213,8 +242,8 @@ namespace M3d {
 	}
       else
 	{
-	  std::cout << ">>> X:" << cSliderPosX->value()  << " Y:" << cSliderPosY->value() << " Z:" << cSliderPosZ->value() << std::endl;
-	  lCenter.set( cSliderPosX->value() , 	cSliderPosY->value() ,	cSliderPosZ->value() );
+	  std::cout << ">>> X:" << cSliderCenterPosX->value()  << " Y:" << cSliderCenterPosY->value() << " Z:" << cSliderCenterPosZ->value() << std::endl;
+	  lCenter.set( cSliderCenterPosX->value() , 	cSliderCenterPosY->value() ,	cSliderCenterPosZ->value() );
 	}
 
       //    std::cout << " Slider " << cSliderPas->value() << std::endl;
@@ -223,6 +252,7 @@ namespace M3d {
       double  lAngleTotal = cSliderAngle->value();
       
       double  lNbTurn     = cSliderTurn->value();
+      double  lSpin       = cSliderSpin->value()/360.0; // for a rotation of one degre;
       double  lGrow       = cSliderGrow->value()/360.0; // for a rotation of one degre
       double  lMoveX      = cSliderMoveX->value()/360.0;
       double  lMoveY      = cSliderMoveY->value()/360.0;
@@ -233,13 +263,19 @@ namespace M3d {
       bool lFlagCloseSeg     = false;        
       bool lFlagCloseSegEnd  = false;
    	
+      bool lFlagRotLeft     = false;        
+      bool lFlagDecrease    = false;
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
+          lFlagCloseSeg = (cCheckCloseSeg->value() != 0 );
+          lFlagCloseSegEnd = (cCheckCloseSegEnd->value() != 0 );
+        }
 
-      lFlagCloseSeg = (cCheckCloseSeg->value() != 0 );
-      lFlagCloseSegEnd = (cCheckCloseSegEnd->value() != 0 );
+      
+      lFlagRotLeft  = (cCheckRotLeft->value() != 0 );
+      lFlagDecrease = (cCheckDecrease->value() != 0 );
 
-
-
-
+      
       
 
       
@@ -247,69 +283,84 @@ namespace M3d {
 
       if(lNbTurn> 0)
         {
-          lNbPas         += lNbPas * lNbTurn;
+          lNbPas     += lNbPas * lNbTurn;
         }
       lAngleTotal    += lNbTurn * 360;           // adding 360 for each turn
  
       
       double lAngle  = lAngleTotal / lNbPas;
+      if( lFlagRotLeft )
+        {
+          lAngle = -lAngle;
+        }
+
+      double lSpinAngle = (lSpin*360*lNbTurn)/ lNbPas;
 
       lMoveX *= lAngle;  // Move for each rotation
       lMoveY *= lAngle;  // Move for each rotation
       lMoveZ *= lAngle;  // Move for each rotation
-      lGrow *= lAngle;  // Grow for each rotation
-      lGrow = 1+lGrow;
+      lGrow  *= lAngle;  // Grow for each rotation
+
+      if( lFlagDecrease == false )
+        { 
+          lGrow  = 1+std::abs(lGrow);
+        }
+      else
+        { 
+          lGrow  = 1-std::abs(lGrow);
+        }
+
 		
     
       /*  if( lAngle > 360 )
 	  lAngle= 360;
       */
-      // Il est TRES IMPORTANT de recreer l'objet a chaque fois
-      // car s'il y a des operations dessus (comme la rotation)
-      // il y a à chaque fois forcement des erreurs de calculs 
-      // (precision limité processeurs) or celle ci s'accumulerais !
-
-      // Sinon on pourrait mettre un rotation avec open gl sur l'objet
-      // et faire tourner l'objet 
-      // avec, par contre a la fin il faudrait vraiment faire
-      // la modification sur les points (on est dans un modeleur, pas un jeu !)
-
+  
       {
 	std::cout << "Center:" << lCenter ;
 	PP3d::Mat4 lMatRecenter;
-	lMatRecenter.initMove( lCenter ); //on revient au centre;
+	lMatRecenter.initMove( lCenter ); //on positionne en fonction du centre de rotation ;
 			
 			
 	PP3d::Point3d lNCenter =  -lCenter;					
 	std::cout << " Neg:" << lNCenter << std::endl;
 	PP3d::Mat4 lMatZero;
-	lMatZero.initMove( lNCenter ); //on se positionne en zero;
+	lMatZero.initMove( lNCenter ); //on revient a la postion originale en zero;
 
 						
 	PP3d::Mat4 lMatRot;
         lMatRot.identity();
 
-	PP3d::Mat4 lMatTrans;
-        lMatTrans.identity();
+	PP3d::Mat4 lMatMov;
+        lMatMov.identity();
         
 	PP3d::Mat4 lMatGrow;
         lMatGrow.identity();
 
+	PP3d::Mat4 lMatSpin;
+        lMatSpin.identity();
+        
 	switch( cMyTypeRevol )
 	  {
 	  case TypeRevol::RevolX :
-            lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
+            lMatMov.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotX( -M_PI*lAngle/180 );
+
+            lMatSpin.initRotY( -M_PI*lSpinAngle/180 );
   	    break;
 		
 	  case TypeRevol::RevolY :
-            lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
+            lMatMov.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotY( -M_PI*lAngle/180 );
-  	    break;
+            
+            lMatSpin.initRotX( -M_PI*lSpinAngle/180 );
+ 	    break;
 					
 	  case TypeRevol::RevolZ :
-             lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );
+            lMatMov.initMove( lMoveX, lMoveY, lMoveZ );
 	    lMatRot.initRotZ( -M_PI*lAngle/180 );
+            
+            lMatSpin.initRotX( -M_PI*lSpinAngle/180 );
   	    break;
 
 	  case TypeRevol::RevolAxis :
@@ -318,7 +369,7 @@ namespace M3d {
 	      PP3d::Point3d lAxis;
 	      if( TheAppli.getAxis( lPtZero, lAxis ))
 		{
-                  lMatTrans.initMove( lMoveX, lMoveY, lMoveZ );  // A FAIRE lMove/Norme ???
+                  lMatMov.initMove( lMoveX, lMoveY, lMoveZ );  // A FAIRE lMove/Norme ???
                   
 		  lAxis -= lPtZero;
 		  lAxis.normalize();
@@ -340,14 +391,19 @@ namespace M3d {
 
         // A FAIRE sauvegarder les parametere au format json avec un nom !
         // et pouvoir les recuperer dans le dialogue
-        
-			
+
+
+        // Pour le spin il faut trouver le centre de l'objet (ou des objets)
+        // CenterOfObj =
+        // decaler vers ce centre  appliqué le spin courant (celon le pas) et remettre les objets en place , il faut calculer la matrice pour cela et faire le calcul avant les autres
+
+        // A FAIRE ...
         
 
         //=============================
         if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
           {                    
-            PP3d::Mat4 lMatTran = lMatRecenter * lMatTrans * lMatGrow * lMatRot *  lMatZero;
+            PP3d::Mat4 lMatTran = lMatRecenter * lMatMov * lMatGrow * lMatRot *  lMatZero;
             PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
                                                                        lFlagCloseSeg, lFlagCloseSegEnd, false, false );
             if( lShape != nullptr )
@@ -372,7 +428,8 @@ namespace M3d {
               // Les premiers dupliqué sont multiplié plusieurs fois.
               
               PP3d::Mat4 lMatCurrent = lMatRecenter ;
-              PP3d::Mat4 lMatTran =  lMatTrans * lMatGrow * lMatRot ;
+              PP3d::Mat4 lMatTran    = lMatMov * lMatGrow * lMatRot ;  // Oldest
+              // PP3d::Mat4 lMatTran    = lMatRot * lMatGrow * lMatMov  ;
               PP3d::Mat4 lMatTran0;
               
               for( int i=1; i< lNbPas; i++ )
@@ -380,7 +437,7 @@ namespace M3d {
                   std::stringstream lDupStr( lDupStr0.str() );
                   
                   lMatCurrent = lMatCurrent * lMatTran;
-                  lMatTran0 = lMatCurrent * lMatZero;
+                  lMatTran0   = lMatCurrent * lMatZero;
 
                   //      lDupStr.seekg (0, lDupStr.beg);
                   std::vector<PP3d::EntityPtr> lNewObjs;
@@ -457,8 +514,7 @@ namespace M3d {
     {
       //	std::cout << "DialogSpiral::CheckCB " << pUserData << std::endl;
       //  MyCheckbutton *lCheck= reinterpret_cast<MyCheckbutton*>(pUserData);
-      //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  
-																											 
+      //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  																											 
       DialogSpiral* lDialog = reinterpret_cast<DialogSpiral*>(pUserData);
       lDialog->maj(); 
     }

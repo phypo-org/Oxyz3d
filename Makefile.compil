@@ -2,7 +2,7 @@
 #---------------------------------------
 
 ifeq ($(TARGET_DIR),Release)
-STRIP_CMD=strip -s
+STRIP_CMD=strip 
 else
 STRIP_CMD=echo
 endif
@@ -74,7 +74,7 @@ vpath %.cpp $(WLIB)  $(SPLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
 #-------------------------------
 
 $(OBJDIR)%.o: %.cpp
-	@mkdir -p $(OBJDIR)
+	mkdir -p $(OBJDIR)
 	$(CC) -c  $(INCLUDE) $(CCFLAGS) -o $@  $^
 
 # link
@@ -90,10 +90,10 @@ $(OTARGET_LIB): $(OBJECTS)
 	   
 
 clean:
-	@rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR) 
-	@rm -rf *.o *.a *.exe core $(OTARGET)
+	rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR) 
+	rm -rf *.o *.a *.exe core $(OTARGET)
 
 .PHONY: clean
 
 # Pour le debuggage des variable  : make print-SLIB // par exemple
-print-%  : ; @echo $* = $($*)
+# print-%  : ; @echo $* = $($*)

@@ -1,4 +1,5 @@
-#ifdef  USING_CGAL  
+
+#ifdef USING_CGAL
 
 #include "Modif.h"
 
