@@ -17,14 +17,14 @@ namespace PP3d {
     Poly* cShape;
     
   public:
-    ObjectPoly( const char* pName, Poly* pPoly)
-      :Object( pName )
-      ,cShape( pPoly )
+    ObjectPoly( const char* pName, Poly* pPoly, bool cTransform=false)
+      :Object( pName, cTransform  )
+      ,cShape( pPoly)
     {
       pPoly->addOwner( this );
     }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
-    ObjectPoly( const std::string& pName, Poly* pPoly)
-      :Object( pName )
+    ObjectPoly( const std::string& pName, Poly* pPoly, bool cTransform=false)
+      :Object( pName, cTransform )
       ,cShape( pPoly )
     {
       pPoly->addOwner( this );

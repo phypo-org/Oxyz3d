@@ -109,9 +109,10 @@ namespace M3d {
     cKamera.initGL();
     cKamera.raz45();
  
-    cViewPropsTransform.cLineWidth = 2; 
-    cViewPropsTransform.cColorLine.set(1.0,0.0,0.0);
-    
+    cViewPropsTransform.cLineWidth = 4; 
+    cViewPropsTransform.cColorLine.set(0.,1.0,0.);
+    cViewPropsTransform.cColorLineHighlight.set(0.1,1.0,0.1);
+   
     cViewInputCursor.cColorPoint.set( 1, 0.9, 0.1, 0.8);
     cViewInputCursor.cColorLine.set( 0.9, 0.5, 0.3, 0.8);
     
@@ -442,12 +443,12 @@ namespace M3d {
 	TheAppli.getDatabase()->recomputeAll(PP3d::Compute::Nothing);     
 	TheAppli.getDatabase()->drawGL( cViewGen, cViewGen, cViewGen, cViewGen, PP3d::GLMode::Select, TheSelect.getSelectType() );
       }
-    /*   else
+       else
       {
-	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() ); 
+	TheAppli.getDatabaseTransform()->recomputeAll(PP3d::Compute::Nothing);
+	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() ); 
       }
-    */
+    
     glFlush();
     //glFinish();  
 

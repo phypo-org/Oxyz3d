@@ -20,7 +20,8 @@ namespace PP3d {
   //******************************************
 
   
-  Selection::Selection()
+  Selection::Selection( bool iIsTransform)
+    :cIsTransform(iIsTransform)
   {
   }
   //--------------------------------
@@ -240,6 +241,12 @@ namespace PP3d {
   //--------------------------------
   bool Selection::addToSelection( EntityPtr lEntity)
   {
+    /*    if( isTransform() != lEntity->isTransform() )
+      {
+        std::cerr << "Selection Mistmach type" << std::endl;
+        return false;
+      }
+    */
     DBG_SEL_NL( "addToSelection " << isSelected(lEntity) << " " << lEntity->isSelect() << " " );
     if( lEntity->isSelect() )
       {

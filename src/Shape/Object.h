@@ -83,8 +83,8 @@ namespace PP3d {
     PPu::PPDateTime70                 cDateCreation;
   public:
 
-    Object(  const char*pName, bool cTransform=false );
-    Object(  const std::string & pName, bool cTransform=false );
+    Object(  const char*pName, bool cTransform );
+    Object(  const std::string & pName, bool cTransform );
     virtual ~Object();
 
     

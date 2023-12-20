@@ -81,15 +81,18 @@ namespace M3d{
 
     std::vector< std::unique_ptr<Win3d> > cAllWin3d;
     std::unique_ptr<PP3d::DataBase>       cuDatabase;
-    
-
+   public:
+    PP3d::Selection                       cSelect;
+  protected:    
     
     std::unique_ptr<PP3d::DataBase>       cuDatabaseTransform; // les axes, plans etc
+  
+  protected:    
     std::unique_ptr<PP3d::DataBase>       cuDatabaseTmp; // Objects temporaires !!!!!!!!!!!
     
     
   public:
-    PP3d::Selection                       cSelect;
+
     PP3d::Selection                       cSelectTransform;
   protected:    
     PP3d::ObjectLine *                    cCurrentAxis;
@@ -217,7 +220,7 @@ namespace M3d{
     {
       if( lA != lB )
 	{
-	  cCurrentAxis = MakeObjectLine( "Axis", lA, lB );
+	  cCurrentAxis = MakeObjectLine( "Axis", lA, lB, true );
 	  cuDatabaseTransform->addObject( cCurrentAxis );
 	  redrawObjectTree();
 	  return true;
@@ -229,8 +232,8 @@ namespace M3d{
     {
       if(lCenter->get() != lVect->get() )
 	{
-	  cCurrentAxis = MakeObjectLine( "Axis", lCenter->get(), lVect->get() );
-	  cuDatabaseTransform->addObject( cCurrentAxis );
+	  cCurrentAxis = MakeObjectLine( "Axis", lCenter->get(), lVect->get(), true );
+	  cuDatabaseTransform->addObject( cCurrentAxis);
 	  redrawObjectTree();
 	  return true;
 	}      
@@ -239,7 +242,7 @@ namespace M3d{
     }
     //---------------------------
     bool setCurrentAxis(PP3d::ObjectPtr iObj) {
-      if( iObj->getObjType() == PP3d::ObjectType::ObjLine )
+      if( iObj->getObjType() == PP3d::ObjectType::ObjLine && iObj->isTransform() )
 	{
 	  cCurrentAxis = (PP3d::ObjectLine*) iObj;
 	  return true;

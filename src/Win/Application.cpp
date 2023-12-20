@@ -18,8 +18,10 @@ namespace M3d{
   //************************************
   Application::Application()	
 
-    :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
-    ,cuDatabaseTransform( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
+    :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase(false) ))
+    ,cSelect(false)
+    ,cuDatabaseTransform( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase( true ) ))
+    ,cSelectTransform(true)
     ,cCurrentTransform( Transform::Nothing)
   {
     std::cout << "========= Application::Application" << std::endl;

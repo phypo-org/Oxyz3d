@@ -25,8 +25,9 @@ namespace PP3d {
 
 
 	
-  DataBase::DataBase()
+  DataBase::DataBase(bool iIsTransform)
     :cCurrent()
+    ,cIsTransform( iIsTransform )
   //    :cCurrentCreation(nullptr)
   //    ,cCurrentLine(nullptr)
   {

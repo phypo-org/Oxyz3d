@@ -58,14 +58,15 @@ namespace M3d {
 #define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
 
 
-#define StrMenu_DefDefaultAxe   "Define select axis"
-  //#define StrMenu_DefDefaultPlane "Define select plane as default"
-  //#define StrMenu_DefDefaultTrans "Define select translation as default"
-
-#define StrMenu_SetAxePoints   "With two selected points of object"
-  // inutile #define StrMenu_SetAxeLine     "With selected line of object"
-#define StrMenu_SetAxeNormal   "With selected facet normal"
-#define StrMenu_SetAxeInput    "With the last two input points"
+  //#define StrMenu_DefDefaultPlane "Define plane as default"
+  //#define StrMenu_DefDefaultTrans "Define translation as default"
+  
+#define StrMenu_DefDefaultAxis "Define default axis"
+#define StrMenu_CreateAxis     "Create axis ..."  
+#define StrMenu_SetAxisPoints   "With two selected points of object"
+#define StrMenu_SetAxisLine     "With line of object"
+#define StrMenu_SetAxisNormal   "With selected facet normal"
+#define StrMenu_SetAxisInput    "With the last two input points"
 
 
 #define StrMenu_DefInputPlane  "Define input plane"
@@ -77,6 +78,9 @@ namespace M3d {
 
   
 #define StrMenu_RoundInput    " Round input value to  ..."
+
+
+
   
   
   //#define StrMenu_SetPlanePoints "X With three points"
@@ -422,13 +426,15 @@ namespace M3d {
     
     cMenubar.add( StrMenu_Select StrMenu_AddSelectCopyToInput, "", MyMenuCallback, this);
     //================================
-
+   
     
-    cMenubar.add("&Utils/" StrMenu_DefDefaultAxe  , "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_DefDefaultAxis  , "", MyMenuCallback, this);
     //    cMenubar.add("&Utils/X StrMenu_DefDefaultPlane", "", MyMenuCallback, this);
     //    cMenubar.add("&Utils/X StrMenu_DefDefaultTrans", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
-    cMenubar.add("&Utils/Create axe/" StrMenu_SetAxePoints  , "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisPoints  , "", MyMenuCallback, this);
+    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisLine    , "", MyMenuCallback, this);
+    
     //    (TheSelect.getSelectType() != PP3d::SelectType::Point
     //     && TheSelect.getNbSelected() < 2
     //   ? FL_MENU_INACTIVE :0));
@@ -438,12 +444,12 @@ namespace M3d {
     //		  && TheSelect.getNbSelected() < 1
     //		  ? FL_MENU_INACTIVE :0));
   
-  cMenubar.add("&Utils/Create axe/" StrMenu_SetAxeNormal  , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisNormal  , "", MyMenuCallback, this);
   //	       (TheSelect.getSelectType() != PP3d::SelectType::Facet
   //	       && TheSelect.getNbSelected() < 1
   //	       ? FL_MENU_INACTIVE :0) );
   
-  cMenubar.add("&Utils/Create axe/" StrMenu_SetAxeInput   , "", MyMenuCallback, this);
+  cMenubar.add("&Utils/"  StrMenu_CreateAxis "/" StrMenu_SetAxisInput   , "", MyMenuCallback, this);
   //	       (TheAppli.getDatabase()->getNbCurrentPoints()  < 2
   //	       ? FL_MENU_INACTIVE :0) );
     
@@ -568,7 +574,7 @@ namespace M3d {
 	  {
 	    PushHistory(); // on sauve l'ancienne base dans l'historique
 	    // Une Nlle base
-	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
 	    TheAppli.setDatabase( luBase ); // on prend la nlle base
 	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
@@ -742,7 +748,7 @@ namespace M3d {
 		    TheAppli.redrawObjectTree();
 		  }
     //=================== UTILS ====================    
-		else if(  strcmp( m->label(), StrMenu_DefDefaultAxe	) == 0)
+		else if(  strcmp( m->label(), StrMenu_DefDefaultAxis	) == 0)
 		  {
 		    if( TheAppli.isSelectAxis() )
 		      {
@@ -752,7 +758,7 @@ namespace M3d {
 		    else
 		      fl_alert( "An axis must be selectionned !");
 		  }
-		else if(  strcmp( m->label(), StrMenu_SetAxePoints	) == 0)
+		else if(  strcmp( m->label(), StrMenu_SetAxisPoints	) == 0)
 		  {
 		    PP3d::SortEntityVisitorPoint lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
@@ -765,10 +771,26 @@ namespace M3d {
 			  }
 		      }
 		    else {
-		      fl_alert( "We must have at least two points to make an axe");
+		      fl_alert( "We must have at least two points to make an axis");
 		    }		     
 		  }
-		else if(  strcmp( m->label(), StrMenu_SetAxeNormal	) == 0)
+		else if(  strcmp( m->label(), StrMenu_SetAxisLine	) == 0)
+		  {
+		    PP3d::SortEntityVisitorLine lVisit;		    
+		    TheSelect.execVisitorOnEntity(lVisit);
+		    size_t lSz = lVisit.cVectLines.size();
+		    if( lSz >= 1 )
+		      {			
+			if( TheAppli.addAxis( lVisit.cVectLines[0]->first(), lVisit.cVectLines[0]->second()) ==false)
+			  {
+			    fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+			  }
+		      }
+		    else {
+		      fl_alert( "We must have at least a line to make an axis");
+		    }		     
+		  }
+		else if(  strcmp( m->label(), StrMenu_SetAxisNormal	) == 0)
 		  {
 		    PP3d::SortEntityVisitorPointFacet lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);
@@ -809,7 +831,7 @@ namespace M3d {
 		    }		     
 	    
 		  }
-		else if( strcmp( m->label(), StrMenu_SetAxeInput) == 0)
+		else if( strcmp( m->label(), StrMenu_SetAxisInput) == 0)
 		  {
 		    PP3d::SortEntityVisitorPoint lVisit;
 		    if( TheInput.execVisitorOnCurrentLine( lVisit ) && lVisit.cVectPoints.size() >= 2 )

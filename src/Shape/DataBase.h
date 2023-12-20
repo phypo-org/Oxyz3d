@@ -47,6 +47,7 @@ namespace PP3d {
    private:
     
     Point3d              cCursor;
+    bool                         cIsTransform=false;
 
 
   private:
@@ -56,8 +57,9 @@ namespace PP3d {
 	  
   public:
 		 
-    DataBase();
+    DataBase(bool iIsTransform);
     virtual ~DataBase();
+    bool    isTransform() { return cIsTransform; }
 
     void resetIdFromMax(); // for UndoHistory
     

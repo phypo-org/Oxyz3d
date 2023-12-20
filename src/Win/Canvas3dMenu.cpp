@@ -126,9 +126,8 @@ namespace M3d {
 #define StrMenu_ScaleRX    "Scale radial X"
 #define StrMenu_ScaleRY    "Scale radial Y"
 #define StrMenu_ScaleRZ    "Scale radial Z"
-  //#define StrMenu_ScaleRZ    "Scale normal"
+#define StrMenu_ScaleNormal "Scale normal"
 #define StrMenu_ScaleAxis  "# Scale around current axis"
-#define StrMenu_ScaleNormal  "Scale around facet normal"
 
 
 #define StrMenu_Flip "Flip"
@@ -1429,8 +1428,8 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
         TheSelect.addGoodEntityFor(lNewFacets);
         PushHistory();
         TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-        //	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-        //	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
+        	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+        	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
       }  
   }
   //-------------------------------------------

@@ -19,12 +19,12 @@ namespace PP3d {
     Line*      cShape;
 
   public:
-    ObjectLine( const char*pName, Line* pLine )
-      : Object( pName )
+    ObjectLine( const char*pName, Line* pLine, bool iTransform=false )
+      : Object( pName, iTransform )
       ,cShape( pLine)
     {;}
-    ObjectLine( const std::string& pName, Line* pLine )
-      : Object( pName )
+    ObjectLine( const std::string& pName, Line* pLine, bool iTransform=false )
+      : Object( pName, iTransform )
       ,cShape( pLine)
     {;}
    
@@ -106,9 +106,9 @@ namespace PP3d {
 
   };
   //******************************  
-  inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB )
+  inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB, bool iIsTransform  )
   {
-    return new ObjectLine( pName, MakeLine( iA, iB ));
+    return new ObjectLine( pName, MakeLine( iA, iB ), iIsTransform );
   }
 }
 

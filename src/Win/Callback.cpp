@@ -175,7 +175,7 @@ namespace M3d {
     if( cFc->value()  )
       {
 	// Une Nlle base
-	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
 	
 	TheSelect.removeAll();
 	TheSelectTransform.removeAll();
@@ -301,7 +301,7 @@ namespace M3d {
     TheSelectTransform.removeAll();
 
 
-    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
     if( PP3d::UndoHistory::Instance().readPrev( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();
@@ -326,7 +326,7 @@ namespace M3d {
     TheSelect.removeAll();
     TheSelectTransform.removeAll();
     
-    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
     if( PP3d::UndoHistory::Instance().readNext( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();

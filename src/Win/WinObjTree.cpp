@@ -292,7 +292,7 @@ namespace M3d {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 	
     if( TheSelect.getSelectType() != PP3d::SelectType::Object
-	|| TheSelectTransform.getSelectType() !=PP3d::SelectType::Null )
+	|| TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
       {
 	lCheck->value( false );
 	return ;
@@ -300,7 +300,9 @@ namespace M3d {
     PP3d::Object*lObj  = reinterpret_cast<PP3d::Object*>(lCheck->cUserData2);
 
     //	std::cout << "Box:"  << (lCheck->value() != 0) << std::endl;
-    if( lObj != nullptr && TheSelect.addToSelection( lObj ) )
+    if( lObj != nullptr )
+      if( (lObj->isTransform() && TheSelectTransform.addToSelection( lObj ))
+          ||( !lObj->isTransform()  && TheSelect.addToSelection( lObj )) )
       {
 	Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
       }

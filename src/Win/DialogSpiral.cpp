@@ -471,7 +471,7 @@ namespace M3d {
           if( cMyTypeInput == TypeOfInput::INPUT_OBJECT )            
             {
               std::cout << ">>>>>>>>SPIRAL OBJECT Select " << TheSelect.getNbSelected() <<":" <<  TheSelect.getSelectionVect().size() << std::endl;
-              std::unique_ptr<PP3d::DataBase> luTmpBase( new PP3d::DataBase() );
+              std::unique_ptr<PP3d::DataBase> luTmpBase( new PP3d::DataBase( false ) );
 
               // On duplique la selection dans la base temporaire
               //       Utils::DuplicateObject( TheBase,  TheSelect.getSelectionVect(), *luTmpBase );
