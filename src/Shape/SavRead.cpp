@@ -438,6 +438,7 @@ namespace PP3d {
 	}
     }	catch( const std::exception & lEx ) {				
       std::cerr << __FILE__ << ":" << __LINE__ << ":Exception " << lEx.what() << std::endl;
+      return false;
     }
    					
     return true;

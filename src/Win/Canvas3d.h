@@ -142,6 +142,7 @@ namespace M3d {
     static void MyMenuCallbackSpline(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData );
+    static void MyMenuCallbackFlip(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackAlign(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSelect(Fl_Widget* w, void* pUserData );

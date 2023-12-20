@@ -130,6 +130,14 @@ namespace M3d {
 #define StrMenu_ScaleAxis  "# Scale around current axis"
 #define StrMenu_ScaleNormal  "Scale around facet normal"
 
+
+#define StrMenu_Flip "Flip"
+#define StrMenu_FlipX StrMenu_Flip " X"
+#define StrMenu_FlipY StrMenu_Flip " Y"
+#define StrMenu_FlipZ StrMenu_Flip " Z"
+#define StrMenu_FlipPlane StrMenu_Flip " *** current plane *** "
+  
+  
 #define StrMenu_Flatten "Flatten"
 #define StrMenu_FlattenX StrMenu_Flatten " X"
 #define StrMenu_FlattenY StrMenu_Flatten " Y"
@@ -263,6 +271,14 @@ namespace M3d {
 
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
       {
+
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipX, "", MyMenuCallbackFlip, this, FL_MENU_DIVIDER);
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipY, "", MyMenuCallbackFlip, this);
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipZ, "", MyMenuCallbackFlip, this);
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipPlane, "", MyMenuCallbackFlip, this);
+
+
+        
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupInPlace, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
         
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
@@ -404,6 +420,8 @@ namespace M3d {
 	}
 	break;
       case PP3d::SelectType::Poly :
+
+        
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
 	break;
       case PP3d::SelectType::All :
@@ -940,6 +958,84 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
       }
   }
   //-------------------------------------------
+
+  void Canvas3d::MyMenuCallbackFlip(Fl_Widget* w, void* pUserData)
+  {	  		
+    BEGINCALL ;
+
+    cout << "Canvas3d::MyMenuCallbackFlip" << endl;
+
+    if( strcmp( m->label(), StrMenu_FlipX ) == 0)
+      {
+        PP3d::SortEntityVisitorPoint lVisit;    
+        TheSelect.execVisitorOnEntity( lVisit );
+        PP3d::Point3d lAvg;
+        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lAvg += lPtr->get();
+          }
+        lAvg *=2;
+        lAvg /= lVisit.cVectPoints.size();
+	
+        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lPtr->get().x() = -lPtr->get().x()+ lAvg.x();
+          }
+        PushHistory();
+        TheAppli.redrawAll(PP3d::Compute::FacetAll);
+
+      }
+    else if( strcmp( m->label(), StrMenu_FlipY ) == 0)
+      {
+        PP3d::SortEntityVisitorPoint lVisit;    
+        TheSelect.execVisitorOnEntity( lVisit );
+        PP3d::Point3d lAvg;
+        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lAvg += lPtr->get();
+          }
+        lAvg *=2;
+        lAvg /= lVisit.cVectPoints.size();
+
+        for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lPtr->get().y() = - lPtr->get().y()+ lAvg.y() ;
+          }
+        PushHistory();
+        TheAppli.redrawAll(PP3d::Compute::FacetAll);
+	
+      }
+    else if( strcmp( m->label(), StrMenu_FlipZ ) == 0)
+      {
+        PP3d::SortEntityVisitorPoint lVisit;    
+        TheSelect.execVisitorOnEntity( lVisit );
+        PP3d::Point3d lAvg;
+        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lAvg += lPtr->get();
+          }
+        lAvg *=2;
+        lAvg /= lVisit.cVectPoints.size();
+ 
+        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+          {
+            lPtr->get().z() =  -lPtr->get().z()+lAvg.z();
+          }
+        PushHistory();
+        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+      }
+    else if( strcmp( m->label(), StrMenu_FlipPlane ) == 0)
+      {
+        // // // // // A_FAIRE
+        std::cerr << "StrMenu_FlipPlane not implemented" << std::endl;
+      }
+ 
+  }
+
+
+
+  
+  //-------------------------------------------
   void Canvas3d::MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData)
   {	  		
     BEGINCALL ;
@@ -1089,21 +1185,19 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
       {
         std::vector<PP3d::EntityPtr> lNewObjs;
         PP3d::MyRead lRead( lDupStr, &lNewObjs );
-	
-        TheSelect.removeAll();	
-        lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false );
-
-        /*
-          lRet = lRead.read( *TheAppli.getDatabase(), false );
-          if( lRet && lNewObjs.size() )
-          {	    
-          TheSelect.removeAll();
-          for( PP3d::EntityPtr lObj : lNewObjs )
-          {
-          TheSelect.addEntity( lObj );
+        
+       TheSelect.removeAll();
+       
+       if( (lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false ))
+            && lNewObjs.size() > 0 )
+         {
+           TheSelect.removeAll();
+ 
+           for( PP3d::EntityPtr lObj : lNewObjs )
+             {
+               TheSelect.addEntity( lObj );
+             }
           }
-          }
-        */
       }
     return lRet;
   }

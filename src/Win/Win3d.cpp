@@ -853,7 +853,7 @@ namespace M3d {
     */
 		else if(  strcmp( m->label(), StrMenu_PutOnGround	) == 0)
 		  {		    
- 		    PP3d::VisitorMinMax lVisitMinMax;
+		    PP3d::VisitorMinMax lVisitMinMax;
 		    TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
 		    
 		    PP3d::SortEntityVisitorPoint lVisitPoint;
@@ -862,6 +862,7 @@ namespace M3d {
 		      {
 			lPoint->get() -=  lVisitMinMax.getMin().y();
 		      }				
+ 		    PushHistory();
 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
 		else if(  strcmp( m->label(), StrMenu_PutUnderGround	) == 0)
@@ -875,12 +876,13 @@ namespace M3d {
 		      {
 			lPoint->get() -=  lVisitMinMax.getMax().y();
 		      }				
-		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+		    PushHistory();
+ 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
     //:::::::::::::::::::::::::::::
 		else if(  strcmp( m->label(), StrMenu_PutEachOnGround	) == 0)
 		  {
-                    const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
+                   const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
 
                     for( PP3d::EntityPtr lEntity : lVectSel )
                       {
@@ -896,11 +898,12 @@ namespace M3d {
                           }				
                         TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
                       }
+  		    PushHistory();
                   }
      //:::::::::::::::::::::::::::::
 		else if(  strcmp( m->label(), StrMenu_PutEachUnderGround	) == 0)
 		  {
-                    const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
+                   const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
 
                     for( PP3d::EntityPtr lEntity : lVectSel )
                       {
@@ -916,11 +919,12 @@ namespace M3d {
                           }				
                         TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
                       }
-                  }
+   		    PushHistory();
+                 }
     //:::::::::::::::::::::::::::::
 		else if(  strcmp( m->label(), StrMenu_Recenter	) == 0)
 		  {		    
- 		     PP3d::VisitorMinMax lVisitMinMax;
+		     PP3d::VisitorMinMax lVisitMinMax;
 		    TheSelect.execVisitorOnlyOnObjects( lVisitMinMax );
 		    
 		     PP3d::SortEntityVisitorPoint lVisitPoint;
@@ -968,6 +972,7 @@ namespace M3d {
 		      {		       			
 			TheAppli.setRoundingInput( lVal );
 		      }
+  		    PushHistory();
 		  }    
     //=================== VIEW ====================
 		else if( strcmp( m->label(), StrMenu_DialogPerspectivSettings ) == 0)
@@ -1019,10 +1024,7 @@ namespace M3d {
   		  }
     		else if( strcmp( m->label(), StrMenu_ViewRecenterOnSelection ) == 0)
 		  {
-		    PP3d::VisitorMinMax lVisitMinMax;
-		    TheSelect.execVisitorOnEntity ( lVisitMinMax );
-		    lKamera.zoomTo( lVisitMinMax ); 
- 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                    lWin3d->recenterOnSelection(lKamera);
 		  }
     //================= WINDOWS ===================
 		else if( strcmp( m->label(), StrMenu_ObjectTree ) == 0)
@@ -1076,6 +1078,14 @@ namespace M3d {
       }
 #endif
   }
+  //-------------------------------------------
+  void Win3d::recenterOnSelection(PP3d::Kamera & iKamera)
+  {
+    PP3d::VisitorMinMax lVisitMinMax;
+    TheSelect.execVisitorOnEntity ( lVisitMinMax );
+    iKamera.zoomTo( lVisitMinMax ); 
+    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+  }  
   //-------------------------------------------
   void Win3d::QuitCallback(Fl_Widget*, void*) {exit(0);}
 

@@ -72,6 +72,8 @@ namespace M3d {
 
     friend class Canvas3d;
   public:
+    void recenterOnSelection(PP3d::Kamera & i);
+
     void setMeasurement( double iScale, long lPosScale )
     {
       //      std::cout << "setMeasurement : " << iScale << " " <<  lPosScale << std::endl;

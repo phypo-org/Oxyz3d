@@ -54,6 +54,8 @@ namespace M3d {
   
   const char * const CHG_AXIS="a";
   
+  const char * const CENTER_ON_SELECTION="A";
+ 
   const char * const CHG_GRID="g";
   
   const char * const CHG_ORTHO_PERS="p";
@@ -1271,7 +1273,7 @@ namespace M3d {
 	  DBG_EVT_NL( " SHIFT :" << Fl::event_shift() );
 	  DBG_EVT_NL( " KEYDOW " <<  Fl::event_key()  );
 
-	  cout << " <" << Fl::event_key() << "> " ;
+	  cout << " key<" << Fl::event_key() << "> " ;
 	  
 	  if(  Fl::event_key() >= 256 )
 	    {
@@ -1363,9 +1365,8 @@ namespace M3d {
 	  else
 	    //			if( Fl::event_ctrl() != 0 )
 	    {
-	      cout << ":" << Fl::event_text() << ":" ;
 	      const char *lStr = Fl::event_text();
-	      cout << " TXT <" << lStr << "> " ;
+	      cout << " txt<" << lStr << "> " ;
 					
 	      if( strcmp( lStr, ANNULE_ACTION )==0)
 		{
@@ -1470,14 +1471,21 @@ namespace M3d {
 	      else if( strcmp( lStr, RESET_VIEW_SCALE_6 )==0)
 		{
 		  cKamera.scaleTo(32.0);
-		}	      	      	      
-	      else if( strcmp( lStr, CHG_AXIS )==0)
+		}
+	      else if( strcmp( lStr, CHG_AXIS )==0 || strcmp( lStr,CENTER_ON_SELECTION) == 0 )
 		{
+                  //                  if( Fl::event_shift() )
+                    {
+                      cMyWin3d.recenterOnSelection(cKamera);
+                    }
+                    /*     else
 		  if( cAxisFlag )
 		    cAxisFlag = false;
 		  else 
 		    cAxisFlag = true;
-		}
+                    */
+                    }
+                    
 	      else if( strcmp( lStr, CHG_GRID )==0)
 		{
 		  if( cGridMode == ModeGrid::NO_GRID )

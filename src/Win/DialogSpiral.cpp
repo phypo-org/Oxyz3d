@@ -323,10 +323,7 @@ namespace M3d {
 
           cFlagSpinX = (cCheckSpinX->value() != 0);
           cFlagSpinY = (cCheckSpinY->value() != 0);
-          cFlagSpinZ = (cCheckSpinZ->value() != 0);
-
-
-          
+          cFlagSpinZ = (cCheckSpinZ->value() != 0);          
        }
 
       
