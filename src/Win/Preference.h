@@ -52,7 +52,8 @@ namespace M3d {
     bool cSelectPassOverLighting = true ; // inlight entity when passing on
     int  cSelectPickingSize=10;
 
-    
+    // Spline 
+    int cBSplineMaille=8;
 
      friend class PPSingletonCrtp;
       

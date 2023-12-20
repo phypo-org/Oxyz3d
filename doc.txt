@@ -37,7 +37,7 @@ X view from x axe -
 Y view from y axe -
 Z view from z axe -
 
-Shift O return to original view
+Shift o return to original view
 
 Shift 0,1,2,3,4,5 change size of view
 
@@ -65,10 +65,12 @@ entry according to the select mode, the nearest point for select
 point mode, the 2 points of the nearest line for select line mode, all the point
 of the nearest facet for select facet mode, all the point of the nearest
 object for object select mode.
-If you select a point of the entry (point passing in res) you cas move
+
+If you are in select point mode you can select a point of the entry
+(point passing in red) and you can move
 it by clicking elsewhere, you can also move it to another by shif
 clicking left, you can delete it with del key, you can also insert
-point at the mouse position with insert key(int the keypad), quit this
+point at the mouse position with insert key(in the keypad), quit this
 mode with Escape key.
 
 

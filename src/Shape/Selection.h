@@ -106,6 +106,7 @@ namespace PP3d {
     void addEntity(  EntityPtr pEntity, bool iSelectAll=true );	
     void removeEntity( EntityPtr pEntity, bool iSelectAll=true );		
     void removeAll();
+    void selectAll( DataBase & iBase );
     void invertSelection( DataBase & iBase );
  
     bool addToSelection( EntityPtr lEntity);

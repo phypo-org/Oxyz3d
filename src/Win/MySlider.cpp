@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 //******************************
-MySlider::MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback pCB, void* pUserData, double lMin, double lMax )
+MySlider::MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback pCB, void* pUserData, double pMin, double pMax )
   :cCallback(pCB)
   ,cUserData(pUserData)
 { 
@@ -15,7 +15,9 @@ MySlider::MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Call
   
   cSlider = new Fl_Hor_Nice_Slider( pX+pW/4, pY, (pW/4)*3, pH, "");
   cSlider->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-  cSlider->bounds(lMin, lMax );
+
+  
+  cSlider->bounds(pMin, pMax );
 	
   cSlider->callback((Fl_Callback*)sSliderCB, this);
 }

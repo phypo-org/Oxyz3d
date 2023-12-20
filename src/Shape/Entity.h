@@ -404,6 +404,7 @@ namespace PP3d {
     Facet(  LinePtr iLine ) { addLine( iLine ); }
     Facet(  LinePtr iLine1, LinePtr iLine2  ) { addLine( iLine1 ); addLine( iLine2 ); }
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 ); }
+    Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3, LinePtr iLine4  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 );addLine( iLine4 ); }
 
       
     ShapeType getType() const  override { return ShapeType::Facet;}
@@ -529,6 +530,14 @@ namespace PP3d {
     bool         testFlat();
 
     Poly* myPoly() { return (Poly*) firstOwner(); }
+    
+    friend std::ostream & operator << ( std::ostream & pOs, Facet& pEntity )
+    {
+      pOs << ((Entity&)pEntity) ;
+      int i=0;
+      for( LinePtr l: pEntity.getLines() ){ pOs << i++ << '>' << (*l) << " ";}
+      return pOs;
+    }
 
     
   protected:
@@ -553,6 +562,12 @@ namespace PP3d {
     {
       cFacets.push_back( pFacet );
       pFacet->addOwner( this );
+    }
+
+    void addFacet( const FacetPtrVect & iVectFacet)
+    {
+      for( FacetPtr lFacet : iVectFacet )
+        addFacet( lFacet );
     }
 
     

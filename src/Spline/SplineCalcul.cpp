@@ -8,7 +8,7 @@ namespace PP3d {
   long SplineCalcul::VYam1[MAX_YAM_MAILLE+1];
   long SplineCalcul::UYam2[MAX_YAM_MAILLE+1];
   long SplineCalcul::VYam2[MAX_YAM_MAILLE+1];
-  size_t SplineCalcul::Maille   = 8;
+  size_t SplineCalcul::BMaille   = 8;
   size_t SplineCalcul::UMaille = 1;
   size_t SplineCalcul::VMaille  = 1;
 
@@ -16,7 +16,7 @@ namespace PP3d {
   void
   SplineCalcul::InitAll()
   {
-    InitYamaguchi( Maille,  Yam1, Yam2 );
+    InitYamaguchi( BMaille,  Yam1, Yam2 );
     InitYamaguchi( UMaille, UYam1, UYam2);
     InitYamaguchi( VMaille ,VYam1, VYam2);
   }
@@ -94,7 +94,10 @@ namespace PP3d {
 
   void SplineCalcul::CalculBSpline(size_t iMaille, VectDouble3 & iPts, VectDouble3 & oResult )
   {
-    InitYamaguchi( Maille,  Yam1, Yam2 );
+    if( iMaille == 0 )
+      iMaille = BMaille;
+    
+    InitYamaguchi( iMaille,  Yam1, Yam2 );
     
     
     size_t lNb = iPts.size();;

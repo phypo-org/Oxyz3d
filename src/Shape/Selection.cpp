@@ -151,6 +151,29 @@ namespace PP3d {
     //    std::cout << "======================================="<< std::endl;
   }
   //--------------------------------
+  void Selection::selectAll( DataBase & iBase )
+  {
+    std::vector<EntityPtr>  lTmpVect;
+
+    // get all the unselect object into lTmpVect
+    for( auto  lPair : iBase.getEntities() )
+      {
+	if( lPair.second->getType() != ConvertToShapeType( getSelectType() ))
+	  {
+	    continue;
+	  }
+	  
+	lTmpVect.push_back(  lPair.second );
+     }
+    
+    removeAll();
+
+    for( EntityPtr lEntity : lTmpVect )
+      {
+	addEntity( lEntity, true );
+      } 
+  }
+  //--------------------------------
   void Selection::invertSelection( DataBase & iBase )
   {
     std::vector<EntityPtr>  lTmpVect;

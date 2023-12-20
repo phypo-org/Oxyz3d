@@ -10,7 +10,7 @@ namespace PP3d {
     {
       //   std::cout << ">>>>>>>>>>>>> ObjBSpline::drawGL" << std::endl;
       
-      remakeAll(); // PAS TRES ECONOMIQUE !!!!!!!!
+      remakeAll(cMyMaille); // PAS TRES ECONOMIQUE !!!!!!!!
 
       
       switch( pViewProps.cSelectType )
@@ -49,6 +49,40 @@ namespace PP3d {
 	  }
 	}
     }
+  //---------------------------		
+  // phipo 20231204
+  void ObjBSpline::selectGL( ViewProps& pViewProps )
+    {
+      std::cout << "  ObjBSpline::selectGL" << std::endl;
+    
+     if( cMyProps.cVisible == false )
+      {
+	return;
+      }
+      std::cout << "  ObjBSpline::selectGL 2 " << std::endl;
+  
+     remakeAll(cMyMaille); // PAS TRES ECONOMIQUE !!!!!!!!
+     ObjectPolylines::selectGL( pViewProps );
+      
+    if( cSplinePts != nullptr )
+      {
+      std::cout << "  ObjBSpline::selectGL 3" << std::endl;
+        switch( pViewProps.cSelectType )
+          {
+          case SelectType::Point:
+            {
+              std::cout << "  ObjBSpline::selectGL 4" << std::endl;
+              //        auto lMemo = pViewProps.deflatePointSize();
+              VisitorDrawSelectPoints	lVisitS( pViewProps, cMyProps);
+              cSplinePts->execVisitor( lVisitS );
+              //   pViewProps.setPointSize(lMemo);
+            }
+            break;
+          
+          default: ;
+          }
+      }
+    }
   //------------------------------------------------------
   void ObjBSpline::drawSplinePointGL( ViewProps & pViewProps )
   {
@@ -79,57 +113,66 @@ namespace PP3d {
   }	 
 
   //---------------------------		
- void ObjBSpline::makePoles()
- {
-      if( getFacet() == nullptr )
-        return ;
+  void ObjBSpline::makePoles()
+  {
+    if( getFacet() == nullptr )
+      return ;
      
-      VectDouble3 lNodes;
-      getFacet()->getPoints( lNodes ); // get the originals points
-      std::cout << "*********** makePoles nodes:"  << lNodes.size() << std::endl;
+    VectDouble3 lNodes;
+    getFacet()->getPoints( lNodes ); // get the originals points
+    std::cout << "*********** makePoles nodes:"  << lNodes.size() << std::endl;
 
-      //     for( size_t j = 0; j <  lNodes.size(); j++ )
-      //       {
-      //         std::cout << "lNodes "<< j << " -> "  <<lNodes.getPoint3d( j ) << std::endl;
-      //      }
- 
-     
-      VectDouble3 lDest;
-      lDest.resize( lNodes.size() ); // reserve size for pole
-
-      for( int i = 0; i < 3; i++ ) {
-        //  std::cout << "******* makePoles poles:"  << i << std::endl;
-        SplineCalcul::Thomas( lNodes.getAxePoint(i), lDest.getAxePoint(i));
+    //     for( size_t j = 0; j <  lNodes.size(); j++ )
+    //       {
+    //         std::cout << "lNodes "<< j << " -> "  <<lNodes.getPoint3d( j ) << std::endl;
+    //      }
+    if( cClosedSpline )
+      {
+        lNodes.add( lNodes[0]);
       }
-      
-      cPoles.clear();
-      
-      // On double le premier point       
-      cPoles.add( lDest.getPoint3d(0) );
-      
-      for( size_t j = 0; j <  lNodes.size(); j++ )
-        {
-          //   std::cout << "Poles " << j << " ==>> " << lDest.getPoint3d( j ) << std::endl;
-          cPoles.add( lDest.getPoint3d( j ) );
-        }
-      
-      // On double le dernier point
-      cPoles.add( lDest.getPoint3d( lNodes.size()- 1 ) );        
+     
+    VectDouble3 lDest;
+    lDest.resize( lNodes.size()  ); // reserve size for pole
+
+    for( int i = 0; i < 3; i++ ) {
+      //  std::cout << "******* makePoles poles:"  << i << std::endl;
+      SplineCalcul::Thomas( lNodes.getAxePoint(i), lDest.getAxePoint(i));
     }
+      
+    cPoles.clear();
+      
+    // On double le premier point       
+    cPoles.add( lDest.getPoint3d(0) );
+      
+    for( size_t j = 0; j <  lNodes.size(); j++ )
+      {
+        //   std::cout << "Poles " << j << " ==>> " << lDest.getPoint3d( j ) << std::endl;
+        cPoles.add( lDest.getPoint3d( j ) );
+      }
+         
+    // On double le dernier point
+    cPoles.add( lDest.getPoint3d( lNodes.size()- 1 ) );
+  }
+    
   
   //---------------------------		
   void ObjBSpline::makePtsFromPoles( size_t iMaille  ) {
 
-    if( iMaille == 0 ) iMaille = SplineCalcul::Maille;
+    
+    if( iMaille == 0 ) iMaille = cMyMaille;
+    if( iMaille == 0 ) iMaille = SplineCalcul::BMaille;
+    
       
+    cMyMaille = iMaille;
+    
     if( cPoles.size() == 0 )
       {
         makePoles();
       }
       
     VectDouble3 oResult;
-        std::cout << "BSpline makePtsFromPoles  call CalculBSpline poles:" << cPoles.size() << std::endl;
-    SplineCalcul::CalculBSpline( SplineCalcul::Maille, cPoles, oResult );
+    std::cout << "BSpline makePtsFromPoles  call CalculBSpline poles:" << cPoles.size() << std::endl;
+    SplineCalcul::CalculBSpline( iMaille, cPoles, oResult );
     std::cout << "BSpline makePtsFromPoles  call CalculBSpline result:" << oResult.size() << std::endl;            
  
     if( oResult.size() > 1 ) {
@@ -155,24 +198,29 @@ namespace PP3d {
     }
   }
   //---------------------------		
-  ObjectPolylines* ObjBSpline::CreatePolyline( ObjBSpline * iSpline)
+  ObjectPolylines* ObjBSpline::CreatePolyline( ObjBSpline * iSpline, size_t iMaille)
     {
       //      std::cout << "*********** ObjBSpline::CreatePolyline" << std::endl;
-      ObjectPolylines* lPoly = nullptr;
-      
-      if( iSpline != nullptr )
-        {
-          if( iSpline->cSplinePts == nullptr ) {
-            iSpline->makePtsFromPoles();
-          }
-       
-          lPoly = new ObjectPolylines( "Poly from BSpline", iSpline->cSplinePts );
-          iSpline->cSplinePts = nullptr;
-          
-          iSpline->makePtsFromPoles(); 
-        }
+    if( iMaille == 0 ) iMaille = iSpline->cMyMaille;
+    if( iMaille == 0 ) iMaille = SplineCalcul::BMaille;
+    
+    iSpline->cMyMaille = iMaille;
 
-      return lPoly;
+    ObjectPolylines* lPoly = nullptr;
+    
+    if( iSpline != nullptr )
+      {
+        if( iSpline->cSplinePts == nullptr ) {
+          iSpline->makePtsFromPoles(iMaille);
+        }
+        
+        lPoly = new ObjectPolylines( "Poly from BSpline", iSpline->cSplinePts );
+        iSpline->cSplinePts = nullptr;
+        
+        iSpline->makePtsFromPoles(iMaille); 
+      }
+
+    return lPoly;
     }  
     //---------------------------		
 

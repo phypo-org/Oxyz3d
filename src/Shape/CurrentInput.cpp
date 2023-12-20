@@ -286,7 +286,7 @@ namespace PP3d {
     return lObjPoly;
   }
   //------------------------------------------		
-  ObjBSpline* CurrentInput::convertCurrentLineToBSpline(DataBase & iBase)
+  ObjBSpline* CurrentInput::convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed )
   {
     if( cCurrentLine == nullptr )
       return nullptr;
@@ -294,8 +294,8 @@ namespace PP3d {
     FacetPtr lFacInput = cCurrentLine->getFacet();
     FacetPtr lFac      = lFacInput->duplicate();	
     
-    ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFac );
-    lObjBSpline->makePtsFromPoles();
+    ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFac, iClosed );
+    lObjBSpline->makePtsFromPoles( iMaille );
     
     iBase.addObject( lObjBSpline );
 

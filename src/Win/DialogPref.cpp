@@ -53,6 +53,7 @@ namespace M3d {
 
     Fl_Light_Button* cSelectPassOverLighting;
     MyIntInput     * cSelectPickingSize;
+    MyIntInput     * cBSplineMaille;
 
     MyIntInput     * cHistoMaxDept;
 
@@ -112,6 +113,7 @@ namespace M3d {
       // MyPref.cSelectPassOverLighting = DiagPref.cSelectPassOverLighting->value() == 1;
       
       GET_INT_VALUE( cSelectPickingSize );
+      GET_INT_VALUE( cBSplineMaille );
       size_t lMaxHisto = atoi( DiagPref.cHistoMaxDept->value());
       PP3d::UndoHistory::Instance().setMaxHisto( lMaxHisto );
 	
@@ -194,11 +196,23 @@ namespace M3d {
 	  //	  cSelectPassOverLighting->value( MyPref.cSelectPassOverLighting);
       
 	  INTPUT_INT( cSelectPickingSize, "Precision of picking");
-	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
  
 	  INTPUT_VAR_INT( cHistoMaxDept, PP3d::UndoHistory::Instance().getMaxHisto(), "Undo level");
-	  //	  cSelectPickingSize->value( MyPref.cSelectPickingSize);
 	  
+	  lGr->end();
+	  lGr->hide();
+	  Fl_Group::current()->resizable(lGr);
+	}
+	//===================================
+	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Spline");
+	  lX  = lMarge+300;
+	  lX0 = lMarge;
+	  lY = lMarge;
+
+
+      
+	  INTPUT_INT( cBSplineMaille, "Maillage des BSpline");
+ 
 	  lGr->end();
 	  lGr->hide();
 	  Fl_Group::current()->resizable(lGr);

@@ -14,6 +14,7 @@ namespace PP3d {
 				       bool pFlagCloseSegEnd,
 				       bool pCloseHight,
 				       bool pCloseLow,
+                                       bool iFlagGrid,
 				       long double iEpsilon )
   {
     if( pNbPas <= 0 || pFacet == nullptr  )
@@ -185,7 +186,8 @@ namespace PP3d {
 		
 	FacetPtr lNewFacet0 = new  Facet();
 	FacetPtr lNewFacet1 = new  Facet();
-				
+
+        //:::::::::::::::::::::::::::::::::
 	{
 	  PointPtr lLastPoint  = nullptr;
 					
@@ -207,10 +209,9 @@ namespace PP3d {
 					
 	  lNewFacet0->inverseLines();
 	}
+        //:::::::::::::::::::::::::::::::::
 
-
-	//la meme chose pour l'autre extremite
-				
+	//la meme chose pour l'autre extremite				
 	// On prend les dernieres facettes
 	{
 	  PointPtr lLastPoint  = nullptr;
@@ -218,27 +219,44 @@ namespace PP3d {
 	  FacetPtrVect lFacets = luPoly->getFacets();
 					
 	  PIndex   lBegin = lFacets.size() - lNbCol;
-					
-	  for( PIndex lCol=0; lCol < lNbCol; lCol++ )
+
+          for( int i = lNbCol; i >0; i-- )
 	    {
-	      std::cout << " lCol : " << lCol << std::endl;
+              PIndex lCol= lFacets.size()-i;
+	      std::cout << " lCol : " << lCol  << std::endl;
 							
-	      FacetPtr lFacet = lFacets[lBegin+lCol];
+	      FacetPtr lFacet = lFacets[lCol];
 	      LinePtr lLine = lFacet->getLines()[2];  // On prend le coté oppose
-	      if( lCol ==0 )
-		{
-		  lLastPoint = lLine->getSecond();
-		}
-	      lNewFacet1->addTrueLine( new Line( lLastPoint, lLine->getFirst()) );
-	      lLastPoint = lLine->getFirst();
-	    }
-					
-	  //		lNewFacet1->inverseLines();					
+	     
+              lNewFacet1->addTrueLine( new Line( lLine->getSecond(), lLine->getFirst()));
+            }					
+          
 	}
-		 		
-				
-	luPoly->addFacet( lNewFacet0 );
-	luPoly->addFacet( lNewFacet1 );
+        //:::::::::::::::::::::::::::::::::
+
+        if( iFlagGrid == false || lNewFacet0->getNbLines() <= 4 )
+          {		 						
+            luPoly->addFacet( lNewFacet0 );
+            luPoly->addFacet( lNewFacet1 );              
+
+          }
+        else
+          {
+            FacetPtrVect lVectFacPtr;
+            
+            lNewFacet1->inverseLines();
+            QuadrangulerConcave( *lNewFacet1, lVectFacPtr );
+            for( FacetPtr lFacPtr : lVectFacPtr )
+              {
+                lFacPtr->inverseLines();
+              }
+              
+            QuadrangulerConcave( *lNewFacet0, lVectFacPtr );
+            luPoly->addFacet( lVectFacPtr );
+            
+            delete lNewFacet1;           
+            delete lNewFacet0;                          
+          }
       }
 
     	
@@ -271,6 +289,55 @@ namespace PP3d {
 
     return luPoly;
   }
+  //-------------------------------------------------------------
+  GLuint Maker::QuadrangulerConcave( Facet & iFacet, FacetPtrVect & oFacVect )
+  {
+    LinePtrVect & lLines =   iFacet.getLines();
+
+    if( lLines.size() <= 4 ) return 0;
+    
+    GLuint  lNbLine  = lLines.size();
+    GLuint  lMaxLine = (lNbLine/2)-1;
+    LinePtr lLastLine = nullptr;
+    
+    //    std::cout << "QuadrangulerConcave line:"<< std::dec << lNbLine << " Max:" << lMaxLine << std::endl;
+    
+    for( GLuint l = 0; l< lMaxLine; l++)
+      {
+        LinePtr lLine0 ;
+        LinePtr lLine2 ;
+        
+        LinePtr lLine1 = lLines[l+1];
+        LinePtr lLine3 = lLines[(lNbLine-1)-l];
+        
+        //        std::cout << "QuadrangulerConcave line:" << l << std::endl;
+        
+        if( l == 0 )  // le debut
+          {
+            lLine0 = lLines[0];
+          }
+        else
+          {
+            lLine0 =  new Line( lLastLine->second(),  lLastLine->first());
+          }
+      
+        if( l == lMaxLine-1 ) // la fin
+          {
+            lLine2  = lLines[l+2];;
+          }
+        else
+          {
+            lLine2 = lLastLine = new Line( lLine1->second(),  lLine3->first() );
+          }  
+
+        FacetPtr lFacPtr;
+        oFacVect.push_back( lFacPtr =  new Facet( lLine0, lLine1, lLine2, lLine3 ) );    
+      }
+
+    //    std::cout << "QuadrangulerConcave size:" <<  oFacVect.size() << std::endl;
+
+    return oFacVect.size();
+  }   
   //-------------------------------------------------------------
   FacetPtrVect Maker::Trianguler( DataBase& pBase, FacetPtrVect& pFacet, bool lForce )
   {

@@ -40,6 +40,7 @@
 #include "MyFlWidget.h"
 
 #include "Dialogs.h"
+#include "Preference.h"
 
 using namespace std;
 
@@ -68,6 +69,7 @@ namespace M3d {
 #define StrMenu_CreateShapeFacetP     "FacetPoly"
 #define StrMenu_CreateShapeFacet2P    "BiFacetPoly"
 #define StrMenu_CreateShapeBSpline    "BSpline"
+#define StrMenu_CreateShapeBSplineClosed    "BSpline closed"
 
 
 #define StrMenu_Spline "Splines"
@@ -77,7 +79,7 @@ namespace M3d {
 #define  StrMenu_ModifyShape "Modify shape"
   
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
-#define  StrMenu_DeleteShapeFacet "facet to shape"
+#define  StrMenu_DeleteShapeFacet "Delete facet"
 
 
 #define StrMenu_Revol     "New Revolution "
@@ -276,8 +278,19 @@ namespace M3d {
       {
 	pMenu.add( StrMenu_ConnectPoint, "", MyMenuCallbackConnectPoint, this);	
       }
-      
+    
 
+     lMenuFlagActif=FL_MENU_INACTIVE;   
+    cout << "Nb Selected:" << TheSelect.getNbSelected() << " type:" << PP3d::GetStrShapeType( TheSelect.getSelectType() ) << endl;
+
+    if( TheSelect.getNbSelected() > 2 
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+      // && TheSelect.allHaveTheSameOwner()) 
+      lMenuFlagActif = 0;
+    
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+    
     
     lMenuFlagActif=FL_MENU_INACTIVE;
     if( TheSelect.getNbSelected()
@@ -286,6 +299,8 @@ namespace M3d {
 
     pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
+
+    
 
     if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
         && TheSelect.getNbSelected() > 0
@@ -422,15 +437,9 @@ namespace M3d {
     // ... Ajout script lua !!! plugin
     
     lMenuFlagActif = FL_MENU_INACTIVE;
+
     
  
-    
-    lMenuFlagActif = FL_MENU_INACTIVE;
-    if( TheSelect.getNbSelected() > 2 
-	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
-      // && TheSelect.allHaveTheSameOwner()) 
-      lMenuFlagActif = 0;
-    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
 
     if(TheInput.isCurrentPoints() 
@@ -460,7 +469,8 @@ namespace M3d {
       }
     pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "", MyMenuCallbackShape,this,   lMenuFlagActif);
         pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
-  
+          pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
+
     //===== Revol
     lMenuFlagActif = 0;
     if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
@@ -527,13 +537,13 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
                  
               if( strcmp( m->label(), StrMenu_MuteBSplineToPolyline ) == 0)
                 {
-                  lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity) );
+                  lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
                   TheBase.deleteEntity( lEntity );
                 }
               else
                 if( strcmp( m->label(), StrMenu_CreatPolylineFromBSpline ) == 0)
                   {
-                    lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity) );
+                    lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
                   }
               
               if( lObj != nullptr )
@@ -595,10 +605,17 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
       {
         if(TheInput.getNbCurrentPoints() >= 2 )
           {
-           lShape =TheInput.convertCurrentLineToBSpline(TheBase);
+            lShape =TheInput.convertCurrentLineToBSpline(TheBase, MyPref.cBSplineMaille, false );
           }
       }
-    
+    else if( strcmp( m->label(), StrMenu_CreateShapeBSplineClosed ) == 0)
+      {
+        if(TheInput.getNbCurrentPoints() >= 2 )
+          {
+            lShape =TheInput.convertCurrentLineToBSpline(TheBase, MyPref.cBSplineMaille, true );
+          }
+      }
+     
     //-----------------
     else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
       {

@@ -150,8 +150,8 @@ namespace PP3d {
     ObjectPoly *     convertCurrentLineToBiFacetPoly(DataBase & iBase);
     ObjectPolylines* convertCurrentLineToPolylines(DataBase & iBase);
     ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
-    ObjBSpline*      convertCurrentLineToBSpline(DataBase & iBase);
-
+    ObjBSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
+    
     bool isCurrentPoints()   { return cCurrentLine     != nullptr; }
     bool isCurrentCreation() { return cCurrentCreation != nullptr; }
     FacetPtr getCurrentLine()

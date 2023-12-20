@@ -18,14 +18,17 @@ namespace PP3d {
 	static constexpr long double  kEpsilon=1e-10;
 	  
 	  static PolyPtr CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
-					       bool pFlagClose,
-					       bool pFlagCloseSeg,
-					       bool pFlagCloseSegEnd,
-					       bool pCloseHight,
-					       bool pCloseLow,
+					       bool iFlagClose,
+					       bool iFlagCloseSeg,
+					       bool iFlagCloseSegEnd,
+					       bool iCloseHight,
+					       bool iCloseLow,
+                                               bool iFlagGrid = false,
 					       long double  iEpsilon = kEpsilon);
-	  
-		static FacetPtrVect Trianguler( DataBase& pBase, FacetPtrVect& pFacet, bool lForce );		
+          
+          static GLuint QuadrangulerConcave( Facet & iFacet, FacetPtrVect & oFacVect );
+          
+          static FacetPtrVect Trianguler( DataBase& pBase, FacetPtrVect& pFacet, bool lForce );		
 	};
 		
 	//****************************************

@@ -450,8 +450,9 @@ namespace PP3d{
                                                false, false, false, false, false );
          }
 
-         return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
-                                            false, true, true, true, false );
+    return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
+                                        false, true, true, false, false, true ); //pFlagCloseSeg, pFlagCloseSegEnd
+    // phipo 20231219 Old false, true, true, true, false ); //pFlagCloseSeg, pFlagCloseSegEnd, pCloseHight
 
   }
  //************************
@@ -618,7 +619,7 @@ namespace PP3d{
       case PrimitivFactory::Type::FACET_N : return "Facet";
       case PrimitivFactory::Type::CYLINDER: return "Cylinder";
       case PrimitivFactory::Type::SPHERE  : return "Sphere";
-      case PrimitivFactory::Type::PLANE  : return "Sphere";
+      case PrimitivFactory::Type::PLANE  : return  "Plane";
       case PrimitivFactory::Type::CUBE    : return "Cube";
       case PrimitivFactory::Type::TETRA   : return "Tetra";
       case PrimitivFactory::Type::PYRAMID : return "Pyramid";			 

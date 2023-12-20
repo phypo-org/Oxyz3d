@@ -47,8 +47,8 @@ namespace M3d {
 #define StrMenu_SelectEdgeLoop001  "Select edge loop001"
 #define StrMenu_SelectEdgeLoop0001  "Select edge loop0001"
 
+#define StrMenu_SelectAll       "Select all"
 #define StrMenu_UnselectAll     "Unselect all"
-#define StrMenu_InvertSelect    "Invert selection"
 #define StrMenu_InvertSelect    "Invert selection"
 
 #define StrMenu_DeleteSelect    "Delete object selection"
@@ -89,7 +89,9 @@ namespace M3d {
 //#define StrMenu_SetTransInput  "X With the last two input points"
 
 #define StrMenu_PutOnGround    "Put selection on ground"
+#define StrMenu_PutEachOnGround    "Put each element of selection on ground"
 #define StrMenu_PutUnderGround "Put selection under ground"
+#define StrMenu_PutEachUnderGround "Put each element of selection under ground"
 #define StrMenu_Recenter       "Recenter selection"
 
 
@@ -409,6 +411,7 @@ namespace M3d {
     cMenubar.add( StrMenu_Edit   StrMenu_Undo,         "", UndoCB, this, FL_MENU_DIVIDER);
     cMenubar.add( StrMenu_Edit   StrMenu_Redo,         "", RedoCB, this, FL_MENU_DIVIDER);
     //================================
+    cMenubar.add( StrMenu_Select StrMenu_SelectAll, "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_UnselectAll, "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_SelectMore,   "", MyMenuCallback, this);
     cMenubar.add( StrMenu_Select StrMenu_SelectLess,   "", MyMenuCallback, this);
@@ -479,6 +482,8 @@ namespace M3d {
 	       
   cMenubar.add("&Utils/" StrMenu_PutOnGround ,    "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_PutUnderGround , "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_PutEachOnGround ,    "", MyMenuCallback, this );
+  cMenubar.add("&Utils/" StrMenu_PutEachUnderGround , "", MyMenuCallback, this );
   cMenubar.add("&Utils/" StrMenu_Recenter , "", MyMenuCallback, this,   FL_MENU_DIVIDER);
   
   cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "", MyMenuCallback, this );
@@ -677,6 +682,13 @@ namespace M3d {
 		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
 		  }
+		else if( strcmp( m->label(),StrMenu_SelectAll	) == 0)
+		  {
+		    TheSelect.selectAll( *TheAppli.getDatabase() );
+		    
+		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+		    TheAppli.redrawObjectTree();
+		  }
 		else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 		  {
 		    TheSelect.removeAll();
@@ -865,6 +877,47 @@ namespace M3d {
 		      }				
 		    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
 		  }
+    //:::::::::::::::::::::::::::::
+		else if(  strcmp( m->label(), StrMenu_PutEachOnGround	) == 0)
+		  {
+                    const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
+
+                    for( PP3d::EntityPtr lEntity : lVectSel )
+                      {
+                        PP3d::VisitorMinMax lVisitMinMax;
+                        lEntity->execVisitor( lVisitMinMax );
+		    
+                        PP3d::SortEntityVisitorPoint lVisitPoint;
+                        lEntity->execVisitor( lVisitPoint );
+                        
+                        for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
+                          {
+                            lPoint->get() -=  lVisitMinMax.getMin().y();
+                          }				
+                        TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                      }
+                  }
+     //:::::::::::::::::::::::::::::
+		else if(  strcmp( m->label(), StrMenu_PutEachUnderGround	) == 0)
+		  {
+                    const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
+
+                    for( PP3d::EntityPtr lEntity : lVectSel )
+                      {
+                        PP3d::VisitorMinMax lVisitMinMax;
+                        lEntity->execVisitor( lVisitMinMax );
+		    
+                        PP3d::SortEntityVisitorPoint lVisitPoint;
+                        lEntity->execVisitor( lVisitPoint );
+                        
+                        for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
+                          {
+                            lPoint->get() -=  lVisitMinMax.getMax().y();
+                          }				
+                        TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                      }
+                  }
+    //:::::::::::::::::::::::::::::
 		else if(  strcmp( m->label(), StrMenu_Recenter	) == 0)
 		  {		    
  		     PP3d::VisitorMinMax lVisitMinMax;

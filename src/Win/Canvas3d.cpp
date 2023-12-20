@@ -169,7 +169,7 @@ namespace M3d {
   {   
     glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
     glLoadIdentity(); // Clear the matrix
-       
+        
     int lW = pixel_w();
     int lH = pixel_h();
 
@@ -1030,7 +1030,12 @@ namespace M3d {
 	    std::cout << " **************** cUserActionSaisie SHIFT " << lId  << std::endl;
 	    DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
 	    
-	    userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );	    						
+	    userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );
+
+            // 1)Il faudrait aussi passer en revue toutes les splines car elles stokent en interne leurs points
+            // 2)Il faudrait que lors du drawselect on mette l'Id de la spline pour pouvoir la retrouver
+            // 3)Peut etre faire ensuite un redraw avec seulement la spline trouvé qui mettrait dans ce cas le rang du
+            // point ou du segment ... Argh, pas génial tout ça !
 	    return 1;
 	  }
 				
