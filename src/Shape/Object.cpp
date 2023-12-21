@@ -19,15 +19,15 @@ namespace PP3d{
 
   //********************************
 
-  Object::Object(  const char*pName, bool iTransform)
+  Object::Object(  const char*pName, ClassType  iClass )
     :cName(pName)
-    ,cIsTransform( iTransform )
+    ,cClassType( iClass )
     ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
   {
   }
-  Object::Object(  const std::string& pName, bool iTransform)
+  Object::Object(  const std::string& pName,  ClassType  iClass)
     :cName(pName)
-    ,cIsTransform( iTransform )
+    ,cClassType( iClass )
     ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
  {
   }

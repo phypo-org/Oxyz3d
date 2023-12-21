@@ -215,7 +215,7 @@ namespace M3d {
 
     MyToggleButton*
       lButSelTran = new MyToggleButton( lX, lY, lW, lH, nullptr,
-				      BasculeSelModeCB, this, (void*)4 );
+				      BasculeSelModeGeoCB, this, (void*)4 );
     lButSelTran->value(false);
     lButSelTran->image( lPixSel );
     lButSelTran->tooltip("Enable selection for transformation : axe, plane ...");
@@ -278,7 +278,7 @@ namespace M3d {
     lButSelLine->setUserData( this, (void*)PP3d::SelectType::Line,   lButSelLine, lButSelPt,   lButFacet,   lButSelBody,  lButSelTran, lButSelAll  );
     lButFacet->setUserData(   this, (void*)PP3d::SelectType::Facet,  lButFacet,   lButSelPt,   lButSelLine, lButSelBody,  lButSelTran, lButSelAll  );
     lButSelBody->setUserData( this, (void*)PP3d::SelectType::Object, lButSelBody, lButSelPt,   lButSelLine, lButFacet,  lButSelTran,   lButSelAll  );
-    lButSelTran->setUserData( this, (void*)PP3d::SelectType::Null,   lButSelTran, lButSelBody, lButSelPt,   lButSelLine, lButFacet,   lButSelAll   );
+    //    lButSelTran->setUserData( this, (void*)PP3d::SelectType::Null,   lButSelTran, lButSelBody, lButSelPt,   lButSelLine, lButFacet,   lButSelAll   );
 
     //=================================================================
 	
@@ -291,7 +291,7 @@ namespace M3d {
     MyToggleButton*
       lBut1 = new MyToggleButton( lX, lY, lW, lH, nullptr,
 				  BasculeViewModeCB, this,   (void*)1);
-    lBut1->value( cuCanvas3d->cFlagViewTransform);
+    lBut1->value( cuCanvas3d->cFlagViewGeo );
     lBut1->image( lPixSel );
     lBut1->tooltip("Wire");
     lX += lW;
@@ -328,12 +328,12 @@ namespace M3d {
 
     //========================
 
-    Fl_Image* lPixViewTransform = MyImage::LoadImage("Icons/ViewTransformOnOff.png", Application::sIconSize);
+    Fl_Image* lPixViewGeo = MyImage::LoadImage("Icons/ViewTransformOnOff.png", Application::sIconSize);
 		
     lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
 			       CB_ViewTransfrom, this );
-    lBut->value( cuCanvas3d->getViewTransform());
-    lBut->image( lPixViewTransform );
+    lBut->value( cuCanvas3d->getViewGeo());
+    lBut->image( lPixViewGeo );
     lBut->tooltip("On/off for transformations draw");
     lX += lW;
 
@@ -574,7 +574,7 @@ namespace M3d {
 	  {
 	    PushHistory(); // on sauve l'ancienne base dans l'historique
 	    // Une Nlle base
-	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
+	    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
 	    TheAppli.setDatabase( luBase ); // on prend la nlle base
 	    TheAppli.redrawAll(PP3d::Compute::FacetAll);
@@ -698,7 +698,6 @@ namespace M3d {
 		else if( strcmp( m->label(),StrMenu_UnselectAll	) == 0)
 		  {
 		    TheSelect.removeAll();
-		    TheSelectTransform.removeAll();
 		    
 		    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
 		    TheAppli.redrawObjectTree();
@@ -750,11 +749,12 @@ namespace M3d {
     //=================== UTILS ====================    
 		else if(  strcmp( m->label(), StrMenu_DefDefaultAxis	) == 0)
 		  {
-		    if( TheAppli.isSelectAxis() )
-		      {
-			TheAppli.setCurrentAxis( (PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0]);
-			TheSelectTransform.removeAll();			
-		      }
+
+                    if( TheAppli.setCurrentAxis( TheSelect.getSelectionVect()[0] ))
+                      {
+                        
+			TheSelect.removeAll();			
+                        }
 		    else
 		      fl_alert( "An axis must be selectionned !");
 		  }

@@ -291,8 +291,7 @@ namespace M3d {
   {
     MyCheckbutton* lCheck = reinterpret_cast<MyCheckbutton*>(pData);
 	
-    if( TheSelect.getSelectType() != PP3d::SelectType::Object
-	|| TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
+    if( TheSelect.getSelectType() != PP3d::SelectType::Object )
       {
 	lCheck->value( false );
 	return ;
@@ -301,8 +300,7 @@ namespace M3d {
 
     //	std::cout << "Box:"  << (lCheck->value() != 0) << std::endl;
     if( lObj != nullptr )
-      if( (lObj->isTransform() && TheSelectTransform.addToSelection( lObj ))
-          ||( !lObj->isTransform()  && TheSelect.addToSelection( lObj )) )
+      if( TheSelect.addToSelection( lObj ))
       {
 	Application::Instance().redrawAllCanvas(PP3d::Compute::Nothing);
       }
@@ -340,7 +338,7 @@ namespace M3d {
   {
     switch( pType )
       {
-      case ObjectType::ObjLine:   return "Axe";
+      case ObjectType::ObjLine:   return "Axis";
       case ObjectType::ObjFacet:  return "Plane";
       default: ;
       }
@@ -349,7 +347,8 @@ namespace M3d {
  //--------------------------------------------
   void WinObjTree::rebuildDatabase( const char* iRootname,
 				    PP3d::DataBase & iDatabase,
-				    bool iFlagAxe)
+				    bool iFlagAxe,
+                                    PP3d::ClassType iClassTypeFilter)
   {       
     int lH = 18;
 
@@ -365,7 +364,11 @@ namespace M3d {
  
     for( PP3d::Object* lObj : iDatabase.getAllObject() )
       {
+        if( lObj->isClassType(iClassTypeFilter) == false )
+          continue;
+        
 	std::ostringstream lOstr;
+
 				
 	lOstr   << iRootname
 		<< ( iFlagAxe ? GetTransformStr(lObj->getObjType()) : PP3d::GetStrObjectType( lObj->getObjType())) << "/"
@@ -443,8 +446,8 @@ namespace M3d {
 
     cTree->begin();    
 
-    rebuildDatabase( "Transformations/", *Application::Instance().getDatabaseTransform(), true );
-    rebuildDatabase( "Objects/",         *Application::Instance().getDatabase(),          false );
+    rebuildDatabase( "Geometries/",   *Application::Instance().getDatabase(),    true,  PP3d::ClassTypeGeo );
+    rebuildDatabase( "Objects/",      *Application::Instance().getDatabase(),  false, PP3d::ClassTypeObj );
 
     cTree->end();
  

@@ -20,8 +20,7 @@ namespace PP3d {
   //******************************************
 
   
-  Selection::Selection( bool iIsTransform)
-    :cIsTransform(iIsTransform)
+  Selection::Selection()
   {
   }
   //--------------------------------

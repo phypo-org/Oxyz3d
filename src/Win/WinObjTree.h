@@ -52,7 +52,8 @@ namespace M3d {
     
     void rebuildDatabase( const char* iRootname,
 			  PP3d::DataBase & iDatabase,
-			  bool iFlagAxe );
+			  bool iFlagAxe,
+                          PP3d::ClassType iClassTypeFilter );
   public:
     static WinObjTree& Instance()
     {

@@ -111,7 +111,12 @@ namespace M3d {
  
     cViewPropsTransform.cLineWidth = 4; 
     cViewPropsTransform.cColorLine.set(0.,1.0,0.);
+     cViewPropsTransform.cColorLineSelect.set(0.,0.8,0.);
+     
+    cViewPropsTransform.cColorFacet.set(0.,0.7,0.);
+    cViewPropsTransform.cColorFacetSelect.set(0.,1.0,0.);
     cViewPropsTransform.cColorLineHighlight.set(0.1,1.0,0.1);
+    
    
     cViewInputCursor.cColorPoint.set( 1, 0.9, 0.1, 0.8);
     cViewInputCursor.cColorLine.set( 0.9, 0.5, 0.3, 0.8);
@@ -373,21 +378,23 @@ namespace M3d {
 
     // Draw the 3d view of object
     ///////////    TheAppli.getDatabase()->recomputeAll( );      // AFAIRE : optimiser c'est couteux de le faire a chaque fois
-    TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly, cViewInputObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType() );
+    TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly, cViewInputObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType(), PP3d::ClassTypeObj  );
 
 
     // Draw transformation
-    if( cFlagViewTransform )
+    if( cFlagViewGeo )
       {
 	////////	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelectTransform.getSelectType() ); 
+	TheAppli.getDatabase()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(),  PP3d::ClassTypeGeo ); 
       }
     
-    // Draw transformation
+    // 
     if( TheAppli.getDatabaseTmp() != nullptr )
       {
 	////////	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType()  ); 
+	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeObj); 
+        if( cFlagViewGeo )
+	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeGeo); 
       }
 
     // draw rectangle selection if needed
@@ -437,16 +444,16 @@ namespace M3d {
  
 
     // Draw the 3d view of object
-    if( TheSelectTransform.getSelectType() == PP3d::SelectType::Null )  // pour les transformations
+    if(  getSelectGeo())  // pour les transformations
       {
 	////////
-	TheAppli.getDatabase()->recomputeAll(PP3d::Compute::Nothing);     
-	TheAppli.getDatabase()->drawGL( cViewGen, cViewGen, cViewGen, cViewGen, PP3d::GLMode::Select, TheSelect.getSelectType() );
+	TheAppli.getDatabase()->recomputeAll(PP3d::Compute::Nothing);
+	TheAppli.getDatabase()->drawGL( cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, PP3d::GLMode::Select, TheSelect.getSelectType(), PP3d::ClassTypeGeo); 
       }
        else
       {
-	TheAppli.getDatabaseTransform()->recomputeAll(PP3d::Compute::Nothing);
-	TheAppli.getDatabaseTransform()->drawGL( cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, cViewPropsTransform, PP3d::GLMode::Select, TheSelectTransform.getSelectType() ); 
+	TheAppli.getDatabase()->recomputeAll(PP3d::Compute::Nothing);     
+	TheAppli.getDatabase()->drawGL( cViewGen, cViewGen, cViewGen, cViewGen, PP3d::GLMode::Select, TheSelect.getSelectType(), PP3d::ClassTypeObj  );
       }
     
     glFlush();
@@ -470,7 +477,6 @@ namespace M3d {
     if(cVisitModifSelect!= nullptr )
       {
 	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
-	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelectTransform );
       }
     userTerminateAction(pEvent);
   }									 
@@ -1379,7 +1385,6 @@ namespace M3d {
 		  if( cMode == ModeUser::MODE_BASE )
 		    {
 		      TheSelect.removeAll();
-		      TheSelectTransform.removeAll();
 		    }
 		}
 	      else if( strcmp( lStr, MOVE_Z_N )==0)

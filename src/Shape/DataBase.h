@@ -47,7 +47,6 @@ namespace PP3d {
    private:
     
     Point3d              cCursor;
-    bool                         cIsTransform=false;
 
 
   private:
@@ -57,9 +56,8 @@ namespace PP3d {
 	  
   public:
 		 
-    DataBase(bool iIsTransform);
+    DataBase();
     virtual ~DataBase();
-    bool    isTransform() { return cIsTransform; }
 
     void resetIdFromMax(); // for UndoHistory
     
@@ -70,7 +68,7 @@ namespace PP3d {
 
     //		void add( O3dObj* pObj );
     void addObject( Object* pObj);
-    void drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType);
+    void drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType, ClassType iClassType);
     void recomputeAll( Compute iCompute );
     const std::set<Object*> & getAllObject()  const { return  cContainerObject;}
     const std::unordered_map<EntityId, Entity*>& getEntities() const { return  cEntities;}

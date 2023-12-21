@@ -29,7 +29,6 @@
 #define TheBase  (*TheAppli.getDatabase())
 #define TheInput (M3d::Application::Instance().getInput())
 #define TheSelect          TheAppli.cSelect
-#define TheSelectTransform TheAppli.cSelectTransform
  
 
 
@@ -84,9 +83,7 @@ namespace M3d{
    public:
     PP3d::Selection                       cSelect;
   protected:    
-    
-    std::unique_ptr<PP3d::DataBase>       cuDatabaseTransform; // les axes, plans etc
-  
+      
   protected:    
     std::unique_ptr<PP3d::DataBase>       cuDatabaseTmp; // Objects temporaires !!!!!!!!!!!
     
@@ -95,8 +92,11 @@ namespace M3d{
 
     PP3d::Selection                       cSelectTransform;
   protected:    
-    PP3d::ObjectLine *                    cCurrentAxis;
-    
+    //  PP3d::ObjectLine *                    cCurrentAxis;
+    PP3d::Vect3d                          cCurrentAxis;
+
+    bool hasCurrentAxis();
+
 #ifdef USING_LUA
     M3d::ShapeLua*                        cLua=nullptr;
 #endif
@@ -162,7 +162,6 @@ namespace M3d{
       
       cuDatabase = std::move(iuBase);
     }
-    PP3d::DataBase* getDatabaseTransform() { return cuDatabaseTransform.get(); }
     
     PP3d::DataBase* getDatabaseTmp() { return cuDatabaseTmp.get(); }
     void clearDatabaseTmp() { return cuDatabaseTmp.reset(); }
@@ -207,7 +206,6 @@ namespace M3d{
     
     void recomputeAll( PP3d::Compute iCompute ) {
       getDatabase()->recomputeAll( iCompute );
-      getDatabaseTransform()->recomputeAll( iCompute );
       if( getDatabaseTmp() )
         getDatabaseTmp()->recomputeAll( iCompute );
     }
@@ -220,8 +218,9 @@ namespace M3d{
     {
       if( lA != lB )
 	{
-	  cCurrentAxis = MakeObjectLine( "Axis", lA, lB, true );
-	  cuDatabaseTransform->addObject( cCurrentAxis );
+          PP3d::ObjectLinePtr lAxis = MakeObjectLine( "Axis", lA, lB, PP3d::ClassTypeGeo );
+          
+	  cuDatabase->addObject( lAxis );
 	  redrawObjectTree();
 	  return true;
 	}
@@ -232,8 +231,9 @@ namespace M3d{
     {
       if(lCenter->get() != lVect->get() )
 	{
-	  cCurrentAxis = MakeObjectLine( "Axis", lCenter->get(), lVect->get(), true );
-	  cuDatabaseTransform->addObject( cCurrentAxis);
+	  PP3d::ObjectLinePtr lAxis= MakeObjectLine( "Axis", lCenter->get(), lVect->get(), PP3d::ClassTypeGeo );
+          
+	  cuDatabase->addObject( lAxis);
 	  redrawObjectTree();
 	  return true;
 	}      
@@ -241,40 +241,35 @@ namespace M3d{
     
     }
     //---------------------------
-    bool setCurrentAxis(PP3d::ObjectPtr iObj) {
-      if( iObj->getObjType() == PP3d::ObjectType::ObjLine && iObj->isTransform() )
-	{
-	  cCurrentAxis = (PP3d::ObjectLine*) iObj;
-	  return true;
-	}
-      return false;
+    bool setCurrentAxis(PP3d::EntityPtr iObj);   
+    //---------------------------
+    bool setCurrentAxis(PP3d::ObjectLinePtr iObj) {
+      return setCurrentAxis( iObj->getLine() );
     }
      //---------------------------
-   PP3d::ObjectLine * getCurrentAxis() { return cCurrentAxis; }
+    bool setCurrentAxis(PP3d::LinePtr iLine) {
+      if( iLine->isSamePointXYZ() )
+        {
+          return false;
+        }
+      cCurrentAxis.set( iLine->first()->get(), iLine->second()->get() );
+      std::cout << "CurrentAxis:" << cCurrentAxis << std::endl;
+      return true;
+    }
+     //---------------------------
+   PP3d::Vect3d & getCurrentAxis() { return cCurrentAxis; }
     //---------------------------
     bool getAxis( PP3d::Point3d & oPtZero, PP3d::Point3d & oAxis  )
     {
-      PP3d::ObjectLine  * lObjAxis = TheAppli.getCurrentAxis();
-      if(lObjAxis != nullptr )
-	{
-	  oPtZero = lObjAxis->getVectorOrigin();
-	  oAxis = lObjAxis->getAxis();
-	  return true;
-	}
-      return false;
-    }
+      PP3d::Vect3d lAxis = TheAppli.getCurrentAxis();
+      
+      oPtZero =  lAxis.getA();
+      oAxis = lAxis.getB();
+      return true;
+   }
     //---------------------------
    const char * autoSave();
-    //---------------------------
-    bool isSelectAxis() {
 
-      //      std::cout << "isSelectAxis:" << TheSelectTransform.getSelectionVect()[0]->getType()  <<  " " << PP3d::ShapeType::Object
-      //		<< "   "	<< TheSelectTransform.getSelectionVect()[0]->getType() << " " <<  PP3d::ShapeType::Object << std::endl;
-      return (TheSelectTransform.getSelectType() != PP3d::SelectType::Null
-	      && TheSelectTransform.getNbSelected() >= 1
-	      && TheSelectTransform.getSelectionVect()[0]->getType() == PP3d::ShapeType::Object
-	      && ((PP3d::ObjectPtr)TheSelectTransform.getSelectionVect()[0])->getObjType() == PP3d::ObjectType::ObjLine);
-    }
     //---------------------------
     void info( const std::string & iStr );  
     

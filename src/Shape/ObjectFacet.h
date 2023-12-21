@@ -16,14 +16,14 @@ namespace PP3d {
 		Point3d cNorm; //????
 
 	public:
-		ObjectFacet(  const char*pName, Facet* pFacet, bool cTransform=false)
-			: Object( pName, cTransform )
+		ObjectFacet(  const char*pName, Facet* pFacet, ClassType iClassType=ClassTypeObj)
+			: Object( pName, iClassType )
 			,cShape(pFacet)
                         
 		{;}
 		
-		ObjectFacet(  const std::string& pName, Facet* pFacet, bool cTransform=false)
-			: Object( pName,cTransform )
+		ObjectFacet(  const std::string& pName, Facet* pFacet, ClassType iClassType=ClassTypeObj)
+			: Object( pName, iClassType )
 			,cShape(pFacet)
                         
 		{;}

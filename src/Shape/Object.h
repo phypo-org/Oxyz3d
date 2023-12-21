@@ -29,6 +29,8 @@ namespace PP3d {
   class ViewProps;
   class SubSelect;
 
+  enum ClassType { ClassTypeVoid=0, ClassTypeObj=1, ClassTypeGeo=2, ClassTypeAll=0xFFFF };
+  
 		
   enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
   inline static const char* GetStrObjectType( ObjectType pType )
@@ -78,20 +80,22 @@ namespace PP3d {
     ObjProps                     cMyProps;
     std::string                  cName;
 
-    bool                         cIsTransform=false;
+    ClassType                    cClassType=ClassTypeObj;
     
-    PPu::PPDateTime70                 cDateCreation;
+    PPu::PPDateTime70            cDateCreation;
   public:
 
-    Object(  const char*pName, bool cTransform );
-    Object(  const std::string & pName, bool cTransform );
+    Object(  const char*pName,  ClassType  iClassType );
+    Object(  const std::string & pName, ClassType  iClassType);
     virtual ~Object();
 
     
     virtual ObjectType getObjType() const =0;
     ShapeType getType() const override { return ShapeType::Object;}
     virtual ShapeType getSubType() const =0;
-    bool    isTransform() { return cIsTransform; }
+    bool  isClassType( ClassType iClass ) { return ((ulong)cClassType & ((ulong)iClass))!=0; }
+    bool  isClassGeo() { return isClassType( ClassTypeGeo );}
+    
     PPu::PPDateTime70 getDateCreation() const { return cDateCreation; }
     virtual void execVisitor( EntityVisitor& pVisit ) override;
     virtual void execVisitor( EntityVisitorNode& pVisit ) override;

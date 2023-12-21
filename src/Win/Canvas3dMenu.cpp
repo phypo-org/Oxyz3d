@@ -162,7 +162,7 @@ namespace M3d {
 #define StrMenu_ExtrudeY    StrMenu_Extrude  " Y"
 #define StrMenu_ExtrudeZ    StrMenu_Extrude  " Z"
 #define StrMenu_ExtrudeNorm StrMenu_Extrude  " normal"
-#define StrMenu_ExtrudeTrans StrMenu_Extrude  " current transformation"
+#define StrMenu_ExtrudeTrans StrMenu_Extrude  " current axis"
 #define StrMenu_ExtrudePath StrMenu_Extrude  " path"
 #define StrMenu_ExtrudePathNorm StrMenu_Extrude  " path norm"
 
@@ -234,17 +234,14 @@ namespace M3d {
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    if( TheAppli.getCurrentAxis() )
-      pMenu.add( StrMenu_Move  "/" StrMenu_MoveAxis, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveAxis, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    if( TheAppli.getCurrentAxis() )
-      {
-        pMenu.add( StrMenu_Rot  "/" StrMenu_CenterRotAxis, "",  MyMenuCallbackSelect, this);
-        pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
-      }
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_CenterRotAxis, "",  MyMenuCallbackSelect, this);
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
     
     pMenu.add( StrMenu_Rot  "/" StrMenu_RotFacetNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object
@@ -265,7 +262,6 @@ namespace M3d {
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRY, "",  MyMenuCallbackSelect, this);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
     pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    if( TheAppli.getCurrentAxis() )
       pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
 
     if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
@@ -336,7 +332,6 @@ namespace M3d {
         pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralSelObj, this );
         pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralSelObj, this );
     
-        if( TheAppli.isSelectAxis() )
           pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralSelObj, this, FL_MENU_DIVIDER );
       }
         // ======= SPIRAL ========
@@ -497,7 +492,6 @@ namespace M3d {
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z", MyMenuCallbackRevol, this, lMenuFlagActif);
  
     lMenuFlagActif = 0;
-    if( TheAppli.isSelectAxis() ==false ) lMenuFlagActif=FL_MENU_INACTIVE; 
     pMenu.add( StrMenu_RevolAxis, "", MyMenuCallbackRevol, this, lMenuFlagActif);
 
 
@@ -509,7 +503,6 @@ namespace M3d {
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
  
-    if( TheAppli.isSelectAxis() ==false ) lMenuFlagActif=FL_MENU_INACTIVE; 
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralInput, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
 
@@ -1099,12 +1092,7 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
     else
       if( strcmp( m->label(), StrMenu_AlignOnAxis ) == 0 )
         {
-          if( TheAppli.getCurrentAxis() == nullptr )
-            {
-              fl_alert( "No default axis");
-              return;
-            }
-          lAxis =  TheAppli.getCurrentAxis()->getAxis();
+          lAxis =  TheAppli.getCurrentAxis().getB();
         }
       else
         if( strcmp( m->label(), StrMenu_AlignOnNorm ) == 0 )
@@ -1424,7 +1412,7 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
       {
         //	std::cout << "MyMenuCallbackInset finish" << std::endl;
         TheSelect.removeAll();
-        TheSelectTransform.changeSelectType( PP3d::SelectType::Facet );       
+        TheSelect.changeSelectType( PP3d::SelectType::Facet );       
         TheSelect.addGoodEntityFor(lNewFacets);
         PushHistory();
         TheAppli.redrawAll(PP3d::Compute::FacetAll);	

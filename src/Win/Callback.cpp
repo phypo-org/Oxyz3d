@@ -175,10 +175,9 @@ namespace M3d {
     if( cFc->value()  )
       {
 	// Une Nlle base
-	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
+	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	
 	TheSelect.removeAll();
-	TheSelectTransform.removeAll();
 
 	std::string lFilename = cFc->value();
 	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
@@ -298,10 +297,9 @@ namespace M3d {
     Win3d*    lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
     
     TheSelect.removeAll();
-    TheSelectTransform.removeAll();
 
 
-    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
     if( PP3d::UndoHistory::Instance().readPrev( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();
@@ -312,7 +310,6 @@ namespace M3d {
     else
       {
       TheSelect.removeAll();
-      TheSelectTransform.removeAll();
    }
 
     TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
@@ -324,19 +321,16 @@ namespace M3d {
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lButton->cUserData1);
     
     TheSelect.removeAll();
-    TheSelectTransform.removeAll();
     
-    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase(false) );
+    std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
     if( PP3d::UndoHistory::Instance().readNext( *luBase, &TheSelect ) )
       {
 	luBase->resetIdFromMax();
-	//	std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
 
 	TheAppli.setDatabase( luBase, false );
       } 
     else{
       TheSelect.removeAll();
-      TheSelectTransform.removeAll();
     }
       
  	
@@ -354,7 +348,7 @@ namespace M3d {
     MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
     Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
     
-    lWin3d->cuCanvas3d->setViewTransform(  (bool)lToggle->value() );
+    lWin3d->cuCanvas3d->setViewGeo(  (bool)lToggle->value() );
     lWin3d->canvasRedraw();
   }
 
@@ -380,14 +374,6 @@ namespace M3d {
 	
        
    TheSelect.changeSelectType( lVal.cSelType );
-   if(lVal.cSelType == PP3d::SelectType::Null )
-     {
-       TheSelectTransform.changeSelectType( PP3d::SelectType::Object );       
-     }
-   else
-     {
-       TheSelectTransform.changeSelectType( PP3d::SelectType::Null );       
-     }
       
 
     // std::cout << "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) << std::endl;
@@ -398,21 +384,42 @@ namespace M3d {
     MyToggleButton* 	lBut1 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData4 );
     MyToggleButton* 	lBut2 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData5 );
     MyToggleButton* 	lBut3 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData6 );
-    MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData7 );
+    //    MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData7 );
     //    MyToggleButton* 	lBut5 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData8 );
 
     lBut0->value( true );
     lBut1->value( false );
     lBut2->value( false );
     lBut3->value( false );
-    lBut4->value( false );
+    //    lBut4->value( false );
     //    lBut5->value( false );
 
     //    std::cout << "BasculeSelModeCB " << lVal.cVal << std::endl;
 
     TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
-  //-------------------------------------------
+   //-------------------------------------------
+  // Change Geo mode
+  
+  void	BasculeSelModeGeoCB(Fl_Widget*w, void*pData)
+  {
+    MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
+    Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
+	
+
+    //    std::cout << " value:" << (int)lToggle->value();
+    if( lToggle->value() )
+      lToggle->value( true );
+    else
+      lToggle->value( false );
+    //    std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
+
+		
+    lWin3d->cuCanvas3d->setSelectGeo(  (int)lToggle->value() );		
+
+    lWin3d->canvasRedraw();
+  }
+ //-------------------------------------------
   // Change view mode
   
   void	BasculeViewModeCB(Fl_Widget*w, void*pData)

@@ -25,9 +25,8 @@ namespace PP3d {
 
 
 	
-  DataBase::DataBase(bool iIsTransform)
+  DataBase::DataBase()
     :cCurrent()
-    ,cIsTransform( iIsTransform )
   //    :cCurrentCreation(nullptr)
   //    ,cCurrentLine(nullptr)
   {
@@ -137,7 +136,7 @@ namespace PP3d {
   }
 
   //-------------------------------------------------------------
-  void DataBase::drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType)
+  void DataBase::drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType, ClassType iClassType )
   {
     iViewGen.cSelectType = iViewInputCursor.cSelectType = iViewInputPoly.cSelectType = iViewInputObject.cSelectType = iSelectType;
     iViewGen.cGLMode = iViewInputCursor.cGLMode = iViewInputPoly.cGLMode = iViewInputObject.cGLMode = iSelectOrDrawMode;
@@ -152,19 +151,19 @@ namespace PP3d {
     //======================================			
     for( Object* lObj : cContainerObject )
       {
-
-
-
-    if(  iSelectOrDrawMode == GLMode::Draw  )
-	  {
-	    //			std::cout << "draw lObj:" << lObj->getName() << std::endl;
-	    lObj->drawGL( iViewGen );
-	  }
-	else
-	  {
-	    lObj->selectGL( iViewGen );
-	    //						std::cout << "select lObj:" << lObj->getName() << std::endl;
-	  }
+        if( lObj->isClassType( iClassType ))
+          {
+            if(  iSelectOrDrawMode == GLMode::Draw  )
+              {
+                //			std::cout << "draw lObj:" << lObj->getName() << std::endl;
+                lObj->drawGL( iViewGen );
+              }
+            else
+              {
+                lObj->selectGL( iViewGen );
+                //						std::cout << "select lObj:" << lObj->getName() << std::endl;
+              }
+          }
 	//	std::cout << " fin lObj:" << lObj->getName() << std::endl;
       }
 		

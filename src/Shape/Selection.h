@@ -80,12 +80,10 @@ namespace PP3d {
     EntityId getLastHightLightEntityId() { return cLastHightLightEntityId; }
 
     //===========================
-    bool                         cIsTransform=false;
 		
   public:
-    Selection( bool iIsTransform);
+    Selection();
 
-    bool    isTransform() { return cIsTransform; }
 		
   protected:
 		

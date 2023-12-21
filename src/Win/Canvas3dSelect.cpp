@@ -207,20 +207,13 @@ namespace M3d {
     if( lEntity != nullptr )
       {
 	//	cout << "********** Find Entity : " << iId <<  endl;	       	
-	PP3d::Selection * lSelect = &TheSelect;
-	PP3d::DataBase  * lBase   = TheAppli.getDatabase();
-	
-	if( TheSelectTransform.getSelectType() != PP3d::SelectType::Null )
-	  { // Selection de transformation
-	    lSelect = &TheSelectTransform;
-	    lBase   = TheAppli.getDatabaseTransform();		
-	  }
+        
 	////    cout <<" processHits before Select" <<endl; 
 	
 	//	PP3d::SelectMode lSelectMode = 	PP3d::SelectMode::Select;
 	
-	lFlagRedraw = lSelect->selectPickingColor(  lEntity,
-						    *lBase,
+	lFlagRedraw = TheSelect.selectPickingColor(  lEntity,
+						    *TheAppli.getDatabase(),
 						     cSelectMode,
 						    pFlagMove );	
 	////	    cout << " processHits after Select" <<endl;

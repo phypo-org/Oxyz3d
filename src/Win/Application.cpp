@@ -18,16 +18,12 @@ namespace M3d{
   //************************************
   Application::Application()	
 
-    :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase(false) ))
-    ,cSelect(false)
-    ,cuDatabaseTransform( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase( true ) ))
-    ,cSelectTransform(true)
+    :cuDatabase( std::unique_ptr<PP3d::DataBase>( new PP3d::DataBase() ))
     ,cCurrentTransform( Transform::Nothing)
   {
     std::cout << "========= Application::Application" << std::endl;
     
 		
-    cSelectTransform.changeSelectType( PP3d::SelectType::Null );
 
 #ifdef USING_LUA
     M3d::ShapeLua::SetPrototype();
@@ -98,7 +94,7 @@ namespace M3d{
 	lWin->setUndoRedoState();
       }
   }
-  //-----------------------------------	
+  //-----------------------------------	 
   void Application::setCursorPosition( PP3d::Point3d& pPos)
   {
     for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
@@ -156,8 +152,27 @@ namespace M3d{
 
     return nullptr;
   }
-	 
+  //----------------------------------------
+    bool Application::setCurrentAxis(PP3d::EntityPtr iObj)
+    {
+      switch( iObj->getType() )
+        {
+        case PP3d::ShapeType::Line :
+          return setCurrentAxis( ((PP3d::LinePtr)iObj));
+
+          // METTRE Dyn_cast !!!
+          
+        case PP3d::ShapeType::Object :
+          if( ((PP3d::ObjectPtr)iObj)->getObjType() ==  PP3d::ObjectType::ObjLine )
+            {
+              return setCurrentAxis( ((PP3d::ObjectLinePtr)iObj)->getLine());
+            }
+        default: ;
+        }
+      return false;
+    }
 
   
+ 
   //************************************
 }

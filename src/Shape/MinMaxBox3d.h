@@ -86,6 +86,16 @@ namespace PP3d{
       return cMax;
     }
 
+    Point3d &getA()
+    {
+      return cMin;
+    }
+    Point3d &getB()
+    {
+      return cMax;
+    }
+
+    
     Point3d size() const;
     Point3d center() const ;
     Double3 centerDbl() const ;
@@ -160,6 +170,7 @@ namespace PP3d{
   };
 	
   typedef Rect3d  MinMaxBox3d;
+  typedef Rect3d  Vect3d ;
 	
   //***************************************
 }

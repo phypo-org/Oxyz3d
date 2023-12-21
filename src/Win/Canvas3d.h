@@ -54,8 +54,9 @@ namespace M3d {
 		
  
     bool    cFlagViewNormal    = false;
-    bool    cFlagViewTransform = true;
+    bool    cFlagViewGeo       = true;
     bool    cFlagCursor3d      = false;
+    bool    cFlagSelectGeo     = false;
 		
     PP3d::ViewProps cViewGen;
     PP3d::ViewProps cViewPropsTransform;
@@ -70,8 +71,12 @@ namespace M3d {
 
 
   public:
-    void setViewTransform( bool cVal) { cFlagViewTransform = cVal; }
-    bool getViewTransform()           { return cFlagViewTransform; }
+    void setViewGeo( bool cVal) { cFlagViewGeo = cVal; }
+    bool getViewGeo()           { return cFlagViewGeo; }
+    
+    void setSelectGeo( bool cVal) { cFlagSelectGeo = cVal; }
+    bool getSelectGeo()           { return cFlagSelectGeo && cFlagViewGeo; }
+
 
   protected:
  

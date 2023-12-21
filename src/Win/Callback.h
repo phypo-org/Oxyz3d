@@ -69,6 +69,7 @@ extern void RedoCB(Fl_Widget*w, void*pData);
 extern void PushHistoryCB(Fl_Widget*w, void*pData);
 extern void CB_ViewTransfrom(Fl_Widget*w, void*pData);
 extern void ExportStlCB( Fl_File_Chooser * cFc, void * iUseSelect);
+extern void BasculeSelModeGeoCB(Fl_Widget*w, void*pData);
 extern void BasculeSelModeCB(Fl_Widget*w, void*pData);
 extern void BasculeViewModeCB(Fl_Widget*w, void*pData);
 extern void BasculeBoolCB(Fl_Widget*w, void*pData);

@@ -19,12 +19,12 @@ namespace PP3d {
     Line*      cShape;
 
   public:
-    ObjectLine( const char*pName, Line* pLine, bool iTransform=false )
-      : Object( pName, iTransform )
+    ObjectLine( const char*pName, Line* pLine, ClassType iClassType=ClassTypeObj )
+      : Object( pName,  iClassType )
       ,cShape( pLine)
     {;}
-    ObjectLine( const std::string& pName, Line* pLine, bool iTransform=false )
-      : Object( pName, iTransform )
+    ObjectLine( const std::string& pName, Line* pLine, ClassType iClassType=ClassTypeObj )
+      : Object( pName,  iClassType)
       ,cShape( pLine)
     {;}
    
@@ -105,11 +105,20 @@ namespace PP3d {
     PP3d::Point3d getVector() { return getAxis();}
 
   };
+
+  using ObjectLinePtr = ObjectLine*;
+
+  
+  
   //******************************  
-  inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB, bool iIsTransform  )
+  inline ObjectLine * MakeObjectLine( const char*pName, const Point3d & iA,  const Point3d & iB, ClassType iClassType )
   {
-    return new ObjectLine( pName, MakeLine( iA, iB ), iIsTransform );
+    return new ObjectLine( pName, MakeLine( iA, iB ), iClassType );
   }
+
+
+
+  
 }
 
 #endif
