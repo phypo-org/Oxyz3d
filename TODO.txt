@@ -1,0 +1,41 @@
+
+
+
+- Supprimer la base transform et remplacer par une propriete du genre
+  enum  classe ==  OBJECT , AXE, POINT, PLAN, TRAJECTOIRE,TRANSFORMATION ...
+   Tester dans les focntions draw et select de Database pour tracer
+  les uns ou les autres
+ ==>  faire une branche dans git pour tester
+
+
+- Mettre les fonctions de dessins 3d de Database dans un objet View et
+ le mettre ainsi que l'objets de dessins dans un repertoire VIEW
+
+
+- Dans Win sortir  les fonctions 3d de l'interface dans des fichiers à part.
+
+
+- Utiliser les PolyLine et les Spline  pour faire des trajectoires
+
+- Faire une tortue3d en logo pour générer des objets.
+
+
+- Ajouter la notion de groupe d'objets , soit sous forme d'un
+  ObjectGroup, soit sous forme d'un GroupId commun à tout les objets
+  du groupe, possiblité de selectionner séparement les groupes et les
+  objets (pour ne pas avoir a redefaire les groupes)
+   . groupes recursif pouvant contenir d'autre groupes ?
+   . possibilités de visualiser les membres d'un groupe (couleur) ?
+   . possibilités d'ajouter ou de retirer des objets d'un groupes
+
+
+
+
+- Avoir un autre niveau de database/visualisation/ergonomie avec des
+  alias qui pointe vers les objets (un peu comme les sprites dans
+  AsteroidFighter)
+  . Les Alias ont des matrices pour leurs positions leurs tailles ...
+  . Un objets peut donc etre present plusieurs fois via des alias
+  différents
+  . Aucune modificatins possibles des objets eux memes
+  
