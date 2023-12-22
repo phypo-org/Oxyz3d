@@ -484,7 +484,7 @@ namespace M3d {
   void Canvas3d::userTerminateAction(	int	pEvent )
   {
     std::cout << "TERMINATE" << std::endl;
-		
+  		
     cMouseInitPosX = cMouseLastPosX = -1;
     cMouseInitPosY = cMouseLastPosY = -1;
     
@@ -1384,6 +1384,7 @@ namespace M3d {
 		{
 		  if( cMode == ModeUser::MODE_BASE )
 		    {
+                      PushHistory();
 		      TheSelect.removeAll();
 		    }
 		}

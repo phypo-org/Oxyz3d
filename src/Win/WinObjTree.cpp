@@ -352,15 +352,27 @@ namespace M3d {
   {       
     int lH = 18;
 
-    
+  
+    if( iFlagAxe == false )
+      {
+       std::ostringstream lOs;
+       lOs << "Group(" << iDatabase.getGroups().size() << "):";
+       for( const GroupPtr lGroup: iDatabase.getGroups())
+         lOs << ' ' << lGroup->getGroupId() << ':'<<lGroup->values().size();
+
+       Fl_Tree_Item* lNode = cTree->add( lOs.str().c_str() );
+      }
+  
     if( iDatabase.getEntities().size() )
     {
       std::ostringstream lOs;
       lOs  << iRootname << " objects:" <<  iDatabase.getAllObject().size()
-	   << " entities:" <<  iDatabase.getEntities().size() ;
+	   << " entities:" <<  iDatabase.getEntities().size()  ;
       
       Fl_Tree_Item* lNode = cTree->add( lOs.str().c_str() );
     }
+
+    
  
     for( PP3d::Object* lObj : iDatabase.getAllObject() )
       {
@@ -373,7 +385,12 @@ namespace M3d {
 	lOstr   << iRootname
 		<< ( iFlagAxe ? GetTransformStr(lObj->getObjType()) : PP3d::GetStrObjectType( lObj->getObjType())) << "/"
 		<< lObj->getId() ;
-	
+
+        GroupPtr lGroupObj = lObj->getGroup();
+        if( lGroupObj != nullptr )
+          {
+            lOstr << " grp:" << lGroupObj->getGroupId();
+          }
 	
 	Fl_Tree_Item* lNode = cTree->add( lOstr.str().c_str() );
 	

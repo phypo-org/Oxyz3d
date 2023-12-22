@@ -22,6 +22,7 @@ namespace PP3d {
   //************************************
 
   TUniqueId<EntityId, 1> DataBase::sUniqueId;
+  TUniqueId<EntityId, 1> DataBase::sUniqueGroupId;
 
 
 	
@@ -446,5 +447,26 @@ namespace PP3d {
 	//	cFreePolys.push( ioPoly );
       }
   }
+  //---------------------- GROUP -----------------------------
+     void DataBase::freeGroup( GroupPtr iGroup )
+    {
+      if( iGroup == nullptr )
+        return;
+      
+      iGroup->clear();
+      cGroups.removeObj(iGroup );
+      
+      delete iGroup;
+    }
+  //-----------------------------
+    GroupPtr DataBase::newGroup()
+    {
+      GroupPtr lGroup = new GroupObject(sUniqueGroupId.getNewId());
+      cGroups.insertObj( lGroup );
+      return lGroup;
+    } 
+  //---------------------- GROUP -----------------------------
+
+  
   //************************************
 } // end namespace

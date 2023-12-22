@@ -210,6 +210,31 @@ namespace M3d {
 #define StrMenu_SubdivideFold        "Fold"
   //#define StrMenu_SubdivideCentralFold "Fold  central facet (Bug!)"
 
+
+
+
+#define StrMenu_CombineIntoGroup "Combine into group"
+#define StrMenu_SeparateGroup    "Separate group"
+
+
+#define BEGINCALL							\
+  static bool slFlagDialog=false;					\
+									\
+  Fl_Menu_* mw = (Fl_Menu_*)w;						\
+  const Fl_Menu_Item* m = mw->mvalue();					\
+  if (!m)								\
+    {									\
+      printf("NULL\n");							\
+									\
+      return ;								\
+    }									\
+									\
+  printf("%s\n", m->label());						\
+  M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);	\
+
+
+  
+
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
   {
@@ -337,7 +362,38 @@ namespace M3d {
         // ======= SPIRAL ========
 
 
-   
+    //=========== GROUP ===========
+    if( TheSelect.getSelectType() == PP3d::SelectType::Object )
+      {
+    
+        if(  TheSelect.getNbSelected() > 1 )
+          pMenu.add( StrMenu_CombineIntoGroup, "",
+                     //:::::::::::::::::::::::::::::::::::
+                     [](Fl_Widget *w, void *pUserData) {
+                         std::cout <<"Callback lambda" << std::endl;
+                         TheSelect.combineGroup(TheBase);
+                       },
+                     //:::::::::::::::::::::::::::::::::::
+                     this, FL_MENU_DIVIDER );
+        
+        if( TheSelect.getNbSelected() > 0 )
+          {
+            pMenu.add( StrMenu_SeparateGroup, "",
+                     //:::::::::::::::::::::::::::::::::::
+                       [](Fl_Widget *w, void *pUserData) {
+                         BEGINCALL
+                               
+                         std::cout <<"Callback lambda 2" << std::endl;
+                         TheSelect.separateGroup(TheBase);                               
+                       },
+                     //:::::::::::::::::::::::::::::::::::
+                       this
+                       );
+          }
+      }
+        
+        //=========== GROUP ===========
+
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
       {
@@ -513,21 +569,6 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
-#define BEGINCALL							\
-  static bool slFlagDialog=false;					\
-									\
-  Fl_Menu_* mw = (Fl_Menu_*)w;						\
-  const Fl_Menu_Item* m = mw->mvalue();					\
-  if (!m)								\
-    {									\
-      printf("NULL\n");							\
-									\
-      return ;								\
-    }									\
-									\
-  printf("%s\n", m->label());						\
-  M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);	\
-
 
   //-------------------------------------------
 void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
@@ -1653,7 +1694,7 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
         TheAppli.redrawAll(PP3d::Compute::FacetAll);
       } 
   }
-  
+
   //***************************************
 
 

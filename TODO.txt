@@ -1,7 +1,7 @@
 
 
 
-- Supprimer la base transform et remplacer par une propriete du genre
+XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   enum  classe ==  OBJECT , AXE, POINT, PLAN, TRAJECTOIRE,TRANSFORMATION ...
    Tester dans les focntions draw et select de Database pour tracer
   les uns ou les autres

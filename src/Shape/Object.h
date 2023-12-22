@@ -15,6 +15,7 @@
 #include "Entity.h"
 
 #include "Utils/PPDate.h"
+#include "Utils/PPContainer.h"
 
 
 // Cet objet a pour role de chapeauter les Shape
@@ -73,6 +74,12 @@ namespace PP3d {
     return pOs;
   }
 
+  class Object;
+  class GroupObject;
+  using ObjectPtr = Object*;
+
+  using GroupPtr = GroupObject*;
+   
   //*********************************
   class Object : public Entity {
 
@@ -126,9 +133,21 @@ namespace PP3d {
     virtual void drawSelectPolyGL( ViewProps& pViewProps );
     virtual void drawSelectObjectGL( ViewProps& pViewProps );
 
-    //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps ); 
+    //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps );
 
-  		
+
+    //=========== GROUP ==========
+    GroupPtr cGroup = nullptr;
+
+  private:
+    void internalSetGroup(GroupPtr iGroup ) { cGroup=iGroup;}
+  public:
+    GroupPtr  getGroup() { return cGroup; }
+    void      setGroup( GroupPtr iGroup );
+   
+    //=========== GROUP ==========
+
+    
     //virtual void drawSelectionGL( ViewProps& pViewProps );
     const std::string&   getName()      const     { return cName; }
     void                 rename( const char* pName) { cName = pName; }
@@ -140,12 +159,36 @@ namespace PP3d {
 
     Point3d getCenter() const { return cMyProps.cCenter; }
 
+
+
+    
     friend class DataBase;
+    friend class GroupObject;
 	
   };
-  using ObjectPtr = Object*;
 	
-  //*********************************************
+  //*********************************
+  class GroupObject{
+    EntityId cGroupId=0;
+    PPu::HashSetPtr<Object> cObjects;
+    
+  protected:
+       GroupObject(EntityId cId) :cGroupId(cId) {;}
+  
+  public:
+    EntityId getGroupId() const { return cGroupId; }
+        
+    void addObject(ObjectPtr iObj);
+    void removeObject(ObjectPtr iObj);
+    bool exist( ObjectPtr iObj) const ;
+    void clear();
+    const PPu::HashSetPtr<Object>& values() const { return cObjects;}
+  
+    friend class DataBase;
+  };
+
+  
+ //*********************************************
   //	class  ShapeLines : public Object {
 		
   //	};

@@ -137,6 +137,7 @@ namespace PP3d {
     ioEntity->setSelect( true );
     cSelectObjVect.push_back( ioEntity );
 
+ 
     
     if( iSelectAll && ioEntity->getType() == ShapeType::Line )
       {
@@ -146,6 +147,27 @@ namespace PP3d {
 	    addEntity( lLine, false );	    
 	  }
       }
+    else
+      //:::::::::: GROUP :::::::::::::
+      if( ioEntity->getType() == ShapeType::Object )
+        {
+          // Si on a un element d'un groupe il faut tous les selectionner !!!
+          ObjectPtr lObj = dynamic_cast<ObjectPtr>(ioEntity);
+          if( lObj != nullptr ) 
+            {
+              GroupPtr lGroup = lObj->getGroup();
+              if( lGroup != nullptr )
+                {
+                  for( ObjectPtr lObjElem: lGroup->values() )
+                    {
+                      if( lObj != lObjElem )
+                        addEntity( lObjElem ); // il y a le emplace au debut!!!
+                    }
+                }
+            }
+        }
+      //:::::::::: GROUP :::::::::::::
+
     //    std::cout << "======================================="<< std::endl;
     //    std::cout << *this << std::endl;
     //    std::cout << "======================================="<< std::endl;
@@ -214,7 +236,7 @@ namespace PP3d {
 	      {
 		cSelectObjVect.erase( cSelectObjVect.begin() + i );
 		break;
-	      }
+	      }            
 	  }
 	
 	if( iSelectAll && ioEntity->getType() == ShapeType::Line )
@@ -223,6 +245,27 @@ namespace PP3d {
 	    if( lLine )
 	      removeEntity( lLine, false );
 	  }
+        else
+          //:::::::::: GROUP :::::::::::::
+          if( ioEntity->getType() == ShapeType::Object )
+            {
+              // Si on a un element d'un groupe il faut tous les deselectionner !!!
+              ObjectPtr lObj = dynamic_cast<ObjectPtr>(ioEntity);
+              if( lObj != nullptr ) 
+                {
+                  GroupPtr lGroup = lObj->getGroup();
+                  if( lGroup != nullptr )
+                    {
+                      for( ObjectPtr lObjElem: lGroup->values() )
+                        {
+                          if( lObj != lObjElem )
+                            removeEntity( lObjElem, iSelectAll ); // il y a le emplace au debut!!!
+                        }
+                    }
+                }
+            }
+        //:::::::::: GROUP :::::::::::::
+
       }
   }
   //--------------------------------
@@ -429,8 +472,7 @@ namespace PP3d {
    {
      for( EntityPtr lEntity :  cSelectObjVect)
        {
-         if( lEntity->getType() != ShapeType::Object
-             || ((Object*)lEntity)->getObjType() != iObjType )
+         if( lEntity->getType() != ShapeType::Object )
            return false;
        }
      return true;
@@ -477,7 +519,67 @@ namespace PP3d {
 	pDatabase.getInput().addToInput( lEntity, pFlagLink );				
       }	
   }
+  //------------ GROUP -------------
+  bool Selection::combineGroup( DataBase & iBase)
+  {
+    std::cout << "combineGroup 1 sz:" << cSelectObjVect.size()  << std::endl;
+      
+    if( cSelectType != SelectType::Object
+        || cSelectObjVect.size() < 2 )
+      return false;
+
+    std::cout << "combineGroup 2" << std::endl;
+    
+    GroupPtr lNewGroup = nullptr;
+    //=====================
+    for(  EntityPtr lEntity : cSelectObjVect )
+      {
+        if( lEntity->getType()  != ShapeType::Object )
+          continue;
+        
+        ObjectPtr lObj = dynamic_cast<ObjectPtr>(lEntity);
+        if( lObj == nullptr ) 
+          continue;
+        
+        GroupPtr lGroup = lObj->getGroup();
+        if( lGroup != nullptr && lGroup == lNewGroup ) // ???
+          continue;
+        
+        if( lGroup != nullptr )
+          iBase.freeGroup( lGroup );
+        
+        if( lNewGroup == nullptr )
+          lNewGroup = iBase.newGroup();
+
+        lNewGroup->addObject( lObj ); 
+      }
+     //=====================
+    
+    //  removeAll(); ?
+    return true;
+  }
+  //--------------------------------
+  void Selection::separateGroup( DataBase & iBase)
+  {
+    if( cSelectType != SelectType::Object ) return ;
+    //=====================
+    for(  EntityPtr lEntity : cSelectObjVect )
+      {
+        if( lEntity->getType()  != ShapeType::Object ) continue;
+
+        ObjectPtr lObj = ((ObjectPtr)lEntity);
+
+        GroupPtr lGroup = lObj->getGroup();
+        if( lGroup != nullptr )
+          {
+            iBase.freeGroup( lGroup );
+          }        
+      }
+    
+    //=====================
+  }
+  //------------ GROUP -------------
 
   //******************************************
-
+ 
 }

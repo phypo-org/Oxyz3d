@@ -26,6 +26,9 @@ const char* TokFacet="F:";
 const char* TokPoly="P:";
 const char* TokObject="O:";
 
+const char* TokGroups="Groups:";
+const char* TokGroup="G:";
+
 const char* TokSaisiePt="Saisie:";
 
 const char* TokSelection="Sel:";
@@ -159,6 +162,24 @@ namespace PP3d {
       }
     cOut << std::endl;
 
+
+
+    if( pData.getGroups().size() )
+      {
+	cOut << TokGroups<< ' ' <<  pData.getGroups().size()<< std::endl;	    
+
+        for( const GroupPtr lGroup: pData.getGroups())
+          {
+            cOut<< TokGroup << ' ' << lGroup->getGroupId() << ' ' << lGroup->values().size();
+            for( const ObjectPtr lObj : lGroup->values() )
+              {
+                cOut  << ' ' << lObj->getId();
+              }
+            cOut << std::endl;
+          }        
+      }
+    cOut << std::endl;
+
     
     FacetPtr lSaiseFacet = pData.getInput().getCurrentLine();
     
@@ -185,6 +206,7 @@ namespace PP3d {
 	  }	    
 	cOut << std::endl;	    
       }
+    cOut << std::endl;
 
     if( iSel )
       {
@@ -387,9 +409,62 @@ namespace PP3d {
 			      cCreateResult->push_back( lObj );
 			    }
 			  SAVCOUT<< "************** pData.addObject 22222 *******************" << std::endl;
+                          lLocalDico.insert( { lId, lObj } );
 			}
 		    }
-		  else		    
+		  else	   //:::::::::: GROUP :::::::::::::
+		    if( lToken == TokGroups )
+		      {
+			size_t lNbGroup;
+			cIn >> lNbGroup;
+                        SAVCOUT << "Read Groups sz:" << lNbGroup << std::endl;
+                      }
+                  else
+                    if( lToken == TokGroup )
+		      {                        
+			size_t lGroupId ;
+			cIn >> lGroupId;
+                        
+ 			size_t lNb;
+			cIn >>  lNb  ;
+                        
+                        SAVCOUT << "Group " << lGroupId << "  sz:" << lNb << std::endl;
+
+                        
+                        if( lNb > 0 )
+                          {
+                            GroupPtr lNewGroup = pData.newGroup();
+
+                            SAVCOUT << "\t " << "new group " << lNewGroup->getGroupId() << std::endl;
+
+                            for( size_t i=0; i< lNb; i++)
+                              {			    
+                                EntityId lId;
+                                
+                                cIn >> lId ;
+                                SAVCOUT << i << ">\t Id " << lId  << std::endl;
+                                
+                                EntityPtr lEntity = lLocalDico.at(lId);
+                                if( lEntity != nullptr && lEntity->getType() == ShapeType::Object  )
+                                  {
+                                    ObjectPtr lObj = dynamic_cast<ObjectPtr>(lEntity);
+                                    if( lObj != nullptr )
+                                      {
+                                        SAVCOUT << "\t  add " << lId  << std::endl;
+                                        lNewGroup->addObject( lObj );
+                                      }
+                                    else
+                                      {
+                                        std::cerr << "Group : " <<  lGroupId
+                                             << " adding Object:" << lId
+                                                  << " failed " <<  std::endl;
+                                      }
+                                    
+                                  }
+                              }
+                          }
+                      } //:::::::::: GROUP :::::::::::::
+                 else		    
 		    if( lToken == TokSelection )
 		      {
 			std::string lStrTypeSelect;
@@ -405,7 +480,7 @@ namespace PP3d {
 			size_t lNb;
 			cIn >>  lNb  ;
 			
-			//	std::cout << "Selection " << lStrTypeSelect << " " << lSelType
+			//	SAVCOUT << "Selection " << lStrTypeSelect << " " << lSelType
 			//		  << " " << lNb << std::endl;
 			
 			for( size_t i=0; i< lNb; i++)
@@ -416,16 +491,16 @@ namespace PP3d {
 			    
 			    if( ioSel )
 			      {
-				//	std::cout << "Sel " << lId ;
+				//	SAVCOUT << "Sel " << lId ;
 	
 				EntityPtr lEntity = lLocalDico.at(lId);
 				if( lEntity != nullptr )
 				  {
 				    ioSel->addEntity( lEntity, true );
-				    //	    std::cout << " ok " <<  ioSel->getNbSelected()  << std::endl;
+				    //	    SAVCOUT << " ok " <<  ioSel->getNbSelected()  << std::endl;
 				  }
 				//	else
-				//	  std::cout << " ko " << std::endl;
+				//	  SAVCOUT << " ko " << std::endl;
 
 			      }
 			  }

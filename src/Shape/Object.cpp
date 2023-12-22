@@ -15,10 +15,53 @@
 
 
 namespace PP3d{
-
-
   //********************************
 
+  void GroupObject::addObject( ObjectPtr iObj)
+  {    
+    if(iObj->getGroup() != this )
+      {
+        cObjects.insertObj( iObj );
+        iObj->setGroup( this );
+      }
+  }
+  //---------------------------
+  void GroupObject::removeObject(ObjectPtr iObj)
+  {
+    if(iObj->getGroup() == this )
+      {
+        cObjects.removeObj( iObj );
+        iObj->internalSetGroup( nullptr );
+      }
+  }
+  //---------------------------
+  bool  GroupObject::exist( ObjectPtr iObj) const 
+  {
+    if( iObj->getGroup() == this )
+      {
+        return cObjects.existObj(iObj);
+      }
+    return false;
+  }
+  //---------------------------
+  void GroupObject::clear()
+  {
+    for( ObjectPtr lObj : cObjects )
+      {
+        lObj->internalSetGroup( nullptr );
+      }
+    cObjects.clear();
+  }
+  //********************************
+  void Object::setGroup( GroupPtr iGroup )
+  {
+    if( cGroup != nullptr )
+      {
+        cGroup->removeObject( this );
+      }
+    internalSetGroup( iGroup );
+  }
+  //---------------------------
   Object::Object(  const char*pName, ClassType  iClass )
     :cName(pName)
     ,cClassType( iClass )

@@ -163,10 +163,11 @@ namespace M3d {
     static void MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );
-
+  
     static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackExtrudePath(Fl_Widget* w, void* pUserData);
     static void MyMenuCallbackExtrudePathNorm(Fl_Widget* w, void* pUserData);
+ 
 
     //=========== MENUS =================
 

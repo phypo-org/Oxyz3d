@@ -1,0 +1,11 @@
+La normale d'un point d'une courbe ou d'une surface dans un espace à trois dimensions est généralement calculée en utilisant la dérivée seconde de la courbe ou de la surface en ce point. La formule générale pour calculer la normale d'un point (x, y, z) sur une courbe B-spline est :
+
+N = (d²x/dt², d²y/dt², d²z/dt²) / ||(d²x/dt², d²y/dt², d²z/dt²)||
+
+Où N est la normale, (x, y, z) sont les coordonnées du point, d est la dérivée et ||...|| est la norme euclidienne.
+
+La tangente d'un point d'une courbe ou d'une surface dans un espace à trois dimensions est généralement calculée en utilisant la dérivée première de la courbe ou de la surface en ce point. La formule générale pour calculer la tangente d'un point (x, y, z) sur une courbe B-spline est :
+
+T = (dx/dt, dy/dt, dz/dt) / ||(dx/dt, dy/dt, dz/dt)||
+
+Où T est la tangente, (x, y, z) sont les coordonnées du point, d est la dérivée et ||...|| est la norme euclidienne.

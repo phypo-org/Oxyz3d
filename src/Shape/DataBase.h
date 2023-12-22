@@ -26,13 +26,16 @@
 
 
 
+
+
 namespace PP3d {
 
   class Kamera;
   class ObjectFacet;
   class UndoHistory;
   class MyRead;
-  
+
+ 
   //************************************
   class  DataBase{	 
     static TUniqueId<EntityId, 1>         sUniqueId;
@@ -41,6 +44,18 @@ namespace PP3d {
   
     CurrentInput        cCurrent;
 
+
+    //------- GROUP -------
+  private:
+    static TUniqueId<EntityId, 1>  sUniqueGroupId;
+    PPu::HashSetPtr<GroupObject>   cGroups;
+  public:
+    void           freeGroup( GroupPtr iGroup );
+    GroupPtr newGroup();
+    const PPu::HashSetPtr<GroupObject> getGroups() { return cGroups; }
+    //------- GROUP -------
+
+    
   public:
     CurrentInput   &    getInput() { return cCurrent;}
     

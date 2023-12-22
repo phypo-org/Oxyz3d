@@ -173,7 +173,12 @@ namespace PP3d {
 	    }
 	}
     }
+    //---------- GROUP -------------
+    bool combineGroup( DataBase & iBase);
+    void separateGroup( DataBase & iBase);
+    //---------- GROUP -------------
 
+    
     //--------------------------------
   }; // Class
 }  // Namespace
