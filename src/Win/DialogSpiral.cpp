@@ -478,7 +478,7 @@ namespace M3d {
 
               
               std::stringstream  lDupStr0;
-              Utils::SaveObjectsInStream( TheBase, TheSelect.getSelectionVect(), lDupStr0);
+              Utils::SaveObjectsInStream( TheBase, false, TheSelect.getSelectionVect(), lDupStr0);
 
               // On duplique lNbPas les objets en les multipliant par la matrice a chaque fois.
               // Les premiers dupliqué sont multiplié plusieurs fois.

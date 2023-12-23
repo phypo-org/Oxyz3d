@@ -90,8 +90,8 @@ namespace M3d {
 	  //	  Application::Instance().getLua().append("OK");
 	}
       */
-      if( PP3d::MySav::Save( lua_tostring(pLua, 1),
-			     *Application::Instance().getDatabase(), &TheSelect  ))
+      if( PP3d::MySav::Save( lua_tostring(pLua, 1),  
+			     *Application::Instance().getDatabase(), true, &TheSelect  ))
 	{
 	  //	  lOut << "OK"<< std::endl;
 	  AppendConsoleLua( "Save ok");	  

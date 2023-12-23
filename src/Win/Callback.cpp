@@ -70,11 +70,11 @@ namespace M3d {
 	  {
 	    PP3d::SortVisitorEntity  lVisit;
 	    TheSelect.execVisitorOnlyOnObjects( lVisit );	    	    
-	    lRet = lSav.save( *ioDatabase, &TheSelect, &lVisit.cSetAllEntity );
+	    lRet = lSav.save( *ioDatabase, true, &TheSelect, &lVisit.cSetAllEntity );
 	  }
 	else
 	  {
-	    lRet = lSav.save( *ioDatabase,  &TheSelect, nullptr );
+	    lRet = lSav.save( *ioDatabase, true,  &TheSelect, nullptr );
 	  }
 	
 	lOut.close();

@@ -144,29 +144,12 @@ namespace M3d {
     void makeMenuSelect( Fl_Menu_Button& pMenu);
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
 
-    static void MyMenuCallbackSpline(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackFlip(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackAlign(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackSelect(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackShape(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackRevol(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackSpiralInput(Fl_Widget* w, void* pUserData);
-    static void MyMenuCallbackSpiralSelObj(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackInset(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData );
   
     static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackExtrudePath(Fl_Widget* w, void* pUserData);
-    static void MyMenuCallbackExtrudePathNorm(Fl_Widget* w, void* pUserData);
  
 
     //=========== MENUS =================

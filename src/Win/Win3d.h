@@ -67,8 +67,6 @@ namespace M3d {
     PP3d::Kamera& getKamera() { return cuCanvas3d->cKamera;}
     int getId()  { return cWinId; }
   private:
-    static void MyMenuCallback(Fl_Widget* w, void* pUserData );
-    static void QuitCallback(Fl_Widget*, void*);	 
 
     friend class Canvas3d;
   public:

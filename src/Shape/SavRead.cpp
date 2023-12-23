@@ -8,6 +8,8 @@
 #include "ObjectPolylines.h"
 #include "ObjectPoly.h"
 
+#include "Utils/PPContainer.h"
+
 /*
 const char* TokPoint="Point:";
 const char* TokLine="Line:";
@@ -40,7 +42,7 @@ bool sDebugSav = false;
 
 namespace PP3d {
   //*************************************
-  bool MySav::save( DataBase& pData, Selection * iSel, std::set<Entity*> * iFilter)
+  bool MySav::save( DataBase& pData,  bool iFlagSavGroup, Selection * iSel, std::set<Entity*> * iFilter )
   {
     const std::unordered_map<EntityId, Entity*>& lEntities = pData.getEntities();
 
@@ -164,7 +166,7 @@ namespace PP3d {
 
 
 
-    if( pData.getGroups().size() )
+    if( iFlagSavGroup && pData.getGroups().size() )
       {
 	cOut << TokGroups<< ' ' <<  pData.getGroups().size()<< std::endl;	    
 
@@ -232,7 +234,8 @@ namespace PP3d {
   bool MyRead::read( DataBase& pData, Selection * ioSel, bool pConserveOldId  )
   {
     try {
-      std::unordered_map<EntityId, Entity*> lLocalDico;
+      // std::unordered_map<EntityId, Entity*> lLocalDico;
+      PPu::HashMapPtr<EntityId,Entity> lLocalDico;
 				
       std::string lEndOfLine; // pour lire la fin de ligne
       
@@ -262,7 +265,7 @@ namespace PP3d {
 		  pData.addValidEntityForUndo(lPoint);
 		}
 
-	      lLocalDico.insert( { lId, lPoint } );
+	      lLocalDico.insertObj(  lId, lPoint );
 								
 	      ReadEndLine;
 	    }
@@ -273,19 +276,28 @@ namespace PP3d {
 									
 		cIn >> lId >> lFirstId >> lSecondId ;	
 		SAVCOUT<< " - Read Line <<" << lId <<" : " << lFirstId<< " : " << lSecondId <<  std::endl;
-							
-		Line* lLine = new Line( static_cast<PointPtr>(lLocalDico.at(lFirstId)),
-					static_cast<PointPtr>(lLocalDico.at(lSecondId)) );
-		
-		if( pConserveOldId )
-		  {
-		    lLine->setId( lId );
-		    pData.addValidEntityForUndo(lLine);
-		  }
-		
-		lLocalDico.insert( { lId, lLine } ); 
 
-		ReadEndLine;
+                EntityPtr lFirst  = lLocalDico.findObj( lFirstId ); 
+                EntityPtr lSecond = lLocalDico.findObj( lSecondId ); 
+
+                if( lFirst && lSecond )
+                  {
+                    Line* lLine = new Line( dynamic_cast<PointPtr>(lFirst ),
+                                            dynamic_cast<PointPtr>(lSecond));
+		
+                    if( pConserveOldId )
+                      {
+                        lLine->setId( lId );
+                        pData.addValidEntityForUndo(lLine);
+                      }
+                    
+                    lLocalDico.insertObj( lId, lLine  ); 
+                  }
+                else {
+                  std::cerr << "Error Line : point not found :" << lFirstId << " or " << lSecondId <<  std::endl;
+                }
+                
+                ReadEndLine;
 	      }
 	    else
 	      if( lToken == TokFacet )
@@ -295,14 +307,21 @@ namespace PP3d {
 												
 		  cIn >> lId >> lNb  ;
 		  SAVCOUT<< " - Read Facet <<" << lId <<" : " << lNb <<  std::endl;
-		  Facet *lFacet = new Facet();
+		  FacetPtr lFacet = new Facet();
 												
 		  for( size_t i=0; i< lNb; i++)
 		    {
 		      cIn >> lLineId ;
-		      lFacet->addLine( static_cast<LinePtr>(lLocalDico.at(lLineId)) );
+                      EntityPtr lLinePtr = lLocalDico.findObj(lLineId );
+                      if( lLinePtr )
+                        {
+                          lFacet->addLine( dynamic_cast<LinePtr>( lLinePtr ) );
 														
-		      SAVCOUT<< "- Read  "  << i << ":" << lLineId <<  std::endl;														
+                          SAVCOUT<< "- Read  "  << i << ":" << lLineId <<  std::endl;							}
+                      else
+                        {
+                          std::cerr << "Error Facet : line not found:" << lLineId << std::endl;
+                        }
 		    }
 		  if( pConserveOldId )
 		    {
@@ -310,7 +329,7 @@ namespace PP3d {
 		      pData.addValidEntityForUndo( lFacet );
 		    }
 		  
-		  lLocalDico.insert( { lId, lFacet } );
+		  lLocalDico.insertObj(  lId, lFacet );
 												
 		  ReadEndLine;
 		}
@@ -330,15 +349,24 @@ namespace PP3d {
 			cIn >> lFacetId;
 
 			SAVCOUT<< " - Read   " <<  i << ":" << lFacetId <<  std::endl;
-			lPoly->addFacet( static_cast<FacetPtr>(lLocalDico.at(lFacetId)));
+                        EntityPtr lFacetPtr = lLocalDico.findObj( lFacetId );
 
-			if( pConserveOldId )
-			  {
-			    lPoly->setId( lId );
-			    pData.addValidEntityForUndo(lPoly);
-			  }
+                        if( lFacetPtr )
+                          {
+                            lPoly->addFacet( dynamic_cast<FacetPtr>(lFacetPtr));
+                            
+                            if( pConserveOldId )
+                              {
+                                lPoly->setId( lId );
+                                pData.addValidEntityForUndo(lPoly);
+                              }
+                          }
+                        else {
+                          std::cerr << "Error Poly : facet not found :" << lFacetId << std::endl;
+                        }
+                            
 			
-			lLocalDico.insert( { lId, lPoly } );
+			lLocalDico.insertObj( lId, lPoly );
 		      }
 		    ReadEndLine;
 		  }
@@ -372,26 +400,33 @@ namespace PP3d {
 		      
 		      Object* lObj=nullptr;
 
-		      
-		      switch( GetObjectTypeFromStr( lSubType.c_str() ))
-			{
-			case ObjectType::ObjPoint: break;
-			case ObjectType::ObjLine:
-			  lObj = new ObjectLine( lName, static_cast<LinePtr>(lLocalDico.at(lSubId)));
-			  break;
-			case ObjectType::ObjFacet:;
-			  lObj = new ObjectFacet( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
-			  break;
-			case ObjectType::ObjPoly:  ;
-			  lObj = new ObjectPoly( lName, static_cast<PolyPtr>(lLocalDico.at(lSubId)));
-			  break;
-			case ObjectType::ObjPolyline:;
-			  lObj = new ObjectPolylines( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
-			  break;
-			case ObjectType::ObjBSpline:;
-			  lObj = new ObjectPolylines( lName, static_cast<FacetPtr>(lLocalDico.at(lSubId)));
-			  break;			case ObjectType::ObjNull: break;								
-			}
+		      EntityPtr lSubPtr = lLocalDico.findObj(lSubId);
+                      if( lSubPtr )
+                        {                        
+                          switch( GetObjectTypeFromStr( lSubType.c_str() ))
+                            {
+                            case ObjectType::ObjPoint: break;
+                            case ObjectType::ObjLine:
+                              lObj = new ObjectLine( lName, dynamic_cast<LinePtr>(lSubPtr));
+                              break;
+                            case ObjectType::ObjFacet:
+                              lObj = new ObjectFacet( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              break;
+                            case ObjectType::ObjPoly:
+                              lObj = new ObjectPoly( lName, dynamic_cast<PolyPtr>(lSubPtr));
+                              break;
+                            case ObjectType::ObjPolyline:
+                              lObj = new ObjectPolylines( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              break;
+                            case ObjectType::ObjBSpline:
+                              lObj = new ObjectPolylines( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              break;
+                            case ObjectType::ObjNull: break;       				
+                            }
+                        }
+                      else {
+                        std::cerr << "Error Object - component not found :" << lSubId << std::endl;
+                      }
 
 
 		      if( lObj != nullptr )
@@ -409,7 +444,7 @@ namespace PP3d {
 			      cCreateResult->push_back( lObj );
 			    }
 			  SAVCOUT<< "************** pData.addObject 22222 *******************" << std::endl;
-                          lLocalDico.insert( { lId, lObj } );
+                          lLocalDico.insertObj(  lId, lObj  );
 			}
 		    }
 		  else	   //:::::::::: GROUP :::::::::::::
@@ -444,7 +479,8 @@ namespace PP3d {
                                 cIn >> lId ;
                                 SAVCOUT << i << ">\t Id " << lId  << std::endl;
                                 
-                                EntityPtr lEntity = lLocalDico.at(lId);
+                                EntityPtr lEntity = lLocalDico.findObj(lId);
+                                
                                 if( lEntity != nullptr && lEntity->getType() == ShapeType::Object  )
                                   {
                                     ObjectPtr lObj = dynamic_cast<ObjectPtr>(lEntity);
@@ -492,19 +528,16 @@ namespace PP3d {
 			    if( ioSel )
 			      {
 				//	SAVCOUT << "Sel " << lId ;
-	
-				EntityPtr lEntity = lLocalDico.at(lId);
-				if( lEntity != nullptr )
-				  {
-				    ioSel->addEntity( lEntity, true );
-				    //	    SAVCOUT << " ok " <<  ioSel->getNbSelected()  << std::endl;
-				  }
-				//	else
-				//	  SAVCOUT << " ko " << std::endl;
-
+                                  EntityPtr lEntity = lLocalDico.findObj(lId);
+                                  if( lEntity != nullptr )
+                                    {
+                                      ioSel->addEntity( lEntity, true );
+                                      //	    SAVCOUT << " ok " <<  ioSel->getNbSelected()  << std::endl;
+                                    }
+                                  //	else
+				//	  SAVCOUT << " ko " << std::endl;                                    
 			      }
-			  }
-			
+			  }			
 		      }	  
 		    else
 		    {

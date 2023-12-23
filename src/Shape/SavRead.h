@@ -23,16 +23,16 @@ namespace PP3d {
       :cOut( pOut )
     {;}
 
-    bool save( DataBase& pData, Selection * iSel= nullptr, std::set<Entity*> * iFilter = nullptr );
+    bool save( DataBase& pData, bool iFlagSavGroup, Selection * iSel= nullptr, std::set<Entity*> * iFilter = nullptr );
 
-    static bool Save( const char* iFileIn, PP3d::DataBase& iDatabase, Selection * iSel )
+    static bool Save( const char* iFileIn, PP3d::DataBase& iDatabase, bool iFlagSavGroup, Selection * iSel )
     {
       std::ofstream lFilSav;						
       lFilSav.open( iFileIn );
       if( lFilSav.good() )
 	{	  
 	  MySav lSav( lFilSav );	  	  
-	  return lSav.save( iDatabase, iSel );	  
+	  return lSav.save( iDatabase, iFlagSavGroup, iSel );	  
 	}
       return false;
     }

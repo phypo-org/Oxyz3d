@@ -30,14 +30,14 @@ namespace M3d{
       
       std::stringstream lDupStr;      
       PP3d::MySav lSav( lDupStr );      
-      bool lRet = lSav.save( iSrcBase, nullptr, &lVisit.cSetAllEntity );
+      bool lRet = lSav.save( iSrcBase, false, nullptr, &lVisit.cSetAllEntity );
       
       if( lRet )
         {
           std::vector<PP3d::EntityPtr> lNewObjs;
           PP3d::MyRead lRead( lDupStr, &lNewObjs );
           
-          lRet = lRead.read( oDestBase, nullptr, false );
+          lRet = lRead.read( oDestBase,  nullptr );
         }
     
     return lRet;
@@ -51,7 +51,7 @@ namespace M3d{
    }
     //------------------------------------------------------------
     template <class SET_ENTITY>
-    static bool SaveObjectsInStream(  PP3d::DataBase   & iSrcBase,
+    static bool SaveObjectsInStream(  PP3d::DataBase   & iSrcBase, bool iFlagGroup,
                                       SET_ENTITY & iInVectObj, //std::vector<PP3d::EntityPtr>
                                       std::ostream & oDupStr )
     {
@@ -62,7 +62,7 @@ namespace M3d{
 	}
       
       PP3d::MySav lSav( oDupStr );      
-      bool lRet = lSav.save( iSrcBase, nullptr, &lVisit.cSetAllEntity );
+      bool lRet = lSav.save( iSrcBase, iFlagGroup, nullptr, &lVisit.cSetAllEntity );
       
     return lRet;   }
   };

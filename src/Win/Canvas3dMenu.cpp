@@ -233,923 +233,45 @@ namespace M3d {
   M3d::Canvas3d* lCanvas = reinterpret_cast<M3d::Canvas3d*>(pUserData);	\
 
 
+#define LAMBDA [](Fl_Widget *w, void *pUserData) { BEGINCALL
+#define ADBMAL }
   
-
-  //-------------------------------------------
-  void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
-  {
-    if( TheSelect.getNbSelected() > 0 )
-      {										
-	makeMenuSelect(  *cPopup);
-      }
-    else
-      {
-	makeMenuPrimitiv( *cPopup );
-      }
-  }
-  //-------------------------------------------
- 
-  //-------------------------------------------
-  //
-  void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
-  {
-    int lMenuFlagActif=0;
-   
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "", MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Move  "/" StrMenu_MoveAxis, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
+ //-------------------------------------------
+  static bool DuplicateSelection()
+  {    
+    PP3d::SortVisitorEntity  lVisit;    
+    TheSelect.execVisitorOnlyOnObjects( lVisit );
     
-    pMenu.add( StrMenu_Rot  "/" StrMenu_CenterRotAxis, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  MyMenuCallbackSelect, this);
+    std::stringstream lDupStr;
+    PP3d::MySav lSav( lDupStr );				
+    bool lRet = lSav.save( *TheAppli.getDatabase(), false, nullptr, &lVisit.cSetAllEntity  );
     
-    pMenu.add( StrMenu_Rot  "/" StrMenu_RotFacetNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    if(  TheSelect.getSelectType() == PP3d::SelectType::Object
-	 || TheSelect.getSelectType() ==  PP3d::SelectType::Facet)
-      {	
-	pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-	if( TheSelect.getNbSelected() > 0 )
-	  {
-	    pMenu.add( StrMenu_InvertNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER );
-	  }
-      }
-		
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleU, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleX, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRX, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRY, "",  MyMenuCallbackSelect, this);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleNormal, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-      pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-
-    if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
+    if( lRet )
       {
-
-        pMenu.add( StrMenu_Flip "/" StrMenu_FlipX, "", MyMenuCallbackFlip, this, FL_MENU_DIVIDER);
-        pMenu.add( StrMenu_Flip "/" StrMenu_FlipY, "", MyMenuCallbackFlip, this);
-        pMenu.add( StrMenu_Flip "/" StrMenu_FlipZ, "", MyMenuCallbackFlip, this);
-        pMenu.add( StrMenu_Flip "/" StrMenu_FlipPlane, "", MyMenuCallbackFlip, this);
-
-
+        std::vector<PP3d::EntityPtr> lNewObjs;
+        PP3d::MyRead lRead( lDupStr, &lNewObjs );
         
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupInPlace, "", MyMenuCallbackSelect, this, FL_MENU_DIVIDER);
-        
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "", MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "", MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "", MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",  MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",  MyMenuCallbackSelect, this);
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",  MyMenuCallbackSelect, this, FL_MENU_DIVIDER);	
-      }
-    
-    if(  TheSelect.getSelectType() == PP3d::SelectType::Point
-	 && TheSelect.getNbSelected() > 1 )
-      {
-	pMenu.add( StrMenu_ConnectPoint, "", MyMenuCallbackConnectPoint, this);	
-      }
-    
-
-     lMenuFlagActif=FL_MENU_INACTIVE;   
-    cout << "Nb Selected:" << TheSelect.getNbSelected() << " type:" << PP3d::GetStrShapeType( TheSelect.getSelectType() ) << endl;
-
-    if( TheSelect.getNbSelected() > 2 
-	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
-      // && TheSelect.allHaveTheSameOwner()) 
-      lMenuFlagActif = 0;
-    
-    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
-
-    
-    
-    lMenuFlagActif=FL_MENU_INACTIVE;
-    if( TheSelect.getNbSelected()
-	&& TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
-      lMenuFlagActif = 0;
-
-    pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", MyMenuCallbackModifyShape, this, FL_MENU_DIVIDER | lMenuFlagActif);
-
-
-    
-
-    if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
-        && TheSelect.getNbSelected() > 0
-        && TheSelect.isOnlyObject( PP3d::ObjectType::ObjBSpline ) )
-      {
-          
-        pMenu.add( StrMenu_Spline "/" StrMenu_MuteBSplineToPolyline , "", MyMenuCallbackSpline, this);
-        pMenu.add( StrMenu_Spline "/" StrMenu_CreatPolylineFromBSpline , "", MyMenuCallbackSpline, this);
-      }
-
-
-
-
-    // ======= SPIRAL ========
-    if(  TheSelect.getNbSelected() > 0 && TheSelect.getSelectType() == PP3d::SelectType::Object   )
-      {
-        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralX, "^x", MyMenuCallbackSpiralSelObj, this );
-        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralSelObj, this );
-        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralSelObj, this );
-    
-          pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralSelObj, this, FL_MENU_DIVIDER );
-      }
-        // ======= SPIRAL ========
-
-
-    //=========== GROUP ===========
-    if( TheSelect.getSelectType() == PP3d::SelectType::Object )
-      {
-    
-        if(  TheSelect.getNbSelected() > 1 )
-          pMenu.add( StrMenu_CombineIntoGroup, "",
-                     //:::::::::::::::::::::::::::::::::::
-                     [](Fl_Widget *w, void *pUserData) {
-                         std::cout <<"Callback lambda" << std::endl;
-                         TheSelect.combineGroup(TheBase);
-                       },
-                     //:::::::::::::::::::::::::::::::::::
-                     this, FL_MENU_DIVIDER );
-        
-        if( TheSelect.getNbSelected() > 0 )
-          {
-            pMenu.add( StrMenu_SeparateGroup, "",
-                     //:::::::::::::::::::::::::::::::::::
-                       [](Fl_Widget *w, void *pUserData) {
-                         BEGINCALL
-                               
-                         std::cout <<"Callback lambda 2" << std::endl;
-                         TheSelect.separateGroup(TheBase);                               
-                       },
-                     //:::::::::::::::::::::::::::::::::::
-                       this
-                       );
-          }
-      }
-        
-        //=========== GROUP ===========
-
-    
-    if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
-      {
-	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "", MyMenuCallbackCutLine, this);
-  	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut4, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut5, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut6, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut7, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut8, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut9, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut10, "", MyMenuCallbackCutLine, this);
-   	pMenu.add( StrMenu_Cut "/"  StrMenu_CutN, "", MyMenuCallbackCutLine, this);
-      }
-
-    if(  (TheSelect.getSelectType() != PP3d::SelectType::Point
-	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
-	 && TheSelect.getNbSelected() > 0)
-      {
-	pMenu.add( StrMenu_Inset, "", MyMenuCallbackInset, this);
-	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate,  "", MyMenuCallbackSubdivide1, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate2, "", MyMenuCallbackSubdivide2, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate3, "", MyMenuCallbackSubdivide2, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate4, "", MyMenuCallbackSubdivide2, this, FL_MENU_DIVIDER);
-	//	pMenu.add( StrMenu_TriangulateCentral, "", MyMenuCallbackSubdivide, this);
-	
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFalse, "", MyMenuCallbackSubdiveCatmullClark, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
-	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
-	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideFold, "", MyMenuCallbackSubdivide, this);
-	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralFold, "", MyMenuCallbackSubdivide, this); 
-      }
-   
-    switch( TheSelect.getSelectType() )
-      {
-      case PP3d::SelectType::Point :	
-      case PP3d::SelectType::Line :
-      case PP3d::SelectType::Object :
-        
-	break;
-      case PP3d::SelectType::Facet :	
-	{
-	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", MyMenuCallbackExtrude, this);
-	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "", MyMenuCallbackExtrude, this);
-	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "", MyMenuCallbackExtrude, this);
-	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "", MyMenuCallbackExtrude, this);
-	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "", MyMenuCallbackExtrude, this);
-
-
-	  if(TheInput.getCurrentLine()  != nullptr && TheSelect.getNbSelected() > 0 )
-	    {
-              pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePath, "", MyMenuCallbackExtrudePath, this);
-              pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", MyMenuCallbackExtrudePathNorm, this);
-	    }
-
-	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenX, "", MyMenuCallbackFlatten, this);
-	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenY, "", MyMenuCallbackFlatten, this);
-	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenZ, "", MyMenuCallbackFlatten, this);
-	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenAxis, "", MyMenuCallbackFlatten, this);
-	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenAvg, "", MyMenuCallbackFlatten, this);
-	  
-	  if( TheSelect.getNbSelected() == 2 )
-	    pMenu.add( StrMenu_PutOn, "", MyMenuCallbackPutOn, this);
-	  
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnY, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnZ, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_X, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Y, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Z, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnAxis, "", MyMenuCallbackAlign, this);
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnNorm, "", MyMenuCallbackAlign, this);
-	}
-	break;
-      case PP3d::SelectType::Poly :
-
-        
-	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", MyMenuCallbackSelect, this);
-	break;
-      case PP3d::SelectType::All :
-      default:;
-      }
-  }
-
-//-------------------------------------------
-  // If no entity is selected
-  void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
-  {
-    int lMenuFlagActif=0;
-    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreateFacet,    "^c",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreatePlane,    "",   MyMenuCallbackPrimitiv,   this);
-    
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCylinder, "y",   MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/"  StrMenu_CreateSphere,   "s",   MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCube ,    "^c",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateTetra,    "^t",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreatePyramid,  "^p",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateOcto,     "^o",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateDodec,    "^d",  MyMenuCallbackPrimitiv,   this);
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateIcosahe,  "^i",  MyMenuCallbackPrimitiv,   this, FL_MENU_DIVIDER);
-
-    // Ajouter sphere (2 types differents)
-    // Ajouter cone
-    // Ajouter cylindre (revolution) (disque,  anneau si troue)
-    // Ajouter nappe
-    // Ajout anneau
-    // Ajout helice 
-    // ... Ajout script lua !!! plugin
-    
-    lMenuFlagActif = FL_MENU_INACTIVE;
-
-    
+       TheSelect.removeAll();
+       
+       if( (lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false ))
+            && lNewObjs.size() > 0 )
+         {
+           TheSelect.removeAll();
  
-
-
-    if(TheInput.isCurrentPoints() 
-       &&TheInput.getNbCurrentPoints() == 2 )
-      {
-	lMenuFlagActif=0;
+           for( PP3d::EntityPtr lObj : lNewObjs )
+             {
+               TheSelect.addEntity( lObj );
+             }
+          }
       }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", MyMenuCallbackShape,this,lMenuFlagActif);
-      
-    
-    lMenuFlagActif = FL_MENU_INACTIVE;
-    if(TheInput.isCurrentPoints()
-       &&TheInput.getNbCurrentPoints()  >= 3 )
-      {
- 	lMenuFlagActif=0;
-      }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "", MyMenuCallbackShape , this,lMenuFlagActif);
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "", MyMenuCallbackShape, this,lMenuFlagActif);
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "", MyMenuCallbackShape, this,lMenuFlagActif);
-
-    
-    lMenuFlagActif=FL_MENU_INACTIVE;
-    if(TheInput.isCurrentPoints()
-       &&TheInput.getNbCurrentPoints() >= 2 )
-      {
- 	lMenuFlagActif=0;
-      }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "", MyMenuCallbackShape,this,   lMenuFlagActif);
-        pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
-          pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "", MyMenuCallbackShape,this, FL_MENU_DIVIDER | lMenuFlagActif);
-
-    //===== Revol
-    lMenuFlagActif = 0;
-    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
-
-    pMenu.add( StrMenu_Revol "/" StrMenu_RevolX, "^x", MyMenuCallbackRevol, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Revol "/" StrMenu_RevolY, "^y", MyMenuCallbackRevol, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z", MyMenuCallbackRevol, this, lMenuFlagActif);
+    return lRet;
+  }
+  //-------------------------------------------
  
-    lMenuFlagActif = 0;
-    pMenu.add( StrMenu_Revol "/" StrMenu_RevolAxis, "", MyMenuCallbackRevol, this, lMenuFlagActif);
-
-
-    //====== Spiral 
-    lMenuFlagActif = 0;
-    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
-      
-    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralX, "^x", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralY, "^y", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
-    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralZ, "^z", MyMenuCallbackSpiralInput, this, lMenuFlagActif);
- 
-    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralAxis, "", MyMenuCallbackSpiralInput, this, FL_MENU_DIVIDER | lMenuFlagActif);
-
-
-    //==============
-    pMenu.add( StrMenu_CallDialoDiagSub, "",MyMenuCallbackPrimitiv, this, FL_MENU_DIVIDER  );
-
-  }
-  //-------------------------------------------
-  //-------------------------------------------
-  //-------------------------------------------
-
-  //-------------------------------------------
-void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
-  {
-   
-    BEGINCALL
-    //-----------------
-      bool lFlagMakeAnything = false;
-    
-    for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
-        {
-       std::cout << "*********** MENU FOR CALL ObjBSpline::CreatePolyline" << std::endl;
-         if( lEntity->getType() ==  PP3d::ShapeType::Object
-              && (( PP3d::Object*)lEntity)->getObjType() ==   PP3d::ObjectType::ObjBSpline )
-            {
-              PP3d::Object* lObj = nullptr;
-                 
-              if( strcmp( m->label(), StrMenu_MuteBSplineToPolyline ) == 0)
-                {
-                  lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
-                  TheBase.deleteEntity( lEntity );
-                }
-              else
-                if( strcmp( m->label(), StrMenu_CreatPolylineFromBSpline ) == 0)
-                  {
-                    lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
-                  }
-              
-              if( lObj != nullptr )
-                {
-                  TheBase.addObject(lObj  );
-                  lFlagMakeAnything = true;
-                }
-            }
-        }
-    
-    if( lFlagMakeAnything )
-      {
-        PushHistory();
-        TheAppli.redrawAll( PP3d::Compute::FacetAll);                
-      }
-    //-----------------
-  }
- 
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackShape(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL
-      
-    PP3d::Object* lShape=nullptr;
-    //-----------------
-    if( strcmp( m->label(), StrMenu_CreateShapeFacet ) == 0)
-      {
-        if( TheInput.getNbCurrentPoints() >= 3 )
-          {
-            lShape =TheInput.convertCurrentLineToFacet(TheBase);
-          }
-      }
-    
-    if( strcmp( m->label(), StrMenu_CreateShapeFacetP ) == 0)
-      {
-        if( TheInput.getNbCurrentPoints() >= 3 )
-          {
-            lShape =TheInput.convertCurrentLineToFacetPoly(TheBase);
-          }
-      }
-    
-    if( strcmp( m->label(), StrMenu_CreateShapeFacet2P ) == 0)
-      {
-        if( TheInput.getNbCurrentPoints() >= 3 )
-          {
-            lShape =TheInput.convertCurrentLineToBiFacetPoly(TheBase);
-          }
-      }
-    
-    //-----------------
-    else if( strcmp( m->label(), StrMenu_CreateShapePolyline ) == 0)
-      {
-        if(TheInput.getNbCurrentPoints() >= 2 )
-          {
-           lShape =TheInput.convertCurrentLineToPolylines(TheBase);
-          }
-      }
-    else if( strcmp( m->label(), StrMenu_CreateShapeBSpline ) == 0)
-      {
-        if(TheInput.getNbCurrentPoints() >= 2 )
-          {
-            lShape =TheInput.convertCurrentLineToBSpline(TheBase, MyPref.cBSplineMaille, false );
-          }
-      }
-    else if( strcmp( m->label(), StrMenu_CreateShapeBSplineClosed ) == 0)
-      {
-        if(TheInput.getNbCurrentPoints() >= 2 )
-          {
-            lShape =TheInput.convertCurrentLineToBSpline(TheBase, MyPref.cBSplineMaille, true );
-          }
-      }
-     
-    //-----------------
-    else if( strcmp( m->label(), StrMenu_CreateShapeLine ) == 0)
-      {
-        if( TheInput.getNbCurrentPoints() == 2 )
-          {
-           lShape =TheInput.convertCurrentLineToLine(TheBase);
-          }
-      }
-	
-    if( lShape != nullptr )
-      {
-        //						lCanvas->Application::Instance().getDatabase()_>addObject( new PP3d::Object3d( lShape, PP3d::Object3d::GetNewObjecId(), lShape->getClassName() ));
-        PushHistory();
-        TheInput.delAllPoint();
-        TheAppli.redrawAll( PP3d::Compute::FacetAll);
-      }
-  }
-  //-------------------------------------------
-
-  void Canvas3d::MyMenuCallbackPrimitiv(Fl_Widget* w, void* pUserData)
-  {		
-    BEGINCALL  
-				
-      if( strcmp( m->label(), StrMenu_CreateFacet ) == 0)
-	{
-	  std::cout << "MyMenuCallbackPrimitiv StrMenu_CreateFacet"<< std::endl;
-    
-	  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
-	}
-    if( strcmp( m->label(), StrMenu_CreateCylinder ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER  );
-      }
-    if( strcmp( m->label(), StrMenu_CreateSphere ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::SPHERE  );
-      }
-    if( strcmp( m->label(), StrMenu_CreatePlane ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreateCube ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreateTetra ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TETRA  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreatePyramid ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PYRAMID  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreateOcto ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreateDodec ) == 0)
-      {
-	CallDialogPrimitiv( PP3d::PrimitivFactory::Type::DODEC  );
-      }
-    else if( strcmp( m->label(), StrMenu_CreateIcosahe ) == 0)
-      {
-	CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
-      }
-    //========================================
-    else if( strcmp( m->label(), StrMenu_CallDialoDiagSub ) == 0)
-      {
-        CallDialogSubDiv( slFlagDialog, lCanvas );
-      }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackRevol(Fl_Widget* w, void* pUserData)
-  {		
-    BEGINCALL  
- 
-      if( strcmp( m->label(), StrMenu_RevolX )  == 0)
-        {
-          CallDialogRevol( TypeRevol::RevolX  );
-        }
-      else if( strcmp( m->label(), StrMenu_RevolY )  == 0)
-        {
-          CallDialogRevol( TypeRevol::RevolY  );
-        }
-      else if( strcmp( m->label(), StrMenu_RevolZ)  == 0)
-        {
-          CallDialogRevol( TypeRevol::RevolZ  );
-        }									
-      else if( strcmp( m->label(), StrMenu_RevolAxis)  == 0)
-        {
-          CallDialogRevol( TypeRevol::RevolAxis  );
-        }									
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackSpiralInput(Fl_Widget* w, void* pUserData)
-  {		
-    BEGINCALL  
-
-      if( strcmp( m->label(), StrMenu_SpiralX )  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_ENTRY );
-        }
-      else if( strcmp( m->label(), StrMenu_SpiralY )  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_ENTRY  );
-        }
-      else if( strcmp( m->label(), StrMenu_SpiralZ)  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_ENTRY  );
-        }									
-      else if( strcmp( m->label(), StrMenu_SpiralAxis)  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_ENTRY  );
-        }									           
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackSpiralSelObj(Fl_Widget* w, void* pUserData)
-  {		
-    BEGINCALL  
-
-      if( strcmp( m->label(), StrMenu_SpiralX )  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_OBJECT  );
-        }
-      else if( strcmp( m->label(), StrMenu_SpiralY )  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_OBJECT  );
-        }
-      else if( strcmp( m->label(), StrMenu_SpiralZ)  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_OBJECT  );
-        }									
-      else if( strcmp( m->label(), StrMenu_SpiralAxis)  == 0)
-        {
-          CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );
-        }									           
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackExtrudePath(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL ;
-
-    std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePath" << std::endl;
-    PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
-
-    if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
-      {
-        std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  1" << std::endl;
-        PP3d::Point3d lPtZero;
-        PP3d::Point3d lAxis(1,0,0);
-        TheAppli.getAxis( lPtZero, lAxis );
-        std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  2" << std::endl;
-
-        PP3d::Modif::ExtrudePath( TheBase, TheSelect, lPtZero, lAxis, lFacet );
-
-        PushHistory();	
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackExtrudePathNorm(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL ;
-
-    std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
-    PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
-
-    if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
-      {
-        std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  1" << std::endl;
-        PP3d::Point3d lPtZero;
-        PP3d::Point3d lAxis(1,0,0);
-        TheAppli.getAxis( lPtZero, lAxis );
-        std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  2" << std::endl;
-
-        PP3d::Modif::ExtrudePathNorm( TheBase, TheSelect, lPtZero, lAxis, lFacet );
-
-        PushHistory();	
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackExtrude(Fl_Widget* w, void* pUserData)
-  {	  		
-    BEGINCALL ;
-    PP3d::SortEntityVisitorPointFacet lVisit;
-    TheSelect.execVisitorOnEntity( lVisit );
-    
-    std::vector<PP3d::EntityPtr> lNewFacets;
-    
-    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
-      {
-        TheSelect.removeAll();
-        TheSelect.addGoodEntityFor(lNewFacets);  
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-        lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-	
-        //============== TRANSFORMATION ====================
-        if( strcmp( m->label(), StrMenu_ExtrudeX ) == 0)
-          {
-            Application::Instance().setCurrentTransformType(Transform::MoveX);
-          }
-        else if( strcmp( m->label(), StrMenu_ExtrudeY ) == 0)
-          {
-            Application::Instance().setCurrentTransformType(Transform::MoveY);
-          }
-        else if( strcmp( m->label(), StrMenu_ExtrudeZ ) == 0)
-          {
-            Application::Instance().setCurrentTransformType(Transform::MoveZ);
-          }
-        else if( strcmp( m->label(), StrMenu_ExtrudeNorm) == 0)
-          {
-            Application::Instance().setCurrentTransformType(Transform::MoveNormal);
-          }
-        else if( strcmp( m->label(), StrMenu_ExtrudeTrans ) == 0)
-          {
-            Application::Instance().setCurrentTransformType(Transform::MoveAxis);
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackFlatten(Fl_Widget* w, void* pUserData)
-  {	  		
-    BEGINCALL ;
-    
-
-    if( strcmp( m->label(), StrMenu_FlattenX ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg /= lVisit.cVectPoints.size();
-	
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().x() =  lAvg.x();
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-
-      }
-    else if( strcmp( m->label(), StrMenu_FlattenY ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg /= lVisit.cVectPoints.size();
-	
-        for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().y() =  lAvg.y();
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-	
-      }
-    else if( strcmp( m->label(), StrMenu_FlattenZ ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg /= lVisit.cVectPoints.size();
-	
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().z() =  lAvg.z();
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-    else if( strcmp( m->label(), StrMenu_FlattenAvg ) == 0)
-      {
-        //	BUG !!!!!!!!!!!!!!!!!!
-        // il faut trouver le centre et le vecteur moyen
-        PP3d::SortEntityVisitorPointFacet lVisit;		    
-        TheSelect.execVisitorOnEntity(lVisit);
-	
-        PP3d::Point3d lCenter;
-        PP3d::Point3d lAvgNorm;
-	
-        if( PP3d::GetVectorFromFacets( lVisit, lAvgNorm, lCenter ))
-          {		    
-            PP3d::Mat4 lMatAlign;
-            PP3d::Point3d u1(0,1,0);	    
-            lMatAlign.rotateAlign( u1, lAvgNorm  );
-	    
-            PP3d::Mat4 lMatInv;
-            lMatInv.rotateAlignInv( u1, lAvgNorm ); 
-	    
-	    
-            for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
-              {
-                lPtr->get() -= lCenter;  // changement de repere sur lCenter		
-                lPtr->get() *= lMatAlign; // on fait tourner pour mettre la normale sur l'axe des y
-                lPtr->get().y() = 0;
-                lPtr->get() *= lMatInv;  // on remet la normale a sa place
-		  
-                lPtr->get() += lCenter;  // on revient au repere central
-                // On doit pouvoir combiner tout ca dans une seul matrice pour eviter des calculs inutiles
-              }
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-    else if( strcmp( m->label(), StrMenu_FlattenAxis ) == 0)
-      {
-        // A FAIRE
-      }
-  }
-  //-------------------------------------------
-
-  void Canvas3d::MyMenuCallbackFlip(Fl_Widget* w, void* pUserData)
-  {	  		
-    BEGINCALL ;
-
-    cout << "Canvas3d::MyMenuCallbackFlip" << endl;
-
-    if( strcmp( m->label(), StrMenu_FlipX ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg *=2;
-        lAvg /= lVisit.cVectPoints.size();
-	
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().x() = -lPtr->get().x()+ lAvg.x();
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-
-      }
-    else if( strcmp( m->label(), StrMenu_FlipY ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg *=2;
-        lAvg /= lVisit.cVectPoints.size();
-
-        for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().y() = - lPtr->get().y()+ lAvg.y() ;
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-	
-      }
-    else if( strcmp( m->label(), StrMenu_FlipZ ) == 0)
-      {
-        PP3d::SortEntityVisitorPoint lVisit;    
-        TheSelect.execVisitorOnEntity( lVisit );
-        PP3d::Point3d lAvg;
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lAvg += lPtr->get();
-          }
-        lAvg *=2;
-        lAvg /= lVisit.cVectPoints.size();
- 
-        for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
-          {
-            lPtr->get().z() =  -lPtr->get().z()+lAvg.z();
-          }
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-    else if( strcmp( m->label(), StrMenu_FlipPlane ) == 0)
-      {
-        // // // // // A_FAIRE
-        std::cerr << "StrMenu_FlipPlane not implemented" << std::endl;
-      }
- 
-  }
-
-
-
-  
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackPutOn(Fl_Widget* w, void* pUserData)
-  {	  		
-    BEGINCALL ;
-
-    if( strcmp( m->label(), StrMenu_PutOn ) == 0
-        && TheSelect.getSelectType() == PP3d::SelectType::Facet
-        && TheSelect.getNbSelected() == 2 )
-      {
-        PP3d::FacetPtr lFacetToMove = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
-        PP3d::FacetPtr lFacetDest   = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
-
-        PP3d::Vector3d lNormToMove =  -lFacetToMove->getNormal(); // l'inverse !!!
-        PP3d::Vector3d lNormDest   =  lFacetDest->getNormal();
-        PP3d::Mat4 lMatAlign;
-        lMatAlign.rotateAlign( lNormDest, lNormToMove  ); 
-	
-        PP3d::Point3d lPtToMove = lFacetToMove->getCenter();
-        PP3d::Point3d lPtDest   = lFacetDest->getCenter();
-
-        PP3d::OwnerEntityVisitor lVisit;	
-        lVisit.addOwnersOf( lFacetToMove );
-	
-        for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
-          {
-            lPoly->execVisitor( lVisit ) ; // je sais, c'est tres limite comme code !
-          }
-
-        for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
-          {
-            lPtr->get() -= lPtToMove;  // Deplacement en zero
-            lPtr->get() *= lMatAlign;  // Rotation alignement
-            lPtr->get() += lPtDest;    // positionnement sur l'autre facette   
-          }
-	
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
-      }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackAlign(Fl_Widget* w, void* pUserData)
-  {	  		
-    BEGINCALL ;
-
-    if( TheSelect.getSelectType() != PP3d::SelectType::Facet )
-      return;
-    
- 		
-    PP3d::Point3d lAxis(1,0,0);
-    
-    if( strcmp( m->label(), StrMenu_AlignOnX ) == 0 )
-      lAxis.set( 1,0,0);
-    else if( strcmp( m->label(), StrMenu_AlignOnY ) == 0 )
-      lAxis.set( 0,1,0);
-    else if( strcmp( m->label(), StrMenu_AlignOnZ ) == 0 )
-      lAxis.set( 0,0,1);
-    else if( strcmp( m->label(), StrMenu_AlignOn_X ) == 0 )
-      lAxis.set( -1,0,0);
-    else if( strcmp( m->label(), StrMenu_AlignOn_Y ) == 0 )
-      lAxis.set( 0,-1,0);
-    else if( strcmp( m->label(), StrMenu_AlignOn_Z ) == 0 )
-      lAxis.set( 0,0,-1);
-    else
-      if( strcmp( m->label(), StrMenu_AlignOnAxis ) == 0 )
-        {
-          lAxis =  TheAppli.getCurrentAxis().getB();
-        }
-      else
-        if( strcmp( m->label(), StrMenu_AlignOnNorm ) == 0 )
-          {
-            if( TheSelect.getNbSelected() < 2)
-              {
-                fl_alert( "At least two facets needed");
-                return;
-              }
-            // first facet of selection only use for give normal
-            lAxis =  ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal();
-            TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );
-          }
-	  
     // A OPTIMISER !!!!
-
+  static void Align( PP3d::Point3d & lAxis )
+  {
+    
     PP3d::OwnerEntityVisitor lVisitAll;	
     lVisitAll.addOwnersOf( TheSelect.getSelectionVect() );
 
@@ -1199,224 +321,1195 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
     PushHistory();
     TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
   }
-  //-------------------------------------------
-  static bool DuplicateSelection()
-  {    
-    PP3d::SortVisitorEntity  lVisit;    
-    TheSelect.execVisitorOnlyOnObjects( lVisit );
-    
-    std::stringstream lDupStr;
-    PP3d::MySav lSav( lDupStr );				
-    bool lRet = lSav.save( *TheAppli.getDatabase(), nullptr, &lVisit.cSetAllEntity );
-    
-    if( lRet )
-      {
-        std::vector<PP3d::EntityPtr> lNewObjs;
-        PP3d::MyRead lRead( lDupStr, &lNewObjs );
-        
-       TheSelect.removeAll();
-       
-       if( (lRet = lRead.read( *TheAppli.getDatabase(), &TheSelect, false ))
-            && lNewObjs.size() > 0 )
-         {
-           TheSelect.removeAll();
- 
-           for( PP3d::EntityPtr lObj : lNewObjs )
-             {
-               TheSelect.addEntity( lObj );
-             }
-          }
-      }
-    return lRet;
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackSelect(Fl_Widget* w, void* pUserData)
+    //-------------------------------------------
+  static bool Extrude( M3d::Canvas3d* iCanvas )
   {	  		
-    BEGINCALL  
-
-      if( strcmp( m->label(), StrMenu_InvertNormal) == 0)
-        {
-          PP3d::VisitorInvertNormal lVisitInv;
-	
-          TheSelect.execVisitorOnEntity( lVisitInv );
-	
-          PushHistory();	    
-          TheAppli.redrawAll(PP3d::Compute::FacetAll);
-        }
-      else
-        //============== TRANSFORMATION ====================
-        // MOVE
-        if( strcmp( m->label(), StrMenu_MoveX ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveX);
-          }
-        else if( strcmp( m->label(), StrMenu_MoveY ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveY);
-          }
-        else if( strcmp( m->label(), StrMenu_MoveZ ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveZ);
-          }
-        else if( strcmp( m->label(), StrMenu_MoveNormal ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveNormal);
-          }
-        else if( strcmp( m->label(), StrMenu_MoveAxis ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveAxis);
-          }    
-    // ROTATE
-        else if( strcmp( m->label(), StrMenu_RotX ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotX);
-          }
-        else if( strcmp( m->label(), StrMenu_RotY ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType( Transform::CenterRotY );
-          }
-        else if( strcmp( m->label(), StrMenu_RotZ ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotZ );
-          }    
-        else if( strcmp( m->label(), StrMenu_CenterRotAxis ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotAxis );
-          }
-        else if( strcmp( m->label(), StrMenu_RotAxis ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::RotAxis );
-          }
-        else if( strcmp( m->label(), StrMenu_RotNorm ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotNorm );
-          }
-        else if( strcmp( m->label(), StrMenu_RotFacetNorm ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotFacetNorm );
-          }
-    // SCALE
-        else if( strcmp( m->label(), StrMenu_ScaleU ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleUniform );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleX ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleX );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleY ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleY );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleZ ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleZ );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleRX ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleRX );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleRY ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleRY );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleRZ ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleRZ );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleNormal ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleNormal );
-          }
-        else if( strcmp( m->label(), StrMenu_ScaleAxis ) == 0)
-          {
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::ScaleAxis );
-          }
-    // DUP
-        else if( strcmp( m->label(), StrMenu_DupInPlace ) == 0)
-          {	
-            DuplicateSelection();
-            PushHistory();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-          }
-        else if( strcmp( m->label(), StrMenu_DupMoveX ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveX);
-          }
-        else if( strcmp( m->label(), StrMenu_DupMoveY ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveY);
-          }
-        else if( strcmp( m->label(), StrMenu_DupMoveZ ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::MoveZ);
-          }
-        else if( strcmp( m->label(), StrMenu_DupRotX ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotX);
-          }
-        else if( strcmp( m->label(), StrMenu_DupRotY ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotY);
-          }
-        else if( strcmp( m->label(), StrMenu_DupRotZ ) == 0)
-          {	
-            DuplicateSelection();
-            TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-            lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-            Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
-          }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackConnectPoint(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL  ;
-
-    PP3d::SortEntityVisitorPoint lVisit;
+    PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
     
-    if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() ))
+    std::vector<PP3d::EntityPtr> lNewFacets;
+    
+    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
+      {
+        TheSelect.removeAll();
+        TheSelect.addGoodEntityFor(lNewFacets);  
+        TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+        iCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+        return true;
+      }
+    return false;
+  }
+ 
+   //-------------------------------------------
+  static void CutLine( int iNbCut )
+  {
+    // On recupere les objects de la selection
+    PP3d::SortEntityVisitorLine lVisit;
+    TheSelect.execVisitorOnEntity( lVisit );
+    TheSelect.removeAll();
+    
+    // On prend les lignes
+    
+    //     std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
+    //Attention au lignes inverses doubles des facettes !
+    PP3d::Modif::CutLines( lVisit.cVectLines, iNbCut, TheAppli.getDatabase() );	
+    PushHistory();
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);
+  } 
+  //-------------------------------------------
+  static  void SplineToPolyline( bool iDelete)
+  {
+    bool lFlagMakeAnything = false;
+    
+    for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
+      {
+        if( lEntity->getType() ==  PP3d::ShapeType::Object
+            && (( PP3d::Object*)lEntity)->getObjType() ==   PP3d::ObjectType::ObjBSpline )
+          {
+            PP3d::Object* lObj = nullptr;
+                 
+            if( iDelete )
+              {
+                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                TheBase.deleteEntity( lEntity );
+              }
+            else
+              {
+                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+              }
+            
+            if( lObj != nullptr )
+              {
+            TheBase.addObject(lObj  );
+            lFlagMakeAnything = true;
+              }
+          }
+      }
+    
+    if( lFlagMakeAnything )
       {
         PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
+        TheAppli.redrawAll( PP3d::Compute::FacetAll);                
+      }
+    //-----------------
+  }
+ 
+  //-------------------------------------------
+  //-------------------------------------------
+  //-------------------------------------------
+  void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
+  {
+    if( TheSelect.getNbSelected() > 0 )
+      {										
+	makeMenuSelect(  *cPopup);
+      }
+    else
+      {
+	makeMenuPrimitiv( *cPopup );
       }
   }
+  //-------------------------------------------
+  //
+  void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
+  {
+    int lMenuFlagActif=0;
+   
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::MoveX);
+
+               ADBMAL, this);
+
+
+    
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveY, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::MoveY);
+
+               ADBMAL, this);
+
+    
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveZ, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::MoveZ);
+
+               ADBMAL, this, FL_MENU_DIVIDER);
+
+    
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveNormal, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::MoveNormal);
+
+               ADBMAL, this, FL_MENU_DIVIDER);
+
+    
+    pMenu.add( StrMenu_Move  "/" StrMenu_MoveAxis, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::MoveAxis);
+
+               ADBMAL, this, FL_MENU_DIVIDER);
+    
+
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotX, "",    LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotX);
+
+               ADBMAL, this);
+
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotY, "",   LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotY);
+
+               ADBMAL , this);
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotZ, "",   LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+    
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_CenterRotAxis, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotAxis);
+
+               ADBMAL , this);
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotAxis, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::RotAxis);
+
+               ADBMAL , this);
+
+    
+    pMenu.add( StrMenu_Rot  "/" StrMenu_RotFacetNorm, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotFacetNorm);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+
+    
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Object         
+	 || TheSelect.getSelectType() ==  PP3d::SelectType::Facet)
+      {	
+	pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::CenterRotNorm);
+
+               ADBMAL, this, FL_MENU_DIVIDER);
+        
+        
+	if( TheSelect.getNbSelected() > 0 )
+	  {
+	    pMenu.add( StrMenu_InvertNormal, "",  LAMBDA
+                       PP3d::VisitorInvertNormal lVisitInv;                       
+                       TheSelect.execVisitorOnEntity( lVisitInv );                       
+                       PushHistory();	    
+                       TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                       ADBMAL, this, FL_MENU_DIVIDER );
+            
+	  }
+      }
+		
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleU, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleUniform);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleX, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleX);
+
+               ADBMAL , this);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleY, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleY);
+
+               ADBMAL , this);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleZ, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleZ);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRX, "", LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleRX);
+
+               ADBMAL  , this);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRY, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleRY);
+
+               ADBMAL , this);
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleRZ, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleRZ);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleNormal, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleNormal);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+    
+    pMenu.add( StrMenu_Scale  "/" StrMenu_ScaleAxis, "",  LAMBDA
+               
+               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+               Application::Instance().setCurrentTransformType(Transform::ScaleAxis);
+
+               ADBMAL , this, FL_MENU_DIVIDER);
+
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Object )
+      {
+
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipX, "", LAMBDA
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   PP3d::SortEntityVisitorPoint lVisit;    
+                   TheSelect.execVisitorOnEntity( lVisit );
+                   PP3d::Point3d lAvg;
+                   for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lAvg += lPtr->get();
+                     }
+                   lAvg *=2;
+                   lAvg /= lVisit.cVectPoints.size();
+	
+                   for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lPtr->get().x() = -lPtr->get().x()+ lAvg.x();
+                     }
+                   PushHistory();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   ADBMAL, this, FL_MENU_DIVIDER);
+
+        
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipY, "", LAMBDA
+                   PP3d::SortEntityVisitorPoint lVisit;    
+                   TheSelect.execVisitorOnEntity( lVisit );
+                   PP3d::Point3d lAvg;
+                   for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lAvg += lPtr->get();
+                     }
+                   lAvg *=2;
+                   lAvg /= lVisit.cVectPoints.size();
+
+                   for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lPtr->get().y() = - lPtr->get().y()+ lAvg.y() ;
+                     }
+                   PushHistory();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                   ADBMAL, this);
+
+        
+        pMenu.add( StrMenu_Flip "/" StrMenu_FlipZ, "", LAMBDA
+                    //:::::::::::::::::::::::::::::::::::::::::
+                  PP3d::SortEntityVisitorPoint lVisit;    
+                   TheSelect.execVisitorOnEntity( lVisit );
+                   PP3d::Point3d lAvg;
+                   for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lAvg += lPtr->get();
+                     }
+                   lAvg *=2;
+                   lAvg /= lVisit.cVectPoints.size();
+ 
+                   for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                     {
+                       lPtr->get().z() =  -lPtr->get().z()+lAvg.z();
+                     }
+                   PushHistory();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   ADBMAL, this);
+
+        
+        pMenu.add( StrMenu_Flip "/not implemented - " StrMenu_FlipPlane, "",LAMBDA
+                   std::cerr << "StrMenu_FlipPlane not implemented" << std::endl;
+                   ADBMAL , this);
+
+
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupInPlace, "", LAMBDA
+                   DuplicateSelection();
+                   PushHistory();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                  ADBMAL, this, FL_MENU_DIVIDER);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "",  LAMBDA               
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::MoveX);
+                   ADBMAL, this);
+
+        pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveY, "",  LAMBDA             
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::MoveY);
+                   ADBMAL, this);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveZ, "",  LAMBDA              
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::MoveZ);
+                   ADBMAL, this);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotX, "",   LAMBDA               
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::CenterRotX);
+                   ADBMAL, this);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotY, "",   LAMBDA               
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::CenterRotY);
+                   ADBMAL, this);
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupRotZ, "",   LAMBDA               
+                   DuplicateSelection();
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Application::Instance().setCurrentTransformType(Transform::CenterRotZ);
+                   ADBMAL , this, FL_MENU_DIVIDER);	
+      }
+    
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Point
+	 && TheSelect.getNbSelected() > 1 )
+      {
+	pMenu.add( StrMenu_ConnectPoint, "", LAMBDA
+                   //LLLLLLLLLLLLLLLLLLLLLLLLL
+                   PP3d::SortEntityVisitorPoint lVisit;
+                   TheSelect.execVisitorOnEntity( lVisit );
+                   
+                   if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheAppli.getDatabase() ))
+                     {
+                       PushHistory();
+                       TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                     }
+                   //LLLLLLLLLLLLLLLLLLLLLLLLL
+                   ADBMAL, this);	
+      }
+    
+
+     lMenuFlagActif=FL_MENU_INACTIVE;   
+    cout << "Nb Selected:" << TheSelect.getNbSelected() << " type:" << PP3d::GetStrShapeType( TheSelect.getSelectType() ) << endl;
+
+    if( TheSelect.getNbSelected() > 2 
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+      // && TheSelect.allHaveTheSameOwner())
+
+
+      lMenuFlagActif = 0;
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_CreateShapeAddFacet,      "", LAMBDA
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+
+               if( TheSelect.getSelectType() ==  PP3d::SelectType::Point )
+                 {
+                   PP3d::OwnerEntityVisitor lVisit;
+                   TheSelect.execVisitorOnEntity( lVisit ); // on recupere les points du select
+                   
+                   std::cout << "CreateShapeAddFacet points:" << lVisit.cVectPoints.size() << std::endl;
+	    
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+                   std::vector<PP3d::EntityPtr> &lVisitPt = (std::vector<PP3d::EntityPtr>& ) lVisit.cVectPoints;
+#pragma GCC diagnostic pop
+	      
+                   lVisit.addOwnersOf( lVisitPt ); // on recupere les owners des points
+                   if( lVisit.cVectPolys.size() == 0)
+                     {
+                       fl_alert( "No polyedre found for select points ");
+                       return;
+                     }
+	    
+                   if( lVisit.cSetPolys.size() > 1)
+                     {
+                       fl_alert( "Selected points have not the same owner");
+                       cout << "Selected points have not the same owner" << endl;
+                       for( PP3d::EntityPtr lEntity : lVisit.cVectPolys )
+                         {
+                           cout << "Entity : " << *lEntity << endl;
+                         }
+                       return;
+                     }	    
+	    
+                   PP3d::PolyPtr  lPoly = lVisit.cVectPolys[0];
+	    
+                   PP3d::FacetPtr lFacet = TheBase.getNewFacet();
+	    
+                   size_t i;
+                   for( i=0; i< lVisit.cVectPoints.size() -1 ; i++ )
+                     {
+                       PP3d::LinePtr lLine = TheBase.getNewLine( lVisit.cVectPoints[i], lVisit.cVectPoints[i+1]);
+                       lFacet->addLine( lLine );
+                     }
+                   PP3d::LinePtr lLine = TheBase.getNewLine(lVisit.cVectPoints[i],  lVisit.cVectPoints[0] );
+                   lFacet->addLine( lLine);
+                   TheBase.validEntity( lFacet, true );
+		
+                   lPoly->addFacet( lFacet );
+                   TheSelect.removeAll();	
+                   PushHistory();	    
+                   TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                 }
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+               ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+    
+    
+    lMenuFlagActif=FL_MENU_INACTIVE;
+    if( TheSelect.getNbSelected()
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
+      lMenuFlagActif = 0;
+
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", LAMBDA
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+               PP3d::SortEntityVisitor lVisit;
+               TheSelect.execVisitorOnEntity( lVisit );
+
+               int lNbErr=0;
+               for( PP3d::FacetPtr lFacet :  lVisit.cVectFacets )
+                 {
+                   PP3d::PolyPtr lPoly = PP3d::GetOwnerPolyFromFacet( lFacet );
+                   if( lPoly != nullptr )
+                     {
+                       lPoly->removeFacet( lFacet );
+                       TheAppli.getDatabase()->freeFacet( lFacet );
+                     }
+                   else
+                     {
+                       if(lNbErr == 0 )
+                         {		    
+                           fl_alert( "No polyedre found for select points ");
+                         }
+                       lNbErr++;
+                     }
+                 }
+               TheSelect.removeAll();	
+               PushHistory();	    
+               TheAppli.redrawAll(PP3d::Compute::FacetAll);
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+               ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+
+    
+
+    if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
+        && TheSelect.getNbSelected() > 0
+        && TheSelect.isOnlyObject( PP3d::ObjectType::ObjBSpline ) )
+      {
+          
+        pMenu.add( StrMenu_Spline "/" StrMenu_MuteBSplineToPolyline , "", LAMBDA
+                   SplineToPolyline( true );
+                   ADBMAL, this);
+        pMenu.add( StrMenu_Spline "/" StrMenu_CreatPolylineFromBSpline , "", LAMBDA
+                   SplineToPolyline( false );
+                   ADBMAL, this);
+      }
+
+
+
+
+    // ======= SPIRAL ========
+    if(  TheSelect.getNbSelected() > 0 && TheSelect.getSelectType() == PP3d::SelectType::Object   )
+      {
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralX, "^x", LAMBDA
+                   CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_OBJECT  ); 
+                   ADBMAL, this );
+        
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralY, "^y",LAMBDA
+                   CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_OBJECT  );     
+                   ADBMAL, this );
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralZ, "^z",LAMBDA                   
+                   CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_OBJECT  );     
+                   ADBMAL, this );    
+       pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "",LAMBDA
+                  CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );   
+                  ADBMAL, this, FL_MENU_DIVIDER );
+      }
+        // ======= SPIRAL ========
+
+
+    //=========== GROUP ===========
+    if( TheSelect.getSelectType() == PP3d::SelectType::Object )
+      {
+    
+        if(  TheSelect.getNbSelected() > 1 )
+          pMenu.add( StrMenu_CombineIntoGroup, "",
+                     //:::::::::::::::::::::::::::::::::::
+                     [](Fl_Widget *w, void *pUserData) {
+                         std::cout <<"Callback lambda" << std::endl;
+                         TheSelect.combineGroup(TheBase);
+                       },
+                     //:::::::::::::::::::::::::::::::::::
+                     this, FL_MENU_DIVIDER );
+        
+        if( TheSelect.getNbSelected() > 0 )
+          {
+            pMenu.add( StrMenu_SeparateGroup, "",
+                     //:::::::::::::::::::::::::::::::::::
+                       [](Fl_Widget *w, void *pUserData) {
+                         BEGINCALL
+                               
+                         std::cout <<"Callback lambda 2" << std::endl;
+                         TheSelect.separateGroup(TheBase);                               
+                       },
+                     //:::::::::::::::::::::::::::::::::::
+                       this
+                       );
+          }
+      }
+        
+        //=========== GROUP ===========
+
+    
+    if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
+      {
+	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut2, "",  LAMBDA CutLine(2);  ADBMAL, this);
+  	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut3, "",  LAMBDA CutLine(3);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut4, "",  LAMBDA CutLine(4);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut5, "",  LAMBDA CutLine(5);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut6, "",  LAMBDA CutLine(6);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut7, "",  LAMBDA CutLine(7);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut8, "",  LAMBDA CutLine(8);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut9, "",  LAMBDA CutLine(9);  ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_Cut10, "", LAMBDA CutLine(10); ADBMAL, this);
+   	pMenu.add( StrMenu_Cut "/"  StrMenu_CutN, "",  LAMBDA
+                   int lNbCut = 20;
+                   if( CallDialogInputInt( "Cut line", lNbCut ) )
+                     CutLine( lNbCut );
+                   ADBMAL, this);
+      }
+
+    if(  (TheSelect.getSelectType() != PP3d::SelectType::Point
+	  && TheSelect.getSelectType() != PP3d::SelectType::Line )
+	 && TheSelect.getNbSelected() > 0)
+      {
+	pMenu.add( StrMenu_Inset, "", LAMBDA
+                    //:::::::::::::::::::::::::::::::::::::::::
+                   PP3d::SortEntityVisitorPointFacet lVisit;
+                   TheSelect.execVisitorOnEntity( lVisit );       
+                   
+                   std::vector<PP3d::EntityPtr> lNewFacets;
+                   if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL))
+                     {
+                       //	std::cout << "MyMenuCallbackInset finish" << std::endl;
+                       TheSelect.removeAll();
+                       TheSelect.changeSelectType( PP3d::SelectType::Facet );       
+                       TheSelect.addGoodEntityFor(lNewFacets);
+                       PushHistory();
+                       TheAppli.redrawAll(PP3d::Compute::FacetAll);	
+                       lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                       Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
+                     }
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   ADBMAL, this);
+
+
+        
+	pMenu.add( StrMenu_SubdivideCatmullClark, "", MyMenuCallbackSubdiveCatmullClark, this);
+
+        
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate,  "", MyMenuCallbackSubdivide1, this);
+
+        
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate2, "", MyMenuCallbackSubdivide2, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate3, "", MyMenuCallbackSubdivide2, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_Triangulate4, "", MyMenuCallbackSubdivide2, this, FL_MENU_DIVIDER);
+	//	pMenu.add( StrMenu_TriangulateCentral, "", MyMenuCallbackSubdivide, this);
+	
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCatmullClarkFalse, "", MyMenuCallbackSubdiveCatmullClark, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideSpike, "", MyMenuCallbackSubdivide, this);
+	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralSpike, "", MyMenuCallbackSubdivide, this);
+	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideFold, "", MyMenuCallbackSubdivide, this);
+	//	pMenu.add( StrMenu_Subdivide "/" StrMenu_SubdivideCentralFold, "", MyMenuCallbackSubdivide, this); 
+      }
+   
+    switch( TheSelect.getSelectType() )
+      {
+      case PP3d::SelectType::Point :	
+      case PP3d::SelectType::Line :
+      case PP3d::SelectType::Object :
+        
+	break;
+      case PP3d::SelectType::Facet :	
+	{
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeX, "", LAMBDA
+                     if( Extrude(lCanvas) )
+                       Application::Instance().setCurrentTransformType(Transform::MoveX);
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "",  LAMBDA
+                     if( Extrude(lCanvas) )
+                       Application::Instance().setCurrentTransformType(Transform::MoveY);
+                       ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "",  LAMBDA
+                     if( Extrude(lCanvas) )
+                       Application::Instance().setCurrentTransformType(Transform::MoveZ);
+                       ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "",  LAMBDA
+                     if( Extrude(lCanvas) )
+                       Application::Instance().setCurrentTransformType(Transform::MoveNormal);
+                       ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "",  LAMBDA
+                     if( Extrude(lCanvas) )
+                       Application::Instance().setCurrentTransformType(Transform::MoveAxis);
+                     ADBMAL, this);
+
+
+	  if(TheInput.getCurrentLine()  != nullptr && TheSelect.getNbSelected() > 0 )
+	    {
+              pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePath, "", LAMBDA
+                         //:::::::::::::::::::::::::::::::::::::::::
+                         std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePath" << std::endl;
+                         PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+                         
+                         if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+                           {
+                             std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  1" << std::endl;
+                             PP3d::Point3d lPtZero;
+                             PP3d::Point3d lAxis(1,0,0);
+                             TheAppli.getAxis( lPtZero, lAxis );
+                             std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  2" << std::endl;
+                             
+                             PP3d::Modif::ExtrudePath( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+                             
+                             PushHistory();	
+                             TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+                           }
+                         //:::::::::::::::::::::::::::::::::::::::::
+                         ADBMAL, this);
+
+              
+              pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", LAMBDA                         
+                          //:::::::::::::::::::::::::::::::::::::::::
+                        std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
+                         PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+                         
+                         if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+                           {
+                             std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  1" << std::endl;
+                             PP3d::Point3d lPtZero;
+                             PP3d::Point3d lAxis(1,0,0);
+                             TheAppli.getAxis( lPtZero, lAxis );
+                             std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  2" << std::endl;
+                             
+                             PP3d::Modif::ExtrudePathNorm( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+                             
+                             PushHistory();	
+                             TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+                           }                         
+                         //:::::::::::::::::::::::::::::::::::::::::
+                         ADBMAL, this);
+	    }
+
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenX, "", LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                    PP3d::SortEntityVisitorPoint lVisit;    
+                     TheSelect.execVisitorOnEntity( lVisit );
+                     PP3d::Point3d lAvg;
+                     for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lAvg += lPtr->get();
+                       }
+                     lAvg /= lVisit.cVectPoints.size();
+	
+                     for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lPtr->get().x() =  lAvg.x();
+                       }
+                     PushHistory();
+                     TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenY, "", LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     PP3d::SortEntityVisitorPoint lVisit;    
+                     TheSelect.execVisitorOnEntity( lVisit );
+                     PP3d::Point3d lAvg;
+                     for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lAvg += lPtr->get();
+                       }
+                     lAvg /= lVisit.cVectPoints.size();
+	
+                     for(  PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lPtr->get().y() =  lAvg.y();
+                       }
+                     PushHistory();
+                     TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                      //:::::::::::::::::::::::::::::::::::::::::
+                    ADBMAL , this);
+          
+	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenZ, "",  LAMBDA
+                     PP3d::SortEntityVisitorPoint lVisit;    
+                     TheSelect.execVisitorOnEntity( lVisit );
+                     PP3d::Point3d lAvg;
+                     for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lAvg += lPtr->get();
+                       }
+                     lAvg /= lVisit.cVectPoints.size();
+	
+                     for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
+                       {
+                         lPtr->get().z() =  lAvg.z();
+                       }
+                     PushHistory();
+                     TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Flatten "/ not implemented y" StrMenu_FlattenAxis, "", LAMBDA
+                     std::cerr << "FlattenAxis not implmented" << std::endl;
+                     ADBMAL , this);
+          
+	  pMenu.add( StrMenu_Flatten "/Bug " StrMenu_FlattenAvg, "",  LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     //	BUG !!!!!!!!!!!!!!!!!!
+                     // il faut trouver le centre et le vecteur moyen
+                     PP3d::SortEntityVisitorPointFacet lVisit;		    
+                     TheSelect.execVisitorOnEntity(lVisit);
+	
+                     PP3d::Point3d lCenter;
+                     PP3d::Point3d lAvgNorm;
+	
+                     if( PP3d::GetVectorFromFacets( lVisit, lAvgNorm, lCenter ))
+                       {		    
+                         PP3d::Mat4 lMatAlign;
+                         PP3d::Point3d u1(0,1,0);	    
+                         lMatAlign.rotateAlign( u1, lAvgNorm  );
+	    
+                         PP3d::Mat4 lMatInv;
+                         lMatInv.rotateAlignInv( u1, lAvgNorm ); 
+	    
+	    
+                         for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
+                           {
+                             lPtr->get() -= lCenter;  // changement de repere sur lCenter		
+                             lPtr->get() *= lMatAlign; // on fait tourner pour mettre la normale sur l'axe des y
+                             lPtr->get().y() = 0;
+                             lPtr->get() *= lMatInv;  // on remet la normale a sa place
+		  
+                             lPtr->get() += lCenter;  // on revient au repere central
+                             // On doit pouvoir combiner tout ca dans une seul matrice pour eviter des calculs inutiles
+                           }
+                       }
+                     PushHistory();
+                     TheAppli.redrawAll(PP3d::Compute::FacetAll);
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this);
+	  
+	  if( TheSelect.getNbSelected() == 2 )
+	    pMenu.add( StrMenu_PutOn, "", LAMBDA
+                       //:::::::::::::::::::::::::::::::::::::::::
+                       if( TheSelect.getSelectType() == PP3d::SelectType::Facet
+                           && TheSelect.getNbSelected() == 2 )
+                         {
+                           PP3d::FacetPtr lFacetToMove = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
+                           PP3d::FacetPtr lFacetDest   = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
+
+                           PP3d::Vector3d lNormToMove =  -lFacetToMove->getNormal(); // l'inverse !!!
+                           PP3d::Vector3d lNormDest   =  lFacetDest->getNormal();
+                           PP3d::Mat4 lMatAlign;
+                           lMatAlign.rotateAlign( lNormDest, lNormToMove  ); 
+	
+                           PP3d::Point3d lPtToMove = lFacetToMove->getCenter();
+                           PP3d::Point3d lPtDest   = lFacetDest->getCenter();
+
+                           PP3d::OwnerEntityVisitor lVisit;	
+                           lVisit.addOwnersOf( lFacetToMove );
+	
+                           for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
+                             {
+                               lPoly->execVisitor( lVisit ) ; // je sais, c'est tres limite comme code !
+                             }
+
+                           for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
+                             {
+                               lPtr->get() -= lPtToMove;  // Deplacement en zero
+                               lPtr->get() *= lMatAlign;  // Rotation alignement
+                               lPtr->get() += lPtDest;    // positionnement sur l'autre facette   
+                             }
+	
+                           PushHistory();
+                           TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+                         }                    
+                       //:::::::::::::::::::::::::::::::::::::::::
+                       ADBMAL, this);
+
+          
+	  
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis(1,0,0);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnY, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis(0,1,0);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnZ, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis( 0,0,1);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_X, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis( -1,0,0);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Y, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis( 0,-1,0);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOn_Z, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis( 0,0,-1);
+                     Align( lAxis ); 
+                     ADBMAL, this);
+          
+	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnAxis, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     PP3d::Point3d lAxis( TheAppli.getCurrentAxis().getB());
+                     Align( lAxis ); 
+                     ADBMAL, this);
+        
+        pMenu.add( StrMenu_Align "/" StrMenu_AlignOnNorm, "",  LAMBDA
+                   if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                   if( TheSelect.getNbSelected() < 2)
+                     {
+                       fl_alert( "At least two facets needed");
+                       return;
+                     }
+                   // first facet of selection only use for give normal
+                   PP3d::Point3d lAxis( ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal());
+                   TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );                     
+                   Align( lAxis ); 
+                   ADBMAL, this);
+      }
+	break;
+        
+      case PP3d::SelectType::Poly :
+
+        
+	pMenu.add( StrMenu_Dup "/" StrMenu_DupNormal, "", LAMBDA
+                   std::cerr << "StrMenu_DupNormal not implemented" << std::endl;
+                   ADBMAL, this);
+	break;
+      case PP3d::SelectType::All :
+      default:;
+      }
+  }
+
+  //-------------------------------------------
+  // If no entity is selected
+  void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
+  {
+    int lMenuFlagActif=0;
+    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreateFacet, "^c",
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
+               }, this);
+
+    
+    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreatePlane,    "",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
+               }, this);
+
+ 
+
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCylinder, "y",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER );
+               }, this);  
+    
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateSphere,   "s",   
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::SPHERE  );
+               }, this);  
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCube ,    "^c",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
+               }, this);   
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateTetra,    "^t",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TETRA );
+               }, this);   
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreatePyramid,  "^p",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PYRAMID  );
+               }, this);   
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateOcto,     "^o",   
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
+              }, this);  
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateDodec,    "^d",   
+              [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::DODEC  );
+              }, this);  
+    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateIcosahe,  "^i", 
+              [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
+              }, this, FL_MENU_DIVIDER);
+
+    // Ajouter sphere (2 types differents)
+    // Ajouter cone
+    // Ajouter cylindre (revolution) (disque,  anneau si troue)
+    // Ajouter nappe
+    // Ajout anneau
+    // Ajout helice 
+    // ... Ajout script lua !!! plugin
+    
+    lMenuFlagActif = FL_MENU_INACTIVE;
+
+   
+
+
+    if(TheInput.isCurrentPoints() 
+       &&TheInput.getNbCurrentPoints() == 2 )
+      {
+	lMenuFlagActif=0;
+      }
+    
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if( TheInput.getNbCurrentPoints() == 2 )
+                {
+                  PP3d::Object* lShape =TheInput.convertCurrentLineToLine(TheBase);
+                  if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                    }                }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL,this,lMenuFlagActif);
+     
+    
+    lMenuFlagActif = FL_MENU_INACTIVE;
+    if(TheInput.isCurrentPoints()
+       &&TheInput.getNbCurrentPoints()  >= 3 )
+      {
+ 	lMenuFlagActif=0;
+      }
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if( TheInput.getNbCurrentPoints() >= 3 )
+                {
+                  PP3d::Object* lShape =TheInput.convertCurrentLineToFacet(TheBase);
+                  if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                    }                  
+                }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL , this,lMenuFlagActif);
+    
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if( TheInput.getNbCurrentPoints() >= 3 )
+                {
+                  PP3d::Object* lShape = TheInput.convertCurrentLineToFacetPoly(TheBase);
+                
+                  if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                    }
+                }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL, this,lMenuFlagActif);
+    
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if( strcmp( m->label(), StrMenu_CreateShapeFacet2P ) == 0)
+                {
+                  if( TheInput.getNbCurrentPoints() >= 3 )
+                    {
+                      PP3d::Object* lShape =TheInput.convertCurrentLineToBiFacetPoly(TheBase);
+                      
+                      if( lShape != nullptr )
+                        {
+                          PushHistory();
+                          TheInput.delAllPoint();
+                          TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                        }
+                    }
+                }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL, this,lMenuFlagActif);
+
+    
+    lMenuFlagActif=FL_MENU_INACTIVE;
+    if(TheInput.isCurrentPoints()
+       &&TheInput.getNbCurrentPoints() >= 2 )
+      {
+ 	lMenuFlagActif=0;
+      }
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if(TheInput.getNbCurrentPoints() >= 2 )
+                {
+                  PP3d::Object* lShape =TheInput.convertCurrentLineToPolylines(TheBase);
+                
+                  if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                    }
+                }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL,this,   lMenuFlagActif);
+    
+        pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "",  LAMBDA
+               //::::::::::::::::::::::::::::::::::::::
+                  if(TheInput.getNbCurrentPoints() >= 2 )
+                    {
+                      PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
+                                                                                  MyPref.cBSplineMaille, false );
+                    if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                    }
+                  }
+               //::::::::::::::::::::::::::::::::::::::
+             ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
+        
+          pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+                    if(TheInput.getNbCurrentPoints() >= 2 )
+                      {
+                        PP3d::Object* lShape =TheInput.convertCurrentLineToBSpline(TheBase,
+                                                                                   MyPref.cBSplineMaille, true );
+                        if( lShape != nullptr )
+                          {
+                            PushHistory();
+                            TheInput.delAllPoint();
+                            TheAppli.redrawAll( PP3d::Compute::FacetAll);
+                          }
+                       }
+              //::::::::::::::::::::::::::::::::::::::
+              ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+    //===== Revol
+    lMenuFlagActif = 0;
+    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
+
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolX, "^x", LAMBDA
+               CallDialogRevol( TypeRevol::RevolX  );               
+               ADBMAL, this, lMenuFlagActif);
+    
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolY, "^y",  LAMBDA
+               CallDialogRevol( TypeRevol::RevolY  );     
+               ADBMAL, this, lMenuFlagActif);
+    
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z",  LAMBDA
+               CallDialogRevol( TypeRevol::RevolZ  );
+               ADBMAL, this, lMenuFlagActif);
+ 
+    lMenuFlagActif = 0;
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolAxis, "",  LAMBDA
+               CallDialogRevol( TypeRevol::RevolAxis  );
+               ADBMAL, this, lMenuFlagActif);
+
+
+    //====== Spiral 
+    lMenuFlagActif = 0;
+    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
+      
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralX, "^x", LAMBDA
+               CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_ENTRY );
+               ADBMAL, this, lMenuFlagActif);
+    
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralY, "^y", LAMBDA
+               CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_ENTRY  );
+               ADBMAL, this, lMenuFlagActif);
+    
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralZ, "^z", LAMBDA
+               CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_ENTRY  );
+               ADBMAL, this, lMenuFlagActif);
+ 
+    pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralAxis, "", LAMBDA
+               CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_ENTRY  );
+               ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+
+    //==============
+    pMenu.add( StrMenu_CallDialoDiagSub, "", LAMBDA
+                 CallDialogSubDiv( slFlagDialog, lCanvas );
+               ADBMAL, this, FL_MENU_DIVIDER); 
+
+  }
+  //-------------------------------------------
+  //-------------------------------------------
+  //-------------------------------------------
+
+  
+   
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData )
   {
@@ -1441,26 +1534,7 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
                            );
       }    
   }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackInset(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL  ;
-    PP3d::SortEntityVisitorPointFacet lVisit;
-    TheSelect.execVisitorOnEntity( lVisit );       
-    
-    std::vector<PP3d::EntityPtr> lNewFacets;
-    if( PP3d::Modif::SubDivAngle( TheAppli.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL))
-      {
-        //	std::cout << "MyMenuCallbackInset finish" << std::endl;
-        TheSelect.removeAll();
-        TheSelect.changeSelectType( PP3d::SelectType::Facet );       
-        TheSelect.addGoodEntityFor(lNewFacets);
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);	
-        	lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-        	Application::Instance().setCurrentTransformType(Transform::ScaleNormal); 	    
-      }  
-  }
+ 
   //-------------------------------------------
   void Canvas3d::MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData)
   {
@@ -1541,159 +1615,8 @@ void Canvas3d::MyMenuCallbackSpline(Fl_Widget* w, void* pUserData)
     PushHistory();
     TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackModifyShape( Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL  ;
-    if( strcmp( m->label(), StrMenu_DeleteShapeFacet ) == 0)
-      {	
-        PP3d::SortEntityVisitor lVisit;
-        TheSelect.execVisitorOnEntity( lVisit );
 
-        int lNbErr=0;
-        for( PP3d::FacetPtr lFacet :  lVisit.cVectFacets )
-          {
-            PP3d::PolyPtr lPoly = PP3d::GetOwnerPolyFromFacet( lFacet );
-            if( lPoly != nullptr )
-              {
-                lPoly->removeFacet( lFacet );
-                TheAppli.getDatabase()->freeFacet( lFacet );
-              }
-            else
-              {
-                if(lNbErr == 0 )
-                  {		    
-                    fl_alert( "No polyedre found for select points ");
-                  }
-                lNbErr++;
-              }
-          }
-        TheSelect.removeAll();	
-        PushHistory();	    
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-      }
-    else
-      if( strcmp( m->label(), StrMenu_CreateShapeAddFacet ) == 0)
-        {
-          if( TheSelect.getSelectType() ==  PP3d::SelectType::Point )
-            {
-              PP3d::OwnerEntityVisitor lVisit;
-              TheSelect.execVisitorOnEntity( lVisit ); // on recupere les points du select
 
-              std::cout << "CreateShapeAddFacet points:" << lVisit.cVectPoints.size() << std::endl;
-	    
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-              std::vector<PP3d::EntityPtr> &lVisitPt = (std::vector<PP3d::EntityPtr>& ) lVisit.cVectPoints;
-#pragma GCC diagnostic pop
-	      
-              lVisit.addOwnersOf( lVisitPt ); // on recupere les owners des points
-              if( lVisit.cVectPolys.size() == 0)
-                {
-                  fl_alert( "No polyedre found for select points ");
-                  return;
-                }
-	    
-              if( lVisit.cSetPolys.size() > 1)
-                {
-                  fl_alert( "Selected points have not the same owner");
-                  cout << "Selected points have not the same owner" << endl;
-                  for( PP3d::EntityPtr lEntity : lVisit.cVectPolys )
-                    {
-                      cout << "Entity : " << *lEntity << endl;
-                    }
-                  return;
-                }	    
-	    
-              PP3d::PolyPtr  lPoly = lVisit.cVectPolys[0];
-	    
-              PP3d::FacetPtr lFacet = TheBase.getNewFacet();
-	    
-              size_t i;
-              for( i=0; i< lVisit.cVectPoints.size() -1 ; i++ )
-                {
-                  PP3d::LinePtr lLine = TheBase.getNewLine( lVisit.cVectPoints[i], lVisit.cVectPoints[i+1]);
-                  lFacet->addLine( lLine );
-                }
-              PP3d::LinePtr lLine = TheBase.getNewLine(lVisit.cVectPoints[i],  lVisit.cVectPoints[0] );
-              lFacet->addLine( lLine);
-              TheBase.validEntity( lFacet, true );
-		
-              lPoly->addFacet( lFacet );
-              TheSelect.removeAll();	
-              PushHistory();	    
-              TheAppli.redrawAll(PP3d::Compute::FacetAll);
-            }
-        }
-  }
-  //-------------------------------------------
-  void Canvas3d::MyMenuCallbackCutLine(Fl_Widget* w, void* pUserData)
-  {
-    BEGINCALL  ;
-
-    int lNbCut=0;
-    //============== CUT  ====================
-    if( strcmp( m->label(), StrMenu_Cut2 ) == 0)
-      {
-        lNbCut =2;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut3 ) == 0)
-      {
-        lNbCut = 3;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut4 ) == 0)
-      {
-        lNbCut = 4;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut5 ) == 0)
-      {
-        lNbCut = 5;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut6 ) == 0)
-      {
-        lNbCut =6 ;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut7 ) == 0)
-      {
-        lNbCut = 7;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut8 ) == 0)
-      {
-        lNbCut = 8;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut9 ) == 0)
-      {
-        lNbCut = 9;
-      }
-    else  if( strcmp( m->label(), StrMenu_Cut10 ) == 0)
-      {
-        lNbCut = 10;
-      }
-    else  if( strcmp( m->label(), StrMenu_CutN ) == 0)
-      {
-        int lVal = 20;
-        if( CallDialogInputInt( "Cut line", lVal ) )
-          lNbCut = lVal;
-      }
-
-    std::cout << "MyMenuCallbackSelect : " << lNbCut << std::endl;
-    
-    if( lNbCut > 1 )
-      {
-        // On recupere les objects de la selection
-        PP3d::SortEntityVisitorLine lVisit;
-        TheSelect.execVisitorOnEntity( lVisit );
-        TheSelect.removeAll();
-	
-        // On prend les lignes
-
-        std::cout << "MyMenuCallbackSelect before CutLines : " << lNbCut << std::endl;
-        //Attention au lignes inverses doubles des facettes !
-        PP3d::Modif::CutLines( lVisit.cVectLines, lNbCut, TheAppli.getDatabase() );	
-        PushHistory();
-        TheAppli.redrawAll(PP3d::Compute::FacetAll);
-      } 
-  }
 
   //***************************************
 
