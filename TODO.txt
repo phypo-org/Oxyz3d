@@ -1,5 +1,5 @@
 
-
+XXXXXXX - Grid
 
 XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   enum  classe ==  OBJECT , AXE, POINT, PLAN, TRAJECTOIRE,TRANSFORMATION ...
@@ -7,20 +7,7 @@ XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   les uns ou les autres
  ==>  faire une branche dans git pour tester
 
-
-- Mettre les fonctions de dessins 3d de Database dans un objet View et
- le mettre ainsi que l'objets de dessins dans un repertoire VIEW
-
-
-- Dans Win sortir  les fonctions 3d de l'interface dans des fichiers à part.
-
-
-- Utiliser les PolyLine et les Spline  pour faire des trajectoires
-
-- Faire une tortue3d en logo pour générer des objets.
-
-
-- Ajouter la notion de groupe d'objets , soit sous forme d'un
+XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
   ObjectGroup, soit sous forme d'un GroupId commun à tout les objets
   du groupe, possiblité de selectionner séparement les groupes et les
   objets (pour ne pas avoir a redefaire les groupes)
@@ -30,8 +17,40 @@ XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
 
 
 
+- Remplacer les callback par des lambda
 
-- Avoir un autre niveau de database/visualisation/ergonomie avec des
+- Permettre la saisie de valeur au clavier pour les modifications
+  interactive à la souris
+
+- Ajouter un bouton et un niveau de selection supplementaire pour les
+  objets/groups (qui ne fait que desactive la selection des groupes)
+
+
+- Revoir l'architecture générale du code
+
+- Mettre plus de fonctions de dessins 3d de Database dans un objet View et
+ le mettre ainsi que l'objets de dessins dans un repertoire VIEW
+
+
+- mettre en place la sauvegarde de plan (comme pour les vecteurs) ne
+  . mettre que deux points ?
+  
+
+- Bridge
+- Bevel
+- etc
+
+
+=====================================================
+
+- Deuxieme selection ? stocker la selection dans des sav comme dans wings
+
+- Utiliser les PolyLine et les Spline  pour faire des trajectoires
+
+- Faire une tortue3d en logo pour générer des objets.
+
+Atelier Scene :
+  Avoir un autre niveau de database/visualisation/ergonomie avec des
   alias qui pointe vers les objets (un peu comme les sprites dans
   AsteroidFighter)
   . Les Alias ont des matrices pour leurs positions leurs tailles ...
@@ -39,3 +58,8 @@ XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   différents
   . Aucune modificatins possibles des objets eux memes
   
+- Atelier transformation ?
+- Atelier articulation ?
+- Atelier animation ?
+- Atelier Couleur, lumiere, texture ...
+- Atelier 2D ?

@@ -86,7 +86,7 @@ namespace M3d {
 #define StrMenu_RevolX    "Revol X ..."
 #define StrMenu_RevolY    "Revol Y ..."
 #define StrMenu_RevolZ    "Revol Z ..."
-#define StrMenu_RevolAxis StrMenu_Revol "Revol current axis..."
+#define StrMenu_RevolAxis "Revol current axis..."
 
   
 #define StrMenu_Spiral_Input     "New Spiral from Input"
@@ -548,7 +548,7 @@ namespace M3d {
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z", MyMenuCallbackRevol, this, lMenuFlagActif);
  
     lMenuFlagActif = 0;
-    pMenu.add( StrMenu_RevolAxis, "", MyMenuCallbackRevol, this, lMenuFlagActif);
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolAxis, "", MyMenuCallbackRevol, this, lMenuFlagActif);
 
 
     //====== Spiral 
