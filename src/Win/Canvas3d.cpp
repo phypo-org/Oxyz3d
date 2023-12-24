@@ -469,6 +469,7 @@ namespace M3d {
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
 
     TheAppli.currentTransform().raz();
+    TheAppli.currentValTransf()= 0;
     TheAppli.currentTransform().scaleTo(1);
   }
   //------------------------------
@@ -489,6 +490,7 @@ namespace M3d {
     cMouseInitPosY = cMouseLastPosY = -1;
     
     TheAppli.setCurrentTransformType( Transform::Nothing );
+    TheAppli.currentValTransf() = 0;
     TheAppli.currentTransform().raz();
 
     PP3d::Point3d lVoid;
@@ -546,21 +548,52 @@ namespace M3d {
   }
 
   //---------------------------
+  void Canvas3d::userTransformSelectionInput( int pEvent )
+  { 
+    Transform lCurrent= TheAppli.getCurrentTransformType();
+
+    std::cout << "currentValTransf:" << TheAppli.currentValTransf() << std::endl;
+    
+    if( CallDialogInputDouble( "Value", TheAppli.currentValTransf(), [&]( double ioVal, bool  ioRun ) {
+
+      //    std::cout << " F val:" << ioVal << " " << ioRun << std::endl;
+      TheAppli.setCurrentTransformType( lCurrent );
+      userTransformSelectionInternal( ioVal, !ioRun);
+      TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); 
+
+      return true;
+    }))
+      {
+        ;
+      }
+    else
+      {
+        std::cout << "userTransformSelectionInput CANCEL" << std::endl;        
+        userCancelAction( pEvent );
+      }
+  }
+  //---------------------------
   void Canvas3d::userTransformSelection(int pEvent, bool pFlagFinalize)
   {
+  
     int lX = Fl::event_x();
     int lY = Fl::event_y();
  
     float lDx = (float)(lX - cMouseLastPosX);
-    float lDy = (float)(cMouseLastPosY - lY);
+     
+    float lDy = (float)(cMouseLastPosY - lY); // NOT USE !!!!
     cMouseLastPosX = lX;
     cMouseLastPosY = lY;
-    
-    long double lScale= lDx*0.01;
-    
-  
-    std::cout << "***** Canvas3d::userTransformSelection **** " << lDx << " " << lDy << " Scale:" <<  lScale << std::endl;
 
+    userTransformSelectionInternal(  lDx,  pFlagFinalize);
+  }
+  //---------------------------   
+  void Canvas3d::userTransformSelectionInternal( float lDx, bool pFlagFinalize)
+  {      
+    //    std::cout << "***** Canvas3d::userTransformSelectionInternal **** " << lDx << " " << " Scale:" <<  lScale << std::endl;
+    
+    TheAppli.currentValTransf() = TheAppli.currentValTransf() + lDx;
+ 
 		
     PP3d::Mat4 lMatTran;
     lMatTran.identity();
@@ -653,7 +686,7 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-	  TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;             // DIFFERENCE !!!	
+	  TheAppli.currentTransform().angle().x() += M_PI*lDx/100;             // DIFFERENCE !!!	
 	  cVisitModifSelect->setCoef( TheAppli.currentTransform().angle().x() );// DIFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
@@ -667,15 +700,15 @@ namespace M3d {
 			
       case Transform::MoveX:
 	{
-	  TheAppli.currentTransform().position().x() += lDx/10;
-	  cMyWin3d.setCurrentVal(  "move x" , TheAppli.currentTransform().position().x() );
+	  TheAppli.currentTransform().position().x() += lDx/100;
+	  cMyWin3d.setCurrentVal(  "move x" , TheAppli.currentTransform().position().x());
 	  lMatTran.initMove( TheAppli.currentTransform().position().x(), 0, 0 );
 	}
 	break;
 				
       case Transform::MoveY:
 	{
-	  TheAppli.currentTransform().position().y() += lDx/10;
+	  TheAppli.currentTransform().position().y() += lDx/100;
 	  cMyWin3d.setCurrentVal( "move y" ,  TheAppli.currentTransform().position().y() );
 	  lMatTran.initMove( 0, TheAppli.currentTransform().position().y(), 0 );
 	}
@@ -683,7 +716,7 @@ namespace M3d {
 				
       case Transform::MoveZ:
 	{
-	  TheAppli.currentTransform().position().z() += lDx/10;
+	  TheAppli.currentTransform().position().z() += lDx/100;
 	  cMyWin3d.setCurrentVal(  "move z" , TheAppli.currentTransform().position().z() );
 	  lMatTran.initMove( 0, 0, TheAppli.currentTransform().position().z() );
 	}
@@ -728,31 +761,31 @@ namespace M3d {
 	    {		
 	    case Transform::ScaleUniform :
 	      {
-		TheAppli.currentTransform().scale().x() += lScale;
-		TheAppli.currentTransform().scale().y() += lScale;
-		TheAppli.currentTransform().scale().z() += lScale;
+		TheAppli.currentTransform().scale().x() += lDx/100;
+		TheAppli.currentTransform().scale().y() += lDx/100;
+		TheAppli.currentTransform().scale().z() += lDx/100;
 		break;
 	      }
 	    case Transform::ScaleX :
-	      TheAppli.currentTransform().scale().x() += lScale;
+	      TheAppli.currentTransform().scale().x() += lDx/100;
 	      break;
 	    case Transform::ScaleY :
-	      TheAppli.currentTransform().scale().y() += lScale;
+	      TheAppli.currentTransform().scale().y() += lDx/100;
 	      break;
 	    case Transform::ScaleZ :
-	      TheAppli.currentTransform().scale().z() += lScale;
+	      TheAppli.currentTransform().scale().z() += lDx/100;
 	      break;
 	    case Transform::ScaleRX :
-	      TheAppli.currentTransform().scale().y() += lScale;
-	      TheAppli.currentTransform().scale().z() += lScale;
+	      TheAppli.currentTransform().scale().y() += lDx/100;
+	      TheAppli.currentTransform().scale().z() += lDx/100;
 	      break;
 	    case Transform::ScaleRY :
-	      TheAppli.currentTransform().scale().x() += lScale;
-	      TheAppli.currentTransform().scale().z() += lScale;
+	      TheAppli.currentTransform().scale().x() += lDx/100;
+	      TheAppli.currentTransform().scale().z() += lDx/100;
 	      break;
 	    case Transform::ScaleRZ :
-	      TheAppli.currentTransform().scale().x() += lScale;
-	      TheAppli.currentTransform().scale().y() += lScale;
+	      TheAppli.currentTransform().scale().x() += lDx/100;
+	      TheAppli.currentTransform().scale().y() += lDx/100;
 	      break;
 	    case Transform::ScaleAxis :
 	      {
@@ -794,7 +827,7 @@ namespace M3d {
 	  switch( TheAppli.getCurrentTransformType() )
 	    {
 	    case Transform::CenterRotX :
-	      TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+	      TheAppli.currentTransform().angle().x() += M_PI*lDx/100;
 	      CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 	      
 	      std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
@@ -805,7 +838,7 @@ namespace M3d {
 	      break;
 							
 	    case Transform::CenterRotY :
-	      TheAppli.currentTransform().angle().y() += M_PI*lDx*0.01;
+	      TheAppli.currentTransform().angle().y() += M_PI*lDx/100;
 	      CallDialogKeepFloat( TheAppli.currentTransform().angle().y());
 	      
 	      std::cout << " Angle:" << TheAppli.currentTransform().angle().y()
@@ -816,7 +849,7 @@ namespace M3d {
 	      break;
 	      
 	    case Transform::CenterRotZ :
-	      TheAppli.currentTransform().angle().z() += M_PI*lDx*0.01;
+	      TheAppli.currentTransform().angle().z() += M_PI*lDx/100;
 	      CallDialogKeepFloat( TheAppli.currentTransform().angle().z());
 	      
 	      std::cout << " Angle:" << TheAppli.currentTransform().angle().z()
@@ -844,7 +877,7 @@ namespace M3d {
 			//	      << lAxis.cX*lAxis.cX+lAxis.cY*lAxis.cY+lAxis.cZ*lAxis.cZ
 			//	      << std::endl;
 			// On prend x mais on pourrait prendre ce que l'on veut
-			TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+			TheAppli.currentTransform().angle().x() += M_PI*lDx/100;
 			CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 			 
 			//			std::cout << " Angle:" << TheAppli.currentTransform().angle().x()
@@ -869,7 +902,7 @@ namespace M3d {
 		    PP3d::SortEntityVisitorPointFacet lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);		    
 		      
-		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		    TheAppli.currentTransform().angle().x() += M_PI*lDx/100;
 		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 		      
 		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
@@ -894,7 +927,7 @@ namespace M3d {
 		    PP3d::SortEntityVisitorPointFacet lVisit;		    
 		    TheSelect.execVisitorOnEntity(lVisit);		    
 		      
-		    TheAppli.currentTransform().angle().x() += M_PI*lDx*0.01;
+		    TheAppli.currentTransform().angle().x() += M_PI*lDx/100;
 		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 		      
 		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
@@ -914,7 +947,7 @@ namespace M3d {
 	std::cout << "Nothing to do 2!!!" << std::endl;
       }
 
-    std::cout << "pos:" << TheAppli.currentTransform().position() << std::endl;
+    //    std::cout << "pos:" << TheAppli.currentTransform().position() << std::endl;
 
 
     if( pFlagFinalize == false )
@@ -1293,9 +1326,12 @@ namespace M3d {
 		  //=======================
 		case	FL_Tab:
 		  DBG_EVT_NL( " TAB" );
+
+                  cout << "TAB " << endl;
 		  if( cMode == ModeUser::MODE_TRANSFORM )
 		    {
-		      userTransformSelection(pEvent);
+                      //CallDialogKeepFloatInit( this );
+		      userTransformSelectionInput(pEvent);
 		    }		  
 		  break;
 		  //=======================

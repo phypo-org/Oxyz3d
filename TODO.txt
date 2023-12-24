@@ -17,10 +17,10 @@ XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
 
 
 
-- Remplacer les callback par des lambda
+XXXXXX  - Remplacer les callback par des lambda
 
 - Permettre la saisie de valeur au clavier pour les modifications
-  interactive à la souris
+  interactive à la souris . Enlever DialogKeepFloat 
 
 - Ajouter un bouton et un niveau de selection supplementaire pour les
   objets/groups (qui ne fait que desactive la selection des groupes)

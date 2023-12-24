@@ -10,6 +10,8 @@
  
 #include <memory>
  
+#include <functional>
+
 
 void CallDialogPerspectiv( M3d::Canvas3d* pCanvas, PP3d::Kamera &pKamera );
 void CallDialogPrimitiv( PP3d::PrimitivFactory::Type );
@@ -29,7 +31,10 @@ extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, Ty
 extern void CallDialogSpiral( TypeRevol iTypeRevol, TypeOfInput iTypeInput );
 // extern void CallDialogSpiral( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
 extern bool CallDialogInputInt( const char* iLabel, int & ioVal);
-extern bool CallDialogInputDouble(  const char* iLabel, double & ioVal);
+
+using DialogInputDoubleFuncExec = std::function<bool ( double , bool  )>;
+extern bool CallDialogInputDouble(  const char* iLabel, double & ioVal, DialogInputDoubleFuncExec iFunc=nullptr);
+
 
 extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 

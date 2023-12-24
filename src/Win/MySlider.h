@@ -18,7 +18,7 @@ class MySlider{
   void*               cUserData;
   
  public:
-  MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback* pCB, void* pUserData, double pMin, double pMax );
+  MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback* pCB, void* pUserData, double pMin, double pMax, bool Vertical = false );
 
   void  value( float pVal );
   float value();

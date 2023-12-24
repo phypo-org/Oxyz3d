@@ -26,7 +26,6 @@
 
 
 
-
 class Fl_Menu_Button;
 struct Fl_Menu_Item;
 
@@ -125,7 +124,9 @@ namespace M3d {
     void userChangeKameraView(int	pEvent);
     void userInputPoint( bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
+    void userTransformSelectionInput( int pEvent );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
+    void userTransformSelectionInternal( float lDx,  bool cFlagFinalize=false);
     bool userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     bool userSelectionPointColor(int	pEvent, bool cFlagMove);
     bool userDragInputPt(int  pEvent, bool iFinalize );

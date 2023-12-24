@@ -109,6 +109,7 @@ namespace M3d{
 		
     Transform       cCurrentTransform;
     PP3d::Transf3d  cCurrentTransf;
+    double          cCurrentValTransf; // pour Le dialogInput
 
     TypeDeform      cCurrentDeform = TypeDeform::Nothing;
     
@@ -130,11 +131,12 @@ namespace M3d{
     
     void setCurrentTransformType( Transform lTrans)
     {	
-      cCurrentTransf.raz();
+      //      cCurrentTransf.raz();
       cCurrentTransform= lTrans;			
     }
     Transform getCurrentTransformType()   { return cCurrentTransform;}
     PP3d::Transf3d& currentTransform()    { return cCurrentTransf;}
+    double&         currentValTransf()    { return cCurrentValTransf;}
 
     InputPlaneType getInputPlane()              { return cInputPlaneType; }
     void   setInputPlane(InputPlaneType iPt )   { cInputPlaneType = iPt; }
