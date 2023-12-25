@@ -11,14 +11,15 @@ class MySlider{
   
  protected:
 
-  Fl_Hor_Nice_Slider* cSlider;
-  Fl_Float_Input    * cInput;
+  Fl_Hor_Nice_Slider* cSlider=nullptr;
+  Fl_Float_Input    * cInput=nullptr;
   
-  Fl_Callback*        cCallback;
-  void*               cUserData;
+  Fl_Callback*        cCallback=nullptr;
+  void*               cUserData=nullptr;
+  bool                cHaveSlider=false;
   
  public:
-  MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback* pCB, void* pUserData, double pMin, double pMax, bool Vertical = false );
+  MySlider( int pX, int pY, int pW, int pH, const char* pLabel,  Fl_Callback* pCB, void* pUserData, double pMin, double pMax, bool Vertical = false, bool pHaveSlider=true );
 
   void  value( float pVal );
   float value();

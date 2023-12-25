@@ -19,8 +19,23 @@ XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
 
 XXXXXX  - Remplacer les callback par des lambda
 
-- Permettre la saisie de valeur au clavier pour les modifications
-  interactive à la souris . Enlever DialogKeepFloat 
+ccccc - Permettre la saisie de valeur au clavier pour les modifications
+  interactive à la souris . Enlever DialogKeepFloat
+  
+  Actuellment on fournit un Dx (c'est pas terrible) remplacer par la
+  vrai valeur pour l'affichage etc avec un facteur lié a l'echelle de
+  l'affichage(en tout cas pour les move !!!!), meme chose pour les limite du slider, il fudrait aussi
+  tenir compte si c'est un scale,un move une rotation (-360 +360)
+  actuellment en grade, verifier que c'est coherent avec l'affichage
+  !!!!, il faudrait que le dialogue sache sur quoi il travaille, peut
+  etre avec une callback/lambda qui pourrait acceder au canvas et
+  faire un switch sur le type de transformation ???
+  ----- A Finaliser !!! ------
+  
+  
+
+
+
 
 - Ajouter un bouton et un niveau de selection supplementaire pour les
   objets/groups (qui ne fait que desactive la selection des groupes)

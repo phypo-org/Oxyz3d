@@ -103,7 +103,7 @@ namespace M3d {
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
       cMyWindow->position( 100, 100) ;
 
-      cSliderPas =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "value", SliderCB, this, -100, 100, true ));
+      cSliderPas =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "value", SliderCB, this, -100, 100, true, false ));
       
       cSliderPas->value( iVal );
     
