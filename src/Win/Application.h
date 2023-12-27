@@ -22,8 +22,10 @@
 #include "Utils/PPSingletonCrtp.h"
 #include "Utils/PPConfig.h"
 
+#include "TransformType.h"
 
-  
+
+
 #define PushHistory() PP3d::UndoHistory::Instance().sav( *Application::Instance().getDatabase(), &TheSelect, Application::Instance().autoSave() )
 #define TheAppli M3d::Application::Instance()
 #define TheBase  (*TheAppli.getDatabase())
@@ -35,38 +37,11 @@
 namespace M3d{
 
   class Win3d;
-	
-  enum class Transform{
-    Nothing,
-      MoveX,
-      MoveY,
-      MoveZ,
-      MoveNormal,
-      MoveAxis,
-            
-      CenterRotX,
-      CenterRotY,
-      CenterRotZ,
-      CenterRotNorm,
-      CenterRotAxis,
-      CenterRotFacetNorm,
-      RotAxis,
 
-      ScaleUniform,
-      ScaleX,
-      ScaleY,
-      ScaleZ,
-      ScaleRX,
-      ScaleRY,
-      ScaleRZ,
-      ScaleAxis,
-      ScaleNormal,      
-      };
 
   enum class TypeDeform {
     Nothing,
       DeformProportinal,
-
       };
 
   enum class InputPlaneType { X, Y, Z, Free };
@@ -110,6 +85,8 @@ namespace M3d{
     Transform       cCurrentTransform;
     PP3d::Transf3d  cCurrentTransf;
     double          cCurrentValTransf; // pour Le dialogInput
+
+    
 
     TypeDeform      cCurrentDeform = TypeDeform::Nothing;
     

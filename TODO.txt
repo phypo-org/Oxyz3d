@@ -31,7 +31,8 @@ ccccc - Permettre la saisie de valeur au clavier pour les modifications
   etre avec une callback/lambda qui pourrait acceder au canvas et
   faire un switch sur le type de transformation ???
   ----- A Finaliser !!! ------
-  
+
+ ...EN COURS  src/Win/TransformType.cpp pour tenir des modif ???
   
 
 
