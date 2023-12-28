@@ -433,7 +433,7 @@ namespace M3d {
 		    TheSelect.execVisitorOnEntity(lVisit);		    
 		      
 		    TheAppli.currentTransform().angle().x() += M_PI*lDx/180.;
-		    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
+                    //	    CallDialogKeepFloat( TheAppli.currentTransform().angle().x());
 		      
 		    lMatRot.initRotAxis( lAxis, TheAppli.currentTransform().angle().x() );		      
 		  }		      
