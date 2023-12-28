@@ -48,17 +48,26 @@ void MySlider::sInputCB( Fl_Widget*pWidget, void*pUserData )
   void MySlider::value( float pVal )
   {
     if( cSlider )
-      cSlider->value( pVal );
-    
-    std::stringstream lOs;
-    lOs <<  pVal;
-    cInput->value(  lOs.str().c_str() );
+      {
+        cSlider->value( pVal );
+        std::stringstream lOs;
+        lOs <<  cSlider->value();
+        cInput->value(  lOs.str().c_str() );
+      }
+    else
+      {
+        std::stringstream lOs;
+        lOs <<  pVal;
+        cInput->value(  lOs.str().c_str() );
+      }
   }
 //-------------------------------------------------
   float MySlider::value()
   {
-    
-    return  (float) atof(cInput->value());
+    if( cSlider )
+      return  (float)cSlider->value();
+    else
+      return  (float) atof(cInput->value());
   }
 
 //******************************

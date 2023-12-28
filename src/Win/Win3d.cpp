@@ -750,7 +750,7 @@ namespace M3d {
                  TheSelect.execVisitorOnlyOnObjects( lVisitPoint );
                  for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
                    {
-                     lPoint->get() -=  lVisitMinMax.getMin().y();
+                     lPoint->get().y() -=  lVisitMinMax.getMin().y();
                    }				
                  PushHistory();
                  TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
@@ -766,7 +766,7 @@ namespace M3d {
                  TheSelect.execVisitorOnlyOnObjects( lVisitPoint );
                  for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
                    {
-                     lPoint->get() -=  lVisitMinMax.getMax().y();
+                     lPoint->get().y() -=  lVisitMinMax.getMax().y();
                    }				
                  PushHistory();
                  TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
@@ -787,7 +787,7 @@ namespace M3d {
                         
                      for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
                        {
-                         lPoint->get() -=  lVisitMinMax.getMin().y();
+                         lPoint->get().y() -=  lVisitMinMax.getMin().y();
                        }				
                      TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
                    }
@@ -808,7 +808,7 @@ namespace M3d {
                         
                      for( PP3d::PointPtr lPoint : lVisitPoint.cVectPoints )
                        {
-                         lPoint->get() -=  lVisitMinMax.getMax().y();
+                         lPoint->get().y() -=  lVisitMinMax.getMax().y();
                        }				
                      TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
                    }
