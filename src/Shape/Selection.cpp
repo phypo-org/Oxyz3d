@@ -80,6 +80,7 @@ namespace PP3d {
 	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectFacets;
 	break;
 	
+      case SelectType::Group:
       case SelectType::Object:;
 	lVectEntity = (std::vector<EntityPtr>*) & lVisit.cVectObjects;
 	break;
@@ -149,7 +150,8 @@ namespace PP3d {
       }
     else
       //:::::::::: GROUP :::::::::::::
-      if( ioEntity->getType() == ShapeType::Object )
+      if( cSelectType == SelectType::Group && ioEntity->getType() == ShapeType::Object )
+        //        if( isSelectGroup() && ioEntity->getType() == ShapeType::Object )
         {
           // Si on a un element d'un groupe il faut tous les selectionner !!!
           ObjectPtr lObj = dynamic_cast<ObjectPtr>(ioEntity);
@@ -247,7 +249,8 @@ namespace PP3d {
 	  }
         else
           //:::::::::: GROUP :::::::::::::
-          if( ioEntity->getType() == ShapeType::Object )
+          if( cSelectType == SelectType::Group  && ioEntity->getType() == ShapeType::Object )
+            //   if(  isSelectGroup() && ioEntity->getType() == ShapeType::Object )
             {
               // Si on a un element d'un groupe il faut tous les deselectionner !!!
               ObjectPtr lObj = dynamic_cast<ObjectPtr>(ioEntity);
@@ -443,6 +446,7 @@ namespace PP3d {
       case SelectType::Facet:  return "Facet";
       case SelectType::Poly:   return "Poly";
       case SelectType::Object: return "Object";
+      case SelectType::Group:  return "Group";
       case SelectType::All:    return "All";
       }
     return "SelectType::unknown";
@@ -462,6 +466,8 @@ namespace PP3d {
       return SelectType::Poly;
     else		if( ::strcmp( pStr, "Object" ) == 0 )
       return SelectType::Object;
+    else		if( ::strcmp( pStr, "Group" ) == 0 )
+      return SelectType::Group;
     else		if( ::strcmp( pStr, "All" ) == 0 )
       return SelectType::All;
     
@@ -480,7 +486,7 @@ namespace PP3d {
   //--------------------------------
   void Selection::deleteAllFromDatabase(DataBase& pDatabase )
   {
-    if( cSelectType == SelectType::Object )
+    if( cSelectType == SelectType::Object || cSelectType == SelectType::Group )
       {
 	std::vector<EntityPtr> lDelList;
 	for(  EntityPtr lEntity : cSelectObjVect )
@@ -524,7 +530,7 @@ namespace PP3d {
   {
     std::cout << "combineGroup 1 sz:" << cSelectObjVect.size()  << std::endl;
       
-    if( cSelectType != SelectType::Object
+    if( ( cSelectType != SelectType::Object && cSelectType != SelectType::Group) 
         || cSelectObjVect.size() < 2 )
       return false;
 
@@ -561,22 +567,23 @@ namespace PP3d {
   //--------------------------------
   void Selection::separateGroup( DataBase & iBase)
   {
-    if( cSelectType != SelectType::Object ) return ;
-    //=====================
-    for(  EntityPtr lEntity : cSelectObjVect )
+    if( cSelectType == SelectType::Object ||  cSelectType == SelectType::Group )
       {
-        if( lEntity->getType()  != ShapeType::Object ) continue;
-
-        ObjectPtr lObj = ((ObjectPtr)lEntity);
-
-        GroupPtr lGroup = lObj->getGroup();
-        if( lGroup != nullptr )
+        //=====================
+        for(  EntityPtr lEntity : cSelectObjVect )
           {
-            iBase.freeGroup( lGroup );
-          }        
-      }
-    
-    //=====================
+            if( lEntity->getType()  != ShapeType::Object ) continue;
+            
+            ObjectPtr lObj = ((ObjectPtr)lEntity);
+            
+            GroupPtr lGroup = lObj->getGroup();
+            if( lGroup != nullptr )
+              {
+                iBase.freeGroup( lGroup );
+              }        
+          }
+        //=====================
+      }    
   }
   //------------ GROUP -------------
 

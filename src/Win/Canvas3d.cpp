@@ -98,7 +98,7 @@ namespace M3d {
     :Fl_Gl_Window( pX, pY, pW, pH, l )
     ,cMyWin3d(pW3d)
     ,cScale(1.0)
-    ,cMode( ModeUser::MODE_BASE )
+    ,cUserMode( ModeUser::MODE_BASE )
     ,cAxisFlag( true )
     ,cFlagLightColor( false)
      //	 cGridMode( ModeGrid::GRID_3D )
@@ -131,6 +131,7 @@ namespace M3d {
 
     mode( FL_RGB | FL_DOUBLE | FL_DEPTH | FL_STENCIL | FL_DOUBLE);
     
+    
     cout << "************************************************************************"  << std::endl;
    cout << "******** CAN DO STENCIL: " << Fl_Gl_Window::can_do( FL_STENCIL )
 	 << " " << hex <<  FL_STENCIL
@@ -149,7 +150,7 @@ namespace M3d {
   {
     if( MyPref.cDbgEvt )
       {
-	switch( cMode )
+	switch( getUserMode()  )
 	  {
 	  case ModeUser::MODE_BASE:
 	    std::cout << "MODE_BASE  ";
@@ -166,8 +167,8 @@ namespace M3d {
 	  case ModeUser::MODE_TRANSFORM :
 	    std::cout << "MODE_TRANSFORM  " ;
 	    break;
-	  case ModeUser::MODE_DRAG_INPUT_PT :
-	    std::cout << "MODE_DRAG_INPUT_PT  " ;
+	  case ModeUser::MODE_DRAG :
+	    std::cout << "MODE_DRAG " ;
 	    break;
 	  }
       }
@@ -205,7 +206,7 @@ namespace M3d {
     TheAppli.currentTransform().raz();
 
     PP3d::Point3d lVoid;
-    cMode = ModeUser::MODE_BASE;
+    changeUserMode(  ModeUser::MODE_BASE );
     cancelDragSelect();					
     cSelectMode = PP3d::SelectMode::Undefine;
     if(cVisitModifSelect != nullptr )
@@ -346,16 +347,27 @@ namespace M3d {
 
 	// SAISIE DE POINT
 	if( Fl::event_button() == FL_LEFT_MOUSE
-	    &&  Fl::event_ctrl() &&  cMode == ModeUser::MODE_BASE)
-	  {
-	    DBG_ACT(" **************** cUserActionSaisie " );
-	    std::cout << " **************** cUserActionSaisie " << std::endl;
-	    userInputPoint(true );
-						
-	    return 1;
-	  }
+	    &&  Fl::event_ctrl() )
+          {
+            if(  getUserMode() == ModeUser::MODE_BASE)
+            {
+              if( getSubMode() == SubModeUser::SUBMODE_MAGNET )
+                {
+                   DBG_ACT(" **************** MAGNET ");
+                  return 1;
+                }
+              if( getSubMode() == SubModeUser::SUBMODE_INPUT_PT )
+                {
+                  DBG_ACT(" **************** cUserActionSaisie " );
+                  std::cout << " **************** cUserActionSaisie " << std::endl;
+                  userInputPoint(true );              
+                  return 1;
+                }
+            }
+ 
+      }
 	if( Fl::event_button() == FL_LEFT_MOUSE
-	    &&  Fl::event_shift() &&  cMode == ModeUser::MODE_BASE)
+	    &&  Fl::event_shift() &&  getUserMode() == ModeUser::MODE_BASE)
 	  {
 	    PP3d::EntityId lId =TheSelect.getLastHightLightEntityId();
 	    
@@ -369,9 +381,9 @@ namespace M3d {
 				
 	// SELECTION RECTANGLE : BUG
 	if( Fl::event_button() == FL_MIDDLE_MOUSE
-	    &&  Fl::event_shift() ) // &&  cMode == ModeUser::MODE_BASE)
+	    &&  Fl::event_shift() ) // &&  getUserMode() == ModeUser::MODE_BASE)
 	  {	  
-	    cMode = ModeUser::MODE_SELECT_RECT;
+	    changeUserMode( ModeUser::MODE_SELECT_RECT );
 
 	    userPrepareAction( pEvent );
 	    TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
@@ -382,12 +394,12 @@ namespace M3d {
 	if( Fl::event_button() == FL_MIDDLE_MOUSE )
 	  {
 	    userPrepareAction( pEvent );
-	    if( cMode == ModeUser::MODE_BASE )
-	      cMode = ModeUser::MODE_MOVE_CAMERA;
+	    if( getUserMode() == ModeUser::MODE_BASE )
+	      changeUserMode( ModeUser::MODE_MOVE_CAMERA );
 	    return 1;
 	  }
 
-	if( Fl::event_button() == FL_LEFT_MOUSE &&  cMode == ModeUser::MODE_TRANSFORM )
+	if( Fl::event_button() == FL_LEFT_MOUSE &&  getUserMode() == ModeUser::MODE_TRANSFORM )
 	  {
 	    userPrepareAction( pEvent );
 	    return 1;
@@ -398,21 +410,21 @@ namespace M3d {
 	// FIN DEPLACEMENT CAMERA OU SELECTION
 	if( Fl::event_button() == FL_LEFT_MOUSE )
 	  {
-	    if( cMode == ModeUser::MODE_MOVE_CAMERA )
+	    if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 	      {
-		cMode = ModeUser::MODE_BASE;
+		changeUserMode( ModeUser::MODE_BASE );
 		userTerminateAction( pEvent );
 		return 1;
 	      }
 	    else  //DEBUT MODE_SELECT
-	      if( cMode == ModeUser::MODE_BASE )
+	      if( getUserMode() == ModeUser::MODE_BASE )
 		{
 		  cSelectMode = PP3d::SelectMode::Undefine;
 		  userPrepareAction( pEvent );
 		  if( userSelectionPointColor( pEvent, false ))
-		    cMode = ModeUser::MODE_SELECT;
+		    changeUserMode( ModeUser::MODE_SELECT);
 		  else
-		    cMode = ModeUser::MODE_SELECT_RECT;
+		    changeUserMode( ModeUser::MODE_SELECT_RECT);
 
 		    
 		  return 1;
@@ -429,7 +441,7 @@ namespace M3d {
 	    cPopup->clear();						
 						
 						
-	    if( cMode == ModeUser::MODE_BASE )
+	    if( getUserMode() == ModeUser::MODE_BASE )
 	      {
 		makeMenu( *cPopup); 
 	      }
@@ -448,23 +460,23 @@ namespace M3d {
 	//========================================
 
       case FL_RELEASE:
-	DBG_EVT( "******** Button Release ");
+	DBG_EVT( "******** Button Release ");      
 					
 	switch(  Fl::event_button() )
 	  {
 	  case FL_LEFT_MOUSE :
-	    if( cMode == ModeUser::MODE_SELECT )
+	    if( getUserMode() == ModeUser::MODE_SELECT )
 	      {
 		userTerminateAction( pEvent );
 	      }
 	    else
-	    if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+	    if( getUserMode() == ModeUser::MODE_DRAG )
 	      {
-		cout << "MODE_DRAG_INPUT_PT - RELEASE " << endl;
+		cout << "MODE_DRAG - RELEASE " << endl;
 
 		userDragInputPt(pEvent, true );
 		userTerminateAction( pEvent );
-		cMode = ModeUser::MODE_BASE;
+		changeUserMode( ModeUser::MODE_BASE );
 	      }
 	    DBG_EVT(  "LEFT ");
 	    break;
@@ -476,7 +488,7 @@ namespace M3d {
 	    break;
 	  }
 				
-	if(  cMode == ModeUser::MODE_TRANSFORM
+	if(  getUserMode() == ModeUser::MODE_TRANSFORM
 	     && TheAppli.getCurrentTransformType() != Transform::Nothing )
 	  {
 	    userTransformSelection(pEvent, true );
@@ -484,7 +496,7 @@ namespace M3d {
 	    TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
 	  }
 				
-	if( cMode == ModeUser::MODE_SELECT_RECT )
+	if( getUserMode() == ModeUser::MODE_SELECT_RECT )
 	  {
 	    userSelectionRectangle(pEvent, true );
 	    userTerminateAction( pEvent );
@@ -500,27 +512,27 @@ namespace M3d {
 	
 	if( cMouseLastPosX != -1 )
 	  {
-	    if( cMode == ModeUser::MODE_DRAG_INPUT_PT)
+	    if( getUserMode() == ModeUser::MODE_DRAG)
 	      {
 		userDragInputPt(pEvent, false);
 	      }
 	    else
-	    if( cMode == ModeUser::MODE_TRANSFORM )
+	    if( getUserMode() == ModeUser::MODE_TRANSFORM )
 	      {
 		userTransformSelection(pEvent);
 	      }
 	    else
-	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
+	      if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 		{
 		  userChangeKameraView( pEvent );
 		}					
 	      else
-		if( cMode == ModeUser::MODE_SELECT )
+		if( getUserMode() == ModeUser::MODE_SELECT )
 		  {
 		    userSelectionPointColor( pEvent, false );
 		  }
 		else
-		  if( cMode == ModeUser::MODE_SELECT_RECT )
+		  if( getUserMode() == ModeUser::MODE_SELECT_RECT )
 		    {
 		      cMouseLastPosX = Fl::event_x();
 		      cMouseLastPosY = Fl::event_y();
@@ -540,14 +552,14 @@ namespace M3d {
 	  DBG_EVT( " <MOVE> " << cMouseLastPosX );
 	  if( cMouseLastPosX != -1 )
 	    {					 	
-	      if( cMode == ModeUser::MODE_MOVE_CAMERA )
+	      if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 		{
 		  userChangeKameraView( pEvent );
 		  TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou du rectangel etc
 		}
 	    }
 	  else
-	    if( cMode == ModeUser::MODE_BASE )
+	    if( getUserMode() == ModeUser::MODE_BASE )
 	      {
 		if(  Fl::event_ctrl() )
 		  { 
@@ -614,7 +626,7 @@ namespace M3d {
 		  DBG_EVT_NL( " TAB" );
 
                   cout << "TAB " << endl;
-		  if( cMode == ModeUser::MODE_TRANSFORM )
+		  if( getUserMode() == ModeUser::MODE_TRANSFORM )
 		    {
                       //CallDialogKeepFloatInit( this );
 		      userTransformSelectionInput(pEvent);
@@ -622,7 +634,7 @@ namespace M3d {
 		  break;
 		  //=======================
 		case FL_Insert:
-		  if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+		  if( getUserMode() == ModeUser::MODE_DRAG )
 		    {
 		      DBG_ACT( "Canvas3d::handle FL_Insert" );
 		      
@@ -659,11 +671,11 @@ namespace M3d {
 		  //=======================
 		case FL_BackSpace:
 		case FL_Delete:
-		  if( cMode == ModeUser::MODE_DRAG_INPUT_PT )
+		  if( getUserMode() == ModeUser::MODE_DRAG )
 		    {
 		      TheInput.delCurrentLineSelectPoint(TheBase); 
 		    }
-		  else if( cMode == ModeUser::MODE_BASE )
+		  else if( getUserMode() == ModeUser::MODE_BASE )
 		    {		      
 		      TheInput.delLastPoint ();
 		    }
@@ -704,7 +716,7 @@ namespace M3d {
 		}
 	      else if( strcmp( lStr, UNSELECT_ALL) == 0 )
 		{
-		  if( cMode == ModeUser::MODE_BASE )
+		  if( getUserMode() == ModeUser::MODE_BASE )
 		    {
                       PushHistory();
 		      TheSelect.removeAll();
@@ -877,7 +889,7 @@ namespace M3d {
 
       case FL_MOUSEWHEEL:
 	Fl::focus(this);
-	if( cMode == ModeUser::MODE_MOVE_CAMERA )
+	if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 	  {						
 	    cScale = cKamera.scale().x();
 	    if( Fl::event_dy() != 0)

@@ -371,11 +371,20 @@ namespace M3d {
 	
     ConvVoid lVal;
     lVal.cPtr=  lToggle->cUserData2;
-	
-       
-   TheSelect.changeSelectType( lVal.cSelType );
-      
 
+    /*
+    // Traitement special pour les groupes 
+    TheSelect.changeSelectGroup( false );
+    if(  lVal.cSelType == PP3d::SelectType::Group )
+      {
+        TheSelect.changeSelectGroup( true );
+        lVal.cSelType = PP3d::SelectType::Object;
+      }
+    // Traitement special pour les groupes 
+    */
+    
+    TheSelect.changeSelectType( lVal.cSelType );
+ 
     // std::cout << "  BasculeSelModeCB " << PP3d::Selection::GetStrSelectType(lVal.cSelType) << std::endl;
     
 
@@ -384,13 +393,16 @@ namespace M3d {
     MyToggleButton* 	lBut1 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData4 );
     MyToggleButton* 	lBut2 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData5 );
     MyToggleButton* 	lBut3 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData6 );
-    //    MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData7 );
-    //    MyToggleButton* 	lBut5 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData8 );
+    MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData7 );
+    
+   //    MyToggleButton* 	lBut4 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData8 );
+    //    MyToggleButton* 	lBut5 =  reinterpret_cast<MyToggleButton*>( lToggle->cUserData9 );
 
     lBut0->value( true );
     lBut1->value( false );
     lBut2->value( false );
     lBut3->value( false );
+    lBut4->value( false );
     //    lBut4->value( false );
     //    lBut5->value( false );
 

@@ -134,11 +134,11 @@ namespace M3d {
 		    cout << "Same Point !!!" << endl;
 		    
 		    TheInput.editCurrentLineSelectPoint();
-		    if( cMode == ModeUser::MODE_BASE
+		    if( getUserMode() == ModeUser::MODE_BASE
 			&& Fl::event_button() == FL_LEFT_MOUSE  )
 			  {
-			    cout << "MODE_DRAG_INPUT_PT !!!" << endl;
-			    cMode = ModeUser::MODE_DRAG_INPUT_PT;			
+			    cout << "MODE_DRAG !!!" << endl;
+			    changeUserMode( ModeUser::MODE_DRAG );			
 			  }		    
 		  }
 	    /*

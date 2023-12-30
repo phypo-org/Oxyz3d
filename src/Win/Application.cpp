@@ -92,6 +92,7 @@ namespace M3d{
 	//	std::cout <<  "      Application::redrawAllCanvas canvas" << std::endl;
 	lWin->canvasRedraw();  
 	lWin->setUndoRedoState();
+        lWin->redraw();
       }
   }
   //-----------------------------------	 

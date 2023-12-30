@@ -282,7 +282,7 @@ namespace M3d {
       }
 
     // draw rectangle selection if needed
-    if( cMode == ModeUser::MODE_SELECT_RECT )
+    if( getUserMode() == ModeUser::MODE_SELECT_RECT )
       {	
 	drawSelectRect();
       }

@@ -199,6 +199,7 @@ namespace PP3d{
 	}
 	break;
 				
+      case SelectType::Group:
       case SelectType::Object:
 	{
 	  //	  std::cout << "Object::drawGL object cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
@@ -290,13 +291,14 @@ namespace PP3d{
 	}
 	break;
 				
+      case SelectType::Group:
       case SelectType::Object:
 	{
 	  drawSelectObjectGL( pViewProps );
 	}
 	break;
 			
-      case SelectType::All:
+     case SelectType::All:
 	{
 	  drawSelectFacetGL( pViewProps );					
 	  drawSelectLineGL( pViewProps);					

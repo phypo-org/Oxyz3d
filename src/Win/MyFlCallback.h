@@ -17,8 +17,10 @@ namespace M3d {
     void* cUserData6;
     void* cUserData7;
     void* cUserData8;
+    void* cUserData9;
+    void* cUserData10;
 		
-    MyUserData( void* pUserData1, void* pUserData2, void* pUserData3=nullptr, void* pUserData4=nullptr, void* pUserData5=nullptr, void* pUserData6=nullptr, void* pUserData7=nullptr, void* pUserData8=nullptr )
+    MyUserData( void* pUserData1, void* pUserData2, void* pUserData3=nullptr, void* pUserData4=nullptr, void* pUserData5=nullptr, void* pUserData6=nullptr, void* pUserData7=nullptr, void* pUserData8=nullptr, void* pUserData9=nullptr, void* pUserData10=nullptr )
       :cUserData1(pUserData1)
       ,cUserData2(pUserData2)
       ,cUserData3(pUserData3)
@@ -27,10 +29,12 @@ namespace M3d {
       ,cUserData6(pUserData6)
       ,cUserData7(pUserData7)
       ,cUserData8(pUserData8)
+      ,cUserData9(pUserData9)
+      ,cUserData10(pUserData10)
     {
     }
 
-    void setUserData( void* pUserData1, void* pUserData2, void* pUserData3=nullptr, void* pUserData4=nullptr, void* pUserData5=nullptr, void* pUserData6=nullptr, void* pUserData7=nullptr, void* pUserData8=nullptr )
+    void setUserData( void* pUserData1, void* pUserData2, void* pUserData3=nullptr, void* pUserData4=nullptr, void* pUserData5=nullptr, void* pUserData6=nullptr, void* pUserData7=nullptr, void* pUserData8=nullptr, void* pUserData9=nullptr, void* pUserData10=nullptr )
     {
       cUserData1=pUserData1;
       cUserData2=pUserData2;
@@ -40,6 +44,8 @@ namespace M3d {
       cUserData6=pUserData6;
       cUserData7=pUserData7;
       cUserData8=pUserData8;
+      cUserData9=pUserData9;
+      cUserData10=pUserData10;
     }
   };  
   //****************************************************

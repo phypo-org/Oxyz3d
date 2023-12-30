@@ -106,7 +106,7 @@ namespace M3d {
 	if( iFinalize )
 	  {
 	    TheInput.changeCurrentLineSelectPoint( lResult );
-	    cMode = ModeUser::MODE_BASE;
+	    changeUserMode( ModeUser::MODE_BASE );
 	  }
 	else	  
 	  TheInput.viewCurrentPoint( lResult );

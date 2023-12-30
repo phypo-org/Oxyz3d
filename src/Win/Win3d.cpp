@@ -236,7 +236,8 @@ namespace M3d {
     lX += lW;
 
 
-    //========================		
+ 
+   //========================		
     Fl_Image* lPixSel = MyImage::LoadImage("Icons/SelectTransformOnOff.png", Application::sIconSize);
 
     MyToggleButton*
@@ -246,14 +247,40 @@ namespace M3d {
     lButSelTran->image( lPixSel );
     lButSelTran->tooltip("Enable selection for transformation : axe, plane ...");
     lX += lW;
+   
+ 
+   //========================		
+    lPixSel = MyImage::LoadImage("Icons/magnet.png", Application::sIconSize);
+
+    MyToggleButton*
+      lButModeMagnet = new MyToggleButton( lX, lY, lW, lH, nullptr,
+                                        []( Fl_Widget*w, void*pData){
+                                            MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
+                                            Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
+
+                                            if( lToggle->value() )
+                                              {
+                                                lWin3d->cuCanvas3d->changeSubMode( SubModeUser::SUBMODE_MAGNET );
+                                              }
+                                            else
+                                              {
+                                                lWin3d->cuCanvas3d->changeSubMode( SubModeUser::SUBMODE_INPUT_PT );
+                                              }                                           
+                                          }, this );
+    lButModeMagnet->value(false);
+    lButModeMagnet->image( lPixSel );
+    lButModeMagnet->tooltip("Enable/Disable magnt mode ...");
+    lX += lW;
+    lX += lW;
 
  
+ 
     //========================		
-    //    lPixSel = MyImage::LoadImage("Icons/all.png", Application::sIconSize);
+    lPixSel = MyImage::LoadImage("Icons/all.png", Application::sIconSize);
 
     MyToggleButton* lButSelAll = nullptr ;
-    //new MyToggleButton( lX, lY, lW, lH, nullptr,
-    //				      BasculeSelModeCB, this, (void*)0 );
+    new MyToggleButton( lX, lY, lW, lH, nullptr,
+    				      BasculeSelModeCB, this, (void*)0 );
     //    lButSelAll->value(false);
     //    lButSelAll->image( lPixSel );
     //    lButSelAll->tooltip("Enable selection for all type (execpt transformation)");
@@ -299,11 +326,24 @@ namespace M3d {
     lButSelBody->tooltip("Enable selection for objects");
     lX += lW;
 
+    //========================		
+    lPixSel = MyImage::LoadImage("Icons/group.png", Application::sIconSize);
+
+    MyToggleButton*
+      lButSelGroup = new MyToggleButton( lX, lY, lW, lH, nullptr,
+                                        BasculeSelModeCB, this, (void*)4 );
+    lButSelGroup->value(false);
+    lButSelGroup->image( lPixSel );
+    lButSelGroup->tooltip("Enable selection for transformation : axe, plane ...");
+    lX += lW;
+    
+
     //    lButSelAll->setUserData(  this, (void*)PP3d::SelectType::All,    lButSelAll,  lButSelPt,   lButSelLine, lButFacet,   lButSelBody, lButSelTran  );
-    lButSelPt->setUserData(   this, (void*)PP3d::SelectType::Point,  lButSelPt,   lButSelLine, lButFacet,   lButSelBody,  lButSelTran, lButSelAll  );
-    lButSelLine->setUserData( this, (void*)PP3d::SelectType::Line,   lButSelLine, lButSelPt,   lButFacet,   lButSelBody,  lButSelTran, lButSelAll  );
-    lButFacet->setUserData(   this, (void*)PP3d::SelectType::Facet,  lButFacet,   lButSelPt,   lButSelLine, lButSelBody,  lButSelTran, lButSelAll  );
-    lButSelBody->setUserData( this, (void*)PP3d::SelectType::Object, lButSelBody, lButSelPt,   lButSelLine, lButFacet,  lButSelTran,   lButSelAll  );
+    lButSelPt->setUserData(   this, (void*)PP3d::SelectType::Point,  lButSelPt,   lButSelLine, lButFacet,   lButSelBody,  lButSelGroup, lButSelTran, lButSelAll  );
+    lButSelLine->setUserData( this, (void*)PP3d::SelectType::Line,   lButSelLine, lButSelPt,   lButFacet,   lButSelBody,  lButSelGroup, lButSelTran, lButSelAll  );
+    lButFacet->setUserData(   this, (void*)PP3d::SelectType::Facet,  lButFacet,   lButSelPt,   lButSelLine, lButSelBody,  lButSelGroup, lButSelTran, lButSelAll  );
+    lButSelBody->setUserData( this, (void*)PP3d::SelectType::Object, lButSelBody, lButSelPt,   lButSelLine, lButFacet,    lButSelGroup, lButSelTran,   lButSelAll  );
+    lButSelGroup->setUserData( this, (void*)PP3d::SelectType::Group, lButSelGroup, lButSelPt,  lButSelLine, lButFacet,    lButSelBody,  lButSelTran,   lButSelAll  );
     //    lButSelTran->setUserData( this, (void*)PP3d::SelectType::Null,   lButSelTran, lButSelBody, lButSelPt,   lButSelLine, lButFacet,   lButSelAll   );
 
     //=================================================================

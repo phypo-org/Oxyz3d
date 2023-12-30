@@ -32,7 +32,9 @@ struct Fl_Menu_Item;
 
 namespace M3d {
  
-  enum class ModeUser { MODE_BASE, MODE_SELECT, MODE_SELECT_RECT, MODE_MOVE_CAMERA, MODE_TRANSFORM, MODE_DRAG_INPUT_PT };
+  enum class ModeUser { MODE_BASE, MODE_SELECT, MODE_SELECT_RECT, MODE_MOVE_CAMERA, MODE_TRANSFORM, MODE_DRAG };
+  enum class SubModeUser{  SUBMODE_INPUT_PT, SUBMODE_MAGNET };
+  
   enum class ModeGrid { NO_GRID=0, GRID_2D=1, GRID_3D=2 };
 
   class Win3d;
@@ -45,7 +47,8 @@ namespace M3d {
     Win3d&         cMyWin3d;
     PP3d::Kamera    cKamera;
     double          cScale;
-    ModeUser        cMode;
+    ModeUser        cUserMode    = ModeUser::MODE_BASE;
+    SubModeUser     cSubUserMode = SubModeUser::SUBMODE_INPUT_PT;
 
     bool      cAxisFlag;
     bool      cFlagLightColor; 
@@ -66,8 +69,7 @@ namespace M3d {
 
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
-
-
+   
 
   public:
     void setViewGeo( bool cVal) { cFlagViewGeo = cVal; }
@@ -76,7 +78,7 @@ namespace M3d {
     void setSelectGeo( bool cVal) { cFlagSelectGeo = cVal; }
     bool getSelectGeo()           { return cFlagSelectGeo && cFlagViewGeo; }
 
-
+  
   protected:
  
     // Pour le dragging 
@@ -110,8 +112,17 @@ namespace M3d {
 		
 
 
-    void changeUserMode( ModeUser pMode ) { cMode = pMode; }
-    void setVisualMode( GLuint pMode ) { cViewGen.cViewMode = pMode; }
+    void     changeUserMode( ModeUser iMode ) { cUserMode = iMode; }
+    ModeUser getUserMode()   const             { return cUserMode;}
+    
+    void     changeSubMode(SubModeUser iMode ) { cSubUserMode = iMode; }
+    SubModeUser getSubMode()  const             { return cSubUserMode;}
+
+
+    
+    
+    
+    void setVisualMode( GLuint pMode )    { cViewGen.cViewMode = pMode; }
     //------------------------------
     int       cMouseInitPosX=-1;
     int       cMouseInitPosY=-1;

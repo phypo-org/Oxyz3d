@@ -87,7 +87,8 @@ namespace PP3d {
 		
   protected:
 		
-    SelectType     cSelectType = SelectType::Object;
+    SelectType     cSelectType  = SelectType::Object;
+    //    bool           cSelectGroup = false;
 
     std::unordered_set<EntityPtr> cSelectObj;
     std::vector<EntityPtr>        cSelectObjVect;
@@ -129,6 +130,9 @@ namespace PP3d {
     SelectType&        getSelectType() { return  cSelectType; }
     static const char* GetStrSelectType(SelectType);
     static SelectType  GetSelectTypeFromStr( const char* pStr );
+
+    //    void   changeSelectGroup( bool lVal ) { cSelectGroup = lVal; }
+    //    bool   isSelectGroup() { return cSelectGroup; }
 
     bool isOnlyObject( ObjectType iObjType );
     
