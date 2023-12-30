@@ -399,6 +399,11 @@ namespace M3d {
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
   {
+    if( getSubMode() == SubModeUser::SUBMODE_MAGNET )
+      {
+        makeMenuMagnet(   *cPopup);
+      }
+    else
     if( TheSelect.getNbSelected() > 0 )
       {										
 	makeMenuSelect(  *cPopup);
@@ -409,11 +414,70 @@ namespace M3d {
       }
   }
   //-------------------------------------------
+#define StrMenu_MagnetSize "Size"
+#define StrMenu_MagnetAlgo "Algo"
+ 
+    void  Canvas3d::makeMenuMagnet(Fl_Menu_Button& pMenu)
+  {
+    pMenu.label( " Magnet ");
+    if( cMagnet.getAction() == MagnetAction::MAGNET_ACTION_ATTRACK )
+      {
+        pMenu.add(  "Repel", "", LAMBDA
+                   
+                   lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_REPEL);
+                   ADBMAL, this, FL_MENU_DIVIDER);
+      }
+    else
+      {
+        pMenu.add( "Attrack", "", LAMBDA
+               
+                 lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
+               ADBMAL, this, FL_MENU_DIVIDER);
+      }
+
+    
+    pMenu.add( StrMenu_MagnetAlgo "/" "Distance", "", LAMBDA               
+               lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_DIST);
+               ADBMAL, this);
+    
+    pMenu.add( StrMenu_MagnetAlgo "/" "Square distance", "", LAMBDA               
+               lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_DIST);
+               ADBMAL, this);
+    
+   pMenu.add( StrMenu_MagnetAlgo "/" "Square root distance", "", LAMBDA               
+              lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
+               ADBMAL, this, FL_MENU_DIVIDER);
+
+   
+    
+    pMenu.add( StrMenu_MagnetSize "/" " 10", "", LAMBDA               
+               lCanvas->cMagnet.setSize(10);
+               ADBMAL, this);
+    
+    pMenu.add( StrMenu_MagnetSize "/" " 50", "", LAMBDA               
+               lCanvas->cMagnet.setSize(50);
+               ADBMAL, this);
+    
+    pMenu.add( StrMenu_MagnetSize "/" " 100", "", LAMBDA               
+               lCanvas->cMagnet.setSize(100);
+               ADBMAL, this);
+    
+    pMenu.add( StrMenu_MagnetSize "/" " 200", "", LAMBDA               
+               lCanvas->cMagnet.setSize(200);
+               ADBMAL, this);    
+    pMenu.add( StrMenu_MagnetSize "/" " 300", "", LAMBDA               
+               lCanvas->cMagnet.setSize(300);
+               ADBMAL, this);    
+   
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
+  }
+  //-------------------------------------------
   //
   void  Canvas3d::makeMenuSelect(Fl_Menu_Button& pMenu)
   {
     int lMenuFlagActif=0;
-   
+
+    pMenu.label( " Modify selection ");
     pMenu.add( StrMenu_Move  "/" StrMenu_MoveX, "", LAMBDA
                
                lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
@@ -1252,6 +1316,8 @@ namespace M3d {
   // If no entity is selected
   void  Canvas3d::makeMenuPrimitiv(Fl_Menu_Button& pMenu)
   {
+    pMenu.label( " Create ");
+    
     int lMenuFlagActif=0;
     pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreateFacet, "^c",
                [](Fl_Widget *w, void *pUserData)

@@ -88,6 +88,7 @@ namespace M3d {
     PP3d::Rect3d lRect(lMin, lMax);
     lRect.drawGL();
 
+    glColor4f(1.0f, 0.2f, 0.2f, 0.2f);
     glBegin( GL_LINES );
        
 
@@ -109,6 +110,65 @@ namespace M3d {
     glVertex3f( (float)lMax.cX, (float)lMax.cY, 0);
     glVertex3f( (float)lMax.cX, (float)lMin.cY, 0);      
 	
+    glEnd();
+    glEnable(GL_LIGHTING);
+      
+    glDepthMask( GL_TRUE );
+    glDisable( GL_BLEND );             
+  }
+  
+
+ //---------------------------
+  void Canvas3d::drawSelectCircle(int iSz)  // 2D !
+  {   
+    glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
+    glLoadIdentity(); // Clear the matrix
+        
+    int lW = pixel_w();
+    int lH = pixel_h();
+
+    glOrtho( 0, lW, 0, lH, -100.0, 100.0); // Setup an Ortho view
+    glViewport(0, 0, lW, lH);
+
+    glMatrixMode(GL_MODELVIEW); // Tell opengl that we are doing model matrix work. (drawing)
+    glLoadIdentity(); // Clear the model matrix
+    //    glEnable( GL_BLEND );
+    glDisable(GL_DEPTH_TEST);
+    
+    glDepthFunc(GL_LESS); 
+
+
+    glDepthMask( GL_FALSE );
+    //    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+				
+    glColor4f(0.1f, 0.1f, 0.0f, 0.2f);
+    glDisable( GL_LIGHTING );
+
+
+    PP3d::Point3d lCenter( cMouseLastPosX, lH-cMouseLastPosY, 0  );
+
+    PP3d::Point3d lSz( iSz, 0, 0);
+
+    //    cout << "min:" << lMin << " max:" << lMax << endl;
+   
+
+    glLineWidth( 1 );
+    glBegin(GL_POLYGON);
+
+    // Diagonale
+    //       glVertex3dv( lMin.vectForGL() ); 
+    //       glVertex3dv( lMax.vectForGL() );
+    int lNb = 32;
+    double lStepAngle = 2*M_PI/lNb;
+    double lAngle = 0;
+    for( int i=0; i< lNb; i++ )
+      {
+        lAngle += lStepAngle;
+        double x = cos( lAngle )*lSz.cX+lCenter.cX;
+        double y = sin( lAngle )*lSz.cX+lCenter.cY;
+        
+        glVertex3f( (float)x, (float)y, 0 );
+      }
     glEnd();
     glEnable(GL_LIGHTING);
       
@@ -192,7 +252,7 @@ namespace M3d {
   //---------------------------
   void Canvas3d::draw() 
   {
-    //    cout << "        " << this << " draw " << endl;
+    //   cout << "        " << this << " draw " << endl;
     if( sDrawColorSelect  )
       {
 	drawForSelect();
@@ -286,6 +346,13 @@ namespace M3d {
       {	
 	drawSelectRect();
       }
+   
+     // draw rectangle selection if needed
+    if( getSubMode() == SubModeUser::SUBMODE_MAGNET && getUserMode() == ModeUser::MODE_DRAG )
+      {	
+	drawSelectCircle(cMagnet.getSize());
+      }
+   
   
     glFlush();    
   }  

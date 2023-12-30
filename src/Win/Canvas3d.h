@@ -24,6 +24,7 @@
 #include "Modif/VisitorModif.h"
 #include "Modif/Modif.h"
 
+#include "Magnet.h"
 
 
 class Fl_Menu_Button;
@@ -50,6 +51,9 @@ namespace M3d {
     ModeUser        cUserMode    = ModeUser::MODE_BASE;
     SubModeUser     cSubUserMode = SubModeUser::SUBMODE_INPUT_PT;
 
+    Magnet          cMagnet;
+
+    
     bool      cAxisFlag;
     bool      cFlagLightColor; 
     ModeGrid  cGridMode;
@@ -69,7 +73,7 @@ namespace M3d {
 
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
-   
+    
 
   public:
     void setViewGeo( bool cVal) { cFlagViewGeo = cVal; }
@@ -149,12 +153,14 @@ namespace M3d {
     bool pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
 
     void drawSelectRect();
+    void drawSelectCircle(  int iSz );
 
     
     //=========== MENUS =================
     void makeMenu( Fl_Menu_Button& pMenu);
     void makeMenuSelect( Fl_Menu_Button& pMenu);
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
+    void makeMenuMagnet( Fl_Menu_Button& pMenu);
 
     static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData );

@@ -68,7 +68,7 @@ object for object select mode.
 
 If you are in select point mode you can select a point of the entry
 (point passing in red) and you can move
-it by clicking elsewhere, you can also move it to another by shif
+it on it on by clicking elsewhere, you can also move it to another by shif
 clicking left, you can delete it with del key, you can also insert
 point at the mouse position with insert key(in the keypad), quit this
 mode with Escape key.

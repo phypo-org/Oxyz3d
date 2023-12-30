@@ -190,8 +190,10 @@ namespace M3d {
       cChoiceGeometry->add("Cube");        // 2
       cChoiceGeometry->add("Octahedron");  // 3
       cChoiceGeometry->add("Dodecahedron"); // 4      
-      cChoiceGeometry->add("Icosahedron");
-      
+      cChoiceGeometry->add("Icosahedron"); //5
+      //      cChoiceGeometry->add("Octahedron2"); //6
+      //      cChoiceGeometry->add("Odron"); //7
+
       cChoiceGeometry->value(2);
       cChoiceGeometry->tooltip("The original object to be subdivided");
 	

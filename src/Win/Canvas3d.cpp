@@ -354,7 +354,15 @@ namespace M3d {
               if( getSubMode() == SubModeUser::SUBMODE_MAGNET )
                 {
                    DBG_ACT(" **************** MAGNET ");
-                  return 1;
+                   userPrepareAction( pEvent );
+                   cMagnet.drag(*this);
+                   
+                   //cMagnet.prepareMagnetDraw();
+
+                   TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
+                   changeUserMode( ModeUser::MODE_DRAG );			
+                   TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
+                   return 1;
                 }
               if( getSubMode() == SubModeUser::SUBMODE_INPUT_PT )
                 {
@@ -473,18 +481,28 @@ namespace M3d {
 	    if( getUserMode() == ModeUser::MODE_DRAG )
 	      {
 		cout << "MODE_DRAG - RELEASE " << endl;
-
-		userDragInputPt(pEvent, true );
-		userTerminateAction( pEvent );
-		changeUserMode( ModeUser::MODE_BASE );
-	      }
+                if( getSubMode() == SubModeUser::SUBMODE_INPUT_PT )
+                  {
+                    userDragInputPt(pEvent, true );
+                    userTerminateAction( pEvent );
+                    changeUserMode( ModeUser::MODE_BASE );
+                  }
+                else if( getSubMode() == SubModeUser::SUBMODE_MAGNET )
+                {
+                  DBG_ACT(" **************** MAGNET RELEASE  " );
+                  std::cout << " ****************  MAGNET RELEASE " << std::endl;
+                  cMagnet.releaseMagnet();
+                  changeUserMode( ModeUser::MODE_BASE );
+                  TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
+                }
+              }
 	    DBG_EVT(  "LEFT ");
 	    break;
 	  case FL_MIDDLE_MOUSE :
 	    DBG_EVT( "MIDDLE ");
 	    break;
 	  case FL_RIGHT_MOUSE :
-	    DBG_EVT(  "RIGHT ");							
+	    DBG_EVT(  "RIGHT ");
 	    break;
 	  }
 				
@@ -509,16 +527,30 @@ namespace M3d {
       case FL_DRAG:
 	Fl::focus(this);
 	DBG_EVT( " <DRAG> " << cMouseLastPosX );
-	
+        cout << "<DRAG> "  << cMouseLastPosX << endl;
+
 	if( cMouseLastPosX != -1 )
 	  {
 	    if( getUserMode() == ModeUser::MODE_DRAG)
 	      {
-		userDragInputPt(pEvent, false);
+                cout << "usermode drag "  <<  endl;
+                
+                if( getSubMode() ==  SubModeUser::SUBMODE_INPUT_PT )
+                  {
+                    userDragInputPt(pEvent, false);
+                  }
+                else if(  getSubMode() == SubModeUser::SUBMODE_MAGNET )
+                  {
+                    cout << "Canvas3d::userDrag Magnet " << endl;
+                    cMouseLastPosX = Fl::event_x();
+                    cMouseLastPosY = Fl::event_y();
+                    cMagnet.drag(*this); 
+                  //cMagnet.prepareMagnetDraw();
+                  }
 	      }
 	    else
 	    if( getUserMode() == ModeUser::MODE_TRANSFORM )
-	      {
+	      {                
 		userTransformSelection(pEvent);
 	      }
 	    else

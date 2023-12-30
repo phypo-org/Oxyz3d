@@ -163,7 +163,7 @@ namespace M3d {
 	  std::cout << "Shape is null" << std::endl;
 	  return;
 	}
-      TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
+      TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Magnet", lShape ) );  
 
       //  lShape->move(lPos );
       		
