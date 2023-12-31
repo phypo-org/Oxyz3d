@@ -180,11 +180,11 @@ namespace M3d {
     lX = 15;
    									
     cXinput = new MyFloatInput( lX, lY, lW*1.5, lH, "x" );
-    lX += cXinput->w() + 2;
+    lX += cXinput->w() + 16;
     cYinput = new MyFloatInput( lX, lY, lW*1.5, lH, "y" );
-    lX += cYinput->w() + 2;
+    lX += cYinput->w() + 16;
     cZinput = new MyFloatInput( lX, lY, lW*1.5,  lH, "z" );
-    lX += cZinput->w() + 2;
+    lX += cZinput->w() + 16;
  
 
     lW =  Application::sIconSize+4;
@@ -260,11 +260,11 @@ namespace M3d {
 
                                             if( lToggle->value() )
                                               {
-                                                lWin3d->cuCanvas3d->changeSubMode( SubModeUser::SUBMODE_MAGNET );
+                                                lWin3d->cuCanvas3d->setGlobalMode( GlobalMode::MAGNET );
                                               }
                                             else
                                               {
-                                                lWin3d->cuCanvas3d->changeSubMode( SubModeUser::SUBMODE_INPUT_PT );
+                                                lWin3d->cuCanvas3d->setGlobalMode( GlobalMode::INPUT );
                                               }                                           
                                           }, this );
     lButModeMagnet->value(false);
@@ -1056,7 +1056,7 @@ namespace M3d {
     //================================
 
 		
-    cuCanvas3d->cPopup = new	Fl_Menu_Button( 0, 0, 1, 1);
+    cuCanvas3d->cPopup = new	Fl_Menu_Button( 0, 0, 1, 1, "Popup");
 
     
     end();

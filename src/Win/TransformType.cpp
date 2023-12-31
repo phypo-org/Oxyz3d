@@ -42,6 +42,8 @@ namespace M3d{
       case  Transform::ScaleRZ:;
       case  Transform::ScaleAxis:;
       case  Transform::ScaleNormal: ;
+
+      case Transform::MagnetMove: ;
       }
     
     return cInitValue;

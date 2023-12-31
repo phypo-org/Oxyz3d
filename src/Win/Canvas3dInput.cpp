@@ -32,9 +32,9 @@ namespace M3d {
 
 //---------------------------
   // nouveau point venant de la position de la souris (ctrl)
-  void Canvas3d::userInputPoint( bool iFinalize )
+  void Canvas3d::userInputPoint( int x, int y, bool iFinalize )
   {     
-    if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
+    if( setCursor3dPosition( x, y ) )
       {
 	PP3d::Point3d lResult = TheAppli.getDatabase()->getCursorPosition();
 
@@ -48,6 +48,12 @@ namespace M3d {
 	
 	TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
       }
+  }
+//---------------------------
+  // nouveau point venant de la position de la souris (ctrl)
+  void Canvas3d::userInputPoint( bool iFinalize )
+  {     
+    userInputPoint( Fl::event_x(), Fl::event_y(),iFinalize );    
   }
 //---------------------------
   // recuperation d'un point d'un objet (shift)

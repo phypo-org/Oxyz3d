@@ -12,9 +12,12 @@ namespace M3d {
 
   
   //****************************
-  bool Magnet::exec( Point3d & ioPt )
-  {    
-    // il faut calculer le vecteur entre le point et le
+  bool Magnet::execOn( Point3d & ioPt )
+  {
+    /*
+    Point3d lDiff = ioPos - TransformPos;
+    
+    // il faut calculer le vecteur entre le point et le magnet
     Point3d lVect = ioPt - cPos;
     double lSquareDest = lVect.square();
     if( lSquareDest > cSize2 )
@@ -48,7 +51,7 @@ namespace M3d {
       {
         ioPt += lVal;
       }
-    
+    */
     return true;
   }
   //--------------------------------------
@@ -82,7 +85,7 @@ namespace M3d {
   PP3d::Poly* Magnet::releaseMagnet(){
 
     
-    TheInput.swapCurrentCreation( nullptr );  
+    // TheInput.swapCurrentCreation( nullptr );  
 
       return nullptr;
   }

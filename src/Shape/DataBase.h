@@ -61,7 +61,7 @@ namespace PP3d {
     
    private:
     
-    Point3d              cCursor;
+    Point3d              cCursorPos;
 
 
   private:
@@ -88,8 +88,8 @@ namespace PP3d {
     const std::set<Object*> & getAllObject()  const { return  cContainerObject;}
     const std::unordered_map<EntityId, Entity*>& getEntities() const { return  cEntities;}
 		
-    void     setCursorPosition( Point3d pPt ) { cCursor=pPt; }
-    Point3d  getCursorPosition() { return cCursor; }
+    void     setCursorPosition( Point3d pPt ) { cCursorPos=pPt; }
+    Point3d  getCursorPosition() { return cCursorPos; }
 		
  
   private:

@@ -33,10 +33,26 @@ struct Fl_Menu_Item;
 
 namespace M3d {
  
-  enum class ModeUser { MODE_BASE, MODE_SELECT, MODE_SELECT_RECT, MODE_MOVE_CAMERA, MODE_TRANSFORM, MODE_DRAG };
-  enum class SubModeUser{  SUBMODE_INPUT_PT, SUBMODE_MAGNET };
+  enum class GlobalMode{
+    INPUT,
+    MAGNET,
+    SCULT
+  };
   
-  enum class ModeGrid { NO_GRID=0, GRID_2D=1, GRID_3D=2 };
+  enum class ModeUser {
+    MODE_BASE,
+    MODE_SELECT,
+    MODE_SELECT_RECT,
+    MODE_MOVE_CAMERA,
+    MODE_TRANSFORM,
+    MODE_DRAG
+  };
+  
+  enum class ModeGrid {
+    NO_GRID=0,
+    GRID_2D=1,
+    GRID_3D=2
+  };
 
   class Win3d;
 
@@ -49,7 +65,7 @@ namespace M3d {
     PP3d::Kamera    cKamera;
     double          cScale;
     ModeUser        cUserMode    = ModeUser::MODE_BASE;
-    SubModeUser     cSubUserMode = SubModeUser::SUBMODE_INPUT_PT;
+    GlobalMode          cGlobalMode  = GlobalMode::INPUT;
 
     Magnet          cMagnet;
 
@@ -119,8 +135,8 @@ namespace M3d {
     void     changeUserMode( ModeUser iMode ) { cUserMode = iMode; }
     ModeUser getUserMode()   const             { return cUserMode;}
     
-    void     changeSubMode(SubModeUser iMode ) { cSubUserMode = iMode; }
-    SubModeUser getSubMode()  const             { return cSubUserMode;}
+    void       setGlobalMode( GlobalMode iAct ) { cGlobalMode = iAct; }
+    GlobalMode getGlobalMode()  const           { return cGlobalMode;}
 
 
     
@@ -132,11 +148,15 @@ namespace M3d {
     int       cMouseInitPosY=-1;
     int       cMouseLastPosX=-1;
     int       cMouseLastPosY=-1;
+
+    int cMouseLastPosZ=-1;
+
 	 
     void userPrepareAction( int	pEvent );
     void userCancelAction(	int	pEvent );						 
     void userTerminateAction(	int	pEvent );						 
     void userChangeKameraView(int	pEvent);
+    void userInputPoint( int x, int y, bool iFinalize );
     void userInputPoint( bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelectionInput( int pEvent );
@@ -153,7 +173,8 @@ namespace M3d {
     bool pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  );
 
     void drawSelectRect();
-    void drawSelectCircle(  int iSz );
+    void drawSelectCircle(  PP3d::Point3d iPos, int iSize, bool iUseAlternColor = false );
+    void drawMagnet(Magnet & iMagnet );
 
     
     //=========== MENUS =================

@@ -33,6 +33,8 @@ namespace M3d{
       ScaleRZ,
       ScaleAxis,
       ScaleNormal,
+
+      MagnetMove
       
       };
 

@@ -119,7 +119,16 @@ namespace M3d {
   
 
  //---------------------------
-  void Canvas3d::drawSelectCircle(int iSz)  // 2D !
+  void Canvas3d::drawMagnet(Magnet & iMagnet )  // 2D !
+  {    
+    drawSelectCircle( iMagnet.getPosition(), iMagnet.getSize()  );
+    if( iMagnet.getPosition() != iMagnet.getTransformPosition())
+      {
+        drawSelectCircle( iMagnet.getTransformPosition(),  iMagnet.getSize(), true );
+      }
+  }
+  //--------------------------- 
+  void Canvas3d::drawSelectCircle(  PP3d::Point3d iPos, int iSz, bool iUseAlternColor )  // 2D !
   {   
     glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
     glLoadIdentity(); // Clear the matrix
@@ -141,24 +150,24 @@ namespace M3d {
     glDepthMask( GL_FALSE );
     //    glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 				
-    glColor4f(0.1f, 0.1f, 0.0f, 0.2f);
+    glColor4f(0.4f, 0.6f, (iUseAlternColor?0.5f:1.0f), 0.2f);
     glDisable( GL_LIGHTING );
 
 
-    PP3d::Point3d lCenter( cMouseLastPosX, lH-cMouseLastPosY, 0  );
+    PP3d::Point3d lCenter( iPos );
 
     PP3d::Point3d lSz( iSz, 0, 0);
 
     //    cout << "min:" << lMin << " max:" << lMax << endl;
    
 
-    glLineWidth( 1 );
+    glLineWidth( 2 );
     glBegin(GL_POLYGON);
 
     // Diagonale
     //       glVertex3dv( lMin.vectForGL() ); 
     //       glVertex3dv( lMax.vectForGL() );
-    int lNb = 32;
+    int lNb = 128;
     double lStepAngle = 2*M_PI/lNb;
     double lAngle = 0;
     for( int i=0; i< lNb; i++ )
@@ -170,10 +179,33 @@ namespace M3d {
         glVertex3f( (float)x, (float)y, 0 );
       }
     glEnd();
+    
+ 
+    glColor4f(0.2f, 0.5f, (iUseAlternColor?0.5f:1.0f), 0.2f);
+
+    glLineWidth( 2 );
+    glBegin(GL_POLYGON);
+
+    // Diagonale
+    //       glVertex3dv( lMin.vectForGL() ); 
+    //       glVertex3dv( lMax.vectForGL() );
+    lSz -=5;
+    lAngle = 0;
+    for( int i=0; i< lNb; i++ )
+      {
+        lAngle += lStepAngle;
+        double x = cos( lAngle )*lSz.cX+lCenter.cX;
+        double y = sin( lAngle )*lSz.cX+lCenter.cY;
+        
+        glVertex3f( (float)x, (float)y, 0 );
+      }
+    glEnd();
+
+    
     glEnable(GL_LIGHTING);
       
     glDepthMask( GL_TRUE );
-    glDisable( GL_BLEND );             
+    //    glDisable( GL_BLEND );     
   }
   
 
@@ -347,10 +379,11 @@ namespace M3d {
 	drawSelectRect();
       }
    
-     // draw rectangle selection if needed
-    if( getSubMode() == SubModeUser::SUBMODE_MAGNET && getUserMode() == ModeUser::MODE_DRAG )
-      {	
-	drawSelectCircle(cMagnet.getSize());
+     // draw magnet
+    if( getGlobalMode() == GlobalMode::MAGNET
+      && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
+      {
+	drawMagnet( cMagnet );
       }
    
   

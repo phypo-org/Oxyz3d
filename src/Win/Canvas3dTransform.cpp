@@ -95,7 +95,7 @@ namespace M3d {
   //---------------------------   
   void Canvas3d::userTransformSelectionInternal( float lDx, bool pFlagFinalize)
   {      
-    //    std::cout << "***** Canvas3d::userTransformSelectionInternal **** " << lDx << " " << " Scale:" <<  lScale << std::endl;
+       std::cout << "***** Canvas3d::userTransformSelectionInternal **** " << lDx << std::endl;
     
     TheAppli.currentValTransf() = TheAppli.currentValTransf() + lDx;
  
@@ -134,6 +134,27 @@ namespace M3d {
 	break;
 	//	return ;
 
+  	//================
+      case Transform::MagnetMove:
+        {
+        std::cout << "======== MagnetMove " << std::endl;        
+        if(cVisitModifSelect == nullptr )  // la premiere fois !
+	    {
+	      cVisitModifSelect = new VisitorMagnet(TheSelect, cMagnet);
+              cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect); // sauvegarde des points originaux !
+	    }
+
+        
+	  
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des anciennes modifs 
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect); // Modification
+	  
+	  if( pFlagFinalize)
+	    validDragSelect( lMatTran );
+	  return;    //////////// ATTENTION 
+	}
+
+        
 	//================
       case Transform::MoveNormal:
 	{
@@ -237,7 +258,7 @@ namespace M3d {
 	      TheAppli.currentTransform().position().y() += lAxis.cY*lDx;
 	      TheAppli.currentTransform().position().z() += lAxis.cZ*lDx;
 	      
-	      cMyWin3d.setCurrentVal(  "move z" , TheAppli.currentTransform().position().z() );
+	      cMyWin3d.setCurrentVal(  "move axis" , TheAppli.currentTransform().position().z() );
 	      lMatTran.initMove( TheAppli.currentTransform().position() );
 	    }
 	  }

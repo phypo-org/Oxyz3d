@@ -399,7 +399,11 @@ namespace M3d {
   //-------------------------------------------
   void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
   {
-    if( getSubMode() == SubModeUser::SUBMODE_MAGNET )
+    cPopup->type(Fl_Menu_Button::POPUP1);
+    //  cPopup->add("This|is|a popup|menu");
+
+    
+    if( getGlobalMode() == GlobalMode::MAGNET )
       {
         makeMenuMagnet(   *cPopup);
       }
@@ -416,20 +420,23 @@ namespace M3d {
   //-------------------------------------------
 #define StrMenu_MagnetSize "Size"
 #define StrMenu_MagnetAlgo "Algo"
- 
+#define StrMenu_Magnet " Magnet "
+#define StrMenu_MagnetRepel " Repel "
+#define StrMenu_MagnetAttract " Attract "
+
     void  Canvas3d::makeMenuMagnet(Fl_Menu_Button& pMenu)
   {
-    pMenu.label( " Magnet ");
+    pMenu.label( StrMenu_Magnet);
     if( cMagnet.getAction() == MagnetAction::MAGNET_ACTION_ATTRACK )
       {
-        pMenu.add(  "Repel", "", LAMBDA
+        pMenu.add( StrMenu_MagnetRepel,"", LAMBDA
                    
                    lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_REPEL);
                    ADBMAL, this, FL_MENU_DIVIDER);
       }
     else
       {
-        pMenu.add( "Attrack", "", LAMBDA
+        pMenu.add( StrMenu_MagnetAttract, "", LAMBDA
                
                  lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
                ADBMAL, this, FL_MENU_DIVIDER);
