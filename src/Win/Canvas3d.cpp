@@ -50,48 +50,6 @@ namespace M3d {
  
    bool sDrawColorSelect=false;
 
-  const char * const ANNULE_ACTION="e";
-  
-  const char * const CHG_AXIS="a";
-  
-  const char * const CENTER_ON_SELECTION="A";
- 
-  const char * const CHG_GRID="g";
-  
-  const char * const CHG_ORTHO_PERS="p";
-  
-  
-  const char * const RESET_VIEW_TO_X="x";
-  const char * const RESET_VIEW_TO_Y="y";
-  const char * const RESET_VIEW_TO_Z="z";
-  const char * const RESET_VIEW_TO_X2="X";
-  const char * const RESET_VIEW_TO_Y2="Y";
-  const char * const RESET_VIEW_TO_Z2="Z";
-  
-
-  const char * const RESET_VIEW_SCALE_ORIGIN="O";
-  
-  const char * const RESET_VIEW="O";
-  const char * const RESET_VIEW_SCALE_0="0";
-  const char * const RESET_VIEW_SCALE_1="1";
-  const char * const RESET_VIEW_SCALE_2="2";
-  const char * const RESET_VIEW_SCALE_3="3";
-  const char * const RESET_VIEW_SCALE_4="4";
-  const char * const RESET_VIEW_SCALE_5="5";
-  const char * const RESET_VIEW_SCALE_6="6";
-  
-  const char * const KEY_UNDO="/7a";
-
-  
-  const char * const STR_CURSOR_3D="c";
-  const char * const STR_EXIT="q";
-
-  const char * const MOVE_Z_N="-";
-  const char * const MOVE_Z_P="+";
-	
-  const char * const UNSELECT_ALL=" ";
-  const char * const BASCULE_DRAW_SELECT_COLOR="!";
-  const char * const BASCULE_TEST_SELECT_COLOR=":";
 
   //***************************************
   Canvas3d::Canvas3d(  Win3d& pW3d, int pX, int pY, int pW, int  pH, const char *l )
@@ -179,6 +137,7 @@ namespace M3d {
   {	
     cMouseInitPosX = cMouseLastPosX = Fl::event_x();
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
+    cMouseLastPosZ = TheAppli.getInputPlaneHeight(); // ????
 
     TheAppli.currentTransform().raz();
     TheAppli.currentValTransf()= 0;
@@ -200,7 +159,8 @@ namespace M3d {
   		
     cMouseInitPosX = cMouseLastPosX = -1;
     cMouseInitPosY = cMouseLastPosY = -1;
-    
+    cMouseLastPosY = -1;
+
     TheAppli.setCurrentTransformType( Transform::Nothing );
     TheAppli.currentValTransf() = 0;
     TheAppli.currentTransform().raz();
@@ -332,6 +292,8 @@ namespace M3d {
     
     traceMode();
     
+    //    MyPref.cDbgEvt = 3;
+    
     DBG_EVT( " <<<Event:" << pEvent << " " << fl_eventnames[pEvent] << ">>> "
 	     << " button:" << Fl::event_button()
 	     << " ctrl: " << Fl::event_ctrl()
@@ -340,461 +302,60 @@ namespace M3d {
     TheInput.hideCurrentPoint();
 
 
-        // MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET //
-
-     if( getGlobalMode() == GlobalMode::MAGNET)
+    int lResult = 0;
+    
+    if( pEvent == FL_PUSH
+        || pEvent == FL_DRAG )
       {
-        //========================================
-       if( getUserMode() == ModeUser::MODE_BASE )
-          {
-            // SHIFT LEFT => BEGIN DRAG diametre du magnet //
-            if( pEvent == FL_PUSH &&  Fl::event_button() == FL_LEFT_MOUSE  && Fl::event_shift() )
-              {
-                userPrepareAction( pEvent );                   
-                cMagnet.drag(*this);
-                PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-                cMagnet.setPosition( lTmp );
-                //cMagnet.prepareMagnetDraw();
-                
-                changeUserMode( ModeUser::MODE_DRAG );
-                
-                setCursor3dPosition( Fl::event_x(), Fl::event_y());
-                TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);                
-                return 1;
-              }
-
-            // CTRL LEFT => BEGIN TRANSFORM par le Magnet
-            if( pEvent == FL_PUSH &&  Fl::event_button() == FL_LEFT_MOUSE  && Fl::event_ctrl() )
-              {
-                userPrepareAction( pEvent );                   
-                PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-                cMagnet.setPosition( lTmp );
-                changeUserMode( ModeUser::MODE_TRANSFORM );
-                Application::Instance().setCurrentTransformType(Transform::MagnetMove);
-
-                setCursor3dPosition( Fl::event_x(), Fl::event_y());
-                TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
-                return 1;                                
-              }
-          }
-
-        //========================================
-       if( getUserMode() == ModeUser::MODE_TRANSFORM )
-         {
-           // LEFT => BEGIN TRANSFORM par le Magnet
-           if( pEvent == FL_PUSH && Fl::event_button() == FL_LEFT_MOUSE )
-             {
-               PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-               cMagnet.setTransformPosition( lTmp );
-               userPrepareAction( pEvent );
-               userTerminateAction( pEvent );
-               setCursor3dPosition( Fl::event_x(), Fl::event_y());
-               userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
-            return 1;
-             }
-           // RELEASE LEFT => Terminate action
-           if( pEvent == FL_RELEASE && Fl::event_button() == FL_LEFT_MOUSE )
-             {
-               if( TheAppli.getCurrentTransformType() != Transform::Nothing )
-                 {
-                   userTransformSelection(pEvent, true );
-                   
-                   userTerminateAction( pEvent );
-                   TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
-                   return 1;
-                 }
-             }
-           // DRAG TRANSFORM 
-           if( pEvent == FL_DRAG  )
-             {
-               if( cMouseLastPosX != -1 )
-                 {
-                   userTransformSelection(pEvent);
-                   PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-                   //   PP3d::Point3d lTmp(cMouseLastPosX, pixel_h()-cMouseLastPosY,0);
-                   PP3d::Point3d lTmp2(cMouseLastPosX, pixel_h()-cMouseLastPosY,0);
-                   cMagnet.setTransformPosition( lTmp2 );
-                   
-                   userInputPoint(  Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
-               setCursor3dPosition( Fl::event_x(), Fl::event_y());
-                   TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou break
-                   return 1;                                   
-                 }
-             }
-           if( pEvent == FL_KEYDOWN )
-             {
-               if(  Fl::event_key() >= 256 &&  Fl::event_key() == FL_Tab )
-                 {
-                   userTransformSelectionInput(pEvent);
-                   return 1;
-                 }
-               else
-                 {
-                   const char *lStr = Fl::event_text(); 
-                   cout << " txt<" << lStr << "> " ;
-                   
-                   if( strcmp( lStr, ANNULE_ACTION )==0)
-                     {
-                       userTerminateAction( pEvent );
-                       TheAppli.setCurrentTransformType( Transform::Nothing );
-                       return 1;
-                     }
-                 }
-             }                      
-         }
-        //========================================
-        if( getUserMode() == ModeUser::MODE_DRAG )
-          {
-            // RELEASE LEFT => STOP DRAG diametre du magnet 
-            if( pEvent == FL_RELEASE &&  Fl::event_button() == FL_LEFT_MOUSE )
-              {
-                 DBG_ACT(" **************** MAGNET RELEASE  " );
-                 std::cout << " ****************  MAGNET RELEASE " << std::endl;
-                 cMagnet.releaseMagnet();
-                 changeUserMode( ModeUser::MODE_BASE );
-                 TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
-                return 1;
-              }
-
-            // DRAG => RESIZE MAGNET 
-            if( pEvent == FL_DRAG  )
-              {
-                cout << "Canvas3d::userDrag Magnet " << endl;
-                
-                cMouseLastPosX = Fl::event_x();
-                cMouseLastPosY = Fl::event_y();
-                
-                int lSz = (cMouseLastPosX-cMouseInitPosX)/3;
-                if( lSz < 0 )
-                  {
-                    lSz = - std::sqrt(-lSz);
-                  }
-                else
-                  lSz = std::sqrt(lSz);
-                
-                lSz +=  cMagnet.getSize();
-                if( lSz > 1000 ) lSz = 1000;
-                if( lSz < 5 )    lSz = 5;
-                
-                cMagnet.setSize( lSz );
-                TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
-                return 1;
-              }
-          }
-        //========================================       
+   	Fl::focus(this);     
       }
-       // MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET MAGNET //
-	
+    
+    if( pEvent ==  FL_ENTER )
+      {
+        Fl::focus(Fl::belowmouse());
+      }
+    
 
+    // ATTENTION L'ORDRE D'APPEL EST IMPORTANT !!!!!
+    
+   if( (lResult = handleCamera( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+   std::cout << "after hdl camera" << std::endl;
+   if( (lResult = handleMenu( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+   
+    std::cout << "after hdl menu" << std::endl;
+   if( (lResult = handleInput( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+ 
+    if( (lResult = handleMagnet( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+         std::cout << "after hdl magnet" << std::endl;
+   
+    std::cout << "after hdl input" << std::endl;
+   if( (lResult = handleSelect( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+      std::cout << "after hdl select" << std::endl;
+ 
+   if( (lResult = handleTransform( pEvent )) !=0 )
+      {
+        return lResult;
+      }
+         std::cout << "after hdl transform" << std::endl;
 
     
     switch( pEvent )
-      {
-	//===========================	
-      case FL_PUSH :
-	DBG_EVT( "-------------- Button Push "  << Fl::event_button()  << " " << Fl::event_shift());
-	Fl::focus(this);     
-
-
-	if( Fl::event_button() == FL_LEFT_MOUSE
-	    &&  Fl::event_ctrl() )
-          {
-            if(  getUserMode() == ModeUser::MODE_BASE)
-            {              
-              	// SAISIE DE POINT
-              if( getGlobalMode() == GlobalMode::INPUT )
-                {
-                  DBG_ACT(" **************** cUserActionSaisie " );
-                  std::cout << " **************** cUserActionSaisie " << std::endl;
-                  userInputPoint(true );              
-                  return 1;
-                }
-            }
- 
-          }
-
-
-
-        // INPUT OBJECT POINT //
-	if( Fl::event_button() == FL_LEFT_MOUSE
-	    &&  Fl::event_shift() &&  getUserMode() == ModeUser::MODE_BASE)
-	  {
-	    PP3d::EntityId lId =TheSelect.getLastHightLightEntityId();
-	    
-	    std::cout << " **************** cUserActionSaisie SHIFT " << lId  << std::endl;
-	    DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
-	    
-	    userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );
-
-	    return 1;
-	  }
-         // INPUT OBJECT POINT //
-
-
-        
-	// SELECTION RECTANGLE : BUG
-	if( Fl::event_button() == FL_MIDDLE_MOUSE
-	    &&  Fl::event_shift() ) // &&  getUserMode() == ModeUser::MODE_BASE)
-	  {	  
-	    changeUserMode( ModeUser::MODE_SELECT_RECT );
-
-	    userPrepareAction( pEvent );
-	    TheAppli.redrawAllCanvas( PP3d::Compute::Nothing);
-	    return 1;
-	  }
-
-	// DEBUT MODE DEPLACEMENT CAMERA
-	if( Fl::event_button() == FL_MIDDLE_MOUSE )
-	  {
-	    userPrepareAction( pEvent );
-	    if( getUserMode() == ModeUser::MODE_BASE )
-	      changeUserMode( ModeUser::MODE_MOVE_CAMERA );
-	    return 1;
-	  }
-
-	if( Fl::event_button() == FL_LEFT_MOUSE &&  getUserMode() == ModeUser::MODE_TRANSFORM )
-	  {
-	    userPrepareAction( pEvent );
-	    return 1;
-	  }
-	
-
-
-	// FIN DEPLACEMENT CAMERA OU SELECTION
-	if( Fl::event_button() == FL_LEFT_MOUSE )
-	  {
-	    if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
-	      {
-		changeUserMode( ModeUser::MODE_BASE );
-		userTerminateAction( pEvent );
-		return 1;
-	      }
-	    else  //DEBUT MODE_SELECT
-	      if( getUserMode() == ModeUser::MODE_BASE )
-		{
-		  cSelectMode = PP3d::SelectMode::Undefine;
-		  userPrepareAction( pEvent );
-		  if( userSelectionPointColor( pEvent, false ))
-		    changeUserMode( ModeUser::MODE_SELECT);
-		  else
-		    changeUserMode( ModeUser::MODE_SELECT_RECT);
-
-		    
-		  return 1;
-		}
-	
-	    userPrepareAction( pEvent );
-						
-	    return 1;
-	  }
-
-	// MENU
-	if(  Fl::event_button() == FL_RIGHT_MOUSE )
-	  {
-	    cPopup->clear();						
-						
-						
-	    if( getUserMode() == ModeUser::MODE_BASE )
-	      {
-		makeMenu( *cPopup); 
-	      }
-	  }
-	cPopup->position( Fl::event_x() , Fl::event_y());
-			
-	cPopup->popup();
-
-						
-	return 1;
-						
-			
-	break;
-	//========================================
-	//========================================
-	//========================================
-
-      case FL_RELEASE:
-	DBG_EVT( "******** Button Release ");      
-					
-	switch(  Fl::event_button() )
-	  {
-	  case FL_LEFT_MOUSE :
-	    if( getUserMode() == ModeUser::MODE_SELECT )
-	      {
-		userTerminateAction( pEvent );
-	      }
-	    else
-	    if( getUserMode() == ModeUser::MODE_DRAG )
-	      {
-		cout << "MODE_DRAG - RELEASE " << endl;
-                if( getGlobalMode() == GlobalMode::INPUT )
-                  {
-                    userDragInputPt(pEvent, true );
-                    userTerminateAction( pEvent );
-                    changeUserMode( ModeUser::MODE_BASE );
-                  }
-             }
-	    DBG_EVT(  "LEFT ");
-	    break;
-	  case FL_MIDDLE_MOUSE :
-	    DBG_EVT( "MIDDLE ");
-	    break;
-	  case FL_RIGHT_MOUSE :
-	    DBG_EVT(  "RIGHT ");
-	    break;
-	  }
-				
-	if(  getUserMode() == ModeUser::MODE_TRANSFORM
-	     && TheAppli.getCurrentTransformType() != Transform::Nothing )
-	  {
-	    userTransformSelection(pEvent, true );
-	    userTerminateAction( pEvent );
-	    TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll);
-	  }
-				
-	if( getUserMode() == ModeUser::MODE_SELECT_RECT )
-	  {
-	    userSelectionRectangle(pEvent, true );
-	    userTerminateAction( pEvent );
-	  }		
-	break;
-	//========================================
-	//========================================
-	//========================================
-
-      case FL_DRAG:
-	Fl::focus(this);
-	DBG_EVT( " <DRAG> " << cMouseLastPosX );
-        cout << "<DRAG> "  << cMouseLastPosX << endl;
-
-	if( cMouseLastPosX != -1 )
-	  {
-	    if( getUserMode() == ModeUser::MODE_DRAG)
-	      {
-                cout << "usermode drag "  <<  endl;
-                
-                if( getGlobalMode() ==  GlobalMode::INPUT )
-                  {
-                    userDragInputPt(pEvent, false);
-                  }
-	      }
-	    else
-	    if( getUserMode() == ModeUser::MODE_TRANSFORM )
-	      {                
-		userTransformSelection(pEvent);
-	      }
-	    else
-	      if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
-		{
-		  userChangeKameraView( pEvent );
-		}					
-	      else
-		if( getUserMode() == ModeUser::MODE_SELECT )
-		  {
-		    userSelectionPointColor( pEvent, false );
-		  }
-		else
-		  if( getUserMode() == ModeUser::MODE_SELECT_RECT )
-		    {
-		      cMouseLastPosX = Fl::event_x();
-		      cMouseLastPosY = Fl::event_y();
-		      userSelectionRectangle(pEvent);			
-		    }	    
-	  }
-	setCursor3dPosition( Fl::event_x(), Fl::event_y());			 					
-	TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou 				break;
-	break;
-      				
-	//====================================
-	//====================================
-	//====================================
-				
-      case FL_MOVE:
-	{
-	  DBG_EVT( " <MOVE> " << cMouseLastPosX );
-          if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
-            {
-              if( cMouseLastPosX != -1 )
-                {					 	
-	     
-                  userChangeKameraView( pEvent );
-                  TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou du rectangel etc
-                }
-            }
-	  else
-	    if( getUserMode() == ModeUser::MODE_BASE )
-	      {                
-		if(  Fl::event_ctrl() )
-		  {             
-                    // std::cout << "CTRL " << std::endl;
-                    if(  Fl::event_shift() )   // ctrl et shift !!!!!!
-                      {
-                        /* std::cout << "SHIFT "
-                                  << " X: " << cMouseLastPosX
-                                  << " Y: "  << cMouseLastPosY
-                                  << " Z:" << cMouseLastPosZ 
-                                  << std::endl;*/
-                        
-                        if( cMouseLastPosZ != -1 )
-                          {
-                            TheAppli.setInputPlaneHeight( TheAppli.getInputPlaneHeight()
-                                                          + (Fl::event_y()-cMouseLastPosZ)/10.0) ; // ?????????????
-                            userInputPoint( cMouseLastPosX, cMouseLastPosY, false ); // just view the possible position of point
-
-                          }
-                        
-                        cMouseLastPosZ = Fl::event_y();
-                      }                                        
-                    else
-                      {
-                        //   std::cout << " NO " << std::endl;           
-                        
-                        cMouseLastPosX = Fl::event_x();
-                        cMouseLastPosY = Fl::event_y();
-                        cMouseLastPosZ = -1;
-                        
-                        userInputPoint( false ); // just view the possible position of point
-                      }                   
-                  }                
-              }                
-            else
-              if( MyPref.cSelectPassOverLighting )
-                {
-                  userSelectionPointColor( pEvent, true );
-                }
-		
-
-					
-		setCursor3dPosition( Fl::event_x(), Fl::event_y());
-		TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); // a cause du curseur ou 				break;
-		
-	
-		//			cout << " Move : x="<< lX << " y=" << lY <<  std::endl;
-		//			cout << " Cursor :  x=" << pResult.cX << " y=" << pResult.cY << " z=" << pResult.cZ << std::endl;
-	  break;
-	}
-	//====================================
-	//====================================
-	//====================================
-			
-      case FL_ENTER:
-	DBG_EVT( " ENTER " << Fl::belowmouse());
-	Fl::focus(Fl::belowmouse()); 
-	break;
-      case FL_LEAVE:
-	DBG_EVT( " LEAVE " << Fl::belowmouse());
-	break;
-
-      case FL_FOCUS:
-	DBG_EVT(  " FOCUS " );
-	break;
-      case FL_UNFOCUS:
-	DBG_EVT( " UNFOCUS " );
-	break;
-	
-	//====================================
-	//====================================
-	//====================================
-				
+      {				
       case FL_KEYDOWN:
 	{
 	  DBG_EVT_NL( " CTRL :" << Fl::event_ctrl() );
@@ -880,15 +441,15 @@ namespace M3d {
 		case 0xffab:
 		  SelFunct::SelectMore( TheSelect, TheBase );
 		    
-		  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
-		  TheAppli.redrawObjectTree();
+		  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+                  TheAppli.redrawObjectTree();
 		  break;
 		
 		case 0xffad:
 		  SelFunct::SelectLess( TheSelect, TheBase );
 		    
-		  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
-		  TheAppli.redrawObjectTree();
+		  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+                  TheAppli.redrawObjectTree();
 		  break;
 		  
 		} // end case
@@ -1076,25 +637,6 @@ namespace M3d {
 	cout << " ACTIVATE ";
 	break;
 
-
-      case FL_MOUSEWHEEL:
-	Fl::focus(this);
-	if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
-	  {						
-	    cScale = cKamera.scale().x();
-	    if( Fl::event_dy() != 0)
-	      {
-		//	    cout << " WHEEL x:" << Fl::event_dx() << " y:" <<  Fl::event_dy() << " " ;	  
-		//	    cScale += Fl::event_dy()/10.0;
-		// cScale *= 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.01);
-		//		cout << 1.0-Fl::event_dy()/(MyPref.cMouseWheel+0.0001) << " " << endl;
-		cScale *= 1.0-(Fl::event_dy()/(MyPref.cMouseWheel+0.000001));
-	      }		
-						
-	    cKamera.setScale(cScale); // verify limits
-	    redraw();
-	  } 
-	break;
       }
 						
     return 1;

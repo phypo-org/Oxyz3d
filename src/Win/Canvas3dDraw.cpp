@@ -55,7 +55,10 @@ namespace M3d {
 
  //---------------------------
   void Canvas3d::drawSelectRect()  // 2D !
-  {   
+  {
+
+    std::cout << "drawSelectRect" << std::endl;
+    
     glMatrixMode (GL_PROJECTION); // Tell opengl that we are doing project matrix work
     glLoadIdentity(); // Clear the matrix
         

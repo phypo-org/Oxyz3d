@@ -297,7 +297,7 @@ namespace M3d {
 	  }
       }
 	
-      TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+      TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
     }
 
     //----------------------------------------
@@ -307,7 +307,7 @@ namespace M3d {
       DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
       TheInput.cancelCurrentCreation();
 
-      TheAppli.redrawAllCanvas( PP3d::Compute::FacetAll );
+      TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll );
 
       Fl::delete_widget( lDialog->cMyWindow );
       Diag.cMyWindow = nullptr;

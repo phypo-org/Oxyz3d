@@ -596,7 +596,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   TheSelect.deleteAllFromDatabase( *TheAppli.getDatabase());
                   PushHistory();			    
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -610,7 +610,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   TheSelect.selectAll( *TheAppli.getDatabase() );
 		  
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -618,7 +618,7 @@ namespace M3d {
     cMenubar.add( StrMenu_Select StrMenu_UnselectAll, "",  LAMBDA
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   TheSelect.removeAll();		    
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -627,7 +627,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   SelFunct::SelectMore( TheSelect, TheBase );
 		  
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this );
@@ -643,7 +643,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.1 );
 		    
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -652,7 +652,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.01 );
 		    
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -661,7 +661,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   SelFunct::SelectEdgeLoop( TheSelect, TheBase, 0.001 );
 		  
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -669,7 +669,7 @@ namespace M3d {
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   TheSelect.invertSelection( *TheAppli.getDatabase() );
                   
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();		  
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -679,7 +679,7 @@ namespace M3d {
                   cout << "Select menu :" << StrMenu_AddSelectCopyToInput << endl;
                   TheSelect.addSelectionToInput( *TheAppli.getDatabase(), false);
                   PushHistory();
-                  TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                  TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheAppli.redrawObjectTree();
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -793,7 +793,7 @@ namespace M3d {
                      lPoint->get().y() -=  lVisitMinMax.getMin().y();
                    }				
                  PushHistory();
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
@@ -809,7 +809,7 @@ namespace M3d {
                      lPoint->get().y() -=  lVisitMinMax.getMax().y();
                    }				
                  PushHistory();
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
@@ -829,7 +829,7 @@ namespace M3d {
                        {
                          lPoint->get().y() -=  lVisitMinMax.getMin().y();
                        }				
-                     TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                     TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                    }
                  PushHistory();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -850,7 +850,7 @@ namespace M3d {
                        {
                          lPoint->get().y() -=  lVisitMinMax.getMax().y();
                        }				
-                     TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                     TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                    }
                  PushHistory();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -870,7 +870,7 @@ namespace M3d {
                    {
                      lPoint->get() -=  lCenter;
                    }				
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this,   FL_MENU_DIVIDER);
   
@@ -940,49 +940,49 @@ namespace M3d {
                  lKamera.reset(); 
                  lKamera.raz45(); 
                  lKamera.scaleTo(1.0);
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this, FL_MENU_DIVIDER);
     
     cMenubar.add("&View/" StrMenu_ViewAlongX, "x",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razX(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add("&View/" StrMenu_ViewAlongY, "y",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razY(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add("&View/" StrMenu_ViewAlongZ, "z",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razZ(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add("&View/" StrMenu_ViewAlong_X, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razXInv(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add("&View/" StrMenu_ViewAlong_Y, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razYInv(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add("&View/" StrMenu_ViewAlong_Z, "", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  lKamera.razZInv(); 
-                 TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
                  
@@ -1041,7 +1041,7 @@ namespace M3d {
     cMenubar.add("&Debug/" StrMenu_Demo1, nullptr,  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheAppli.getDatabase()->demo1();
-                 TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                  TheAppli.redrawObjectTree();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL  , this);
@@ -1049,7 +1049,7 @@ namespace M3d {
     cMenubar.add("&Debug/" StrMenu_Demo2, nullptr,  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheAppli.getDatabase()->demo2();
-                 TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                  TheAppli.redrawObjectTree();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
@@ -1071,7 +1071,7 @@ namespace M3d {
     PP3d::VisitorMinMax lVisitMinMax;
     TheSelect.execVisitorOnEntity ( lVisitMinMax );
     iKamera.zoomTo( lVisitMinMax ); 
-    TheAppli.redrawAllCanvas(PP3d::Compute::Nothing);
+    TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
   }  
   //-------------------------------------------
 

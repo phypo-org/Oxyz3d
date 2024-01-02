@@ -62,7 +62,7 @@ namespace M3d {
 
   CLUA_OPEN_CODE( LUA_RedrawAllCanvas3d, 0);
   
-  Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
+  Application::Instance().redrawAllCanvas3d(PP3d::Compute::FacetAll);
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------

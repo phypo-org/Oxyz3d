@@ -61,11 +61,11 @@ namespace M3d {
 
   protected:
 	
-    Win3d&         cMyWin3d;
+    Win3d&          cMyWin3d;
     PP3d::Kamera    cKamera;
     double          cScale;
     ModeUser        cUserMode    = ModeUser::MODE_BASE;
-    GlobalMode          cGlobalMode  = GlobalMode::INPUT;
+    GlobalMode      cGlobalMode  = GlobalMode::INPUT;
 
     Magnet          cMagnet;
 
@@ -126,7 +126,13 @@ namespace M3d {
     void drawGrid();
     void draw();
     void drawForSelect();
-    int  handle(	int	pEventh	); 
+    int  handle(	int	pEvent	); 
+    int  handleMagnet(	int	pEvent	); 
+    int  handleInput(	int	pEvent	); 
+    int  handleMenu(	int	pEvent	); 
+    int  handleCamera(	int	pEvent	); 
+    int  handleSelect(	int	pEvent	); 
+    int  handleTransform( int	pEvent	); 
 
     PP3d::Kamera&   getKamera()   { return cKamera;   }
 		
@@ -150,6 +156,8 @@ namespace M3d {
     int       cMouseLastPosY=-1;
 
     int cMouseLastPosZ=-1;
+
+    bool userActionRun() const{ return cMouseLastPosX != -1; } // mettre un bool a la place
 
 	 
     void userPrepareAction( int	pEvent );
@@ -178,7 +186,6 @@ namespace M3d {
 
     
     //=========== MENUS =================
-    void makeMenu( Fl_Menu_Button& pMenu);
     void makeMenuSelect( Fl_Menu_Button& pMenu);
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);
     void makeMenuMagnet( Fl_Menu_Button& pMenu);
@@ -197,7 +204,55 @@ namespace M3d {
 		
     friend class Win3d;
   };
-  //***************************************	
+  //***************************************
+
+
+
+
+
+  const char * const ANNULE_ACTION="e";
+  
+  const char * const CHG_AXIS="a";
+  
+  const char * const CENTER_ON_SELECTION="A";
+ 
+  const char * const CHG_GRID="g";
+  
+  const char * const CHG_ORTHO_PERS="p";
+  
+  
+  const char * const RESET_VIEW_TO_X="x";
+  const char * const RESET_VIEW_TO_Y="y";
+  const char * const RESET_VIEW_TO_Z="z";
+  const char * const RESET_VIEW_TO_X2="X";
+  const char * const RESET_VIEW_TO_Y2="Y";
+  const char * const RESET_VIEW_TO_Z2="Z";
+  
+
+  const char * const RESET_VIEW_SCALE_ORIGIN="O";
+  
+  const char * const RESET_VIEW="O";
+  const char * const RESET_VIEW_SCALE_0="0";
+  const char * const RESET_VIEW_SCALE_1="1";
+  const char * const RESET_VIEW_SCALE_2="2";
+  const char * const RESET_VIEW_SCALE_3="3";
+  const char * const RESET_VIEW_SCALE_4="4";
+  const char * const RESET_VIEW_SCALE_5="5";
+  const char * const RESET_VIEW_SCALE_6="6";
+  
+  const char * const KEY_UNDO="/7a";
+
+  
+  const char * const STR_CURSOR_3D="c";
+  const char * const STR_EXIT="q";
+
+  const char * const MOVE_Z_N="-";
+  const char * const MOVE_Z_P="+";
+	
+  const char * const UNSELECT_ALL=" ";
+  const char * const BASCULE_DRAW_SELECT_COLOR="!";
+  const char * const BASCULE_TEST_SELECT_COLOR=":";
+  
 }
 
 

@@ -312,9 +312,9 @@ namespace M3d {
       TheSelect.removeAll();
    }
 
-    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
-    TheAppli.redrawObjectTree();
-  }  //-------------------------------------------
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);
+  }
+  //-------------------------------------------
   void RedoCB(Fl_Widget*w, void*pData)
   {
     MyButton* lButton = reinterpret_cast<MyButton*>( pData);
@@ -334,8 +334,7 @@ namespace M3d {
     }
       
  	
-    TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
-    TheAppli.redrawObjectTree();
+    TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
   //-------------------------------------------
   void PushHistoryCB(Fl_Widget*w, void*pData)

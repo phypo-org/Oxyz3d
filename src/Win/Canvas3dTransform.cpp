@@ -79,7 +79,7 @@ namespace M3d {
       //    std::cout << " F val:" << ioVal << " " << ioRun << std::endl;
       TheAppli.setCurrentTransformType( lCurrent );
       userTransformSelectionInternal( ioVal, !ioRun);
-      TheAppli.redrawAllCanvas(PP3d::Compute::Nothing); 
+      TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); 
 
       return true;
     }))
@@ -95,7 +95,7 @@ namespace M3d {
   //---------------------------   
   void Canvas3d::userTransformSelectionInternal( float lDx, bool pFlagFinalize)
   {      
-       std::cout << "***** Canvas3d::userTransformSelectionInternal **** " << lDx << std::endl;
+    std::cout << "***** Canvas3d::userTransformSelectionInternal **** " << lDx << std::endl;
     
     TheAppli.currentValTransf() = TheAppli.currentValTransf() + lDx;
  
@@ -110,19 +110,19 @@ namespace M3d {
  
 	  
 	  if(cVisitModifSelect == nullptr )
-	    {
-	      cVisitModifSelect = new PP3d::VisitorDeform(TheSelect, TheAppli.getCurrentDeformType(), TheAppli.getCurrentTransformType()  );// DIFFERENCE !!!
-	      cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
-	    }
+          {
+          cVisitModifSelect = new PP3d::VisitorDeform(TheSelect, TheAppli.getCurrentDeformType(), TheAppli.getCurrentTransformType()  );// DIFFERENCE !!!
+          cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect);
+          }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
 	  cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );// DIFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	    validDragSelect( lMatTran );
+          validDragSelect( lMatTran );
 	*/
-	  return;    //////////// ATTENTION 
+        return;    //////////// ATTENTION 
       }
     
   
@@ -137,8 +137,8 @@ namespace M3d {
   	//================
       case Transform::MagnetMove:
         {
-        std::cout << "======== MagnetMove " << std::endl;        
-        if(cVisitModifSelect == nullptr )  // la premiere fois !
+          std::cout << "======== MagnetMove " << std::endl;        
+          if(cVisitModifSelect == nullptr )  // la premiere fois !
 	    {
 	      cVisitModifSelect = new VisitorMagnet(TheSelect, cMagnet);
               cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect); // sauvegarde des points originaux !
@@ -492,5 +492,51 @@ namespace M3d {
       }
   }
 
+    
+  //---------------------------
+  int Canvas3d::handleTransform(  int pEvent )
+  {
+    if( getGlobalMode() != GlobalMode::INPUT)
+      {
+        return 0;
+      }
+           
+       
+    if( pEvent == FL_PUSH )
+      {        
+	if( Fl::event_button() == FL_LEFT_MOUSE &&  getUserMode() == ModeUser::MODE_TRANSFORM )
+	  {
+	    userPrepareAction( pEvent );
+	    return 1;
+	  }
+      }
 
+    if( pEvent ==FL_RELEASE )
+      {
+        if(  getUserMode() == ModeUser::MODE_TRANSFORM
+             && TheAppli.getCurrentTransformType() != Transform::Nothing )
+          {
+	    userTransformSelection(pEvent, true );
+	    userTerminateAction( pEvent );
+	    TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);            
+	    return 1;
+          }
+      }
+
+    if( pEvent ==FL_DRAG)
+      {
+        if(  getUserMode() == ModeUser::MODE_TRANSFORM )
+          {
+            if( userActionRun() ) 
+              {
+		userTransformSelection(pEvent);
+                setCursor3dPosition( Fl::event_x(), Fl::event_y());
+                TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break;
+                return 1;
+              }
+          }
+      }
+    return 0;
+  }    
+       
 } //namespace 

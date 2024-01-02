@@ -397,27 +397,6 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
-  void  Canvas3d::makeMenu(Fl_Menu_Button& pMenu)
-  {
-    cPopup->type(Fl_Menu_Button::POPUP1);
-    //  cPopup->add("This|is|a popup|menu");
-
-    
-    if( getGlobalMode() == GlobalMode::MAGNET )
-      {
-        makeMenuMagnet(   *cPopup);
-      }
-    else
-    if( TheSelect.getNbSelected() > 0 )
-      {										
-	makeMenuSelect(  *cPopup);
-      }
-    else
-      {
-	makeMenuPrimitiv( *cPopup );
-      }
-  }
-  //-------------------------------------------
 #define StrMenu_MagnetSize "Size"
 #define StrMenu_MagnetAlgo "Algo"
 #define StrMenu_Magnet " Magnet "
@@ -1688,8 +1667,40 @@ namespace M3d {
     PushHistory();
     TheAppli.redrawAll(PP3d::Compute::FacetAll);
   }
-
-
+  //----------------------------------------
+  int Canvas3d::handleMenu(  int pEvent )
+  {
+    if( pEvent == FL_PUSH
+        &&  Fl::event_button() == FL_RIGHT_MOUSE  )
+      {
+        cPopup->clear();						
+												
+        if( getUserMode() == ModeUser::MODE_BASE )
+          {
+           cPopup->type(Fl_Menu_Button::POPUP1);
+           
+           if( getGlobalMode() == GlobalMode::MAGNET )
+             {
+               makeMenuMagnet(   *cPopup);
+             }
+           else
+             if( TheSelect.getNbSelected() > 0 )
+               {										
+                 makeMenuSelect(  *cPopup);
+               }
+             else
+               {
+                 makeMenuPrimitiv( *cPopup );
+               }
+           cPopup->position( Fl::event_x() , Fl::event_y());           
+           cPopup->popup();
+          }
+       	
+	return 1;
+      }
+    
+    return 0;
+  }
 
   //***************************************
 

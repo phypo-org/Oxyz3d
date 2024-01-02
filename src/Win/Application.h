@@ -170,7 +170,8 @@ namespace M3d{
 #endif
 		
     Win3d & createNewWin3d( int pW, int pH );
-    void    redrawAllCanvas( PP3d::Compute iCompute);
+    void    redrawAllCanvas3d( PP3d::Compute iCompute);
+    void    redrawAllWin3d( PP3d::Compute iCompute);
     Win3d*  findCanvas3d( int iId );
     void    changeAllSelectType( PP3d::SelectType pType );
 		
@@ -179,7 +180,7 @@ namespace M3d{
 	  
     void redrawAll( PP3d::Compute iCompute )
     {
-      redrawAllCanvas( iCompute   );
+      redrawAllWin3d( iCompute   );
       redrawObjectTree();
     }
     

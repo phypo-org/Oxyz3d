@@ -192,7 +192,7 @@ namespace M3d {
       lMatTran.initMove( cSliderPosX->value(), cSliderPosY->value(), cSliderPosZ->value() );
       lShape->modify( lMatTran );
 
-      Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
+      Application::Instance().redrawAllCanvas3d(PP3d::Compute::FacetAll);
     }
 
     //----------------------------------------
@@ -490,7 +490,7 @@ namespace M3d {
 
       TheInput.cancelCurrentCreation();
 
-      TheAppli.redrawAllCanvas(PP3d::Compute::FacetAll);
+      TheAppli.redrawAllCanvas3d(PP3d::Compute::FacetAll);
 
       Fl::delete_widget( Diag.cMyWindow );
       Diag.cMyWindow = nullptr;

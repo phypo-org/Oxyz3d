@@ -105,7 +105,7 @@ namespace M3d {
   
  static void OkCB( Fl_Widget*, void*pUserData )
     {  
-      Application::Instance().redrawAllCanvas(PP3d::Compute::FacetAll);
+      Application::Instance().redrawAll(PP3d::Compute::FacetAll);
 
       std::cout << " DiagPref.cSelectPassOverLighting=" << (int) DiagPref.cSelectPassOverLighting->value()
 		<< std::endl;
