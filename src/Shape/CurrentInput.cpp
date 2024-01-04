@@ -353,11 +353,11 @@ namespace PP3d {
     cCurrentCreation = nullptr;
   }
   //------------------------------------------	
-  void CurrentInput::swapCurrentCreation( Object* pCurrentCreation )
+  void CurrentInput::swapCurrentCreation( Object* pCurrentCreation, bool iFlagDelete )
   {
     if( cCurrentCreation != pCurrentCreation )
       {
-	if( cCurrentCreation != nullptr )
+	if( iFlagDelete && cCurrentCreation != nullptr )
 	  {
 	    cCurrentCreation->deleteAllHieracrchy();
 	  }

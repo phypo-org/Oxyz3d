@@ -144,7 +144,7 @@ namespace PP3d {
 
 			
     void move   ( Point3d p );
-    void scale  ( Point3d p );
+    void scale  ( Point3d p ); // A n'utiliser que si l'objet est centre sur l'origine !
     void modify ( Mat4& pMat );
 
     static Object* FindMyObject();

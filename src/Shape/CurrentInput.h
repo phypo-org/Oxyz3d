@@ -134,7 +134,7 @@ namespace PP3d {
     Object*   getCurrentCreation();
     Object*   validCurrentCreation( DataBase & iBase);
     void      cancelCurrentCreation( );
-    void      swapCurrentCreation( Object* pCurrentCreation );
+    void      swapCurrentCreation( Object* pCurrentCreation, bool iFlagDel = true );
     void      addToInput( EntityPtr, bool pFlagLink );
 
 

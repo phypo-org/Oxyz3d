@@ -261,11 +261,20 @@ namespace M3d {
       }
   }
   //---------------------------
-  void Canvas3d::validDragSelect( PP3d::Mat4 &pMat )
+  void Canvas3d::validDragSelect( PP3d::Mat4 & pMat )
   {
     std::cout << "validDragSelect PushHistory " << std::endl;
     
     dragSelect( pMat ); // Inutile ? 
+    cDragPoints.clear();
+    cDragSavPoints.clear();
+    PushHistory();
+  }
+  //---------------------------
+  void Canvas3d::validDragSelect( )
+  {
+    std::cout << "validDragSelect PushHistory " << std::endl;
+    
     cDragPoints.clear();
     cDragSavPoints.clear();
     PushHistory();

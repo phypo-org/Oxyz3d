@@ -32,11 +32,13 @@ namespace M3d {
 
   //---------------------------
   // nouveau point venant de la position de la souris (ctrl)
-  void Canvas3d::userInputPoint( int x, int y, bool iFinalize )
-  {     
+  PP3d::Point3d  Canvas3d::userInputPoint( int x, int y, bool iFinalize )
+  {
+    PP3d::Point3d lResult;
+    
     if( setCursor3dPosition( x, y ) )
       {
-	PP3d::Point3d lResult = TheAppli.getDatabase()->getCursorPosition();
+	lResult = TheAppli.getDatabase()->getCursorPosition();
 
 	TheAppli.roundInput( lResult );
 	
@@ -48,12 +50,13 @@ namespace M3d {
 	
 	TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);
       }
+    return lResult;
   }
   //---------------------------
   // nouveau point venant de la position de la souris (ctrl)
-  void Canvas3d::userInputPoint( bool iFinalize )
+  PP3d::Point3d Canvas3d::userInputPoint( bool iFinalize )
   {     
-    userInputPoint( Fl::event_x(), Fl::event_y(),iFinalize );    
+    return userInputPoint( Fl::event_x(), Fl::event_y(),iFinalize );    
   }
   //---------------------------
   // recuperation d'un point d'un objet (shift)
@@ -143,7 +146,7 @@ namespace M3d {
                     DBG_ACT(" **************** cUserActionSaisie " );
                     std::cout << " **************** cUserActionSaisie " << std::endl;
                     userInputPoint(true );              
-                    userPrepareAction( pEvent );        
+                    userActionPrepare( pEvent );        
                     return 1;  
                   }
                
@@ -155,7 +158,7 @@ namespace M3d {
                     DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
                     
                     userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );
-                    userPrepareAction( pEvent );        
+                    userActionPrepare( pEvent );        
             
                     return 1;
                   }
@@ -171,7 +174,7 @@ namespace M3d {
             if( Fl::event_button() == FL_LEFT_MOUSE )
               {
                 userDragInputPt(pEvent, true );
-                userTerminateAction( pEvent );
+                userActionTerminate( pEvent );
                 changeUserMode( ModeUser::MODE_BASE );
                 return 1;
               }
@@ -179,7 +182,7 @@ namespace M3d {
 
         if(  pEvent == FL_DRAG )
           {
-            if( userActionRun() )
+            if( userActionIsRun() )
               {
                 userDragInputPt(pEvent, false);
                 return 1;

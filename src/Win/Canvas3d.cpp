@@ -82,10 +82,17 @@ namespace M3d {
     cViewInputPoly.cColorPoint.set( 0.7, 0.4, 0.1, 0.7);
     cViewInputPoly.cColorLine.set( 0.6, 0.5, 0.2, 0.7 );    
     
-    cViewInputObject.cColorPoint.set( 0.4, 1, 0.4, 0.7);
-    cViewInputObject.cColorLine.set( 0.4, 0.8, 0.3, 0.6);
-    cViewInputObject.cColorFacet.set( 0.2, 0.4, 0.2, 0.5 );
+    cViewInputObject.cColorPoint.set( 0.4, 1, 0.4, 0.5);
+    cViewInputObject.cColorLine.set( 0.4, 0.8, 0.3, 0.4);
+    cViewInputObject.cColorFacet.set( 0.2, 0.4, 0.2, 0.3 );
+
     
+    cViewInputObjectMagnet.cColorPoint.set ( 0.5, 0.5, 1, 0.5);
+    cViewInputObjectMagnet.cColorLine.set  ( 0.4, 0.4, 1, 0.4);
+    cViewInputObjectMagnet.cColorFacet.set ( 0.3, 0.3, 1, 0.3 );
+    cViewInputObjectMagnet.cViewMode = PP3d::ViewMode::SKELETON;
+
+      
 
     mode( FL_RGB | FL_DOUBLE | FL_DEPTH | FL_STENCIL | FL_DOUBLE);
     
@@ -103,6 +110,8 @@ namespace M3d {
   Canvas3d::~Canvas3d( )
   {	
   }
+  //---------------------------
+  Magnet  & Canvas3d::getMagnet()  { return TheAppli.getMagnet(); }  
   //---------------------------
   void Canvas3d::traceMode() const
   {
@@ -131,9 +140,9 @@ namespace M3d {
 	  }
       }
   }
- 
+
   //---------------------------
-  void Canvas3d::userPrepareAction( int	pEvent )
+  void Canvas3d::userActionPrepare( int	pEvent )
   {	
     cMouseInitPosX = cMouseLastPosX = Fl::event_x();
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
@@ -144,16 +153,16 @@ namespace M3d {
     TheAppli.currentTransform().scaleTo(1);
   }
   //------------------------------
-  void Canvas3d::userCancelAction(	int	pEvent )
+  void Canvas3d::userActionCancel(	int	pEvent )
   {  
     if(cVisitModifSelect!= nullptr )
       {
 	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
       }
-    userTerminateAction(pEvent);
+    userActionTerminate(pEvent);
   }									 
   //------------------------------
-  void Canvas3d::userTerminateAction(	int	pEvent )
+  void Canvas3d::userActionTerminate(	int	pEvent )
   {
     std::cout << "TERMINATE" << std::endl;
   		
@@ -176,59 +185,18 @@ namespace M3d {
       }
   }									 
   //---------------------------
-  void Canvas3d::userChangeKameraView( int pEvent)
-  {
-    if( cMouseLastPosX == -1 )
-      return;
-
-    //    std::cout << " ZKam:" << getKamera().position()[2] << " " << std::flush;
-    
-    int lX = Fl::event_x();
-    int lY = Fl::event_y();
-    //		if( Fl::event_button2() )
-    if( Fl::event_button2() )
-      {
-	getKamera().position()[0] += (cMouseLastPosX	-lX)/10.0;
-	getKamera().position()[1] += (lY-cMouseLastPosY)/10.0;
-      }
-    else
-      //			if( Fl::event_button1() )
-      //	if( Fl::event_button1() )
-      {
-	getKamera().angle()[1] += (cMouseLastPosX-lX)/1.0;
-	getKamera().angle()[0] += (lY-cMouseLastPosY)/1.0;
-
-	if( getKamera().angle()[0] < 0 )
-	  getKamera().angle()[0] += 360;
-	else
-	  if( getKamera().angle()[0] > 360 )
-	    getKamera().angle()[0] -= 360;
-
-	if( getKamera().angle()[1] < 0 )
-	  getKamera().angle()[1] += 360;
-	else
-	  if( getKamera().angle()[1] > 360 )
-	    getKamera().angle()[1] -= 360;
-
-								
-	//	cout << "angle X: " <<	getKamera().angle()[0]  
-	//	     << "angle Y: " <<	getKamera().angle()[1] ;
-      }
-    redraw();
-    cMouseLastPosX = lX;
-    cMouseLastPosY = lY;      
-  }  
-
-  //---------------------------
+  // pX, pY sont des coordonnees "ecran"
+  
   bool Canvas3d::transform2Dto3D(  int pX, int pY,  PP3d::Point3d & iResult )
   {
     // On lance une droite à partir de la position de la souris
     // le Z n'est pas vraiment important (attention a la precision des doubles quand meme)
+    double lH = pixel_h();
+  
+    // on prend 2 point avec deux Z differents
+    PP3d::Point3d lPt0( pX, lH-pY,   lH);
+    PP3d::Point3d lPt1( pX, lH-pY, - lH );
     
-    //    PP3d::Point3d lPt0( Fl::event_x(), pixel_h()-Fl::event_y(),  pixel_h());
-    //    PP3d::Point3d lPt1( Fl::event_x(), pixel_h()-Fl::event_y(), - pixel_h() );
-    PP3d::Point3d lPt0( pX, pY,  pixel_h());
-    PP3d::Point3d lPt1( pX, pY, - pixel_h() );
     
     PP3d::Point3d lR0;
     PP3d::Point3d lR1;
@@ -243,6 +211,8 @@ namespace M3d {
 
     //  cout <<"transform2Dto3D Plane Height:" << TheAppli.getInputPlaneHeight() << endl;
     bool lOk = false;
+
+    // On 
     switch( TheAppli.getInputPlane() )
       {
       case InputPlaneType::X : lOk = lLineV.intersectPlanX( iResult, TheAppli.getInputPlaneHeight() );
@@ -250,13 +220,13 @@ namespace M3d {
       case InputPlaneType::Y : lOk = lLineV.intersectPlanY( iResult, TheAppli.getInputPlaneHeight() );
 	break;
       case InputPlaneType::Z : lOk = lLineV.intersectPlanZ( iResult, TheAppli.getInputPlaneHeight() );
-	break;  
-      case InputPlaneType::Free : {
-	    double lH = pixel_h();
-	    double lX = ((double )Fl::event_x());
-	    double lY = lH-((double) Fl::event_y());
-	    PP3d::Point3d lPt0;
-	    PP3d::Point3d lResult0;
+	break;
+        
+      case InputPlaneType::Free : { //??????????????????
+        double lX = ((double )pX);      
+        double lY = lH-((double)pY);
+        PP3d::Point3d lPt0;
+        PP3d::Point3d lResult0;
 	    getKamera().projectObjectToWin( lPt0, lResult0, true);
 	    getKamera().projectWinToObject( PP3d::Point3d( lX, lY, lResult0.cZ), iResult, true);
 	return true;
@@ -270,8 +240,9 @@ namespace M3d {
   {
     PP3d::Point3d lResult;    
     
-    if( transform2Dto3D( pX, pixel_h()-pY, lResult ) )
+    if( transform2Dto3D( pX,  pY, lResult ) )
       {
+        //        std::cout << "Canvas3d::setCursor3dPosition " << lResult << std::endl;
 	TheAppli.getDatabase()->setCursorPosition ( lResult );
 	TheAppli.setCursorPosition( lResult );
 	return true;
@@ -322,39 +293,40 @@ namespace M3d {
       {
         return lResult;
       }
-   std::cout << "after hdl camera" << std::endl;
+   //   std::cout << "after hdl camera" << std::endl;
    if( (lResult = handleMenu( pEvent )) !=0 )
       {
         return lResult;
       }
    
-    std::cout << "after hdl menu" << std::endl;
+   //    std::cout << "after hdl menu" << std::endl;
    if( (lResult = handleInput( pEvent )) !=0 )
       {
         return lResult;
       }
- 
+     //std::cout << "after hdl magnet" << std::endl;
+
     if( (lResult = handleMagnet( pEvent )) !=0 )
       {
         return lResult;
       }
-         std::cout << "after hdl magnet" << std::endl;
    
-    std::cout << "after hdl input" << std::endl;
    if( (lResult = handleSelect( pEvent )) !=0 )
       {
         return lResult;
       }
-      std::cout << "after hdl select" << std::endl;
+   //    std::cout << "after hdl select" << std::endl;
  
    if( (lResult = handleTransform( pEvent )) !=0 )
       {
         return lResult;
       }
-         std::cout << "after hdl transform" << std::endl;
+   //   std::cout << "after hdl transform" << std::endl;
+   
+   
 
-    
-    switch( pEvent )
+   
+   switch( pEvent )
       {				
       case FL_KEYDOWN:
 	{
@@ -370,7 +342,7 @@ namespace M3d {
 		{
 		  //=======================
 		case FL_Escape:
-		  userCancelAction( pEvent );
+		  userActionCancel( pEvent );
 		  break;
 		  //=======================
 		case	FL_Tab:
@@ -462,7 +434,7 @@ namespace M3d {
 					
 	      if( strcmp( lStr, ANNULE_ACTION )==0)
 		{
-		  userTerminateAction( pEvent );
+		  userActionTerminate( pEvent );
 		  TheAppli.setCurrentTransformType( Transform::Nothing );
 		}
 	      else if( strcmp( lStr, UNSELECT_ALL) == 0 )

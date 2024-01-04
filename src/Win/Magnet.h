@@ -3,6 +3,7 @@
 
 
 #include "Shape/Entity.h"
+#include "Shape/ObjectPoly.h"
 
 #include "Modif/VisitorModif.h"
 
@@ -30,13 +31,14 @@ namespace M3d {
     ACTIONAXIS_XYZ,
   };
 
+  
   //****************************
   class Magnet{
     
     PP3d::Point3d      cPos;    
     PP3d::Point3d      cTransformPos;    
-    double             cSize    = 100;
-    double             cSize2   = cSize*cSize;
+    double             cSize    = 1;
+    double             cSize2   = 1;
 
     double             cPower  =1;
     
@@ -44,7 +46,8 @@ namespace M3d {
     MagnetActionAxis   cActionAxis = MagnetActionAxis::ACTIONAXIS_XYZ;
     MagnetAlgo         cAlgo       = MagnetAlgo::MAGNET_ALGO_DIST;
 
-    
+
+  
   public:
  
     void          setTransformPosition( PP3d::Point3d & iPos ) { cTransformPos = iPos; }
@@ -63,11 +66,23 @@ namespace M3d {
     double        getPower()                    const  { return cPower; }
 
 
-    bool          execOn( PP3d::Point3d & ioPt );
+    bool          execOn( PP3d::Point3d & ioPt , double iCoef );
     
     PP3d::Poly*   prepareMagnetDraw();
     PP3d::Poly*   releaseMagnet();
     void          drag( Canvas3d & iCanvas );
+
+  protected:
+    PP3d::Poly       * cShapeMagnet=nullptr;
+    PP3d::ObjectPoly * cObjectPoly=nullptr;
+ 
+    
+  public:
+    PP3d::Poly       * getMyShape ()                            { return cShapeMagnet; }
+    PP3d::ObjectPoly * getMyObject()                            { return cObjectPoly;  }
+    void               setMyShape (PP3d::Poly       * iShape)   { cShapeMagnet = iShape; }
+    void               setMyObject(PP3d::ObjectPoly * iObject)  { cObjectPoly  = iObject; }
+    void               prepareDrawMagnet();
 
   };
   //****************************
@@ -83,23 +98,8 @@ namespace M3d {
 
     }
     //---------------------------------		
-    void execEndFacet( PP3d::Facet* pEntity) override
-    {
-      // 	  std::cout << " cModifPt00000000222:" << cModifPt.size() << std::endl;
-      VisitorModifPoints::execEndFacet(pEntity); 
-      //	  std::cout << " cModifPt222:" << cModifPt.size() << std::endl;
-
-      if( cMode == Mode::MODIF )
-	{
-	  //	  std::cout << " cModifPt:" << cModifPt.size() << std::endl;
-	  
-	  for( PP3d::Point* lPt:cModifPt )
-	    {
-              cMagnet.execOn( lPt->get() );
-	    }
-	  cModifPt.clear(); 
-	}        
-    }
+    void execEndFacet( PP3d::Facet* pEntity) override;
+    
   };
 
 

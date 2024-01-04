@@ -12,10 +12,12 @@ namespace PP3d {
   class Mat4;
   struct ObjProps;
 
+  enum class ViewMode{ FULL, SKELETON };
  
   //******************************
   class ViewProps{
 
+    
   public:
     
     bool cFlagDrawPoint;
@@ -46,7 +48,7 @@ namespace PP3d {
     float      cLineWidthSelect=4;
     float      cLineWidthHighlight=6;
 		
-    GLuint     cViewMode=0;        // Skeleton
+    ViewMode   cViewMode=ViewMode::FULL;        
     GLuint     cFlagViewNormal=0;
 
     bool       cDebug=false;

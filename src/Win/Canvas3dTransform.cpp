@@ -89,7 +89,7 @@ namespace M3d {
     else
       {
         std::cout << "userTransformSelectionInput CANCEL" << std::endl;        
-        userCancelAction( pEvent );
+        userActionCancel( pEvent );
       }
   }
   //---------------------------   
@@ -99,7 +99,7 @@ namespace M3d {
     
     TheAppli.currentValTransf() = TheAppli.currentValTransf() + lDx;
  
-		
+    
     PP3d::Mat4 lMatTran;
     lMatTran.identity();
 
@@ -137,20 +137,25 @@ namespace M3d {
   	//================
       case Transform::MagnetMove:
         {
-          std::cout << "======== MagnetMove " << std::endl;        
+          //  std::cout << "======== Transform::MagnetMove "
+          //          << TheAppli.currentValTransf()
+          //         << std::endl;
+          
           if(cVisitModifSelect == nullptr )  // la premiere fois !
 	    {
-	      cVisitModifSelect = new VisitorMagnet(TheSelect, cMagnet);
+	      cVisitModifSelect = new VisitorMagnet(TheSelect, getMagnet());
               cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::SAV, TheSelect); // sauvegarde des points originaux !
-	    }
-
-        
-	  
-	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des anciennes modifs 
+ 	    }
+          
+	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des anciennes modifs
+          cVisitModifSelect->setCoef( TheAppli.currentValTransf() );  // prise en compte de la souris !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect); // Modification
 	  
 	  if( pFlagFinalize)
-	    validDragSelect( lMatTran );
+            {
+              std::cout << "======== Transform::MagnetMove finalize " << std::endl;
+	    validDragSelect( );
+            }
 	  return;    //////////// ATTENTION 
 	}
 
@@ -169,11 +174,11 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-          cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/30 );// DIFFERENCE !!!//// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!! DIFFERENCE !!!
+          cVisitModifSelect->setCoef( TheAppli.currentValTransf()); //((double)cMouseLastPosX-cMouseInitPosX)/30 );// DIFFERENCE !!!//// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!! DIFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	    validDragSelect( lMatTran );
+	    validDragSelect(  );
 	  return;    //////////// ATTENTION 
 	}
 	//================
@@ -191,11 +196,11 @@ namespace M3d {
 	    }
 	  
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect); // remise a zero des modifs
-          cVisitModifSelect->setCoef( ((double)cMouseLastPosX-cMouseInitPosX)/100.0 );// DIFFERENCE !!!// D// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!IFFERENCE !!!
+          cVisitModifSelect->setCoef(TheAppli.currentValTransf()); // ((double)cMouseLastPosX-cMouseInitPosX)/100.0 );// DIFFERENCE !!!// D// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!// DIFFERENCE !!!IFFERENCE !!!
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	    validDragSelect( lMatTran );
+	    validDragSelect( ); //lMatTran );
 	  return;    //(double)/////////// ATTENTI suricata.yamlON 
 	}
 	//================
@@ -217,7 +222,7 @@ namespace M3d {
 	  cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::MODIF, TheSelect);
 	  
 	  if( pFlagFinalize)
-	    validDragSelect( lMatTran );
+	    validDragSelect();// lMatTran );
 	  return;    //(double)/////////// ATTENTlON 
 	}
 	//================
@@ -506,7 +511,7 @@ namespace M3d {
       {        
 	if( Fl::event_button() == FL_LEFT_MOUSE &&  getUserMode() == ModeUser::MODE_TRANSFORM )
 	  {
-	    userPrepareAction( pEvent );
+	    userActionPrepare( pEvent );
 	    return 1;
 	  }
       }
@@ -517,7 +522,7 @@ namespace M3d {
              && TheAppli.getCurrentTransformType() != Transform::Nothing )
           {
 	    userTransformSelection(pEvent, true );
-	    userTerminateAction( pEvent );
+	    userActionTerminate( pEvent );
 	    TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);            
 	    return 1;
           }
@@ -527,7 +532,7 @@ namespace M3d {
       {
         if(  getUserMode() == ModeUser::MODE_TRANSFORM )
           {
-            if( userActionRun() ) 
+            if( userActionIsRun() ) 
               {
 		userTransformSelection(pEvent);
                 setCursor3dPosition( Fl::event_x(), Fl::event_y());

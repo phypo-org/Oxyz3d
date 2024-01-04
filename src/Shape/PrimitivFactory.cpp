@@ -337,7 +337,7 @@ namespace PP3d{
 	|| (iParam->cTop ==0 && iParam->cCheckHole )
 	)
       {
-	std::cout << "PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
+	std::cerr  << "*** Error : PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
 	return nullptr;
       }
     
@@ -398,7 +398,7 @@ namespace PP3d{
 	|| iParam->cNbV < 1 || iParam->cNbV > 4096
  	)
       {
-	std::cout << "PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
+	std::cerr << "*** Error : PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
 	return nullptr;
       }
     
@@ -466,7 +466,12 @@ namespace PP3d{
 	|| (iParam->cWidth  < sMinSz )
 	)
       {
-	std::cout << "PrimitivFactory::CreateSphere - Bad parameter" << std::endl;
+	std::cerr << "*** Error : PrimitivFactory::CreateSphere - Bad parameter "
+                  << " NbU:" << iParam->cNbU
+                  << " NbV:" << iParam->cNbV
+                  << " Height:" << iParam->cHeight
+                  << " Width:" << iParam->cWidth
+                  << std::endl;
 	return nullptr;
       }
     

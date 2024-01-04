@@ -67,8 +67,6 @@ namespace M3d {
     ModeUser        cUserMode    = ModeUser::MODE_BASE;
     GlobalMode      cGlobalMode  = GlobalMode::INPUT;
 
-    Magnet          cMagnet;
-
     
     bool      cAxisFlag;
     bool      cFlagLightColor; 
@@ -79,13 +77,15 @@ namespace M3d {
     bool    cFlagViewGeo       = true;
     bool    cFlagCursor3d      = false;
     bool    cFlagSelectGeo     = false;
+
 		
     PP3d::ViewProps cViewGen;
     PP3d::ViewProps cViewPropsTransform;
     PP3d::ViewProps cViewInputCursor;
     PP3d::ViewProps cViewInputPoly;
     PP3d::ViewProps cViewInputObject;
-    
+    PP3d::ViewProps cViewInputObjectMagnet;
+
 
     Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
@@ -98,6 +98,7 @@ namespace M3d {
     void setSelectGeo( bool cVal) { cFlagSelectGeo = cVal; }
     bool getSelectGeo()           { return cFlagSelectGeo && cFlagViewGeo; }
 
+    Magnet  & getMagnet();
   
   protected:
  
@@ -109,7 +110,8 @@ namespace M3d {
     bool initDragSelect();
     void dragSelect( PP3d::Mat4 &pMat );
     void validDragSelect( PP3d::Mat4 &pMat);
-    void cancelDragSelect();
+     void validDragSelect();
+   void cancelDragSelect();
 
     
     // dragging
@@ -137,7 +139,6 @@ namespace M3d {
     PP3d::Kamera&   getKamera()   { return cKamera;   }
 		
 
-
     void     changeUserMode( ModeUser iMode ) { cUserMode = iMode; }
     ModeUser getUserMode()   const             { return cUserMode;}
     
@@ -148,7 +149,7 @@ namespace M3d {
     
     
     
-    void setVisualMode( GLuint pMode )    { cViewGen.cViewMode = pMode; }
+    void setVisualMode( PP3d::ViewMode pMode )    { cViewGen.cViewMode = pMode; }
     //------------------------------
     int       cMouseInitPosX=-1;
     int       cMouseInitPosY=-1;
@@ -157,15 +158,16 @@ namespace M3d {
 
     int cMouseLastPosZ=-1;
 
-    bool userActionRun() const{ return cMouseLastPosX != -1; } // mettre un bool a la place
+    bool userActionIsRun() const{ return cMouseLastPosX != -1; } // mettre un bool a la place
 
 	 
-    void userPrepareAction( int	pEvent );
-    void userCancelAction(	int	pEvent );						 
-    void userTerminateAction(	int	pEvent );						 
+    void userActionPrepare( int	pEvent );
+    void userActionCancel(	int	pEvent );						 
+    void userActionTerminate(	int	pEvent );
+    
     void userChangeKameraView(int	pEvent);
-    void userInputPoint( int x, int y, bool iFinalize );
-    void userInputPoint( bool iFinalize);
+    PP3d::Point3d  userInputPoint( int x, int y, bool iFinalize );
+    PP3d::Point3d  userInputPoint( bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelectionInput( int pEvent );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
@@ -182,7 +184,6 @@ namespace M3d {
 
     void drawSelectRect();
     void drawSelectCircle(  PP3d::Point3d iPos, int iSize, bool iUseAlternColor = false );
-    void drawMagnet(Magnet & iMagnet );
 
     
     //=========== MENUS =================

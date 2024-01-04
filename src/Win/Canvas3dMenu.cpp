@@ -406,53 +406,53 @@ namespace M3d {
     void  Canvas3d::makeMenuMagnet(Fl_Menu_Button& pMenu)
   {
     pMenu.label( StrMenu_Magnet);
-    if( cMagnet.getAction() == MagnetAction::MAGNET_ACTION_ATTRACK )
+    if( getMagnet().getAction() == MagnetAction::MAGNET_ACTION_ATTRACK )
       {
         pMenu.add( StrMenu_MagnetRepel,"", LAMBDA
                    
-                   lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_REPEL);
+                   lCanvas->getMagnet().setAction(MagnetAction::MAGNET_ACTION_REPEL);
                    ADBMAL, this, FL_MENU_DIVIDER);
       }
     else
       {
         pMenu.add( StrMenu_MagnetAttract, "", LAMBDA
                
-                 lCanvas->cMagnet.setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
+                 lCanvas->getMagnet().setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
                ADBMAL, this, FL_MENU_DIVIDER);
       }
 
     
     pMenu.add( StrMenu_MagnetAlgo "/" "Distance", "", LAMBDA               
-               lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_DIST);
+               lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_DIST);
                ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetAlgo "/" "Square distance", "", LAMBDA               
-               lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_DIST);
+               lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_DIST);
                ADBMAL, this);
     
    pMenu.add( StrMenu_MagnetAlgo "/" "Square root distance", "", LAMBDA               
-              lCanvas->cMagnet.setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
+              lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
                ADBMAL, this, FL_MENU_DIVIDER);
 
    
     
     pMenu.add( StrMenu_MagnetSize "/" " 10", "", LAMBDA               
-               lCanvas->cMagnet.setSize(10);
+               lCanvas->getMagnet().setSize(10);
                ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetSize "/" " 50", "", LAMBDA               
-               lCanvas->cMagnet.setSize(50);
+               lCanvas->getMagnet().setSize(50);
                ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetSize "/" " 100", "", LAMBDA               
-               lCanvas->cMagnet.setSize(100);
+               lCanvas->getMagnet().setSize(100);
                ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetSize "/" " 200", "", LAMBDA               
-               lCanvas->cMagnet.setSize(200);
+               lCanvas->getMagnet().setSize(200);
                ADBMAL, this);    
     pMenu.add( StrMenu_MagnetSize "/" " 300", "", LAMBDA               
-               lCanvas->cMagnet.setSize(300);
+               lCanvas->getMagnet().setSize(300);
                ADBMAL, this);    
    
     TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
@@ -896,7 +896,9 @@ namespace M3d {
 
 
     // ======= SPIRAL ========
-    if(  TheSelect.getNbSelected() > 0 && TheSelect.getSelectType() == PP3d::SelectType::Object   )
+    if(  TheSelect.getNbSelected() > 0
+         && ( TheSelect.getSelectType() == PP3d::SelectType::Object
+              ||  TheSelect.getSelectType() == PP3d::SelectType::Group)  )
       {
         pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralX, "^x", LAMBDA
                    CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_OBJECT  ); 

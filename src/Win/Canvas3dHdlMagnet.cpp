@@ -20,6 +20,7 @@ using namespace std;
 
 namespace M3d {
 
+
   //---------------------------
   int Canvas3d::handleMagnet(  int pEvent )
   {
@@ -32,14 +33,16 @@ namespace M3d {
         // SHIFT LEFT => BEGIN DRAG diametre du magnet //
         if( pEvent == FL_PUSH &&  Fl::event_button() == FL_LEFT_MOUSE  && Fl::event_shift() )
           {
-            userPrepareAction( pEvent );                   
-            cMagnet.drag(*this);
+            userActionPrepare( pEvent );                   
+            getMagnet().drag(*this);
             PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-            cMagnet.setPosition( lTmp );
-            //cMagnet.prepareMagnetDraw();
+            //   TheAppli.cMagnet.setPosition2D( lTmp );
+            //TheAppli.cMagnet.prepareMagnetDraw();
                 
             changeUserMode( ModeUser::MODE_DRAG );
-                
+
+            getMagnet().prepareDrawMagnet();
+
             setCursor3dPosition( Fl::event_x(), Fl::event_y());
             TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);                
             return 1;
@@ -48,9 +51,12 @@ namespace M3d {
         // CTRL LEFT => BEGIN TRANSFORM par le Magnet
         if( pEvent == FL_PUSH &&  Fl::event_button() == FL_LEFT_MOUSE  && Fl::event_ctrl() )
           {
-            userPrepareAction( pEvent );                   
+            userActionPrepare( pEvent );                   
             PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-            cMagnet.setPosition( lTmp );
+            // TheAppli.cMagnet.setPosition2D( lTmp );
+
+            getMagnet().prepareDrawMagnet();
+
             changeUserMode( ModeUser::MODE_TRANSFORM );
             Application::Instance().setCurrentTransformType(Transform::MagnetMove);
 
@@ -66,12 +72,17 @@ namespace M3d {
         // LEFT => BEGIN TRANSFORM par le Magnet
         if( pEvent == FL_PUSH && Fl::event_button() == FL_LEFT_MOUSE )
           {
-            PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-            cMagnet.setTransformPosition( lTmp );
-            userPrepareAction( pEvent );
-            userTerminateAction( pEvent );
-            setCursor3dPosition( Fl::event_x(), Fl::event_y());
-            userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
+            userActionPrepare( pEvent );
+            
+                //        setCursor3dPosition( Fl::event_x(), Fl::event_y());
+             
+            PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
+
+            std::cout << "*** MAGNET FIRST POS:" << lPos << std::endl;
+            getMagnet().setPosition( lPos );
+            getMagnet().prepareDrawMagnet();
+
+            TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break
             return 1;
           }
         // RELEASE LEFT => Terminate action
@@ -79,9 +90,9 @@ namespace M3d {
           {
             if( TheAppli.getCurrentTransformType() != Transform::Nothing )
               {
-                userTransformSelection(pEvent, true );
-                   
-                userTerminateAction( pEvent );
+                TheInput.swapCurrentCreation( nullptr  );
+                userTransformSelection(pEvent, true );                   
+                userActionTerminate( pEvent );
                 TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);
                 return 1;
               }
@@ -91,15 +102,18 @@ namespace M3d {
           {
             if( cMouseLastPosX != -1 )
               {
-                userTransformSelection(pEvent);
-                PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-                //   PP3d::Point3d lTmp(cMouseLastPosX, pixel_h()-cMouseLastPosY,0);
-                PP3d::Point3d lTmp2(cMouseLastPosX, pixel_h()-cMouseLastPosY,0);
-                cMagnet.setTransformPosition( lTmp2 );
+              //        setCursor3dPosition( Fl::event_x(), Fl::event_y());
+                 PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false );                 std::cout << "MAGNET POS:" << lPos << std::endl;
+ // just view the possible position of point
+                 getMagnet().setTransformPosition( lPos );
+
+                //        PP3d::Point3d lTmp(  Fl::event_x(), Fl::event_y(), 0 );
+                //                TheAppli.cMagnet.setTransformPosition2D( lTmp );
+
+                 getMagnet().prepareDrawMagnet();
+                 userTransformSelection(pEvent);
                    
-                userInputPoint(  Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
-                setCursor3dPosition( Fl::event_x(), Fl::event_y());
-                TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break
+                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break
                 return 1;                                   
               }
           }
@@ -117,7 +131,9 @@ namespace M3d {
                    
                 if( strcmp( lStr, ANNULE_ACTION )==0)
                   {
-                    userTerminateAction( pEvent );
+                    TheInput.swapCurrentCreation( nullptr  );
+
+                    userActionTerminate( pEvent );
                     TheAppli.setCurrentTransformType( Transform::Nothing );
                     return 1;
                   }
@@ -132,7 +148,11 @@ namespace M3d {
           {
             DBG_ACT(" **************** MAGNET RELEASE  " );
             std::cout << " ****************  MAGNET RELEASE " << std::endl;
-            cMagnet.releaseMagnet();
+            getMagnet().releaseMagnet();
+            
+    TheInput.swapCurrentCreation( nullptr  );
+
+            
             changeUserMode( ModeUser::MODE_BASE );
             TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);
             return 1;
@@ -142,24 +162,29 @@ namespace M3d {
         if( pEvent == FL_DRAG  )
           {
             cout << "Canvas3d::userDrag Magnet " << endl;
-                
+               
             cMouseLastPosX = Fl::event_x();
             cMouseLastPosY = Fl::event_y();
-                
-            int lSz = (cMouseLastPosX-cMouseInitPosX)/3;
+            double lSz = (((double)cMouseLastPosX)-((double)cMouseInitPosX))/100.;
+            
+            std::cout << "lSz:" << lSz;
+
             if( lSz < 0 )
-              {
-                lSz = - std::sqrt(-lSz);
-              }
-            else
-              lSz = std::sqrt(lSz);
-                
-            lSz +=  cMagnet.getSize();
-            if( lSz > 1000 ) lSz = 1000;
-            if( lSz < 5 )    lSz = 5;
-                
-            cMagnet.setSize( lSz );
-            TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);
+              lSz = -lSz;
+            
+           // A CHANGER            
+
+            if( lSz < 0.01 ) lSz = 0.01;
+            if( lSz > 50 ) lSz = 50;
+            
+            std::cout << " lSz2:" << lSz<< std::endl; 
+  
+       
+            getMagnet().setSize( lSz ); 
+            
+            getMagnet().prepareDrawMagnet();
+
+            TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);
             return 1;
           }
       }

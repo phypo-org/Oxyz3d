@@ -447,7 +447,7 @@ namespace M3d {
     //    std::cout << " ---> value:" << (int)lToggle->value() << std::endl;
 
 		
-    lWin3d->cuCanvas3d->setVisualMode(  (int)lToggle->value() );		
+    lWin3d->cuCanvas3d->setVisualMode( lToggle->value() ? PP3d::ViewMode::SKELETON : PP3d::ViewMode::FULL );		
 
     lWin3d->canvasRedraw();
   }

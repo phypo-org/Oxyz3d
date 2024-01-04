@@ -19,7 +19,50 @@ using namespace std;
 
 
 namespace M3d {
-  
+ //---------------------------
+  void Canvas3d::userChangeKameraView( int pEvent)
+  {
+    if( cMouseLastPosX == -1 )
+      return;
+
+    //    std::cout << " ZKam:" << getKamera().position()[2] << " " << std::flush;
+    
+    int lX = Fl::event_x();
+    int lY = Fl::event_y();
+    
+    //		if( Fl::event_button2() )
+    if( Fl::event_button2() )
+      {
+	getKamera().position()[0] += (cMouseLastPosX	-lX)/10.0;
+	getKamera().position()[1] += (lY-cMouseLastPosY)/10.0;
+      }
+    else
+      //			if( Fl::event_button1() )
+      //	if( Fl::event_button1() )
+      {
+	getKamera().angle()[1] += (cMouseLastPosX-lX)/1.0;
+	getKamera().angle()[0] += (lY-cMouseLastPosY)/1.0;
+
+	if( getKamera().angle()[0] < 0 )
+	  getKamera().angle()[0] += 360;
+	else
+	  if( getKamera().angle()[0] > 360 )
+	    getKamera().angle()[0] -= 360;
+
+	if( getKamera().angle()[1] < 0 )
+	  getKamera().angle()[1] += 360;
+	else
+	  if( getKamera().angle()[1] > 360 )
+	    getKamera().angle()[1] -= 360;
+
+								
+	//	cout << "angle X: " <<	getKamera().angle()[0]  
+	//	     << "angle Y: " <<	getKamera().angle()[1] ;
+      }
+    redraw();
+    cMouseLastPosX = lX;
+    cMouseLastPosY = lY;      
+  }    
   //---------------------------
   int Canvas3d::handleCamera(  int pEvent )
   {
@@ -30,12 +73,12 @@ namespace M3d {
 	// DEBUT MODE DEPLACEMENT CAMERA
 	if( Fl::event_button() == FL_MIDDLE_MOUSE )
 	  {
-	    userPrepareAction( pEvent );
+	    userActionPrepare( pEvent );
 	    if( getUserMode() == ModeUser::MODE_BASE )
               {
                 changeUserMode( ModeUser::MODE_MOVE_CAMERA );
               }
-            userPrepareAction( pEvent );        
+            userActionPrepare( pEvent );        
 	    return 1;
 	  }
 
@@ -45,8 +88,8 @@ namespace M3d {
 	    if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 	      {
 		changeUserMode( ModeUser::MODE_BASE );
-		userTerminateAction( pEvent );
-                userPrepareAction( pEvent );
+		userActionTerminate( pEvent );
+                userActionPrepare( pEvent );
                 
 		return 0; /////// L'EVENT PEUT ETRE TRAITER AILLEURS !!!!!!!
 	      }
@@ -68,7 +111,7 @@ namespace M3d {
       {
         if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
           {
-            if( userActionRun() )
+            if( userActionIsRun() )
               {
                 userChangeKameraView( pEvent );
                 setCursor3dPosition( Fl::event_x(), Fl::event_y());

@@ -147,7 +147,7 @@ namespace PP3d{
       {
       case SelectType::Null:
 	{
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawFacetGL( pViewProps);
 					
 	  drawLineGL( pViewProps	);		
@@ -157,7 +157,7 @@ namespace PP3d{
       case SelectType::All:
       case SelectType::Point:
 	{
-	  if( pViewProps.cViewMode == 0 )
+	  if( pViewProps.cViewMode == ViewMode::FULL )
 	    drawFacetGL(pViewProps);
 					
 	  drawLineGL( pViewProps );
@@ -170,7 +170,7 @@ namespace PP3d{
       case SelectType::Line:
 	{
 	  //	  std::cout << "Object::drawGL line cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawFacetGL( pViewProps);
 					
 	  drawLineGL( pViewProps );			
@@ -180,7 +180,7 @@ namespace PP3d{
 				
       case SelectType::Facet:
 	{
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawFacetGL( pViewProps);
 
 	  //	  std::cout << "Object::drawGL facet  cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
@@ -192,7 +192,7 @@ namespace PP3d{
       case SelectType::Poly:
 	{
 	  //	  std::cout << "Object::drawGL poly cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawPolyGL(pViewProps);
 	  
 	  drawLineGL( pViewProps );			
@@ -203,7 +203,7 @@ namespace PP3d{
       case SelectType::Object:
 	{
 	  //	  std::cout << "Object::drawGL object cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == 0)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawObjectGL( pViewProps);
 					
 	  drawLineGL( pViewProps );			
@@ -262,7 +262,7 @@ namespace PP3d{
 	
       case SelectType::Point:
 	{
-  	  if( pViewProps.cViewMode == 0)						
+  	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawPolyGL( pViewProps);
 	  
 	  drawSelectPointGL( pViewProps );
@@ -272,7 +272,7 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-  	  if( pViewProps.cViewMode == 0)						
+  	  if( pViewProps.cViewMode == ViewMode::FULL)						
 	    drawPolyGL( pViewProps);
 	  
 	  drawSelectLineGL( pViewProps );

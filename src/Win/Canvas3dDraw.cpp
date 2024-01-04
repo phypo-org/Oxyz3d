@@ -121,15 +121,6 @@ namespace M3d {
   }
   
 
- //---------------------------
-  void Canvas3d::drawMagnet(Magnet & iMagnet )  // 2D !
-  {    
-    drawSelectCircle( iMagnet.getPosition(), iMagnet.getSize()  );
-    if( iMagnet.getPosition() != iMagnet.getTransformPosition())
-      {
-        drawSelectCircle( iMagnet.getTransformPosition(),  iMagnet.getSize(), true );
-      }
-  }
   //--------------------------- 
   void Canvas3d::drawSelectCircle(  PP3d::Point3d iPos, int iSz, bool iUseAlternColor )  // 2D !
   {   
@@ -337,6 +328,14 @@ namespace M3d {
 
     cKamera.execGL();
 
+    PP3d::ViewProps * lTmpViewInputPolyObject = &cViewInputObject;
+    
+    if( getGlobalMode() == GlobalMode::MAGNET
+        && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
+
+      {
+        lTmpViewInputPolyObject =   & cViewInputObjectMagnet;
+      }
     
     //===========================================================	
     drawGrid();
@@ -357,23 +356,24 @@ namespace M3d {
 
     // Draw the 3d view of object
     ///////////    TheAppli.getDatabase()->recomputeAll( );      // AFAIRE : optimiser c'est couteux de le faire a chaque fois
-    TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly, cViewInputObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType(), PP3d::ClassTypeObj  );
+    
+    TheAppli.getDatabase()->drawGL( cViewGen, cViewInputCursor, cViewInputPoly,  * lTmpViewInputPolyObject,  PP3d::GLMode::Draw  , TheSelect.getSelectType(), PP3d::ClassTypeObj  );
 
 
     // Draw transformation
     if( cFlagViewGeo )
       {
 	////////	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabase()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(),  PP3d::ClassTypeGeo ); 
+	TheAppli.getDatabase()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly , cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(),  PP3d::ClassTypeGeo ); 
       }
     
     // 
     if( TheAppli.getDatabaseTmp() != nullptr )
       {
 	////////	TheAppli.getDatabaseTransform()->recomputeAll();
-	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeObj); 
+	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor,  cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeObj); 
         if( cFlagViewGeo )
-	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor, cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeGeo); 
+	TheAppli.getDatabaseTmp()->drawGL( cViewPropsTransform, cViewInputCursor,  cViewInputPoly, cViewInputObject, PP3d::GLMode::Draw, TheSelect.getSelectType(), PP3d::ClassTypeGeo); 
       }
 
     // draw rectangle selection if needed
@@ -381,14 +381,14 @@ namespace M3d {
       {	
 	drawSelectRect();
       }
-   
+    /*
      // draw magnet
     if( getGlobalMode() == GlobalMode::MAGNET
       && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
       {
 	drawMagnet( cMagnet );
       }
-   
+    */
   
     glFlush();    
   }  

@@ -95,6 +95,13 @@ namespace M3d{
 
     double         cRoundingInput =0; // no rounding if 0
 
+
+  private:
+    Magnet           cMagnet;
+  public:
+    Magnet & getMagnet()   { return cMagnet; }
+   
+
   public:
     static const int sIconBigSize = 64;
     static const int sIconSize = 32;

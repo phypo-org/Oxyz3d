@@ -28,6 +28,7 @@ namespace PP3d {
 	lPt->cPt += p;
       }
   }
+  
   //---------------------------
   void Entity::scale ( Point3d p )
   {
@@ -39,6 +40,7 @@ namespace PP3d {
 	lPt->cPt *= p;
       }
   }
+  
   //---------------------------
   void Entity::modify (  Mat4& pMat )
   {
