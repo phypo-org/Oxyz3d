@@ -11,7 +11,7 @@
 #include <memory>
  
 #include <functional>
-
+#include "Magnet.h"
 
 void CallDialogPerspectiv( M3d::Canvas3d* pCanvas, PP3d::Kamera &pKamera );
 void CallDialogPrimitiv( PP3d::PrimitivFactory::Type );
@@ -40,6 +40,10 @@ extern void CallDialogSubDiv( bool& pFlagAlreadyExist, M3d::Canvas3d* iCanvas);
 
 extern void CallDialogPref();
 extern void CallDialogFile( const std::string & iTitle);
+
+extern void CallDialogMagnet( M3d::Magnet & iMagnet );
+extern void CloseDialogMagnet();
+extern void MajDialogMagnet();
 
 
 Fl_Double_Window* CallConsolePython();

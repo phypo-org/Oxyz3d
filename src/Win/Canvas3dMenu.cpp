@@ -411,49 +411,59 @@ namespace M3d {
         pMenu.add( StrMenu_MagnetRepel,"", LAMBDA
                    
                    lCanvas->getMagnet().setAction(MagnetAction::MAGNET_ACTION_REPEL);
+                   MajDialogMagnet();
                    ADBMAL, this, FL_MENU_DIVIDER);
       }
     else
       {
         pMenu.add( StrMenu_MagnetAttract, "", LAMBDA
                
-                 lCanvas->getMagnet().setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
-               ADBMAL, this, FL_MENU_DIVIDER);
+                   lCanvas->getMagnet().setAction(MagnetAction::MAGNET_ACTION_ATTRACK);
+                   MajDialogMagnet();
+                   ADBMAL, this, FL_MENU_DIVIDER);
       }
 
     
     pMenu.add( StrMenu_MagnetAlgo "/" "Distance", "", LAMBDA               
                lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_DIST);
-               ADBMAL, this);
+               MajDialogMagnet();
+              ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetAlgo "/" "Square distance", "", LAMBDA               
                lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_DIST);
-               ADBMAL, this);
+               MajDialogMagnet();
+              ADBMAL, this);
     
    pMenu.add( StrMenu_MagnetAlgo "/" "Square root distance", "", LAMBDA               
               lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
-               ADBMAL, this, FL_MENU_DIVIDER);
+              MajDialogMagnet();
+             ADBMAL, this, FL_MENU_DIVIDER);
 
    
     
-    pMenu.add( StrMenu_MagnetSize "/" " 10", "", LAMBDA               
-               lCanvas->getMagnet().setSize(10);
+    pMenu.add( StrMenu_MagnetSize "/" " 1", "", LAMBDA               
+               lCanvas->getMagnet().setSize(1);
+               MajDialogMagnet();
                ADBMAL, this);
     
-    pMenu.add( StrMenu_MagnetSize "/" " 50", "", LAMBDA               
-               lCanvas->getMagnet().setSize(50);
+    pMenu.add( StrMenu_MagnetSize "/" " 2", "", LAMBDA               
+               lCanvas->getMagnet().setSize(2);
+               MajDialogMagnet();
                ADBMAL, this);
     
-    pMenu.add( StrMenu_MagnetSize "/" " 100", "", LAMBDA               
-               lCanvas->getMagnet().setSize(100);
+    pMenu.add( StrMenu_MagnetSize "/" " 3", "", LAMBDA               
+               lCanvas->getMagnet().setSize(3);
+               MajDialogMagnet();
                ADBMAL, this);
     
-    pMenu.add( StrMenu_MagnetSize "/" " 200", "", LAMBDA               
-               lCanvas->getMagnet().setSize(200);
+    pMenu.add( StrMenu_MagnetSize "/" " 4", "", LAMBDA               
+               lCanvas->getMagnet().setSize(4);
+               MajDialogMagnet();
                ADBMAL, this);    
-    pMenu.add( StrMenu_MagnetSize "/" " 300", "", LAMBDA               
-               lCanvas->getMagnet().setSize(300);
-               ADBMAL, this);    
+    pMenu.add( StrMenu_MagnetSize "/" " 5", "", LAMBDA               
+               lCanvas->getMagnet().setSize(5);
+               MajDialogMagnet();
+       ADBMAL, this);    
    
     TheAppli.redrawAll(PP3d::Compute::FacetAll);	 	
   }

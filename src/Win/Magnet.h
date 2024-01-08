@@ -18,7 +18,8 @@ namespace M3d {
   enum class MagnetAlgo  {
     MAGNET_ALGO_DIST,
     MAGNET_ALGO_SQUARE_DIST,
-    MAGNET_ALGO_SQUARE_ROOT
+    MAGNET_ALGO_SQUARE_ROOT,
+    MAGNET_ALGO_NO_DIST
   };
 
   enum class MagnetActionAxis{
@@ -36,7 +37,9 @@ namespace M3d {
   class Magnet{
     
     PP3d::Point3d      cPos;    
-    PP3d::Point3d      cTransformPos;    
+    PP3d::Point3d      cTransformPos;
+
+    double             cMemSize = 1;
     double             cSize    = 1;
     double             cSize2   = 1;
 
@@ -45,9 +48,11 @@ namespace M3d {
     MagnetAction       cAction     = MagnetAction::MAGNET_ACTION_ATTRACK;
     MagnetActionAxis   cActionAxis = MagnetActionAxis::ACTIONAXIS_XYZ;
     MagnetAlgo         cAlgo       = MagnetAlgo::MAGNET_ALGO_DIST;
-
-
-  
+    
+    bool               cFlagX=true;
+    bool               cFlagY=true;
+    bool               cFlagZ=true;
+ 
   public:
  
     void          setTransformPosition( PP3d::Point3d & iPos ) { cTransformPos = iPos; }
@@ -55,12 +60,16 @@ namespace M3d {
     void          setPosition ( PP3d::Point3d & iPos ) { cPos = iPos;  cTransformPos = iPos;}
     PP3d::Point3d getPosition ()                const  { return cPos; }
    
+    void          setMemSize     ( double iSz)            { cMemSize = iSz; }
+    double        getMemSize     ()                const  { return cMemSize; }
+
     void          setSize     ( double iSz)            { cSize = iSz; cSize2 = cSize*cSize; }
     double        getSize     ()                const  { return cSize; }
     
     void          setAction   ( MagnetAction iAct  )   { cAction = iAct;  }
     MagnetAction  getAction()                   const  { return cAction;  }
     void          setAlgo     ( MagnetAlgo   iAlgo )   { cAlgo   = iAlgo; }
+    MagnetAlgo    getAlgo     ()                       { return cAlgo;    }
 
     void          setPower( double iPower )            { cPower = iPower; }
     double        getPower()                    const  { return cPower; }
@@ -84,6 +93,13 @@ namespace M3d {
     void               setMyObject(PP3d::ObjectPoly * iObject)  { cObjectPoly  = iObject; }
     void               prepareDrawMagnet();
 
+    bool               isUsingX() const{ return cFlagX;}
+    bool               isUsingY() const{ return cFlagY;}
+    bool               isUsingZ() const{ return cFlagZ;}
+    void               useX(bool iFlag = true ) { cFlagX = iFlag; }
+    void               useY(bool iFlag = true ) { cFlagY = iFlag; }
+    void               useZ(bool iFlag = true ) { cFlagZ = iFlag; }
+
   };
   //****************************
 
@@ -95,7 +111,7 @@ namespace M3d {
       :VisitorModifPoints( iSelect )
       ,cMagnet( iMagnet )
     {
-
+      
     }
     //---------------------------------		
     void execEndFacet( PP3d::Facet* pEntity) override;

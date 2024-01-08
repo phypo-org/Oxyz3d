@@ -261,10 +261,12 @@ namespace M3d {
                                             if( lToggle->value() )
                                               {
                                                 lWin3d->cuCanvas3d->setGlobalMode( GlobalMode::MAGNET );
+                                                CallDialogMagnet( TheAppli.getMagnet() );
                                               }
                                             else
                                               {
                                                 lWin3d->cuCanvas3d->setGlobalMode( GlobalMode::INPUT );
+                                                CloseDialogMagnet();
                                               }                                           
                                           }, this );
     lButModeMagnet->value(false);

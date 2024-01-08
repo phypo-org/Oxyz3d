@@ -330,8 +330,8 @@ namespace M3d {
 
     PP3d::ViewProps * lTmpViewInputPolyObject = &cViewInputObject;
     
-    if( getGlobalMode() == GlobalMode::MAGNET
-        && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
+    if( getGlobalMode() == GlobalMode::MAGNET )
+      //        && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
 
       {
         lTmpViewInputPolyObject =   & cViewInputObjectMagnet;

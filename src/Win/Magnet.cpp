@@ -30,6 +30,10 @@ namespace M3d {
     
     switch( cAlgo )
       {
+      case MagnetAlgo::MAGNET_ALGO_NO_DIST:
+        lVal = (cPower*iCoef);
+        break;
+
       case MagnetAlgo::MAGNET_ALGO_SQUARE_DIST:
         lVal = (cPower*iCoef) / lSquareDest;
         break;
@@ -49,11 +53,15 @@ namespace M3d {
         
     if( cAction == MagnetAction::MAGNET_ACTION_ATTRACK )
       {
-        ioPt -= lVal;
+        if( isUsingX() )  ioPt.x() += lVal;
+        if( isUsingY() )  ioPt.y() += lVal;
+        if( isUsingZ() )  ioPt.z() += lVal;
       }
     else
       {
-        ioPt += lVal;
+        if( isUsingX() )  ioPt.x() -= lVal;
+        if( isUsingY() )  ioPt.y() -= lVal;
+        if( isUsingZ() )  ioPt.z() -= lVal;
       }
 
     std::cout << " => " << ioPt << std::endl;

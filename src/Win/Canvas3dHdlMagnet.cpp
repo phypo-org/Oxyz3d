@@ -35,13 +35,11 @@ namespace M3d {
           {
             userActionPrepare( pEvent );                   
             getMagnet().drag(*this);
-            PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-            //   TheAppli.cMagnet.setPosition2D( lTmp );
-            //TheAppli.cMagnet.prepareMagnetDraw();
-                
+            
             changeUserMode( ModeUser::MODE_DRAG );
 
             getMagnet().prepareDrawMagnet();
+            getMagnet().setMemSize( getMagnet().getSize() );
 
             setCursor3dPosition( Fl::event_x(), Fl::event_y());
             TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);                
@@ -51,16 +49,21 @@ namespace M3d {
         // CTRL LEFT => BEGIN TRANSFORM par le Magnet
         if( pEvent == FL_PUSH &&  Fl::event_button() == FL_LEFT_MOUSE  && Fl::event_ctrl() )
           {
-            userActionPrepare( pEvent );                   
-            PP3d::Point3d lTmp(cMouseInitPosX, pixel_h()-cMouseInitPosY,0);
-            // TheAppli.cMagnet.setPosition2D( lTmp );
-
-            getMagnet().prepareDrawMagnet();
-
+            userActionPrepare( pEvent );
+    
             changeUserMode( ModeUser::MODE_TRANSFORM );
             Application::Instance().setCurrentTransformType(Transform::MagnetMove);
 
-            setCursor3dPosition( Fl::event_x(), Fl::event_y());
+            PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
+
+            //            setCursor3dPosition( Fl::event_x(), Fl::event_y());
+            //            PP3d::Point3d lPos = TheAppli.getDatabase()->getCursorPosition();
+
+            std::cout << "*** MAGNET FIRST POS:" << lPos << std::endl;
+            getMagnet().setPosition( lPos );                    
+            getMagnet().prepareDrawMagnet();
+
+            //     setCursor3dPosition( Fl::event_x(), Fl::event_y());
             TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);
             return 1;                                
           }
@@ -69,22 +72,6 @@ namespace M3d {
     //========================================
     if( getUserMode() == ModeUser::MODE_TRANSFORM )
       {
-        // LEFT => BEGIN TRANSFORM par le Magnet
-        if( pEvent == FL_PUSH && Fl::event_button() == FL_LEFT_MOUSE )
-          {
-            userActionPrepare( pEvent );
-            
-                //        setCursor3dPosition( Fl::event_x(), Fl::event_y());
-             
-            PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
-
-            std::cout << "*** MAGNET FIRST POS:" << lPos << std::endl;
-            getMagnet().setPosition( lPos );
-            getMagnet().prepareDrawMagnet();
-
-            TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break
-            return 1;
-          }
         // RELEASE LEFT => Terminate action
         if( pEvent == FL_RELEASE && Fl::event_button() == FL_LEFT_MOUSE )
           {
@@ -106,9 +93,6 @@ namespace M3d {
                  PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false );                 std::cout << "MAGNET POS:" << lPos << std::endl;
  // just view the possible position of point
                  getMagnet().setTransformPosition( lPos );
-
-                //        PP3d::Point3d lTmp(  Fl::event_x(), Fl::event_y(), 0 );
-                //                TheAppli.cMagnet.setTransformPosition2D( lTmp );
 
                  getMagnet().prepareDrawMagnet();
                  userTransformSelection(pEvent);
@@ -138,7 +122,26 @@ namespace M3d {
                     return 1;
                   }
               }
-          }                      
+          }
+        /*
+        // LEFT => BEGIN TRANSFORM par le Magnet
+        if( pEvent == FL_PUSH && Fl::event_button() == FL_LEFT_MOUSE )
+          {
+            userActionPrepare( pEvent );
+            
+                //        setCursor3dPosition( Fl::event_x(), Fl::event_y());
+             
+            PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y() , false ); // just view the possible position of point
+
+            std::cout << "*** MAGNET FIRST POS:" << lPos << std::endl;
+            getMagnet().setPosition( lPos );
+            getMagnet().setTransformPosition( lPos );
+            getMagnet().prepareDrawMagnet();
+
+            TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break
+            return 1;
+          }
+        */                   
       }
     //========================================
     if( getUserMode() == ModeUser::MODE_DRAG )
@@ -150,28 +153,30 @@ namespace M3d {
             std::cout << " ****************  MAGNET RELEASE " << std::endl;
             getMagnet().releaseMagnet();
             
-    TheInput.swapCurrentCreation( nullptr  );
+            TheInput.swapCurrentCreation( nullptr  );
 
             
             changeUserMode( ModeUser::MODE_BASE );
             TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);
             return 1;
           }
-
-        // DRAG => RESIZE MAGNET 
+        // DRAG => RESIZE MAGNET diametre du magnet 
         if( pEvent == FL_DRAG  )
           {
             cout << "Canvas3d::userDrag Magnet " << endl;
-               
+
+           
             cMouseLastPosX = Fl::event_x();
             cMouseLastPosY = Fl::event_y();
             double lSz = (((double)cMouseLastPosX)-((double)cMouseInitPosX))/100.;
             
-            std::cout << "lSz:" << lSz;
-
-            if( lSz < 0 )
-              lSz = -lSz;
+            lSz += getMagnet().getMemSize();         
             
+            std::cout << "lSz:" << lSz ;
+            
+            if( lSz < 0 )
+              lSz = - lSz;
+                
            // A CHANGER            
 
             if( lSz < 0.01 ) lSz = 0.01;
@@ -184,7 +189,10 @@ namespace M3d {
             
             getMagnet().prepareDrawMagnet();
 
+            MajDialogMagnet();
+
             TheAppli.redrawAllCanvas3d( PP3d::Compute::Nothing);
+            
             return 1;
           }
       }
