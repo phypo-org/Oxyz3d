@@ -297,7 +297,7 @@ namespace M3d {
 		
             lCpt++;
             lAvgNorm += lFacet->getNormal();
-            lAvgCenter += lFacet->getCenter();
+            lAvgCenter += lFacet->getCenter3d();
           }
         if( lCpt )
           {
@@ -1215,8 +1215,8 @@ namespace M3d {
                            PP3d::Mat4 lMatAlign;
                            lMatAlign.rotateAlign( lNormDest, lNormToMove  ); 
 	
-                           PP3d::Point3d lPtToMove = lFacetToMove->getCenter();
-                           PP3d::Point3d lPtDest   = lFacetDest->getCenter();
+                           PP3d::Point3d lPtToMove = lFacetToMove->getCenter3d();
+                           PP3d::Point3d lPtDest   = lFacetDest->getCenter3d();
 
                            PP3d::OwnerEntityVisitor lVisit;	
                            lVisit.addOwnersOf( lFacetToMove );

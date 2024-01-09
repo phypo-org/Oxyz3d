@@ -34,6 +34,21 @@ namespace PP3d{
 
     std::vector<Entity*>   cVectAllEntity; // contient tout
     std::set<Entity*>      cSetAllEntity; // contient tout
+
+    void clear(){
+      cVectPoints.clear();
+      cSetPoints.clear();
+      cVectLines.clear();
+      cSetLines.clear();
+      cVectFacets.clear();
+      cSetFacets.clear();
+      cVectPolys.clear();
+      cSetPolys.clear();
+      cVectObjects.clear();
+      cSetObjects.clear();
+      cVectAllEntity.clear();
+      cSetAllEntity.clear();
+    }
    
     //--------------------------------
     friend std::ostream & operator << (  std::ostream & iOs, SortEntityVisitor & iVisit )

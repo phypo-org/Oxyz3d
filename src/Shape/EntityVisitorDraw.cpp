@@ -116,7 +116,7 @@ namespace PP3d {
   {
     //		cViewProps.dragMat( pPt );
 			
-    cViewProps.pointGL(pPt->isSelect(), pPt->isHighlight() );
+    cViewProps.pointGL(pPt->isSelect(), pPt->isHighlight(), pPt->isMagnet() );
     glBegin( GL_POINTS );
     glVertex3dv( pPt->cPt.vectForGL() );
     glEnd();
@@ -144,7 +144,7 @@ namespace PP3d {
 				
     if( pLine->isPoint() )
       {
-	cViewProps.pointGL(pLine->isSelect(), pLine->isHighlight());
+	cViewProps.pointGL(pLine->isSelect(), pLine->isHighlight(), pLine->isMagnet());
 	glBegin( GL_POINTS );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glEnd();
@@ -152,7 +152,7 @@ namespace PP3d {
       }
     else
       {
-	cViewProps.lineGL( pLine->isSelect(), pLine->isHighlight() );
+	cViewProps.lineGL( pLine->isSelect(), pLine->isHighlight(), pLine->isMagnet() );
 	glBegin( GL_LINES );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glVertex3dv( pLine->getSecond()->get().vectForGL() );
@@ -168,7 +168,7 @@ namespace PP3d {
   //*********************************************
   void VisitorDrawObjectLine::execBeginObject( ObjectPtr pObj )
   {
-    cViewProps.lineGL( pObj->isSelect(), pObj->isHighlight() );
+    cViewProps.lineGL( pObj->isSelect(), pObj->isHighlight(), pObj->isMagnet() );
     glDisable( GL_LIGHTING );	 
   }
   //---------------------------	
@@ -200,14 +200,14 @@ namespace PP3d {
   void VisitorDrawPolyline::execBeginFacet( FacetPtr pFacet )
   {
     glDisable( GL_LIGHTING );	  
-    cViewProps.lineGL( pFacet->isSelect(), pFacet->isHighlight()  );
+    cViewProps.lineGL( pFacet->isSelect(), pFacet->isHighlight(), pFacet->isMagnet()  );
   }
   //---------------------------	
   void VisitorDrawPolyline::execBeginLine( LinePtr pLine )
   {			
     if( pLine->isPoint() )
       {
-	cViewProps.pointGL(pLine->isSelect(), pLine->isHighlight());
+	cViewProps.pointGL(pLine->isSelect(), pLine->isHighlight(), pLine->isMagnet());
 	glBegin( GL_POINTS );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glEnd();
@@ -240,7 +240,7 @@ namespace PP3d {
     //==================================
 		
     glNormal3dv( pFacet->getNormal().vectForGL() );
-    cViewProps.facetGL( pFacet->isSelect(), pFacet->isHighlight()  );
+    cViewProps.facetGL( pFacet->isSelect(), pFacet->isHighlight() , pFacet->isMagnet());
 
     cNumLineEnd = (GLuint)(pFacet->getLines().size()-1);
     cNumLine = 0;
@@ -289,7 +289,7 @@ namespace PP3d {
 
   void VisitorDrawPoly::execBeginPoly(	Poly* pPoly )
   {	
-    cViewProps.facetGL( pPoly->isSelect(), pPoly->isHighlight()  );
+    cViewProps.facetGL( pPoly->isSelect(), pPoly->isHighlight(), pPoly->isMagnet()  );
   }
   //---------------------------	
   void VisitorDrawPoly::execEndPoly(	Poly* pPoly )
@@ -341,7 +341,7 @@ namespace PP3d {
   void VisitorDrawObject::execBeginObject( ObjectPtr pObject )
   {
     //		cViewProps.dragMat( pObject );
-    cViewProps.facetGL( pObject->isSelect(), pObject->isHighlight()  );
+    cViewProps.facetGL( pObject->isSelect(), pObject->isHighlight(), pObject->isMagnet()  );
   }
   //---------------------------	
   void VisitorDrawObject::execEndObject( ObjectPtr pObject )

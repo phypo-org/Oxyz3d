@@ -16,7 +16,20 @@ namespace PP3d {
 
     //    if( howManyOwner() != 0 )
     //      std::cout << "*** ERROR : Entity destroy when they are owner" << std::endl;
-  }	
+  }
+    //-------------------------------------
+  Point3d Entity::getNormal3d()
+  {
+    Point3d lNorm;
+    for( Entity* lOwner  :  cOwners )
+    {
+      lNorm += lOwner->getNormal3d();
+    }
+    if( cOwners.size() )
+      lNorm /= cOwners.size();
+    
+    return lNorm;
+  }
   //---------------------------
   void Entity::move ( Point3d p )
   {
@@ -27,8 +40,7 @@ namespace PP3d {
       {
 	lPt->cPt += p;
       }
-  }
-  
+  }  
   //---------------------------
   void Entity::scale ( Point3d p )
   {
@@ -229,11 +241,24 @@ namespace PP3d {
       }
     return nullptr;
   }
-  //-------------------------------------
-  Point3d Facet::getCenter()
-  {		 	
+ //-------------------------------------
+  Point3d Facet::getCenter3d()
+  {
+    
     PP3d::Point3d  lCenter;
     
+    PointPtrSet lPoints;
+    VisitorGetPoints lVisit(lPoints);
+		
+    execVisitor( lVisit );
+    for(  const PP3d::PointPtr pPoint : lPoints )
+      {
+	lCenter += pPoint->cPt;
+      }
+    lCenter /= (double)lPoints.size();
+
+    
+    /*
     for( LinePtr lLine : cLines )
       {
 	lCenter += lLine->first()->get();
@@ -241,6 +266,8 @@ namespace PP3d {
       }
     
     lCenter /= cLines.size()*2;
+    */
+    
     return lCenter;
   }
  //-------------------------------------
@@ -575,6 +602,19 @@ namespace PP3d {
       }
     pVisit.execEndNode( this, nullptr );
   }
+  //-------------------------------------
+  Point3d Poly::getNormal3d()
+  {
+    Point3d lNorm;
+    for( FacetPtr lFacet : getFacets() )
+      {
+        lNorm += lFacet->getNormal();
+      }
+    if( cFacets.size() )
+      lNorm /=  cFacets.size();
+    return lNorm;
+  }
+	
 	
   //*********************************************
   //*********************************************

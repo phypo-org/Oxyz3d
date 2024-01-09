@@ -42,7 +42,6 @@ namespace M3d {
         */
   	if( Fl::event_button() == FL_LEFT_MOUSE)
           {
-
             std::cout << "*** handleSelect LEFT_MOUSE" << std::endl;
             if( getUserMode() == ModeUser::MODE_BASE )    //DEBUT MODE_SELECT
               {
@@ -90,13 +89,15 @@ namespace M3d {
           {
             if( getUserMode() == ModeUser::MODE_SELECT ) // Selection à la volée
               {
+                TheSelect.removeHightLightEntity( TheBase );
+              
                 userSelectionPointColor( pEvent, false );
                 setCursor3dPosition( Fl::event_x(), Fl::event_y());
                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                 return 1;
               }
             else if( getUserMode() == ModeUser::MODE_SELECT_RECT )
-              {
+              {         
                 cMouseLastPosX = Fl::event_x();
                 cMouseLastPosY = Fl::event_y();
                 userSelectionRectangle(pEvent);			

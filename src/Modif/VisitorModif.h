@@ -175,9 +175,9 @@ namespace PP3d {
     
       for( EntityPtr lEntity : cOwners )
 	{	
-	  std::cout << "========  modif execVisitor1"  <<std::endl;
+          //	  std::cout << "========  modif execVisitor1"  <<std::endl;
 	  lEntity->execVisitor( *this );	  	
-	  std::cout << "========  modif execVisitor2"  <<std::endl;
+          //	  std::cout << "========  modif execVisitor2"  <<std::endl;
 	}
     }
   };
@@ -237,7 +237,7 @@ namespace PP3d {
 	  std::cout << " cScalePt:" << cModifPt.size() << std::endl;
 	  
 	  //	  Point3d cNorm = pEntity->getNormal();
-	  Point3d cCenter = pEntity->getCenter();
+	  Point3d cCenter = pEntity->getCenter3d();
 	  
 	  for( Point* lPt:cModifPt )
 	    {
@@ -279,7 +279,7 @@ namespace PP3d {
 	  std::cout << " cScalePt:" << cModifPt.size() << std::endl;
 	  
 	  //	  Point3d cNorm = pEntity->getNormal();
-	  Point3d lCenter = pEntity->getCenter();
+	  Point3d lCenter = pEntity->getCenter3d();
 	  Point3d lNorm = pEntity->getNormal();
 
 	  PP3d::Mat4 lMatRecenter;
@@ -354,7 +354,7 @@ namespace PP3d {
 
 	  //lMatAlignInv.rotateAlignInv( lNormDest, lNormToMove  );
 	  
-	  PP3d::Point3d lCenter = pEntity->getCenter();
+	  PP3d::Point3d lCenter = pEntity->getCenter3d();
 	  
 
 	  for( Point* lPt:cModifPt )

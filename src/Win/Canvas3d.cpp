@@ -69,7 +69,7 @@ namespace M3d {
  
     cViewPropsTransform.cLineWidth = 4; 
     cViewPropsTransform.cColorLine.set(0.,1.0,0.);
-     cViewPropsTransform.cColorLineSelect.set(0.,0.8,0.);
+    cViewPropsTransform.cColorLineSelect.set(0.,0.8,0.);
      
     cViewPropsTransform.cColorFacet.set(0.,0.7,0.);
     cViewPropsTransform.cColorFacetSelect.set(0.,1.0,0.);
@@ -87,9 +87,9 @@ namespace M3d {
     cViewInputObject.cColorFacet.set( 0.2, 0.4, 0.2, 0.3 );
 
     
-    cViewInputObjectMagnet.cColorPoint.set ( 0.5, 0.5, 1, 0.5);
-    cViewInputObjectMagnet.cColorLine.set  ( 0.4, 0.4, 1, 0.4);
-    cViewInputObjectMagnet.cColorFacet.set ( 0.3, 0.3, 1, 0.3 );
+    cViewInputObjectMagnet.cColorPoint.set ( 0.5, 0.5, 1, 0.1);
+    cViewInputObjectMagnet.cColorLine.set  ( 0.4, 0.4, 1, 0.1);
+    cViewInputObjectMagnet.cColorFacet.set ( 0.3, 0.3, 1, 0.05 );
     cViewInputObjectMagnet.cViewMode = PP3d::ViewMode::SKELETON;
 
       
@@ -254,8 +254,15 @@ namespace M3d {
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent ) 
   {
-     TheSelect.removeHightLightEntity( TheBase );
-   
+    if( getGlobalMode() == GlobalMode::MAGNET )
+      {
+        PP3d::EntityPtr lLast = TheBase.findHightLightEntity();
+        if( lLast )
+          getMagnet().setLastHightLigth( lLast );
+      }
+    
+    TheSelect.removeHightLightEntity( TheBase );
+
     //		cout << endl;
     if( pEvent == FL_NO_EVENT ) return 1;
     

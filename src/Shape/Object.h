@@ -95,6 +95,16 @@ namespace PP3d {
     Object(  const char*pName,  ClassType  iClassType );
     Object(  const std::string & pName, ClassType  iClassType);
     virtual ~Object();
+    
+    Point3d getCenter3d() override {
+      if( getShape() != nullptr ) return getShape()->getCenter3d();
+      return Point3d();
+    }
+
+    Point3d getNormal3d() override {
+      if( getShape() != nullptr ) return getShape()->getNormal3d();
+      return Point3d();
+    }
 
     
     virtual ObjectType getObjType() const =0;
@@ -157,7 +167,7 @@ namespace PP3d {
     void   setVisible( bool pVisible=true ) { cMyProps.cVisible = pVisible; } 
     bool   isVisible( bool pVisible=true ) { return cMyProps.cVisible;}
 
-    Point3d getCenter() const { return cMyProps.cCenter; }
+    Point3d getPropsCenter() const { return cMyProps.cCenter; }
 
 
 

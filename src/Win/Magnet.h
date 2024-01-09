@@ -4,13 +4,19 @@
 
 #include "Shape/Entity.h"
 #include "Shape/ObjectPoly.h"
+#include "Shape/SortVisitor.h"
+#include "Shape/Entity.h"
 
 #include "Modif/VisitorModif.h"
 
-namespace M3d {
-  
+ 
   class Canvas3d;
+  class DataBase;
+  class Select;
 
+
+namespace M3d {
+ 
   enum class MagnetAction{
     MAGNET_ACTION_ATTRACK,
     MAGNET_ACTION_REPEL
@@ -52,9 +58,18 @@ namespace M3d {
     bool               cFlagX=true;
     bool               cFlagY=true;
     bool               cFlagZ=true;
- 
+
+    std::vector<PP3d::PointPtr> cVectPoints;
+    std::vector<PP3d::LinePtr>  cVectLines;
+    PP3d::EntityPtr             cLastHightLight = nullptr;
+    
+    
   public:
- 
+    bool magnetise( PP3d::DataBase & iBase, PP3d::Selection & iSel );
+    void unMagnetise();
+    void setLastHightLigth( PP3d::EntityPtr lLast ) { cLastHightLight = lLast; }
+    PP3d::EntityPtr  getLastHightLigth() { return cLastHightLight; }
+
     void          setTransformPosition( PP3d::Point3d & iPos ) { cTransformPos = iPos; }
     PP3d::Point3d getTransformPosition()                const  { return cTransformPos; }
     void          setPosition ( PP3d::Point3d & iPos ) { cPos = iPos;  cTransformPos = iPos;}
@@ -74,12 +89,13 @@ namespace M3d {
     void          setPower( double iPower )            { cPower = iPower; }
     double        getPower()                    const  { return cPower; }
 
+    double        getSquareDist( const PP3d::Point3d & ioPt );
 
     bool          execOn( PP3d::Point3d & ioPt , double iCoef );
     
     PP3d::Poly*   prepareMagnetDraw();
     PP3d::Poly*   releaseMagnet();
-    void          drag( Canvas3d & iCanvas );
+    void          setPos3d();
 
   protected:
     PP3d::Poly       * cShapeMagnet=nullptr;

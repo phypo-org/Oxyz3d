@@ -29,12 +29,17 @@ namespace PP3d {
     ColorRGBA  cColorPoint;
     ColorRGBA  cColorPointSelect;
     ColorRGBA  cColorPointHighlight;
+    ColorRGBA  cColorPointMagnet;
+
     ColorRGBA  cColorLine;
     ColorRGBA  cColorLineSelect;
     ColorRGBA  cColorLineHighlight;
+    ColorRGBA  cColorLineMagnet;
+
     ColorRGBA  cColorFacet;
     ColorRGBA  cColorFacetSelect;
     ColorRGBA  cColorFacetHighlight;
+    ColorRGBA  cColorFacetMagnet;
 
 		
     SelectType cSelectType;
@@ -43,10 +48,12 @@ namespace PP3d {
     float      cPointSize=8;
     float      cPointSizeSelect=10;
     float      cPointSizeHighlight=12;
+    float      cPointSizeMagnet=6;
 	
     float      cLineWidth=2;
     float      cLineWidthSelect=4;
     float      cLineWidthHighlight=6;
+    float      cLineWidthMagnet=3;
 		
     ViewMode   cViewMode=ViewMode::FULL;        
     GLuint     cFlagViewNormal=0;
@@ -71,24 +78,25 @@ namespace PP3d {
       if( cGLMode == GLMode::Draw )	cColorPointSelect.GL();
       glPointSize( cPointSizeSelect );				
     }
+    void pointMagnetGL()
+    {
+      if( cGLMode == GLMode::Draw )     cColorPointMagnet.GL();
+      glPointSize( cPointSizeMagnet );
+      
+    }
     void pointHighlightGL()
     {
       if( cGLMode == GLMode::Draw )	cColorPointHighlight.GL();
       glPointSize( cPointSizeHighlight );				
     }
-    void pointGL( bool pSelect, bool pHighlight)
+    void pointGL( bool pSelect, bool pHighlight, bool pMagnet)
     {
-      if(  pSelect || pHighlight )
-	{
-	  if( pHighlight )
-	    {
-	      pointHighlightGL();
-	      //	      pHighlight = false ; // argh ...
-	    }
-	  else
-	    if( pSelect )
-	      pointSelectGL();
-	}						
+      if( pHighlight )
+        pointHighlightGL();
+      else if( pSelect )
+        pointSelectGL();
+      else if( pMagnet )
+        pointMagnetGL();
       else
 	pointGL();
     }
@@ -102,9 +110,7 @@ namespace PP3d {
       float lTmp =  cPointSize;
       cPointSize -= std::max( cPointSize / 4.0, 1.0);
       return lTmp;
-    }
-
-    
+    }    
     //------------------
     void lineGL()
     {
@@ -117,23 +123,24 @@ namespace PP3d {
       if( cGLMode == GLMode::Draw )	cColorLineSelect.GL() ;
       glLineWidth( cLineWidthSelect );
     }
+    void lineMagnetGL()
+    {
+      if( cGLMode == GLMode::Draw )	cColorLineMagnet.GL() ;
+      glLineWidth( cLineWidthMagnet );
+    }
     void lineHighlightGL()
     {
       if( cGLMode == GLMode::Draw )	cColorLineHighlight.GL() ;
       glLineWidth( cLineWidthHighlight );
     }
-    void lineGL( bool pSelect, bool pHighlight)
+    void lineGL( bool pSelect, bool pHighlight, bool pMagnet)
     {
-      if( pSelect || pHighlight )
-	{
-	  if( pHighlight )
-	    {
-	      lineHighlightGL();
-	      //	      pHighlight = false ; // argh ...
-	    }
-	  else if( pSelect )
-	    lineSelectGL();
-	}
+      if( pHighlight )
+        lineHighlightGL();
+      else if( pSelect )
+        lineSelectGL();
+      else if( pMagnet )
+        lineMagnetGL();
       else
 	lineGL();				
     }
@@ -146,23 +153,22 @@ namespace PP3d {
     {
       if( cGLMode == GLMode::Draw )	cColorFacetSelect.materialGL();
     }
+    void facetMagnetGL()
+    {
+      if( cGLMode == GLMode::Draw )	cColorFacetMagnet.materialGL();
+    }
     void facetHighlightGL()
     {
       if( cGLMode == GLMode::Draw )	cColorFacetHighlight.materialGL();
     }
-    void facetGL( bool pSelect, bool pHighlight )
-    {
-      if( pSelect || pHighlight )
-	{
-	  if( pHighlight )
-	    {
-							
-	      facetHighlightGL();
-	      //	      pHighlight = false ; // argh ...
-	    }
-	  else if( pSelect )
-	    facetSelectGL();
-	}
+    void facetGL( bool pSelect, bool pHighlight, bool pMagnet )
+    {      
+      if( pHighlight )					
+        facetHighlightGL();
+      else if( pSelect )
+        facetSelectGL();
+      else if( pMagnet )
+        facetMagnetGL();
       else
 	facetGL();
     }

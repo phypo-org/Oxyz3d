@@ -4,6 +4,7 @@
 #include "Application.h"
 
 using namespace PP3d;
+using namespace std;
 
 namespace M3d {
 
@@ -12,21 +13,36 @@ namespace M3d {
 
   
   //****************************
-  bool Magnet::execOn( Point3d & ioPt, double iCoef )
+
+  //----------------------------
+  double Magnet::getSquareDist( const Point3d & ioPt )
   {
- 
-    
-    // il faut calculer le vecteur entre le point et le magnet
     Point3d lVect = ioPt - cPos;
     double lSquareDest = lVect.square();
     if( lSquareDest > cSize2 )
-      {        
+      {
+        return -1;
+      }
+    
+    return lSquareDest;
+  }
+  //----------------------------
+ 
+  bool Magnet::execOn( Point3d & ioPt, double iCoef )
+  {    
+    // il faut calculer le vecteur entre le point et le magnet
+    double lSquareDest = getSquareDist( ioPt );
+    if( lSquareDest < 0 )
+      {
         //     std::cout << "  Magnet::execOn Pt:" << ioPt << " Magnet : " <<  cPos << " Dist2:" <<lSquareDest << " Size2:" << cSize2 << " Too far away!!!< " << std::endl;
         return false;            // hors porté
       }
     // ajouter log, exponentiel ... 
 
-    double lVal=0;
+    //  double lVal= cTransformPos.dot( cPos);
+    double lVal=1;
+
+    Point3d lDecal = cTransformPos;
     
     switch( cAlgo )
       {
@@ -53,18 +69,18 @@ namespace M3d {
         
     if( cAction == MagnetAction::MAGNET_ACTION_ATTRACK )
       {
-        if( isUsingX() )  ioPt.x() += lVal;
-        if( isUsingY() )  ioPt.y() += lVal;
-        if( isUsingZ() )  ioPt.z() += lVal;
+        if( isUsingX() )  ioPt.x() += lVal*lDecal.x();
+        if( isUsingY() )  ioPt.y() += lVal*lDecal.y();
+        if( isUsingZ() )  ioPt.z() += lVal*lDecal.z();
       }
     else
       {
-        if( isUsingX() )  ioPt.x() -= lVal;
-        if( isUsingY() )  ioPt.y() -= lVal;
-        if( isUsingZ() )  ioPt.z() -= lVal;
+        if( isUsingX() )  ioPt.x() -= lVal*lDecal.x();
+        if( isUsingY() )  ioPt.y() -= lVal*lDecal.y();
+        if( isUsingZ() )  ioPt.z() -= lVal*lDecal.z();
       }
 
-    std::cout << " => " << ioPt << std::endl;
+    //    std::cout << " => " << ioPt << std::endl;
     
     return true;
   }
@@ -98,15 +114,94 @@ namespace M3d {
       return lShape;
   }
   //--------------------------------------
-  PP3d::Poly* Magnet::releaseMagnet(){
-
-    
+  PP3d::Poly* Magnet::releaseMagnet()
+  {    
     // TheInput.swapCurrentCreation( nullptr );  
 
       return nullptr;
   }
   //---------------------------
-  void Magnet::drag(Canvas3d & iCanvas)
+  void Magnet::unMagnetise()
+  {
+    cout << "    --- unMagnetise" << endl;
+    for( PointPtr lPt : cVectPoints )
+      {
+        lPt->setMagnet(false);
+      }
+    for( LinePtr lLine : cVectLines )
+      {
+        lLine->setMagnet(false);
+      }
+   cVectPoints.clear();
+   cVectLines.clear();
+  }
+  //---------------------------
+  // il faut une selection non vide et une entity hightlight
+  
+  bool Magnet::magnetise( PP3d::DataBase & iBase, PP3d::Selection & iSel )
+  {
+    unMagnetise();
+    
+    cout << "*** magnetise " << iSel.getNbSelected() <<  endl;
+
+    if( iSel.getNbSelected() == 0) return false;
+    
+    if( cLastHightLight == nullptr )
+      {
+        cout << "    no hightlight" << endl;
+        return false;
+      }
+
+
+    PP3d::SortEntityVisitorPoint cVisit;
+        
+    TheSelect.execVisitorOnEntity(cVisit);
+    if(  cVisit.cVectPoints.size() == 0 )
+      {
+        cout << "    no point found in selection " << endl;
+        unMagnetise();
+        return false;
+      }    
+
+
+    //    cout << "    magnetise2 " << iSel.getNbSelected();
+
+    // on magnetise ceux qui sont dans le champ 
+    for( PointPtr lPt : cVisit.cVectPoints )
+      {
+        if( getSquareDist( lPt->get() ) > 0 )
+          {
+            lPt->setMagnet(true);
+            //  cout << '.';
+            cVectPoints.push_back( lPt );
+            auto lOwners = lPt->getOwners();
+            for( auto lOwn : lOwners )  // Et aussi les lines des points 
+              {
+                if( lOwn->getType() == ShapeType::Line )
+                  {
+                    //     cout << '-';
+
+                    lOwn->setMagnet( true );
+                    cVectLines.push_back( (LinePtr)lOwn );
+                  }
+              }
+          }        
+      }
+    //   cout << endl;
+
+    //   Il faut prendre le plan constitué de l'ensemble des objets de la selection comme ???
+    
+    
+    // Point3d lCenter = lHighLight->getCenter3d();
+    //  Point3d lNormal = lHighLight->getNormal3d(); 
+
+                                       
+    
+    return true;
+  }
+    
+    //---------------------------
+  void Magnet::setPos3d()
   {     
     //  if( iCanvas.setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
       {

@@ -64,6 +64,7 @@ namespace PP3d {
     std::set<Entity*> cOwners;
 
     
+    bool              cIsMagnet=false;
     bool              cIsSelected=false;
     bool              cIsHighlight=false;
     bool              cTreeOpen=false;      // for interface 
@@ -88,8 +89,12 @@ namespace PP3d {
     bool isTreeOpen() { return cTreeOpen; }
     void setTreeOpen( bool iVal ) { cTreeOpen=iVal;}
 
+    virtual Point3d getCenter3d() =0;
+    virtual Point3d getNormal3d();
 
   public:
+    bool isMagnet()                 { return   cIsMagnet;}
+    void setMagnet( bool pFlag )    { cIsMagnet  = pFlag;}		
     bool isSelect()                 { return   cIsSelected;}
     void setSelect( bool pFlag )    { cIsSelected  = pFlag;}		
     bool isHighlight()              { return   cIsHighlight;} // la reference pour pouvoir la remettre a zero ! c'est vraiment moche ! du coup ca marche mal ! un seul canvas le dessinne !
@@ -208,6 +213,8 @@ namespace PP3d {
     }
 		
     ShapeType getType() const override { return ShapeType::Point;}
+    
+    Point3d  getCenter3d() override { return cPt;}  ;
 
     Point3d  get() const { return cPt; }
     Point3d& get()       { return cPt; }
@@ -283,7 +290,9 @@ namespace PP3d {
     PointPtr&     second(){ return cPoints.second;}
 
     Point3d       getVector3d() { return (second()->get() - first()->get()); }
-    
+
+    Point3d   getCenter3d()  override { Point3d lRes = (second()->get() + first()->get()); lRes/=2; return lRes; };
+     
     void set( PointPtr lA, PointPtr lB )
     {
       if( getFirst() )  getFirst()->removeOwner(this);
@@ -524,7 +533,9 @@ namespace PP3d {
     
     void         execVisitor( EntityVisitor& pVisit )override;
     void         inverseLines();
-    Point3d      getCenter();
+    Point3d      getCenter3d() override;
+    Point3d      getNormal3d() override { return getNormal(); };
+
     bool         computeConcave();
     bool         isConcave() { return cIsConcave; }
     bool         testFlat();
@@ -546,8 +557,7 @@ namespace PP3d {
     friend class Maker;
      friend class VisitorNormalFacet;
   };
-	
-  using FacetPtr     = Facet*;
+	  using FacetPtr     = Facet*;
   using FacetPtrVect = std::vector<FacetPtr>;
 
   //*********************************************
@@ -557,7 +567,19 @@ namespace PP3d {
 		
   public:
     ShapeType getType() const override { return ShapeType::Poly;}
-		
+
+    Point3d getCenter3d() override {
+      Point3d lRes;
+      for( FacetPtr lFac :  cFacets) 
+	{
+          lRes += lFac->getCenter3d();
+        }
+      if( cFacets.size()) lRes /= (double) cFacets.size(); 
+      return lRes;
+    } ;
+
+    Point3d  getNormal3d() override;
+
     void addFacet( FacetPtr pFacet)
     {
       cFacets.push_back( pFacet );

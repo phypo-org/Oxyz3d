@@ -78,6 +78,7 @@ namespace PP3d {
   public:
     
     EntityId getLastHightLightEntityId() { return cLastHightLightEntityId; }
+    
 
     //===========================
 		
