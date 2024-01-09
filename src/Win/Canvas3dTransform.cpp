@@ -89,7 +89,7 @@ namespace M3d {
     else
       {
         std::cout << "userTransformSelectionInput CANCEL" << std::endl;        
-        userActionCancel( pEvent );
+        userActionCancel(  );
       }
   }
   //---------------------------   
@@ -511,7 +511,7 @@ namespace M3d {
       {        
 	if( Fl::event_button() == FL_LEFT_MOUSE &&  getUserMode() == ModeUser::MODE_TRANSFORM )
 	  {
-	    userActionPrepare( pEvent );
+	    userActionPrepare( );
 	    return 1;
 	  }
       }
@@ -522,7 +522,7 @@ namespace M3d {
              && TheAppli.getCurrentTransformType() != Transform::Nothing )
           {
 	    userTransformSelection(pEvent, true );
-	    userActionTerminate( pEvent );
+	    userActionTerminate(  );
 	    TheAppli.redrawAllCanvas3d( PP3d::Compute::FacetAll);            
 	    return 1;
           }

@@ -142,7 +142,7 @@ namespace M3d {
   }
 
   //---------------------------
-  void Canvas3d::userActionPrepare( int	pEvent )
+  void Canvas3d::userActionPrepare()
   {	
     cMouseInitPosX = cMouseLastPosX = Fl::event_x();
     cMouseInitPosY = cMouseLastPosY = Fl::event_y();
@@ -153,16 +153,16 @@ namespace M3d {
     TheAppli.currentTransform().scaleTo(1);
   }
   //------------------------------
-  void Canvas3d::userActionCancel(	int	pEvent )
+  void Canvas3d::userActionCancel()
   {  
     if(cVisitModifSelect!= nullptr )
       {
 	cVisitModifSelect->modifSelection(PP3d::VisitorModifPoints::Mode::CANCEL, TheSelect );
       }
-    userActionTerminate(pEvent);
+    userActionTerminate();
   }									 
   //------------------------------
-  void Canvas3d::userActionTerminate(	int	pEvent )
+  void Canvas3d::userActionTerminate()
   {
     std::cout << "TERMINATE" << std::endl;
   		
@@ -349,7 +349,7 @@ namespace M3d {
 		{
 		  //=======================
 		case FL_Escape:
-		  userActionCancel( pEvent );
+		  userActionCancel( );
 		  break;
 		  //=======================
 		case	FL_Tab:
@@ -441,7 +441,7 @@ namespace M3d {
 					
 	      if( strcmp( lStr, ANNULE_ACTION )==0)
 		{
-		  userActionTerminate( pEvent );
+		  userActionTerminate( );
 		  TheAppli.setCurrentTransformType( Transform::Nothing );
 		}
 	      else if( strcmp( lStr, UNSELECT_ALL) == 0 )

@@ -146,7 +146,7 @@ namespace M3d {
                     DBG_ACT(" **************** cUserActionSaisie " );
                     std::cout << " **************** cUserActionSaisie " << std::endl;
                     userInputPoint(true );              
-                    userActionPrepare( pEvent );        
+                    userActionPrepare(  );        
                     return 1;  
                   }
                
@@ -158,7 +158,7 @@ namespace M3d {
                     DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
                     
                     userInputPoint(  TheAppli.getDatabase()->findEntity( lId)  );
-                    userActionPrepare( pEvent );        
+                    userActionPrepare(  );        
             
                     return 1;
                   }
@@ -174,7 +174,7 @@ namespace M3d {
             if( Fl::event_button() == FL_LEFT_MOUSE )
               {
                 userDragInputPt(pEvent, true );
-                userActionTerminate( pEvent );
+                userActionTerminate(  );
                 changeUserMode( ModeUser::MODE_BASE );
                 return 1;
               }

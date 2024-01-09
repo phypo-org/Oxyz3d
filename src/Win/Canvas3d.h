@@ -134,7 +134,9 @@ namespace M3d {
     int  handleMenu(	int	pEvent	); 
     int  handleCamera(	int	pEvent	); 
     int  handleSelect(	int	pEvent	); 
-    int  handleTransform( int	pEvent	); 
+    int  handleTransform( int	pEvent	);
+    
+    void stopMagnetise();
 
     PP3d::Kamera&   getKamera()   { return cKamera;   }
 		
@@ -161,9 +163,9 @@ namespace M3d {
     bool userActionIsRun() const{ return cMouseLastPosX != -1; } // mettre un bool a la place
 
 	 
-    void userActionPrepare( int	pEvent );
-    void userActionCancel(	int	pEvent );						 
-    void userActionTerminate(	int	pEvent );
+    void userActionPrepare( );
+    void userActionCancel();						 
+    void userActionTerminate( );
     
     void userChangeKameraView(int	pEvent);
     PP3d::Point3d  userInputPoint( int x, int y, bool iFinalize );

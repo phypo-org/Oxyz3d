@@ -57,7 +57,7 @@ namespace M3d {
                     std::cout << "*** mode SELECT RECT" << std::endl;
                 }
                 
-                userActionPrepare( pEvent );
+                userActionPrepare(  );
                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                return 1;
               }
@@ -69,7 +69,7 @@ namespace M3d {
           {
             if( getUserMode() == ModeUser::MODE_SELECT )
 	      {
-		userActionTerminate( pEvent );
+		userActionTerminate(  );
                 TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
                 return 1;
 	      }
@@ -78,7 +78,7 @@ namespace M3d {
 	if( getUserMode() == ModeUser::MODE_SELECT_RECT )
 	  {
 	    userSelectionRectangle(pEvent, true );
-	    userActionTerminate( pEvent );
+	    userActionTerminate(  );
             TheAppli.redrawAllCanvas3d(PP3d::Compute::Nothing);
             return 1;
 	  }

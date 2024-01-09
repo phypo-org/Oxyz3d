@@ -73,12 +73,12 @@ namespace M3d {
 	// DEBUT MODE DEPLACEMENT CAMERA
 	if( Fl::event_button() == FL_MIDDLE_MOUSE )
 	  {
-	    userActionPrepare( pEvent );
+	    userActionPrepare( );
 	    if( getUserMode() == ModeUser::MODE_BASE )
               {
                 changeUserMode( ModeUser::MODE_MOVE_CAMERA );
               }
-            userActionPrepare( pEvent );        
+            userActionPrepare();        
 	    return 1;
 	  }
 
@@ -88,8 +88,8 @@ namespace M3d {
 	    if( getUserMode() == ModeUser::MODE_MOVE_CAMERA )
 	      {
 		changeUserMode( ModeUser::MODE_BASE );
-		userActionTerminate( pEvent );
-                userActionPrepare( pEvent );
+		userActionTerminate( );
+                userActionPrepare( );
                 
 		return 0; /////// L'EVENT PEUT ETRE TRAITER AILLEURS !!!!!!!
 	      }
