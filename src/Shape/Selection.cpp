@@ -102,8 +102,7 @@ namespace PP3d {
 	
 	for( EntityPtr lEntity : *lVectEntity )
 	  {
-	    addEntity( lEntity, true );
-	    
+	    addEntity( lEntity, true );	    
 	  }
       }
     else {
@@ -142,6 +141,13 @@ namespace PP3d {
     
     if( iSelectAll && ioEntity->getType() == ShapeType::Line )
       {
+        // ATTENTION LE getReverseLine est lent
+        // Si il y a trop de line cela gele !
+
+        // Deja Il faurait faire un visiteur une seule fois plutot que de le cree a chaque fois
+        // il faudrai qu'il soit fournis pas l'appelant !
+        // de plus on pourrait éliminer du visiteur les paires deja trouvées
+        
 	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
 	if( lLine )
 	  {

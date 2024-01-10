@@ -47,6 +47,7 @@ namespace M3d {
     Magnet & getMagnet() { return *cMagnet; }
     
     Fl_Double_Window                * cMyWindow    = nullptr  ;
+    std::unique_ptr<MyChoiceButton>   cChoiceDirection ;
     std::unique_ptr<MyChoiceButton>   cChoiceAction ;
     std::unique_ptr<MyChoiceButton>   cChoiceAlgo   ;
     std::unique_ptr<MySlider>         cSliderSize   ;
@@ -85,7 +86,7 @@ namespace M3d {
       int lXStep = 200;
       int lMemX=0;
 
-      cMyWindow = new Fl_Double_Window(500, 250, "Magnet");
+      cMyWindow = new Fl_Double_Window(500, 300, "Magnet");
       cMyWindow->callback((Fl_Callback*)CloseCB, this);
   
       
@@ -93,8 +94,14 @@ namespace M3d {
       cChoiceAction->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceAction->add( "Attrack"); //0
       cChoiceAction->add( "Repel"); //1
+      lY += lYStep; 
 
       //  cChoiceAction->value( (int)getMagnet().getAction());
+      cChoiceDirection= std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX, lY, lW, lH, "Dir", ChoiceCB, this ))  ;
+      cChoiceDirection->callback((Fl_Callback*)ChoiceCB, this );
+      cChoiceDirection->add( "Free"); //0
+      cChoiceDirection->add( "Normal"); //1
+
 
       lY += lYStep; 
 
@@ -163,6 +170,7 @@ namespace M3d {
     void majFromMagnet()
     {
       cChoiceAction->value( (int)getMagnet().getAction());
+      cChoiceDirection->value( (int)getMagnet().getDirection());
       cSliderSize->value(getMagnet().getSize());
       cChoiceAlgo->value( (int)getMagnet().getAlgo());
       cCheckX->value(  getMagnet().isUsingX() );
@@ -182,6 +190,7 @@ namespace M3d {
       std::cout << "Magnet::maj " << this << std::endl;
 
       getMagnet().setAction( (MagnetAction)cChoiceAction->value() );
+      getMagnet().setDirection( (MagnetDirection)cChoiceDirection->value() );
       getMagnet().setAlgo( (MagnetAlgo)cChoiceAlgo->value() );
       getMagnet().setSize( cSliderSize->value() );
       getMagnet().useX( (cCheckX->value() ==1));

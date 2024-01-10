@@ -153,7 +153,7 @@ namespace M3d {
     int lX = 15;
     int lY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
-    int lW = 70;
+    int lW = 50;
     static int slWinId=1;
     cWinId=slWinId++;
 
@@ -194,7 +194,7 @@ namespace M3d {
     cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, lXCanvas, this->w()-10, (this->h()-lXCanvas)-lSzOutputInfo , "1" );
     
     this->resizable( cuCanvas3d.get() );
-    lX += lW;
+    //    lX += lW;
 
 
     //========================		
@@ -272,7 +272,6 @@ namespace M3d {
     lButModeMagnet->value(false);
     lButModeMagnet->image( lPixSel );
     lButModeMagnet->tooltip("Enable/Disable magnt mode ...");
-    lX += lW;
     lX += lW;
 
  
@@ -411,8 +410,6 @@ namespace M3d {
     lX += lW;
     //========================
     lBut = nullptr;
-
-
     
 		
     Fl_Image* lPixPersp = MyImage::LoadImage("Icons/perspective.png", Application::sIconSize);

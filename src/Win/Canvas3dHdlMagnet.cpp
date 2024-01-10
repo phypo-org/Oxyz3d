@@ -112,27 +112,19 @@ namespace M3d {
                 else { // TRANSFORMATION OF MAGNETISED ENTITY
 
                   //        setCursor3dPosition( Fl::event_x(), Fl::event_y());                  
-                  //        PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y(), false );
-
-                  PP3d::EntityPtr lLastHightLast = getMagnet().getLastHightLigth();
+                 PP3d::EntityPtr lLastHightLast = getMagnet().getLastHightLigth();
                   if( lLastHightLast == nullptr )
                     {
                       cout << "BEGIN TRANSFORM  failed : no hightlight" << endl;
                       return 1;
-                    }
-  
-                  PP3d::Point3d lPos = lLastHightLast->getNormal3d();
-                  float lDx = (float)( Fl::event_x()- cMouseInitPosX);                      
-                  lPos *= lDx;
+                    }                  
+                  getMagnet().magnetise( TheBase, TheSelect );
                   
-                  std::cout << "DRAG MAGNET " << lDx << " POS:" << lPos << std::endl;
-                  
-                  // just view the possible position of point
-                  getMagnet().setTransformPosition( lPos );   // la translation x,y,z
-                  getMagnet().magnetise( TheBase, TheSelect );                  
-                  
-                  // TheInput.swapCurrentCreation( nullptr  );
-                  getMagnet().prepareDrawMagnet();
+                  PP3d::Point3d lPos = userInputPoint( Fl::event_x(), Fl::event_y(), false );
+                  getMagnet().setTransformPosition( lPos ); 
+                 
+                  TheInput.swapCurrentCreation( nullptr  );
+                  //   getMagnet().prepareDrawMagnet();
                   
                   userTransformSelection(pEvent);    // Modification via visiteur ...
                   

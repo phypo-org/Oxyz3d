@@ -397,15 +397,37 @@ namespace M3d {
   //-------------------------------------------
   //-------------------------------------------
   //-------------------------------------------
+#define StrMenu_MagnetNormal " Normal "
+#define StrMenu_MagnetFree " Free "
+
 #define StrMenu_MagnetSize "Size"
 #define StrMenu_MagnetAlgo "Algo"
 #define StrMenu_Magnet " Magnet "
 #define StrMenu_MagnetRepel " Repel "
 #define StrMenu_MagnetAttract " Attract "
 
-    void  Canvas3d::makeMenuMagnet(Fl_Menu_Button& pMenu)
+  void  Canvas3d::makeMenuMagnet(Fl_Menu_Button& pMenu)
   {
     pMenu.label( StrMenu_Magnet);
+    
+     if( getMagnet().getDirection() == MagnetDirection::MAGNET_DIR_NORMAL )
+      {
+        pMenu.add( StrMenu_MagnetFree,"", LAMBDA
+                   
+                   lCanvas->getMagnet().setDirection(MagnetDirection::MAGNET_DIR_FREE);
+                   MajDialogMagnet();
+                   ADBMAL, this, FL_MENU_DIVIDER);
+      }
+    else
+      {
+        pMenu.add( StrMenu_MagnetNormal, "", LAMBDA
+               
+                   lCanvas->getMagnet().setDirection(MagnetDirection::MAGNET_DIR_NORMAL);
+                   MajDialogMagnet();
+                   ADBMAL, this, FL_MENU_DIVIDER);
+      }
+
+     
     if( getMagnet().getAction() == MagnetAction::MAGNET_ACTION_ATTRACK )
       {
         pMenu.add( StrMenu_MagnetRepel,"", LAMBDA

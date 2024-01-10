@@ -120,8 +120,8 @@ namespace PP3d {
     pVisit.execEndNode(  getPoints().second, this );
     pVisit.execEndNode(  this, nullptr );
   }
-  //--------------------------------
-  LinePtr Line::getReverseLine() {
+  //------------------------------- 
+  LinePtr Line::getReverseLine2() {
     
     //    std::cout << "Line::getReverseLine         " << cPoints.first  << " : " << cPoints.second << std::endl;
     
@@ -143,7 +143,23 @@ namespace PP3d {
     return nullptr;
   }
    //--------------------------------
+  // Les lignes inverses partage les memes points
+  // donc la ligne inverse est présente dans la liste des owners des points
   
+  LinePtr Line::getReverseLine()
+  {       
+    for( EntityPtr lEnt : first()->getOwners())
+      {
+        if( lEnt != this
+            && lEnt->getType() == ShapeType::Line ) // Normalement c'est toujours le cas !
+          {
+            if( ((LinePtr)lEnt)->second() == first()
+                && second() == ((LinePtr)lEnt)->first() )
+              return (LinePtr)lEnt;
+          }
+      }
+    return nullptr;
+  }    
 
   //*********************************************
   void Facet::inverseLines( )
@@ -617,5 +633,41 @@ namespace PP3d {
 	
 	
   //*********************************************
+//--------------------------------
+  
+  void FindPointPairVisitor::execBeginLine ( LinePtr pLine )
+  {
+    //  std::cout << "FindPointPairVisitor::execBeginLine "
+    //	<<  cPtPair.first << ":" <<  pLine->first()
+    //	<< "   =========== " 
+    //	<<  cPtPair.second << ":" <<  pLine->second()
+    //	<< std::endl;
+    
+    if( cPtPair.first == pLine->first()
+        && cPtPair.second == pLine->second() )
+      {
+        //	  std::cout << "FindPointPairVisitor::execBeginLine OK OK OK OK OK OK "
+        //		    <<  pLine->getId()<< std::endl;
+        
+        cSet.insert( pLine );
+      }
+  }
+  
+  FindPointPairVisitor::FindPointPairVisitor(const PointPtrPair & iPtPair , std::set<LinePtr> & ioSet )
+    :cPtPair( iPtPair )
+    ,cSet( ioSet )
+  {
+  }
+	  
+  FindPointPairVisitor::FindPointPairVisitor(const PointPtrPair & iPtPair )
+    :cPtPair( iPtPair )
+    ,cSet( cInternalSet )
+  {
+    //   std::cout << "FindPointPairVisitor::execBeginLine 2222222222222222222222222222222222222222222 "
+    //		<< iPtPair.first << "  :  " << iPtPair.second
+    //		<< cPtPair.first << "  :  " << cPtPair.second
+    //		<<  std::endl
+  }
+  
   //*********************************************
 }

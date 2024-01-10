@@ -28,8 +28,11 @@ namespace M3d {
   }
   //----------------------------
  
-  bool Magnet::execOn( Point3d & ioPt, double iCoef )
-  {    
+  bool Magnet::execOn( Point3d & ioPt, double iCoef, double iDx, double iDy )
+  {
+    if( cLastHightLight == nullptr )
+      return false;
+    
     // il faut calculer le vecteur entre le point et le magnet
     double lSquareDest = getSquareDist( ioPt );
     if( lSquareDest < 0 )
@@ -42,7 +45,21 @@ namespace M3d {
     //  double lVal= cTransformPos.dot( cPos);
     double lVal=1;
 
-    Point3d lDecal = cTransformPos;
+      
+    Point3d lDecal;
+
+    if( cDirection == MagnetDirection::MAGNET_DIR_NORMAL)
+      {
+        lDecal = getLastHightLigth()->getNormal3d();
+        iCoef *= iDx*10.0;
+      }
+    else
+      if( cDirection == MagnetDirection::MAGNET_DIR_FREE )
+        {
+          lDecal   = cTransformPos;
+          lDecal  += getLastHightLigth()->getNormal3d()*10.0;
+          iCoef   *= std::sqrt(iDx*iDx+iDy*iDy);
+        }
     
     switch( cAlgo )
       {
@@ -106,19 +123,19 @@ namespace M3d {
     //PP3d::Point3d lScale( lSz, lSz, lSz );
     //      lShape->scale( lScale );
      
-      PP3d::Mat4 lMatTran;
-      lMatTran.identity();
+    PP3d::Mat4 lMatTran;
+    lMatTran.identity();
  
-      lMatTran.initMove( cPos );
-      lShape->modify( lMatTran );
-      return lShape;
+    lMatTran.initMove( cPos );
+    lShape->modify( lMatTran );
+    return lShape;
   }
   //--------------------------------------
   PP3d::Poly* Magnet::releaseMagnet()
   {    
     // TheInput.swapCurrentCreation( nullptr );  
 
-      return nullptr;
+    return nullptr;
   }
   //---------------------------
   void Magnet::unMagnetise()
@@ -132,8 +149,8 @@ namespace M3d {
       {
         lLine->setMagnet(false);
       }
-   cVectPoints.clear();
-   cVectLines.clear();
+    cVectPoints.clear();
+    cVectLines.clear();
   }
   //---------------------------
   // il faut une selection non vide et une entity hightlight
@@ -144,7 +161,12 @@ namespace M3d {
     
     cout << "*** magnetise " << iSel.getNbSelected() <<  endl;
 
-    if( iSel.getNbSelected() == 0) return false;
+    if( iSel.getNbSelected() == 0)
+      {
+       
+        cout << "    no select" << endl;
+        return false;
+      }
     
     if( cLastHightLight == nullptr )
       {
@@ -156,7 +178,7 @@ namespace M3d {
     PP3d::SortEntityVisitorPoint cVisit;
         
     TheSelect.execVisitorOnEntity(cVisit);
-    if(  cVisit.cVectPoints.size() == 0 )
+    if( cVisit.cVectPoints.size() == 0 )
       {
         cout << "    no point found in selection " << endl;
         unMagnetise();
@@ -200,37 +222,37 @@ namespace M3d {
     return true;
   }
     
-    //---------------------------
+  //---------------------------
   void Magnet::setPos3d()
   {     
     //  if( iCanvas.setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
-      {
-	PP3d::Point3d lPos = TheAppli.getDatabase()->getCursorPosition();
+    {
+      PP3d::Point3d lPos = TheAppli.getDatabase()->getCursorPosition();
 
-	TheAppli.roundInput( lPos );
-        setPosition( lPos );	
-      }
+      TheAppli.roundInput( lPos );
+      setPosition( lPos );	
+    }
   }
   //---------------------------
   void Magnet::prepareDrawMagnet()
   {  
     //  if( cShapeMagnet == nullptr )
     //    {
-        PP3d::PrimitivParam lParam;
-        lParam.cNbU    = 20;
-        lParam.cNbV    = 15;
-        lParam.cHeight = getSize();
-        lParam.cWidth  = getSize();
+    PP3d::PrimitivParam lParam;
+    lParam.cNbU    = 20;
+    lParam.cNbV    = 15;
+    lParam.cHeight = getSize();
+    lParam.cWidth  = getSize();
         
-        std::string lName = "Magnet";
+    std::string lName = "Magnet";
         
-        cShapeMagnet = PP3d::PrimitivFactory::Create(  PP3d::PrimitivFactory::Type::SPHERE,
-                                                                lName, &lParam);
-        if( cShapeMagnet != nullptr )
-          {
-            cObjectPoly =  new PP3d::ObjectPoly( lName, cShapeMagnet );    
-            TheInput.swapCurrentCreation( cObjectPoly  );
-          }
+    cShapeMagnet = PP3d::PrimitivFactory::Create(  PP3d::PrimitivFactory::Type::SPHERE,
+                                                   lName, &lParam);
+    if( cShapeMagnet != nullptr )
+      {
+        cObjectPoly =  new PP3d::ObjectPoly( lName, cShapeMagnet );    
+        TheInput.swapCurrentCreation( cObjectPoly  );
+      }
     
     PP3d::Mat4 lMatTran;
     lMatTran.identity();
@@ -240,27 +262,27 @@ namespace M3d {
   }
   //****************************
   void VisitorMagnet::execEndFacet( PP3d::Facet* pEntity) 
-    {
-      //   std::cout << "  VisitorMagnet::execEndFacet:" << cModifPt.size() << std::endl;
-      VisitorModifPoints::execEndFacet(pEntity); 
-      //   std::cout << " VisitorMagnet::execEndFacet2 2:" << cModifPt.size() << std::endl;
+  {
+    //   std::cout << "  VisitorMagnet::execEndFacet:" << cModifPt.size() << std::endl;
+    VisitorModifPoints::execEndFacet(pEntity); 
+    //   std::cout << " VisitorMagnet::execEndFacet2 2:" << cModifPt.size() << std::endl;
 
-      if( cMode == Mode::MODIF )
-	{	  
-	  for( PP3d::Point* lPt:cModifPt )
-	    {
-              double lNb=1;
-	      auto lIter = lNbOwner.find( lPt->getId() );
-	      if(  lIter != lNbOwner.end() )
-		lNb = lIter->second;
+    if( cMode == Mode::MODIF )
+      {	  
+        for( PP3d::Point* lPt:cModifPt )
+          {
+            double lNb=1;
+            auto lIter = lNbOwner.find( lPt->getId() );
+            if(  lIter != lNbOwner.end() )
+              lNb = lIter->second;
 
-              //       std::cout << "  VisitorMagnet::execEndFacet call execOn:" << cCoef << std::endl;
-              cMagnet.execOn( lPt->get(), cCoef/lNb );
-              //     std::cout << "Visit:" <<  lPt->get() << std::endl;
-	    }
-	  cModifPt.clear(); 
-	}        
-    }
+            //       std::cout << "  VisitorMagnet::execEndFacet call execOn:" << cCoef << std::endl;
+            cMagnet.execOn( lPt->get(), cCoef/lNb, cDx, cDy );
+            //     std::cout << "Visit:" <<  lPt->get() << std::endl;
+          }
+        cModifPt.clear(); 
+      }        
+  }
   
   //****************************
 

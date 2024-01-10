@@ -16,6 +16,10 @@
 
 
 namespace M3d {
+  enum class MagnetDirection {
+    MAGNET_DIR_FREE,
+    MAGNET_DIR_NORMAL
+  };
  
   enum class MagnetAction{
     MAGNET_ACTION_ATTRACK,
@@ -50,6 +54,8 @@ namespace M3d {
     double             cSize2   = 1;
 
     double             cPower  =1;
+
+    MagnetDirection    cDirection  = MagnetDirection::MAGNET_DIR_NORMAL;
     
     MagnetAction       cAction     = MagnetAction::MAGNET_ACTION_ATTRACK;
     MagnetActionAxis   cActionAxis = MagnetActionAxis::ACTIONAXIS_XYZ;
@@ -70,32 +76,35 @@ namespace M3d {
     void setLastHightLigth( PP3d::EntityPtr lLast ) { cLastHightLight = lLast; }
     PP3d::EntityPtr  getLastHightLigth() { return cLastHightLight; }
 
-    void          setTransformPosition( PP3d::Point3d & iPos ) { cTransformPos = iPos; }
-    PP3d::Point3d getTransformPosition()                const  { return cTransformPos; }
-    void          setPosition ( PP3d::Point3d & iPos ) { cPos = iPos;  cTransformPos = iPos;}
-    PP3d::Point3d getPosition ()                const  { return cPos; }
+    void            setTransformPosition( PP3d::Point3d & iPos ) { cTransformPos = iPos; }
+    PP3d::Point3d   getTransformPosition()                const  { return cTransformPos; }
+    void            setPosition ( PP3d::Point3d & iPos ) { cPos = iPos;  cTransformPos = iPos;}
+    PP3d::Point3d   getPosition ()                const  { return cPos; }
    
-    void          setMemSize     ( double iSz)            { cMemSize = iSz; }
-    double        getMemSize     ()                const  { return cMemSize; }
+    void            setMemSize  ( double iSz)            { cMemSize = iSz; }
+    double          getMemSize  ()   const               { return cMemSize; }
 
-    void          setSize     ( double iSz)            { cSize = iSz; cSize2 = cSize*cSize; }
-    double        getSize     ()                const  { return cSize; }
+    void            setSize     ( double iSz)            { cSize = iSz; cSize2 = cSize*cSize; }
+    double          getSize     ()                const  { return cSize; }
+
+    void            setDirection( MagnetDirection iDir ) { cDirection = iDir;; }
+    MagnetDirection getDirection() const { return cDirection; }
     
-    void          setAction   ( MagnetAction iAct  )   { cAction = iAct;  }
-    MagnetAction  getAction()                   const  { return cAction;  }
-    void          setAlgo     ( MagnetAlgo   iAlgo )   { cAlgo   = iAlgo; }
-    MagnetAlgo    getAlgo     ()                       { return cAlgo;    }
+    void            setAction   ( MagnetAction iAct  )   { cAction = iAct;  }
+    MagnetAction    getAction()                   const  { return cAction;  }
+    void            setAlgo     ( MagnetAlgo   iAlgo )   { cAlgo   = iAlgo; }
+    MagnetAlgo      getAlgo     ()                       { return cAlgo;    }
 
-    void          setPower( double iPower )            { cPower = iPower; }
-    double        getPower()                    const  { return cPower; }
+    void            setPower( double iPower )            { cPower = iPower; }
+    double          getPower()                    const  { return cPower; }
 
-    double        getSquareDist( const PP3d::Point3d & ioPt );
+    double          getSquareDist( const PP3d::Point3d & ioPt );
 
-    bool          execOn( PP3d::Point3d & ioPt , double iCoef );
+    bool            execOn( PP3d::Point3d & ioPt , double iCoef, double iDx, double iDy );
     
-    PP3d::Poly*   prepareMagnetDraw();
-    PP3d::Poly*   releaseMagnet();
-    void          setPos3d();
+    PP3d::Poly*     prepareMagnetDraw();
+    PP3d::Poly*     releaseMagnet();
+    void            setPos3d();
 
   protected:
     PP3d::Poly       * cShapeMagnet=nullptr;
@@ -122,10 +131,14 @@ namespace M3d {
   struct VisitorMagnet : public  PP3d::VisitorModifPoints
   {
     Magnet & cMagnet;
+    double cDx=1;
+    double cDy=1;
     //---------------------------------			  
-    VisitorMagnet( PP3d::Selection & iSelect, Magnet & iMagnet )
+    VisitorMagnet( PP3d::Selection & iSelect, Magnet & iMagnet, double iDx, double iDy )
       :VisitorModifPoints( iSelect )
       ,cMagnet( iMagnet )
+      ,cDx(iDx)
+      ,cDy(iDy)
     {
       
     }

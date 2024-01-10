@@ -173,7 +173,7 @@ namespace M3d {
     void userInputPoint( PP3d::Entity * iEntity );
     void userTransformSelectionInput( int pEvent );
     void userTransformSelection(int	pEvent, bool cFlagFinalize=false);
-    void userTransformSelectionInternal( float lDx,  bool cFlagFinalize=false);
+    void userTransformSelectionInternal( float lDx, float lDy,  bool cFlagFinalize=false);
     bool userSelectionRectangle(int	pEvent,  bool cFlagFinalize=false);
     bool userSelectionPointColor(int	pEvent, bool cFlagMove);
     bool userDragInputPt(int  pEvent, bool iFinalize );
