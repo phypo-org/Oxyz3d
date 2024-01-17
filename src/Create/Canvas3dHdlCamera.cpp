@@ -20,7 +20,7 @@ using namespace std;
 
 namespace M3d {
  //---------------------------
-  void Canvas3d::userChangeKameraView( int pEvent)
+  void Canvas3dBase::userChangeKameraView( int pEvent)
   {
     if( cMouseLastPosX == -1 )
       return;

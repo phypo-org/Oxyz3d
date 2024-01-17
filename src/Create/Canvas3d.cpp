@@ -52,21 +52,9 @@ namespace M3d {
 
 
   //***************************************
-  Canvas3d::Canvas3d(  Win3d& pW3d, int pX, int pY, int pW, int  pH, const char *l )
-    :Fl_Gl_Window( pX, pY, pW, pH, l )
-    ,cMyWin3d(pW3d)
-    ,cScale(1.0)
-    ,cUserMode( ModeUser::MODE_BASE )
-    ,cAxisFlag( true )
-    ,cFlagLightColor( false)
-     //	 cGridMode( ModeGrid::GRID_3D )
-    ,cGridMode( ModeGrid::GRID_2D )
-     //   ,cDebug(false)	
-  { 
-    gl_font( FL_HELVETICA_BOLD, 24);
-    cKamera.initGL();
-    cKamera.raz45();
- 
+  Canvas3d::Canvas3d( Win3dBase & pW3d, int pX, int pY, int pW, int  pH, const char *l )
+    :Canvas3dBase( pW3d, pX, pY, pW, pH, l)
+  {   
     cViewPropsTransform.cLineWidth = 4; 
     cViewPropsTransform.cColorLine.set(0.,1.0,0.);
     cViewPropsTransform.cColorLineSelect.set(0.,0.8,0.);
@@ -91,25 +79,9 @@ namespace M3d {
     cViewInputObjectMagnet.cColorLine.set  ( 0.4, 0.4, 1, 0.1);
     cViewInputObjectMagnet.cColorFacet.set ( 0.3, 0.3, 1, 0.05 );
     cViewInputObjectMagnet.cViewMode = PP3d::ViewMode::SKELETON;
-
-      
-
-    mode( FL_RGB | FL_DOUBLE | FL_DEPTH | FL_STENCIL | FL_DOUBLE);
-    
-    
-    cout << "************************************************************************"  << std::endl;
-   cout << "******** CAN DO STENCIL: " << Fl_Gl_Window::can_do( FL_STENCIL )
-	 << " " << hex <<  FL_STENCIL
-	 << " " << Fl_Gl_Window::mode()
-	 << " " <<  Fl_Gl_Window::mode()
-	 << std::endl;
-     cout << "************************************************************************"  << std::endl;
-   cout << "************************************************************************"  << std::endl;
+     
   }
-  //---------------------------
-  Canvas3d::~Canvas3d( )
-  {	
-  }
+
   //---------------------------
   Magnet  & Canvas3d::getMagnet()  { return TheCreat.getMagnet(); }  
   //---------------------------
@@ -547,7 +519,7 @@ namespace M3d {
 		{
                   //                  if( Fl::event_shift() )
                     {
-                      cMyWin3d.recenterOnSelection(cKamera);
+                      getWin().recenterOnSelection(cKamera);
                     }
                     /*     else
 		  if( cAxisFlag )

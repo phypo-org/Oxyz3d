@@ -72,7 +72,9 @@ namespace M3d{
 
 		
     std::unique_ptr<Win3d> luWin3d( new Win3d(  lStr.str().c_str(), pW, pH, *(cuDatabase.get()) ));
-
+    
+    /////////////////////////    luWin3d->initCanvas(  pW, pH );
+                  
     Win3d* lReturn =luWin3d.get();
 
     cAllWin3d.push_back(  std::unique_ptr<Win3d>(luWin3d.release()) );

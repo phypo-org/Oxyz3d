@@ -74,7 +74,6 @@ extern void BasculeSelModeCB(Fl_Widget*w, void*pData);
 extern void BasculeViewModeCB(Fl_Widget*w, void*pData);
 extern void BasculeBoolCB(Fl_Widget*w, void*pData);
 extern void BasculeGridCB(Fl_Widget*w, void*pData);
-extern void ChangeUnity(Fl_Widget*w, void*pData);
 extern void BasculePerspective(Fl_Widget*w, void*pData);
 }
 

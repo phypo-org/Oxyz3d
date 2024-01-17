@@ -1,9 +1,13 @@
 // #include "config.h"
 
 
+#include "Win3dBase.h"
+
 
 #include "Callback.h"
 #include "SelFunct.h"
+
+#include "MyFloatInput.h"
 
 
 namespace M3d {
@@ -145,86 +149,56 @@ namespace M3d {
   //****************************************
 
   Win3d::Win3d(const char*pName, int pW, int pH, PP3d::DataBase & pDatabase )
-    :Fl_Window( pW, pH, "Oxyd3d : 3d view" )
+    :Win3dBase( "Oxyd3d : 3d view", pW, pH )
     ,cDatabase( pDatabase )
-    ,cMenubar(0,0,10000, 30)
-  {
+  {    
     //================
-    int lX = 15;
-    int lY = cMenubar.h();
+     cY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
     int lW = 50;
-    static int slWinId=1;
-    cWinId=slWinId++;
 
-    int lSzOutputInfo = 20;
-
-  		
-    // cuCanvas3d = 	std::unique_ptr<Canvas3d>(new Canvas3d(10, 100, this->w()-10, this->h()-100, cDatabase, "1" ));
-    //sw.mode(FL_RGB);
-	
- 
-    cCurrentUnity =  new MyChoiceButton( lX, lY+lH, lW*1.5, lH, "", ChangeUnity, this );
-    for( int i=0 ; i< PP3d::Kamera::GetNbMeasurement(); i++)
-      {
-	cCurrentUnity->add( PP3d::Kamera::GetMeasurement(i));
-      }
-    cCurrentUnity->value(PP3d::Kamera::GetDefaultMeasurement());
-    cCurrentUnity->tooltip("Current unity");
-
-    lX += cCurrentUnity->w() + 2;
-    //    cCurrentScale = new MyFloatInput( lX, lY+lH, lW, lH, "Scale" );
-    //    lX += cCurrentScale->w() + 2;
-    cCurrentInput1 = new MyFloatInput( lX, lY+lH, lW, lH, "" );
-    
-    lX = 15;
-   									
-    cXinput = new MyFloatInput( lX, lY, lW*1.5, lH, "x" );
-    lX += cXinput->w() + 16;
-    cYinput = new MyFloatInput( lX, lY, lW*1.5, lH, "y" );
-    lX += cYinput->w() + 16;
-    cZinput = new MyFloatInput( lX, lY, lW*1.5,  lH, "z" );
-    lX += cZinput->w() + 16;
- 
-
+ 	
     lW =  Creation::sIconSize+4;
     lH =  Creation::sIconSize+4;
 
-    int lXCanvas = lY+lH+2;
-    cuCanvas3d = 	std::make_unique<Canvas3d>(*this, 0, lXCanvas, this->w()-10, (this->h()-lXCanvas)-lSzOutputInfo , "1" );
-    
-    this->resizable( cuCanvas3d.get() );
-    //    lX += lW;
+    int cXCanvas = cY+lH+2;
+	
+    // cCanvas3d = createCanvas( 0, cXCanvas, this->w()-10, (this->h()-cXCanvas)-cSzOutputInfo , "1" );
+ 
+    cuCanvas3d = std::unique_ptr<Canvas3d>(new Canvas3d( *this, 10, 70, this->w()-10, this->h()-90, "1" ));
+    //sw.mode(FL_RGB);
+	
+    this->resizable( cuCanvas3d.get()  );
 
 
     //========================		
     Fl_Image* lPixUndo = MyImage::LoadImage("Icons/undo.png", Creation::sIconSize);
     
-    cButUndo = new MyButton( lX, lY, lW, lH, nullptr,
+    cButUndo = new MyButton( cX, cY, lW, lH, nullptr,
 			     UndoCB, this, nullptr);
     cButUndo->image( lPixUndo );
     cButUndo->tooltip("Undo");
-    lX += lW;
+    cX += lW;
 	
     Fl_Image* lPixPush = MyImage::LoadImage("Icons/store.png", Creation::sIconSize);
     
-    cButStore = new MyButton( lX, lY, lW, lH, nullptr,
+    cButStore = new MyButton( cX, cY, lW, lH, nullptr,
                               PushHistoryCB, this, nullptr);
     cButStore->image( lPixPush );
     cButStore->tooltip("Push history");
-    lX += lW;
+    cX += lW;
 	
     Fl_Image* lPixRedo = MyImage::LoadImage("Icons/redo.png", Creation::sIconSize);
 
     
-    cButRedo = new MyButton( lX, lY, lW, lH, nullptr,
+    cButRedo = new MyButton( cX, cY, lW, lH, nullptr,
 			     RedoCB, this, nullptr);
     cButRedo->image( lPixRedo );
     cButUndo->tooltip("Redo");
-    lX += lW;
+    cX += lW;
 	
-    //      cCurrentUndo = new MyIntInput( lX, lY, lW, lH, "Pos " ); 
-    //     cCurrentUndoMax = new MyIntInput( lX, lY+lH, lW, lH, "Size" );
+    //      cCurrentUndo = new MyIntInput( cX, cY, lW, lH, "Pos " ); 
+    //     cCurrentUndoMax = new MyIntInput( cX, cY+lH, lW, lH, "Size" );
 
 
     //========================		
@@ -232,8 +206,8 @@ namespace M3d {
     //========================		
 
 
-    //   lX += lW;
-    lX += lW;
+    //   cX += lW;
+    cX += lW;
 
 
  
@@ -241,19 +215,19 @@ namespace M3d {
     Fl_Image* lPixSel = MyImage::LoadImage("Icons/SelectTransformOnOff.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButSelTran = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButSelTran = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                         BasculeSelModeGeoCB, this, (void*)4 );
     lButSelTran->value(false);
     lButSelTran->image( lPixSel );
     lButSelTran->tooltip("Enable selection for transformation : axe, plane ...");
-    lX += lW;
+    cX += lW;
    
  
    //========================		
     lPixSel = MyImage::LoadImage("Icons/magnet.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButModeMagnet = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButModeMagnet = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                         []( Fl_Widget*w, void*pData){
                                             MyToggleButton* lToggle = reinterpret_cast<MyToggleButton*>( pData);
                                             Win3d* lWin3d = reinterpret_cast<Win3d*>( lToggle->cUserData1);
@@ -272,7 +246,7 @@ namespace M3d {
     lButModeMagnet->value(false);
     lButModeMagnet->image( lPixSel );
     lButModeMagnet->tooltip("Enable/Disable magnt mode ...");
-    lX += lW;
+    cX += lW;
 
  
  
@@ -280,7 +254,7 @@ namespace M3d {
     lPixSel = MyImage::LoadImage("Icons/all.png", Creation::sIconSize);
 
     MyToggleButton* lButSelAll = nullptr ;
-    new MyToggleButton( lX, lY, lW, lH, nullptr,
+    new MyToggleButton( cX, cY, lW, lH, nullptr,
     				      BasculeSelModeCB, this, (void*)0 );
     //    lButSelAll->value(false);
     //    lButSelAll->image( lPixSel );
@@ -290,53 +264,53 @@ namespace M3d {
     lPixSel = MyImage::LoadImage("Icons/vertex.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButSelPt = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButSelPt = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                       BasculeSelModeCB, this, (void*)0 );
     lButSelPt->value(false);
     lButSelPt->image( lPixSel );
     lButSelPt->tooltip("Enable selection for points of objects");
-    lX += lW;
+    cX += lW;
     //========================		
     lPixSel = MyImage::LoadImage("Icons/edge.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButSelLine = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButSelLine = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                         BasculeSelModeCB, this,   (void*)1);
     lButSelLine->value(false );
     lButSelLine->image( lPixSel );
     lButSelLine->tooltip("Enable selection for lines of objects");
-    lX += lW;
+    cX += lW;
     //========================		
     lPixSel = MyImage::LoadImage("Icons/face.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButFacet = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButFacet = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                       BasculeSelModeCB, this,  (void*)2);
     lButFacet->value(false );
     lButFacet->image( lPixSel );
     lButFacet->tooltip("Enable selection for facets of objects");
-    lX += lW;
+    cX += lW;
     //========================		
     lPixSel = MyImage::LoadImage("Icons/body.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButSelBody = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButSelBody = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                         BasculeSelModeCB, this,  (void*)3);
     lButSelBody->value(true );
     lButSelBody->image( lPixSel );
     lButSelBody->tooltip("Enable selection for objects");
-    lX += lW;
+    cX += lW;
 
     //========================		
     lPixSel = MyImage::LoadImage("Icons/group.png", Creation::sIconSize);
 
     MyToggleButton*
-      lButSelGroup = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lButSelGroup = new MyToggleButton( cX, cY, lW, lH, nullptr,
                                         BasculeSelModeCB, this, (void*)4 );
     lButSelGroup->value(false);
     lButSelGroup->image( lPixSel );
     lButSelGroup->tooltip("Enable selection for transformation : axe, plane ...");
-    lX += lW;
+    cX += lW;
     
 
     //    lButSelAll->setUserData(  this, (void*)PP3d::SelectType::All,    lButSelAll,  lButSelPt,   lButSelLine, lButFacet,   lButSelBody, lButSelTran  );
@@ -349,19 +323,19 @@ namespace M3d {
 
     //=================================================================
 	
-    lX += lW;
+    cX += lW;
 
     //========================		
     lPixSel = MyImage::LoadImage("Icons/skelet.png", Creation::sIconSize);
 
 
     MyToggleButton*
-      lBut1 = new MyToggleButton( lX, lY, lW, lH, nullptr,
+      lBut1 = new MyToggleButton( cX, cY, lW, lH, nullptr,
 				  BasculeViewModeCB, this,   (void*)1);
     lBut1->value( cuCanvas3d->cFlagViewGeo );
     lBut1->image( lPixSel );
     lBut1->tooltip("Wire");
-    lX += lW;
+    cX += lW;
     //========================		
 
     lBut1->setUserData( this, lBut1);
@@ -374,76 +348,76 @@ namespace M3d {
 
     Fl_Image* lPixDif = MyImage::LoadImage("Icons/color.png", Creation::sIconSize);
 		
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagLightColor  );
     lBut->value( cuCanvas3d->cFlagLightColor);
     lBut->image( lPixDif );
     lBut->tooltip("Colored draw");
-    lX += lW;
+    cX += lW;
 		
     //========================
 
     Fl_Image* lPixViewNormal = MyImage::LoadImage("Icons/ViewNormal.png", Creation::sIconSize);
 		
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagViewNormal );
     lBut->value( cuCanvas3d->cFlagViewNormal);
     lBut->image( lPixViewNormal );
     lBut->tooltip("View facet normal");
-    lX += lW;
+    cX += lW;
 
 
     //========================
 
     Fl_Image* lPixViewGeo = MyImage::LoadImage("Icons/ViewTransformOnOff.png", Creation::sIconSize);
 		
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       CB_ViewTransfrom, this );
     lBut->value( cuCanvas3d->getViewGeo());
     lBut->image( lPixViewGeo );
     lBut->tooltip("On/off for transformations draw");
-    lX += lW;
+    cX += lW;
 
 
 		
     //=================================================================
-    lX += lW;
+    cX += lW;
     //========================
     lBut = nullptr;
     
 		
     Fl_Image* lPixPersp = MyImage::LoadImage("Icons/perspective.png", Creation::sIconSize);
 		
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculePerspective, this );
     lBut->value( cuCanvas3d->getKamera().isPerspectiveOn() );
     lBut->image( lPixPersp );
     lBut->tooltip("Perpective draw");
-    lX += lW;
+    cX += lW;
     //========================
 		
     Fl_Image* lPix2 = MyImage::LoadImage("Icons/grid.png", Creation::sIconSize);
 		
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeGridCB, this, &cuCanvas3d->cGridMode );
     lBut->value( cuCanvas3d->cGridMode ==  ModeGrid::GRID_2D );
     lBut->image( lPix2 );
     lBut->tooltip("On/off for grid");
-    lX += lW;
+    cX += lW;
     //========================
     Fl_Image* lPix1 = MyImage::LoadImage("Icons/axe.png", Creation::sIconSize);
 
-    lBut = new MyToggleButton( lX, lY, lW, lH, nullptr,
+    lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cAxisFlag );
     lBut->value( cuCanvas3d->cAxisFlag );
     lBut->image( lPix1 );
     lBut->tooltip("On/off for XYZ axis");
-    lX += lW;
+    cX += lW;
 
 
 
 		
-    cInfoOutput = new Fl_Output( 1, this->h() -lSzOutputInfo , this->w()-2, lSzOutputInfo, "Fl_InfoOutput");
+    cInfoOutput = new Fl_Output( 1, this->h() - cSzOutputInfo , this->w()-2, cSzOutputInfo, "Fl_InfoOutput");
     cInfoOutput->align(FL_ALIGN_BOTTOM);
     cInfoOutput->value("Welcome ...");
 
@@ -1075,13 +1049,6 @@ namespace M3d {
   //-------------------------------------------
 
   //-------------------------------------------
-  void Win3d::setCursorPosition( PP3d::Point3d& pPos)
-  {
-    cXinput->setFloatValue( pPos.cX );
-    cYinput->setFloatValue( pPos.cY );
-    cZinput->setFloatValue( pPos.cZ );
-  }
-  //-------------------------------------------
   void Win3d::setUndoRedoState()
   {
     if(PP3d::UndoHistory::Instance().isMin())      
@@ -1098,23 +1065,7 @@ namespace M3d {
     //    cCurrentUndo->setIntValue( PP3d::UndoHistory::Instance().getCurrent() );
     //    cCurrentUndoMax->setIntValue( PP3d::UndoHistory::Instance().getSize() );
   }
-  //-------------------------------------------
-  void Win3d::setCurrentVal( const char* iLabel, double iVal)
-  {
-    cCurrentInput1->copy_label( iLabel );
 
-    cCurrentInput1->setFloatValue( iVal );
-  }
-  //-------------------------------------------
-  double  Win3d::getCurrentVal()
-  {
-    return strtod(cCurrentInput1->value(), nullptr);
-  }
-  //-------------------------------------------
-  void Win3d::setInfo( const std::string & iStr )
-  {
-    cInfoOutput->value(iStr.c_str());
-  }
   //****************************************
 }
  

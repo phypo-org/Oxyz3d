@@ -1,22 +1,12 @@
 #ifndef H__PP3dCanvas__H
 #define H__PP3dCanvas__H
 
-
-
-
-#include <FL/Fl_Gl_Window.H>
-#include <FL/Fl_Menu_Button.H>
-
-
-#include "MyFlWidget.h"
-
-#include "Shape/Kamera.h"
+#include "Canvas3dBase.h"
 
 
 #include "Shape/DataBase.h"
 #include "Shape/ObjectFacet.h"
 #include "Shape/ObjectLine.h"
-#include "Shape/ViewProps.h"
 #include "Shape/Point3d.h"
 #include "Shape/Entity.h"
 
@@ -39,47 +29,18 @@ namespace M3d {
     SCULT
   };
   
-  enum class ModeUser {
-    MODE_BASE,
-    MODE_SELECT,
-    MODE_SELECT_RECT,
-    MODE_MOVE_CAMERA,
-    MODE_TRANSFORM,
-    MODE_DRAG
-  };
-  
-  enum class ModeGrid {
-    NO_GRID=0,
-    GRID_2D=1,
-    GRID_3D=2
-  };
-
   class Win3d;
 
   //***************************************
-  class Canvas3d : public Fl_Gl_Window{
+  class Canvas3d : public Canvas3dBase{
 
   protected:
 	
-    Win3d&          cMyWin3d;
-    PP3d::Kamera    cKamera;
-    double          cScale;
-    ModeUser        cUserMode    = ModeUser::MODE_BASE;
     GlobalMode      cGlobalMode  = GlobalMode::INPUT;
 
-    
-    bool      cAxisFlag;
-    bool      cFlagLightColor; 
-    ModeGrid  cGridMode;
-		
  
-    bool    cFlagViewNormal    = false;
-    bool    cFlagViewGeo       = true;
-    bool    cFlagCursor3d      = false;
-    bool    cFlagSelectGeo     = false;
 
 		
-    PP3d::ViewProps cViewGen;
     PP3d::ViewProps cViewPropsTransform;
     PP3d::ViewProps cViewInputCursor;
     PP3d::ViewProps cViewInputPoly;
@@ -87,17 +48,12 @@ namespace M3d {
     PP3d::ViewProps cViewInputObjectMagnet;
 
 
-    Fl_Menu_Button*           cPopup=nullptr;
     PP3d::VisitorModifPoints* cVisitModifSelect = nullptr;
     
 
-  public:
-    void setViewGeo( bool cVal) { cFlagViewGeo = cVal; }
-    bool getViewGeo()           { return cFlagViewGeo; }
-    
-    void setSelectGeo( bool cVal) { cFlagSelectGeo = cVal; }
-    bool getSelectGeo()           { return cFlagSelectGeo && cFlagViewGeo; }
 
+  public:
+  
     Magnet  & getMagnet();
   
   protected:
@@ -110,10 +66,8 @@ namespace M3d {
     bool initDragSelect();
     void dragSelect( PP3d::Mat4 &pMat );
     void validDragSelect( PP3d::Mat4 &pMat);
-     void validDragSelect();
-   void cancelDragSelect();
-
-    
+    void validDragSelect();
+    void cancelDragSelect();    
     // dragging
 
 
@@ -122,10 +76,11 @@ namespace M3d {
     // Selection
 		
   public:
-    Canvas3d( Win3d& pW3d, int pX, int pY, int pW, int pH ,const char *l=nullptr);
-    virtual ~Canvas3d(  );
+    Canvas3d( Win3dBase & pW3d, int pX, int pY, int pW, int pH ,const char *l );
+    virtual ~Canvas3d() {;};
 
-    void drawGrid();
+    Win3d & getWin() { return (Win3d&) getMyWin(); }
+     
     void draw();
     void drawForSelect();
     int  handle(	int	pEvent	); 
@@ -137,29 +92,12 @@ namespace M3d {
     int  handleTransform( int	pEvent	);
     
     void stopMagnetise();
-
-    PP3d::Kamera&   getKamera()   { return cKamera;   }
-		
-
-    void     changeUserMode( ModeUser iMode ) { cUserMode = iMode; }
-    ModeUser getUserMode()   const             { return cUserMode;}
-    
+   
     void       setGlobalMode( GlobalMode iAct ) { cGlobalMode = iAct; }
     GlobalMode getGlobalMode()  const           { return cGlobalMode;}
 
 
     
-    
-    
-    void setVisualMode( PP3d::ViewMode pMode )    { cViewGen.cViewMode = pMode; }
-    //------------------------------
-    int       cMouseInitPosX=-1;
-    int       cMouseInitPosY=-1;
-    int       cMouseLastPosX=-1;
-    int       cMouseLastPosY=-1;
-
-    int cMouseLastPosZ=-1;
-
     bool userActionIsRun() const{ return cMouseLastPosX != -1; } // mettre un bool a la place
 
 	 
@@ -167,7 +105,6 @@ namespace M3d {
     void userActionCancel();						 
     void userActionTerminate( );
     
-    void userChangeKameraView(int	pEvent);
     PP3d::Point3d  userInputPoint( int x, int y, bool iFinalize );
     PP3d::Point3d  userInputPoint( bool iFinalize);
     void userInputPoint( PP3d::Entity * iEntity );
@@ -187,7 +124,7 @@ namespace M3d {
     void drawSelectRect();
     void drawSelectCircle(  PP3d::Point3d iPos, int iSize, bool iUseAlternColor = false );
 
-    
+        
     //=========== MENUS =================
     void makeMenuSelect( Fl_Menu_Button& pMenu);
     void makeMenuPrimitiv( Fl_Menu_Button& pMenu);

@@ -485,7 +485,7 @@ namespace M3d {
    void	ChangeUnity(Fl_Widget*w, void*pData)
    {
      MyChoiceButton* lChoice = reinterpret_cast<MyChoiceButton*>( pData);
-     Win3d* lWin3d           = reinterpret_cast<Win3d*>( lChoice->cUserData1);
+     Win3dBase* lWin3d           = reinterpret_cast<Win3dBase*>( lChoice->cUserData1);
     cout << "ChangeUnity button : " << lChoice->value() << endl;
     lWin3d->getKamera().setScaleToMeasurement( lChoice->value() );
     lWin3d->setMeasurement( lChoice->value() );
