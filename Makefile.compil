@@ -17,7 +17,8 @@ ifdef TARGET_LIB
 OTARGET_LIB=$(OBJDIR)$(TARGET_LIB)
 endif
 
-WLIB=$(ROOT_POS)Create
+GLIB=$(ROOT_POS)Gui
+WLIB=$(ROOT_POS)Gui/Create
 SLIB=$(ROOT_POS)Shape
 
 
@@ -25,6 +26,9 @@ ULIB=$(ROOT_POS)Utils
 MLIB=$(ROOT_POS)Modif
 SPLIB=$(ROOT_POS)Spline
 
+GLIB_HDRS=$(wildcard $(GLIB)/*.h)
+GLIB_SRCS=$(wildcard $(GLIB)/*.cpp)
+GLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(GLIB_SRCS) ) )
 
 WLIB_HDRS=$(wildcard $(WLIB)/*.h)
 WLIB_SRCS=$(wildcard $(WLIB)/*.cpp)
@@ -61,12 +65,12 @@ SPLIB_SRCS=$(wildcard $(SPLIB)/*.cpp)
 SPLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SPLIB_SRCS) ) )
 
 # L'ensemble des .o pour le repertoires objs
-OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS) $(SPLIB_OBJS))
+OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(GLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS) $(SPLIB_OBJS))
 
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
-vpath %.cpp $(WLIB)  $(SPLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
+vpath %.cpp $(WLIB)  $(SPLIB) $(GLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
 
 
 
