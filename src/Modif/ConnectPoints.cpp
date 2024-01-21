@@ -138,7 +138,7 @@ namespace PP3d{
 	    
 	    if( iAlsoReverse )
 	      {
-		GetFacetsOfPoint( iPt, ((LinePtr)lLine)->getReverseLine(), oFacPts );
+		GetFacetsOfPoint( iPt, ((LinePtr)lLine)->getReverseLineByPoint(), oFacPts );
 	      }
 	  }
       }

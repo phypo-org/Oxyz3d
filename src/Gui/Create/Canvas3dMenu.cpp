@@ -1,6 +1,6 @@
 #include "Canvas3d.h"
 
-  //#include <config.h>
+//#include <config.h>
 #include <FL/Fl.H>
 
 #include <FL/fl_ask.H>
@@ -128,6 +128,7 @@ namespace M3d {
 #define StrMenu_ScaleRZ    "Scale radial Z"
 #define StrMenu_ScaleNormal "Scale normal"
 #define StrMenu_ScaleAxis  "# Scale around current axis"
+  
 
 
 #define StrMenu_Flip "Flip"
@@ -165,6 +166,8 @@ namespace M3d {
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current axis"
 #define StrMenu_ExtrudePath StrMenu_Extrude  " path"
 #define StrMenu_ExtrudePathNorm StrMenu_Extrude  " path norm"
+
+#define StrMenu_BridgeFac "Bridge between two facettes"
 
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
@@ -216,6 +219,7 @@ namespace M3d {
 #define StrMenu_CombineIntoGroup "Combine into group"
 #define StrMenu_SeparateGroup    "Separate group"
 
+#define ItemActif( A ) (A?0:FL_MENU_INACTIVE)
 
 #define BEGINCALL							\
   static bool slFlagDialog=false;					\
@@ -236,7 +240,7 @@ namespace M3d {
 #define LAMBDA [](Fl_Widget *w, void *pUserData) { BEGINCALL
 #define ADBMAL }
   
- //-------------------------------------------
+  //-------------------------------------------
   static bool DuplicateSelection()
   {    
     PP3d::SortVisitorEntity  lVisit;    
@@ -251,24 +255,24 @@ namespace M3d {
         std::vector<PP3d::EntityPtr> lNewObjs;
         PP3d::MyRead lRead( lDupStr, &lNewObjs );
         
-       TheSelect.removeAll();
+        TheSelect.removeAll();
        
-       if( (lRet = lRead.read( *TheCreat.getDatabase(), &TheSelect, false ))
+        if( (lRet = lRead.read( *TheCreat.getDatabase(), &TheSelect, false ))
             && lNewObjs.size() > 0 )
-         {
-           TheSelect.removeAll();
+          {
+            TheSelect.removeAll();
  
-           for( PP3d::EntityPtr lObj : lNewObjs )
-             {
-               TheSelect.addEntity( lObj );
-             }
+            for( PP3d::EntityPtr lObj : lNewObjs )
+              {
+                TheSelect.addEntity( lObj );
+              }
           }
       }
     return lRet;
   }
   //-------------------------------------------
  
-    // A OPTIMISER !!!!
+  // A OPTIMISER !!!!
   static void Align( PP3d::Point3d & lAxis )
   {
     
@@ -321,7 +325,7 @@ namespace M3d {
     PushHistory();
     TheCreat.redrawAll(PP3d::Compute::FacetAll);	 	
   }
-    //-------------------------------------------
+  //-------------------------------------------
   static bool Extrude( M3d::Canvas3d* iCanvas )
   {	  		
     PP3d::SortEntityVisitorPointFacet lVisit;
@@ -340,7 +344,7 @@ namespace M3d {
     return false;
   }
  
-   //-------------------------------------------
+  //-------------------------------------------
   static void CutLine( int iNbCut )
   {
     // On recupere les objects de la selection
@@ -380,8 +384,8 @@ namespace M3d {
             
             if( lObj != nullptr )
               {
-            TheBase.addObject(lObj  );
-            lFlagMakeAnything = true;
+                TheBase.addObject(lObj  );
+                lFlagMakeAnything = true;
               }
           }
       }
@@ -410,7 +414,7 @@ namespace M3d {
   {
     pMenu.label( StrMenu_Magnet);
     
-     if( getMagnet().getDirection() == MagnetDirection::MAGNET_DIR_NORMAL )
+    if( getMagnet().getDirection() == MagnetDirection::MAGNET_DIR_NORMAL )
       {
         pMenu.add( StrMenu_MagnetFree,"", LAMBDA
                    
@@ -449,17 +453,17 @@ namespace M3d {
     pMenu.add( StrMenu_MagnetAlgo "/" "Distance", "", LAMBDA               
                lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_DIST);
                MajDialogMagnet();
-              ADBMAL, this);
+               ADBMAL, this);
     
     pMenu.add( StrMenu_MagnetAlgo "/" "Square distance", "", LAMBDA               
                lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_DIST);
                MajDialogMagnet();
-              ADBMAL, this);
+               ADBMAL, this);
     
-   pMenu.add( StrMenu_MagnetAlgo "/" "Square root distance", "", LAMBDA               
-              lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
-              MajDialogMagnet();
-             ADBMAL, this, FL_MENU_DIVIDER);
+    pMenu.add( StrMenu_MagnetAlgo "/" "Square root distance", "", LAMBDA               
+               lCanvas->getMagnet().setAlgo(MagnetAlgo::MAGNET_ALGO_SQUARE_ROOT);
+               MajDialogMagnet();
+               ADBMAL, this, FL_MENU_DIVIDER);
 
    
     
@@ -485,7 +489,7 @@ namespace M3d {
     pMenu.add( StrMenu_MagnetSize "/" " 5", "", LAMBDA               
                lCanvas->getMagnet().setSize(5);
                MajDialogMagnet();
-       ADBMAL, this);    
+               ADBMAL, this);    
    
     TheCreat.redrawAll(PP3d::Compute::FacetAll);	 	
   }
@@ -588,10 +592,10 @@ namespace M3d {
       {	
 	pMenu.add( StrMenu_Rot  "/" StrMenu_RotNorm, "",  LAMBDA
                
-               lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
-               Creation::Instance().setCurrentTransformType(Transform::CenterRotNorm);
+                   lCanvas->changeUserMode( ModeUser::MODE_TRANSFORM );
+                   Creation::Instance().setCurrentTransformType(Transform::CenterRotNorm);
 
-               ADBMAL, this, FL_MENU_DIVIDER);
+                   ADBMAL, this, FL_MENU_DIVIDER);
         
         
 	if( TheSelect.getNbSelected() > 0 )
@@ -714,8 +718,8 @@ namespace M3d {
 
         
         pMenu.add( StrMenu_Flip "/" StrMenu_FlipZ, "", LAMBDA
-                    //:::::::::::::::::::::::::::::::::::::::::
-                  PP3d::SortEntityVisitorPoint lVisit;    
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   PP3d::SortEntityVisitorPoint lVisit;    
                    TheSelect.execVisitorOnEntity( lVisit );
                    PP3d::Point3d lAvg;
                    for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
@@ -745,7 +749,7 @@ namespace M3d {
                    DuplicateSelection();
                    PushHistory();
                    TheCreat.redrawAll(PP3d::Compute::FacetAll);	
-                  ADBMAL, this, FL_MENU_DIVIDER);
+                   ADBMAL, this, FL_MENU_DIVIDER);
         
 	pMenu.add( StrMenu_Dup "/" StrMenu_DupMoveX, "",  LAMBDA               
                    DuplicateSelection();
@@ -808,7 +812,7 @@ namespace M3d {
       }
     
 
-     lMenuFlagActif=FL_MENU_INACTIVE;   
+    lMenuFlagActif=FL_MENU_INACTIVE;   
     cout << "Nb Selected:" << TheSelect.getNbSelected() << " type:" << PP3d::GetStrShapeType( TheSelect.getSelectType() ) << endl;
 
     if( TheSelect.getNbSelected() > 2 
@@ -942,11 +946,11 @@ namespace M3d {
         pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralZ, "^z",LAMBDA                   
                    CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_OBJECT  );     
                    ADBMAL, this );    
-       pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "",LAMBDA
-                  CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );   
-                  ADBMAL, this, FL_MENU_DIVIDER );
+        pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "",LAMBDA
+                   CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );   
+                   ADBMAL, this, FL_MENU_DIVIDER );
       }
-        // ======= SPIRAL ========
+    // ======= SPIRAL ========
 
 
     //=========== GROUP ===========
@@ -957,29 +961,29 @@ namespace M3d {
           pMenu.add( StrMenu_CombineIntoGroup, "",
                      //:::::::::::::::::::::::::::::::::::
                      [](Fl_Widget *w, void *pUserData) {
-                         std::cout <<"Callback lambda" << std::endl;
-                         TheSelect.combineGroup(TheBase);
-                       },
+                       std::cout <<"Callback lambda" << std::endl;
+                       TheSelect.combineGroup(TheBase);
+                     },
                      //:::::::::::::::::::::::::::::::::::
                      this, FL_MENU_DIVIDER );
         
         if( TheSelect.getNbSelected() > 0 )
           {
             pMenu.add( StrMenu_SeparateGroup, "",
-                     //:::::::::::::::::::::::::::::::::::
+                       //:::::::::::::::::::::::::::::::::::
                        [](Fl_Widget *w, void *pUserData) {
                          BEGINCALL
                                
-                         std::cout <<"Callback lambda 2" << std::endl;
+                           std::cout <<"Callback lambda 2" << std::endl;
                          TheSelect.separateGroup(TheBase);                               
                        },
-                     //:::::::::::::::::::::::::::::::::::
+                       //:::::::::::::::::::::::::::::::::::
                        this
                        );
           }
       }
         
-        //=========== GROUP ===========
+    //=========== GROUP ===========
 
     
     if(  TheSelect.getSelectType() != PP3d::SelectType::Point)
@@ -1005,7 +1009,7 @@ namespace M3d {
 	 && TheSelect.getNbSelected() > 0)
       {
 	pMenu.add( StrMenu_Inset, "", LAMBDA
-                    //:::::::::::::::::::::::::::::::::::::::::
+                   //:::::::::::::::::::::::::::::::::::::::::
                    PP3d::SortEntityVisitorPointFacet lVisit;
                    TheSelect.execVisitorOnEntity( lVisit );       
                    
@@ -1061,17 +1065,17 @@ namespace M3d {
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeY, "",  LAMBDA
                      if( Extrude(lCanvas) )
                        Creation::Instance().setCurrentTransformType(Transform::MoveY);
-                       ADBMAL, this);
+                     ADBMAL, this);
           
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeZ, "",  LAMBDA
                      if( Extrude(lCanvas) )
                        Creation::Instance().setCurrentTransformType(Transform::MoveZ);
-                       ADBMAL, this);
+                     ADBMAL, this);
           
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeNorm, "",  LAMBDA
                      if( Extrude(lCanvas) )
                        Creation::Instance().setCurrentTransformType(Transform::MoveNormal);
-                       ADBMAL, this);
+                     ADBMAL, this);
           
 	  pMenu.add( StrMenu_Extrude "/" StrMenu_ExtrudeTrans, "",  LAMBDA
                      if( Extrude(lCanvas) )
@@ -1104,8 +1108,8 @@ namespace M3d {
 
               
               pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", LAMBDA                         
-                          //:::::::::::::::::::::::::::::::::::::::::
-                        std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
+                         //:::::::::::::::::::::::::::::::::::::::::
+                         std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
                          PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
                          
                          if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
@@ -1127,7 +1131,7 @@ namespace M3d {
 
 	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenX, "", LAMBDA
                      //:::::::::::::::::::::::::::::::::::::::::
-                    PP3d::SortEntityVisitorPoint lVisit;    
+                     PP3d::SortEntityVisitorPoint lVisit;    
                      TheSelect.execVisitorOnEntity( lVisit );
                      PP3d::Point3d lAvg;
                      for( PP3d::PointPtr lPtr : lVisit.cVectPoints )
@@ -1162,8 +1166,8 @@ namespace M3d {
                        }
                      PushHistory();
                      TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                      //:::::::::::::::::::::::::::::::::::::::::
-                    ADBMAL , this);
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL , this);
           
 	  pMenu.add( StrMenu_Flatten "/" StrMenu_FlattenZ, "",  LAMBDA
                      PP3d::SortEntityVisitorPoint lVisit;    
@@ -1260,10 +1264,25 @@ namespace M3d {
                          }                    
                        //:::::::::::::::::::::::::::::::::::::::::
                        ADBMAL, this);
-
+        
+          /*          
+	  if( TheSelect.getNbSelected() != 2 )
+            {
+              lMenuFlagActif = FL_MENU_INACTIVE;
+              }*/
           
+          pMenu.add( StrMenu_BridgeFac, "", LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->BridgeFacets();
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+          
+                       
 	  
-	  pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
+          pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
                      if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
                      PP3d::Point3d lAxis(1,0,0);
                      Align( lAxis ); 
@@ -1305,19 +1324,19 @@ namespace M3d {
                      Align( lAxis ); 
                      ADBMAL, this);
         
-        pMenu.add( StrMenu_Align "/" StrMenu_AlignOnNorm, "",  LAMBDA
-                   if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
-                   if( TheSelect.getNbSelected() < 2)
-                     {
-                       fl_alert( "At least two facets needed");
-                       return;
-                     }
-                   // first facet of selection only use for give normal
-                   PP3d::Point3d lAxis( ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal());
-                   TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );                     
-                   Align( lAxis ); 
-                   ADBMAL, this);
-      }
+          pMenu.add( StrMenu_Align "/" StrMenu_AlignOnNorm, "",  LAMBDA
+                     if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
+                     if( TheSelect.getNbSelected() < 2)
+                       {
+                         fl_alert( "At least two facets needed");
+                         return;
+                       }
+                     // first facet of selection only use for give normal
+                     PP3d::Point3d lAxis( ((PP3d::FacetPtr)TheSelect.getSelectionVect()[0])->getNormal());
+                     TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );                     
+                     Align( lAxis ); 
+                     ADBMAL, this);
+        }
 	break;
         
       case PP3d::SelectType::Poly :
@@ -1384,17 +1403,17 @@ namespace M3d {
                [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
-              }, this);  
+               }, this);  
     pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateDodec,    "^d",   
-              [](Fl_Widget *w, void *pUserData)
+               [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::DODEC  );
-              }, this);  
+               }, this);  
     pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateIcosahe,  "^i", 
-              [](Fl_Widget *w, void *pUserData)
+               [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
-              }, this, FL_MENU_DIVIDER);
+               }, this, FL_MENU_DIVIDER);
 
     // Ajouter sphere (2 types differents)
     // Ajouter cone
@@ -1509,35 +1528,35 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this,   lMenuFlagActif);
     
-        pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "",  LAMBDA
-               //::::::::::::::::::::::::::::::::::::::
-                  if(TheInput.getNbCurrentPoints() >= 2 )
-                    {
-                      PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
-                                                                                  MyPref.cBSplineMaille, false );
-                    if( lShape != nullptr )
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if(TheInput.getNbCurrentPoints() >= 2 )
+                {
+                  PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
+                                                                              MyPref.cBSplineMaille, false );
+                  if( lShape != nullptr )
                     {
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
                     }
-                  }
-               //::::::::::::::::::::::::::::::::::::::
-             ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
-        
-          pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
+                }
               //::::::::::::::::::::::::::::::::::::::
-                    if(TheInput.getNbCurrentPoints() >= 2 )
-                      {
-                        PP3d::Object* lShape =TheInput.convertCurrentLineToBSpline(TheBase,
-                                                                                   MyPref.cBSplineMaille, true );
-                        if( lShape != nullptr )
-                          {
-                            PushHistory();
-                            TheInput.delAllPoint();
-                            TheCreat.redrawAll( PP3d::Compute::FacetAll);
-                          }
-                       }
+              ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
+        
+    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
+              //::::::::::::::::::::::::::::::::::::::
+              if(TheInput.getNbCurrentPoints() >= 2 )
+                {
+                  PP3d::Object* lShape =TheInput.convertCurrentLineToBSpline(TheBase,
+                                                                             MyPref.cBSplineMaille, true );
+                  if( lShape != nullptr )
+                    {
+                      PushHistory();
+                      TheInput.delAllPoint();
+                      TheCreat.redrawAll( PP3d::Compute::FacetAll);
+                    }
+                }
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
 
@@ -1586,7 +1605,7 @@ namespace M3d {
 
     //==============
     pMenu.add( StrMenu_CallDialoDiagSub, "", LAMBDA
-                 CallDialogSubDiv( slFlagDialog, lCanvas );
+               CallDialogSubDiv( slFlagDialog, lCanvas );
                ADBMAL, this, FL_MENU_DIVIDER); 
 
   }
@@ -1711,23 +1730,23 @@ namespace M3d {
 												
         if( getUserMode() == ModeUser::MODE_BASE )
           {
-           cPopup->type(Fl_Menu_Button::POPUP1);
+            cPopup->type(Fl_Menu_Button::POPUP1);
            
-           if( getGlobalMode() == GlobalMode::MAGNET )
-             {
-               makeMenuMagnet(   *cPopup);
-             }
-           else
-             if( TheSelect.getNbSelected() > 0 )
-               {										
-                 makeMenuSelect(  *cPopup);
-               }
-             else
-               {
-                 makeMenuPrimitiv( *cPopup );
-               }
-           cPopup->position( Fl::event_x() , Fl::event_y());           
-           cPopup->popup();
+            if( getGlobalMode() == GlobalMode::MAGNET )
+              {
+                makeMenuMagnet(   *cPopup);
+              }
+            else
+              if( TheSelect.getNbSelected() > 0 )
+                {										
+                  makeMenuSelect(  *cPopup);
+                }
+              else
+                {
+                  makeMenuPrimitiv( *cPopup );
+                }
+            cPopup->position( Fl::event_x() , Fl::event_y());           
+            cPopup->popup();
           }
        	
 	return 1;
@@ -1735,7 +1754,57 @@ namespace M3d {
     
     return 0;
   }
+  //----------------------------------------
+  void Canvas3d::BridgeFacets()
+  {
+    if( TheSelect.getSelectType() == PP3d::SelectType::Facet
+        && TheSelect.getNbSelected() == 2 )
+      {
+        PP3d::FacetPtr lFacetA = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
+        PP3d::FacetPtr lFacetB = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
+        
+        PP3d::PolyPtr lPolyA = nullptr;
+        PP3d::PolyPtr lPolyB = nullptr;
 
+        if( lFacetA->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
+          lPolyA = (PP3d::PolyPtr) lFacetA->firstOwner();
+        
+        if( lFacetB->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
+          lPolyB = (PP3d::PolyPtr) lFacetB->firstOwner();
+        
+        if( lPolyA == nullptr || lPolyB == nullptr )
+          {
+            return ;
+          }
+        
+
+        PP3d::FacetPtrVect lNewFacets;
+        
+        PP3d::Modif::JoinTwoFacets( &TheBase, lFacetA, lFacetB, lNewFacets, true ); 
+        
+      
+        lPolyA->addFacet(lNewFacets);
+        lPolyA->removeFacet(lFacetA);
+        lPolyB->removeFacet(lFacetB);
+
+        if( lPolyA != lPolyB )
+          {
+            PP3d::FacetPtrVect lFacsB = lPolyB->getFacets();
+            lPolyB->removeAllFacet();
+            lPolyA->addFacet( lFacsB);
+
+            PP3d::OwnerPtrSet lOwnersB = lPolyB->getOwners();
+            lPolyB->removeFromOwners();
+            TheBase.freePoly( lPolyB );
+
+            for( PP3d::OwnerPtr lOwner: lOwnersB )
+              { 
+                TheBase.deleteEntityIfVoid( lOwner );
+              }
+          }
+
+      }
+  }
   //***************************************
 
 

@@ -67,7 +67,7 @@ bool Modif::SubDivMiddle( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, std
 	  lEdge *= 0.5;
 	  
 	  // Il reste a trouver le milieu de l'autre facette
-	  Line * lReverse = lLine->getReverseLine();
+	  Line * lReverse = lLine->getReverseLineByPoint();
 	  if( lReverse == nullptr )
 	    {
 	      // si on ne trouve pas de ligne reverse ! (bordure ?)

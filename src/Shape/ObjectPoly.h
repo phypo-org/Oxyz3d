@@ -30,6 +30,7 @@ namespace PP3d {
       pPoly->addOwner( this );
     }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		
+    bool       isVoid()   const override { return cShape == nullptr; }
     EntityPtr  getShape() override { return cShape; }
     Poly*      getPoly()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjPoly; }
@@ -42,7 +43,8 @@ namespace PP3d {
           lTmp->removeOwner( this );
         }
       cShape = pPoly;
-      cShape->addOwner( this );
+      if( cShape != nullptr) 
+        cShape->addOwner( this );
 
       return lTmp;
     }

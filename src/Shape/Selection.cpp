@@ -148,7 +148,7 @@ namespace PP3d {
         // il faudrai qu'il soit fournis pas l'appelant !
         // de plus on pourrait éliminer du visiteur les paires deja trouvées
         
-	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
+	LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLineByOwner();
 	if( lLine )
 	  {
 	    addEntity( lLine, false );	    
@@ -249,7 +249,7 @@ namespace PP3d {
 	
 	if( iSelectAll && ioEntity->getType() == ShapeType::Line )
 	  {
-	    LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLine();
+	    LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLineByOwner();
 	    if( lLine )
 	      removeEntity( lLine, false );
 	  }

@@ -79,7 +79,7 @@ namespace M3d {
     //    double lDivision = 0;
     getMyWin().setMeasurement( lScale, lPosScale );
 
-    cout << "SCALE:" << cKamera.scale().x() << " -> " << lScale << " ==> " << lPosScale << " " << cKamera.GetMeasurement( lPosScale ) << endl;
+    //    cout << "SCALE:" << cKamera.scale().x() << " -> " << lScale << " ==> " << lPosScale << " " << cKamera.GetMeasurement( lPosScale ) << endl;
 
     // On crée 3 grille Allant de 10 en 10
     if( cGridMode == ModeGrid::GRID_2D )

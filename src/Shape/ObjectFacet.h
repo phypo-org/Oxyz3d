@@ -27,6 +27,7 @@ namespace PP3d {
 			,cShape(pFacet)
                         
 		{;}
+          bool       isVoid()   const override { return cShape == nullptr; }
 		EntityPtr getShape() override { return cShape; };
 		FacetPtr	getFacet()          { return cShape; };
 	  ObjectType getObjType() const override { return ObjectType::ObjFacet; }

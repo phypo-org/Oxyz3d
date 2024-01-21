@@ -318,6 +318,12 @@ namespace PP3d {
       return D.distance();
     }
     //--------------------------------	
+    static TFLOAT DistanceSquare( TPoint3d A, TPoint3d B)
+    {
+      TPoint3d D = A-B;
+      return D.distanceSquare();
+    }
+    //--------------------------------	
     static TFLOAT DistanceToLine( TPoint3d P, TPoint3d A, TPoint3d B)
     {
       TPoint3d AB = B-A;

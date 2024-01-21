@@ -121,7 +121,7 @@ namespace PP3d {
     pVisit.execEndNode(  this, nullptr );
   }
   //------------------------------- 
-  LinePtr Line::getReverseLine2() {
+  LinePtr Line::getReverseLineByPoint() {
     
     //    std::cout << "Line::getReverseLine         " << cPoints.first  << " : " << cPoints.second << std::endl;
     
@@ -146,7 +146,7 @@ namespace PP3d {
   // Les lignes inverses partage les memes points
   // donc la ligne inverse est présente dans la liste des owners des points
   
-  LinePtr Line::getReverseLine()
+  LinePtr Line::getReverseLineByOwner()
   {       
     for( EntityPtr lEnt : first()->getOwners())
       {

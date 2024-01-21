@@ -41,13 +41,10 @@ namespace PP3d {
     add( pPoint->get() );
   }
   //*********************************************
-  void VisitorInvertNormal::execBeginLine( Line* pLine ) 
-    {
-      pLine->inversePoint();
-      //cOs << "\t" <<(*pPoly)
-      //	<< " Facets:" << pPoly->getFacets().size()
-      //	<< std::endl;
-  }		
+  void  VisitorInvertNormal::execBeginFacet( Facet* pFacet )
+  {
+    pFacet->inverseLines();
+  } 	
   //*********************************************
   void VisitorNormalFacet::execBeginFacet( Facet* pFacet )
   {

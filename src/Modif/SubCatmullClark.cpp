@@ -48,7 +48,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	      lAvgMidPts += lMiddle;
 	      lNbLine++;
 
-	      LinePtr lRevLine = lLine->getReverseLine();
+	      LinePtr lRevLine = lLine->getReverseLineByPoint();
 	      if( lRevLine == nullptr )
 		{ // elle va compter pour deux
 		  lAvgMidPts += lMiddle;
@@ -142,7 +142,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 	  lEdge += cMiddle;
 	  
 	  // Il reste a trouver le milieu de l'autre facette
-	  Line * lReverse = lLine->getReverseLine();
+	  Line * lReverse = lLine->getReverseLineByPoint();
 	  if( lReverse == nullptr )
 	    {
 	      // si on ne trouve pas de ligne reverse ! (bordure ?)

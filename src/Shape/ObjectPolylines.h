@@ -14,7 +14,6 @@ namespace PP3d {
 
   class ObjectPolylines  : public ObjectFacet
   {
-
   public:
     ObjectPolylines(  const char*pName, Facet* pFacet)
       : ObjectFacet( pName, pFacet )

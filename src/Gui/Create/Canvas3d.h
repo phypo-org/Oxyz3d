@@ -136,7 +136,9 @@ namespace M3d {
     static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
   
     static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
- 
+
+    //=========== Functions =============
+    void BridgeFacets();
 
     //=========== MENUS =================
 

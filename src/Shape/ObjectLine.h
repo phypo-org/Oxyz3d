@@ -27,11 +27,12 @@ namespace PP3d {
       : Object( pName,  iClassType)
       ,cShape( pLine)
     {;}
-   
+
+    bool       isVoid()   const override { return cShape == nullptr; }
     EntityPtr  getShape() override { return cShape; }
     LinePtr    getLine()           { return cShape; }
-    PointPtr   first()  const { return cShape->first();}
-    PointPtr   second() const { return cShape->second();}
+    PointPtr   first()    const { return cShape->first();}
+    PointPtr   second()   const { return cShape->second();}
     Point3d &  first3d()  const { return cShape->first()->get();}
     Point3d &  second3d() const { return cShape->second()->get();}
     ObjectType getObjType() const override { return ObjectType::ObjLine; }

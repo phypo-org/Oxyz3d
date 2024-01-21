@@ -61,7 +61,7 @@ namespace PP3d {
 
     EntityId          cId=0;
 		
-    std::set<Entity*> cOwners;
+    std::set<Entity*>       cOwners;
 
     
     bool              cIsMagnet=false;
@@ -85,6 +85,8 @@ namespace PP3d {
     EntityId getId() { return cId; }
     bool     isIdVoid() { return cId==0;}
     void     razId() { cId=0;}
+
+    virtual bool isVoid() const =0;
 
     bool isTreeOpen() { return cTreeOpen; }
     void setTreeOpen( bool iVal ) { cTreeOpen=iVal;}
@@ -181,6 +183,10 @@ namespace PP3d {
       lEntity->execVisitor( pVisit );
   }
   
+  using OwnerPtr     = Entity*;
+  using OwnerPtrSet  = std::set<OwnerPtr>;
+
+  
   //*********************************************
   class Point :  public Entity {
 		
@@ -211,14 +217,19 @@ namespace PP3d {
     {
       cPt.set( iX, iY, iZ );
     }
-		
+
+    
+    bool isVoid() const override { return false; }
+
     ShapeType getType() const override { return ShapeType::Point;}
     
     Point3d  getCenter3d() override { return cPt;}  ;
 
     Point3d  get() const { return cPt; }
     Point3d& get()       { return cPt; }
-    operator const Point3d&() const { return cPt; }
+    operator const Point3d&() const { return cPt; }    
+    operator       Point3d()        { return cPt; }
+
     void     set(const Point3d & iPt)  {  cPt = iPt; }
 		
     void execVisitor( EntityVisitor& pVisit ) override;
@@ -276,7 +287,9 @@ namespace PP3d {
     bool isPoint() { return cPoints.first == cPoints.second; } // pour la saisie du premier point d'une facette
     bool isSamePointXYZ() { return cPoints.first->get() == cPoints.second->get(); } // Meme coordonnes xyz de deux points
     bool isSamePointEpsi(long double iEpsi ) { return cPoints.first->get().sameEpsi(iEpsi, cPoints.second->get() ); } // Meme coordonnes xyz de deux points
-								 
+
+     bool isVoid() const override { if(  cPoints.first == nullptr &&  cPoints.second == nullptr ) return true; return false; }
+       
     ShapeType   getType() const override { return ShapeType::Line;}
 		
     PointPtrPair& getPoints() { return cPoints; }
@@ -327,8 +340,8 @@ namespace PP3d {
       cPoints.second = lTmp;
     }
     
-     Line* getReverseLine();
-     Line* getReverseLine2();
+     Line* getReverseLineByOwner();
+     Line* getReverseLineByPoint();
 
     friend class Facet;
     friend class Maker;
@@ -384,6 +397,7 @@ namespace PP3d {
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 ); }
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3, LinePtr iLine4  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 );addLine( iLine4 ); }
 
+    bool isVoid() const override { return getNbLines()>0; }
       
     ShapeType getType() const  override { return ShapeType::Facet;}
 	
@@ -526,7 +540,7 @@ namespace PP3d {
     friend class Maker;
      friend class VisitorNormalFacet;
   };
-	  using FacetPtr     = Facet*;
+  using FacetPtr     = Facet*;
   using FacetPtrVect = std::vector<FacetPtr>;
 
   //*********************************************
@@ -535,6 +549,7 @@ namespace PP3d {
     FacetPtrVect cFacets;
 		
   public:
+    bool isVoid() const override { return getNbFacets() >0; }
     ShapeType getType() const override { return ShapeType::Poly;}
 
     Point3d getCenter3d() override {
@@ -560,7 +575,6 @@ namespace PP3d {
       for( FacetPtr lFacet : iVectFacet )
         addFacet( lFacet );
     }
-
     
     void removeFacet(  FacetPtr pFacet)
     {
@@ -573,16 +587,28 @@ namespace PP3d {
 	      break;
 	    }
 	}
-    }    
+    }
+    
+    void removeAllFacet()
+    {
+      for( FacetPtr lFacet :  cFacets ) 
+	{
+          lFacet->removeOwner(this);
+	}
+      cFacets.clear();
+      Entity::clear();
+    }
+    
     virtual void remove( Entity* lEntity ) override
     {
       if( lEntity->getType() ==  ShapeType::Facet )
 	{
 	  removeFacet(  ((FacetPtr)lEntity) );
-	}
+ 	}
     }
 
     FacetPtrVect&  getFacets()  { return cFacets; }
+    PIndex  getNbFacets() const { return cFacets.size(); }
     void execVisitor( EntityVisitor& pVisit )override;
 
     bool clear() override { cFacets.clear();  return Entity::clear(); }

@@ -111,7 +111,7 @@ namespace PP3d{
     
     if( ioReverseLine ) // if we 
       {
-	*ioReverseLine = iLine->getReverseLine(); //we kept the inverse of the line before change it !!!
+	*ioReverseLine = iLine->getReverseLineByPoint(); //we kept the inverse of the line before change it !!!
       }
 
     

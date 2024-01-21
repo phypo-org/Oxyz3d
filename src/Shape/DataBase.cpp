@@ -271,6 +271,15 @@ namespace PP3d {
     cContainerObject.emplace( pObj );			
   }
   //------------------------------------------
+  bool DataBase::deleteEntityIfVoid( EntityPtr pEntity)
+  {
+    if( pEntity->isVoid() )
+      {
+        return deleteEntity( pEntity );
+      }
+    return false;
+  }
+  //------------------------------------------
   bool DataBase::deleteEntity( EntityPtr pEntity)
   {
     DBG_BAZ( "DataBase::deleteEntity " << pEntity->getStrType() )

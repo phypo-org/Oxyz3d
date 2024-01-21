@@ -104,6 +104,8 @@ namespace PP3d {
 		
     //================================
     bool deleteEntity( EntityPtr );
+    bool deleteEntityIfVoid( EntityPtr pEntity);
+    
     //================================
 		
     //		EntityId   addEntity( Entity* pEntity );		
@@ -174,9 +176,6 @@ namespace PP3d {
 	}
      return nullptr;
     }
-
-
-
     //---------------------------------
 
   protected:

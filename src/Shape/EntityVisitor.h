@@ -112,7 +112,8 @@ namespace PP3d{
   // calcule et stocke la normale pour chaque facette
   struct VisitorInvertNormal : public EntityVisitor	{
 	  
-    virtual void execBeginLine( Line* pLine ) override;
+    virtual void execBeginFacet( Facet* pFacet )override;
+    //virtual void execBeginLine( Line* pLine ) override;
   };
   //*********************************************
   // calcule et stocke la normale pour chaque facette

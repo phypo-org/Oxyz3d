@@ -11,6 +11,7 @@
 #include "Shape/Selection.h"
 
 #include <map>
+#include <vector>
 
 namespace PP3d{
 
@@ -108,6 +109,14 @@ namespace PP3d{
     static void ExtrudePath( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
     static void ExtrudePathNorm( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
 
+
+
+    static bool JoinTwoFacets( DataBase * iBase,
+                               FacetPtr iF1,
+                               FacetPtr iF2,
+                               std::vector<FacetPtr> & oNewFacets,
+                               bool iMiddleSquare  );
+    
 
 #ifdef  USING_CGAL  
     static void CGAL_DuoSabin();
