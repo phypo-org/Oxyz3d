@@ -122,7 +122,14 @@ namespace PP3d {
 
     //		PP3dId  getId() { return getMyEntity().getId(); }
     virtual EntityPtr getShape()=0;
-		
+    virtual void      removeShape()=0;
+    bool removeShapeIsVoid(EntityPtr iEntity = nullptr){
+      if(iEntity == nullptr || iEntity == getShape() )
+        {
+          removeShape();
+        }
+      return isVoid();
+    }
 
     virtual int recomputeAll(ObjProps&pProps,
 			      Compute iCompute);

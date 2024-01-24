@@ -8,13 +8,11 @@ using namespace PP3d;
 bool Modif::DeletePointFromFacet( DataBase * iBase, PointPtr iPoint , FacetPtr ioFacet, std::vector<PointPtr> &oPoints )
 {
   if( ioFacet->getNbLines() <= 3 )
-    {
-      
+    {      
       for( LinePtr lLine : ioFacet->getLines())
 	{
-      // Les points ???
-	  
-	  lLine->removeFromOwners();
+      // Les points ???	  
+          //PLANTAGE dans getowners ? line non valable ? ->	  lLine->removeFromOwners();
 	  iBase->freeLine( lLine );
 	}
 
@@ -25,6 +23,7 @@ bool Modif::DeletePointFromFacet( DataBase * iBase, PointPtr iPoint , FacetPtr i
 
   std::cout << "**** Modif::DeletePointFromFacet" << std::endl;
 
+  // le getNbLines()+1 et le modulo evite de tester  le first de la ligne
   for( GLuint i=0; i< ioFacet->getNbLines()+1; i++ )
     {
       LinePtr lFirstLine = ioFacet->getLineModulo( i );
@@ -61,20 +60,40 @@ bool Modif::DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet )
     std::cout << "****  Modif::DeletePoints line " << std::endl;
       lVisitLineOwner.addOwnersOf( lLine );
     }
-  PolyPtr lPoly = nullptr;
+  
+  EntityPtr lOwner=nullptr; 
   for( FacetPtr lFacet : lVisitLineOwner.cVectFacets )
     {
-      if( DeletePointFromFacet( iBase, iPoint, lFacet, lPointsNewFacet ) == true )
+      EntityPtr lOwner = lFacet->firstOwner();
+        
+       if( DeletePointFromFacet( iBase, iPoint, lFacet, lPointsNewFacet ) == true )
 	{
-	  // il faut detruire la facette !
+       	  // il faut detruire la facette !
+          if( lOwner != nullptr )
+            {
+              if( lOwner->getType() ==  ShapeType::Poly )
+                {
+                  ((Poly*)lOwner)->removeFacet( lFacet );
+                }
+              /*
+              else
+                if( lOwner->getType() ==  ShapeType::Object )
+                  {
+                    if( ((Object*)lOwner)->removeShapeIsVoid(lFacet) )
+                      {
+                        iBase->removeEntityIfNoOwner( lOwner );
+                      }
+                  }
+              */
+            }       
 	}
-      lPoly = (PolyPtr) lFacet->firstOwner();
     }
+  
   if( iCreateFacet
       && lPointsNewFacet.size() >= 3
-      && lPoly && lPoly->getType() == ShapeType::Poly )
+      && lOwner && lOwner->getType() == ShapeType::Poly )
     {
-      size_t lSz = lPointsNewFacet.size();
+     size_t lSz = lPointsNewFacet.size();
      
       FacetPtr lFacPtr = iBase->getNewFacet();
       for( size_t i=0; i < lSz-1 ; i++ )
@@ -87,7 +106,7 @@ bool Modif::DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet )
       PointPtr Pt1 = lPointsNewFacet[lSz-1];    
       PointPtr Pt2 = lPointsNewFacet[0];           
       lFacPtr->addLine( iBase->getNewLine( Pt1, Pt2)  );
-      lPoly->addFacet( lFacPtr );
+      ((PolyPtr)lOwner)->addFacet( lFacPtr );
 				    
       iBase->validEntity( lFacPtr, true );// VALIDATION (a optimiser)	      
     }

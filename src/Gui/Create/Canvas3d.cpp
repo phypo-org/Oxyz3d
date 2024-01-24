@@ -222,7 +222,51 @@ namespace M3d {
     return false;
   }
 
+  
+  const char * const CHG_AXIS="a";
+  
+  const char * const CENTER_ON_SELECTION="A";
+ 
+  const char * const CHG_GRID="g";
+  
+  const char * const CHG_ORTHO_PERS="p";
+  
+  const char * const SMOOTH="s";
 
+  
+  const char * const RESET_VIEW_TO_X="x";
+  const char * const RESET_VIEW_TO_Y="y";
+  const char * const RESET_VIEW_TO_Z="z";
+  const char * const RESET_VIEW_TO_X2="X";
+  const char * const RESET_VIEW_TO_Y2="Y";
+  const char * const RESET_VIEW_TO_Z2="Z";
+  
+  const char * const RESET_VIEW_SCALE_ORIGIN="O";
+  
+  const char * const RESET_VIEW="O";
+  const char * const RESET_VIEW_SCALE_0="0";
+  const char * const RESET_VIEW_SCALE_1="1";
+  const char * const RESET_VIEW_SCALE_2="2";
+  const char * const RESET_VIEW_SCALE_3="3";
+  const char * const RESET_VIEW_SCALE_4="4";
+  const char * const RESET_VIEW_SCALE_5="5";
+  const char * const RESET_VIEW_SCALE_6="6";
+  
+  const char * const KEY_UNDO="/7a";
+
+  
+  const char * const STR_CURSOR_3D="c";
+  const char * const STR_EXIT="q";
+
+  const char * const MOVE_Z_N="-";
+  const char * const MOVE_Z_P="+";
+	
+  const char * const UNSELECT_ALL=" ";
+  const char * const BASCULE_DRAW_SELECT_COLOR="!";
+  const char * const BASCULE_TEST_SELECT_COLOR=":";
+  
+#define  CMP_KEY(A) A[0] == std::tolower(lStr[0])
+  
   //---------------------------------------------------------
   int Canvas3d::handle( int pEvent ) 
   {
@@ -372,7 +416,6 @@ namespace M3d {
 		  break;
 		  //=======================
 		case FL_BackSpace:
-		case FL_Delete:
 		  if( getUserMode() == ModeUser::MODE_DRAG )
 		    {
 		      TheInput.delCurrentLineSelectPoint(TheBase); 
@@ -382,6 +425,18 @@ namespace M3d {
 		      TheInput.delLastPoint ();
 		    }
 		  
+		  lFlagRedrawAll = true;
+		  break;
+		  //=======================
+		case FL_Delete:
+                  if( TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
+                    {
+                      mergeFacets(&TheBase, &TheSelect);
+                    }
+                  else
+                    {
+                      TheSelect.deleteAllFromDatabase( *TheCreat.getDatabase());
+                    }
 		  lFlagRedrawAll = true;
 		  break;
 		  //=======================
@@ -527,8 +582,7 @@ namespace M3d {
 		  else 
 		    cAxisFlag = true;
                     */
-                    }
-                    
+                    }                    
 	      else if( strcmp( lStr, CHG_GRID )==0)
 		{
 		  if( cGridMode == ModeGrid::NO_GRID )
@@ -557,6 +611,11 @@ namespace M3d {
 		    else
 		      sDrawColorSelect = true;
 		  }
+                else
+                  if( CMP_KEY(SMOOTH))
+                    {
+                      subdiveCatmullClark( true );                      
+                    }
 	    
 	      /*
 		else if( strcmp( lStr, STR_EXIT ) ==0)

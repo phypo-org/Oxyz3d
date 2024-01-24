@@ -1,11 +1,19 @@
 
 XXXXXXX - Grid
+XXXXXX  - Remplacer les callback par des lambda
+XXXXXXX - Ajouter un bouton et un niveau de selection supplementaire pour les
+  objets/groups (qui ne fait que desactive la selection des groupes)
+
+
+XXXXXX - Revoir l'architecture générale du code
 
 XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   enum  classe ==  OBJECT , AXE, POINT, PLAN, TRAJECTOIRE,TRANSFORMATION ...
    Tester dans les focntions draw et select de Database pour tracer
   les uns ou les autres
  ==>  faire une branche dans git pour tester
+
+=====================================================
 
 XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
   ObjectGroup, soit sous forme d'un GroupId commun à tout les objets
@@ -16,8 +24,6 @@ XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
    . possibilités d'ajouter ou de retirer des objets d'un groupes
 
 
-
-XXXXXX  - Remplacer les callback par des lambda
 
 ccccc - Permettre la saisie de valeur au clavier pour les modifications
   interactive à la souris . Enlever DialogKeepFloat
@@ -36,14 +42,6 @@ ccccc - Permettre la saisie de valeur au clavier pour les modifications
   
 
 
-
-
-- Ajouter un bouton et un niveau de selection supplementaire pour les
-  objets/groups (qui ne fait que desactive la selection des groupes)
-
-
-- Revoir l'architecture générale du code
-
 - Mettre plus de fonctions de dessins 3d de Database dans un objet View et
  le mettre ainsi que l'objets de dessins dans un repertoire VIEW
 
@@ -52,9 +50,27 @@ ccccc - Permettre la saisie de valeur au clavier pour les modifications
   . mettre que deux points ?
   
 
-- Bridge
+XXXXXX - Bridge
+       Debugger la destruction de l'un des objets quand il y a fusion       
+Faire un autre bridge avec des points ajoués comme pour Wings3D
+
 - Bevel
 - etc
+
+
+---- Destruction d'entity :
+
+- Faire la destruction de Ligne
+- Faire la destruction de facette
+- Debuger la destruction des points
+
+
+- Ameliorer la gestion du dialogue de la sauvegarde et du chargement
+
+
+
+- Ameliorer l'interface des aimants (Magnets)
+
 
 
 =====================================================

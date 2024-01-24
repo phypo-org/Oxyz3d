@@ -55,7 +55,7 @@ namespace M3d {
 #define StrMenu_UnselectAll     "Unselect all"
 #define StrMenu_InvertSelect    "Invert selection"
 
-#define StrMenu_DeleteSelect    "Delete object selection"
+#define StrMenu_DeleteSelect    "Delete selection"
  
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
   

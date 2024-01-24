@@ -133,13 +133,18 @@ namespace M3d {
     static void MyMenuCallbackSubdivide(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide1(Fl_Widget* w, void* pUserData );
     static void MyMenuCallbackSubdivide2(Fl_Widget* w, void* pUserData );
-    static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
+    
+    void   subdiveCatmullClark( bool lModifOldPts);
+   static void MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData );
   
     static void MyMenuCallbackModifyShape(Fl_Widget* w, void* pUserData );
 
-    //=========== Functions =============
-    void BridgeFacets();
+    void deleteSelection();
 
+    //=========== Functions =============
+    void bridgeFacets();
+
+    PP3d::FacetPtr mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect);
     //=========== MENUS =================
 
     void traceMode() const;
@@ -151,50 +156,8 @@ namespace M3d {
 
 
 
-
   const char * const ANNULE_ACTION="e";
-  
-  const char * const CHG_AXIS="a";
-  
-  const char * const CENTER_ON_SELECTION="A";
- 
-  const char * const CHG_GRID="g";
-  
-  const char * const CHG_ORTHO_PERS="p";
-  
-  
-  const char * const RESET_VIEW_TO_X="x";
-  const char * const RESET_VIEW_TO_Y="y";
-  const char * const RESET_VIEW_TO_Z="z";
-  const char * const RESET_VIEW_TO_X2="X";
-  const char * const RESET_VIEW_TO_Y2="Y";
-  const char * const RESET_VIEW_TO_Z2="Z";
-  
 
-  const char * const RESET_VIEW_SCALE_ORIGIN="O";
-  
-  const char * const RESET_VIEW="O";
-  const char * const RESET_VIEW_SCALE_0="0";
-  const char * const RESET_VIEW_SCALE_1="1";
-  const char * const RESET_VIEW_SCALE_2="2";
-  const char * const RESET_VIEW_SCALE_3="3";
-  const char * const RESET_VIEW_SCALE_4="4";
-  const char * const RESET_VIEW_SCALE_5="5";
-  const char * const RESET_VIEW_SCALE_6="6";
-  
-  const char * const KEY_UNDO="/7a";
-
-  
-  const char * const STR_CURSOR_3D="c";
-  const char * const STR_EXIT="q";
-
-  const char * const MOVE_Z_N="-";
-  const char * const MOVE_Z_P="+";
-	
-  const char * const UNSELECT_ALL=" ";
-  const char * const BASCULE_DRAW_SELECT_COLOR="!";
-  const char * const BASCULE_TEST_SELECT_COLOR=":";
-  
 }
 
 

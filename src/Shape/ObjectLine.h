@@ -29,6 +29,7 @@ namespace PP3d {
     {;}
 
     bool       isVoid()   const override { return cShape == nullptr; }
+    void       removeShape() override { cShape = nullptr; }
     EntityPtr  getShape() override { return cShape; }
     LinePtr    getLine()           { return cShape; }
     PointPtr   first()    const { return cShape->first();}

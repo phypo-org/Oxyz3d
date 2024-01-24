@@ -15,7 +15,7 @@ namespace PP3d{
   //*****************************************
   class SortEntityVisitor : public EntityVisitor {
 
-    bool cAcceptDoublon;
+    bool cAcceptDoublon = false;
   public:
     std::vector<PointPtr>  cVectPoints;
     std::set<PointPtr>     cSetPoints;

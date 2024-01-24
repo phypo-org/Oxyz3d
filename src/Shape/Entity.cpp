@@ -65,7 +65,7 @@ namespace PP3d {
       }
   }
   //---------------------------
-  void Entity::deleteAllHieracrchy()
+  void Entity::deleteAllHierarchy()
   {    
     SortVisitorEntity lVisit(false);  //SortEntityVisitor
     execVisitor( lVisit );

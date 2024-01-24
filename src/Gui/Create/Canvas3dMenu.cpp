@@ -41,7 +41,7 @@
 
 #include "Dialogs.h"
 #include "Gui/Preference.h"
-
+#include "Utils/PPContainer.h"
 using namespace std;
 
 
@@ -79,7 +79,8 @@ namespace M3d {
 #define  StrMenu_ModifyShape "Modify shape"
   
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
-#define  StrMenu_DeleteShapeFacet "Delete facet"
+#define  StrMenu_HoleShapeFacet "Facets to hole"
+#define  StrMenu_MergeShapeFacets "Merge facets of a shape"
 
 
 #define StrMenu_Revol     "New Revolution "
@@ -883,7 +884,7 @@ namespace M3d {
 	&& TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
       lMenuFlagActif = 0;
 
-    pMenu.add( StrMenu_ModifyShape "/" StrMenu_DeleteShapeFacet , "", LAMBDA
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_HoleShapeFacet , "", LAMBDA
                //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
                PP3d::SortEntityVisitor lVisit;
                TheSelect.execVisitorOnEntity( lVisit );
@@ -909,6 +910,26 @@ namespace M3d {
                TheSelect.removeAll();	
                PushHistory();	    
                TheCreat.redrawAll(PP3d::Compute::FacetAll);
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+               ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
+
+    
+    lMenuFlagActif=FL_MENU_INACTIVE;
+    if( TheSelect.getNbSelected() > 1
+	&& TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
+      lMenuFlagActif = 0;
+    
+    pMenu.add( StrMenu_ModifyShape "/" StrMenu_MergeShapeFacets , "", LAMBDA
+               //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+               
+               PP3d::FacetPtr lFac = lCanvas->mergeFacets( &TheBase, &TheSelect );
+               if( lFac != nullptr )
+                 {
+                   TheSelect.removeAll();
+                   TheSelect.addEntity( lFac );
+                   PushHistory();	    
+                   TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                 }
                //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
                ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
@@ -1266,14 +1287,14 @@ namespace M3d {
                        ADBMAL, this);
         
           /*          
-	  if( TheSelect.getNbSelected() != 2 )
-            {
-              lMenuFlagActif = FL_MENU_INACTIVE;
-              }*/
+                      if( TheSelect.getNbSelected() != 2 )
+                      {
+                      lMenuFlagActif = FL_MENU_INACTIVE;
+                      }*/
           
           pMenu.add( StrMenu_BridgeFac, "", LAMBDA
                      //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->BridgeFacets();
+                     lCanvas->bridgeFacets();
                      PushHistory();
                      TheCreat.redrawAll(PP3d::Compute::FacetAll);
                      
@@ -1616,28 +1637,34 @@ namespace M3d {
   
    
   //-------------------------------------------
-  void Canvas3d::MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData )
+  void Canvas3d::subdiveCatmullClark( bool lModifOldPts)
   {
-    BEGINCALL  ;
     PP3d::SortEntityVisitorPointFacet lVisit;
     TheSelect.execVisitorOnEntity( lVisit );
-
-    bool lModifOldPts = true;
     
-    if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFalse )==0 )
-      {
-        lModifOldPts = false;
-      }
- 
+    
     std::vector<PP3d::EntityPtr> lNewFacets;
     if( PP3d::Modif::SubCatmullClark( TheCreat.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, lModifOldPts ))
       {	
         TheSelect.removeAll();
         TheSelect.addGoodEntityFor(lNewFacets);
         PushHistory();
-        TheCreat.redrawAll(PP3d::Compute::FacetAll
-                           );
-      }    
+        TheCreat.redrawAll(PP3d::Compute::FacetAll );
+      }  
+  }
+  //-------------------------------------------
+  void Canvas3d::MyMenuCallbackSubdiveCatmullClark(Fl_Widget* w, void* pUserData )
+  {
+    BEGINCALL  ;
+    
+    bool lModifOldPts = true;
+    
+    if( strcmp( m->label(), StrMenu_SubdivideCatmullClarkFalse )==0 )
+      {
+        lModifOldPts = false;
+      }
+    
+    lCanvas->subdiveCatmullClark( lModifOldPts );
   }
  
   //-------------------------------------------
@@ -1755,7 +1782,162 @@ namespace M3d {
     return 0;
   }
   //----------------------------------------
-  void Canvas3d::BridgeFacets()
+  PP3d::FacetPtr Canvas3d::mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect )
+  {
+    PPu::HashSetPtr<PP3d::Line>    lReverseLinesFound; // Set pour eviter les doublons
+    PPu::HashSetPtr<PP3d::Facet>   lFacetsToMerge;  // Set pour eviter les doublons
+    PPu::HashSetPtr<PP3d::Entity>  lOwners;  // Set pour eviter les doublons
+
+    // Il suffit de supprimer les lignes communes aux facettes, de detruire les facettes
+    // concernées et d'en creer une avec les lignes qui reste (it's so easy :) 
+
+    
+    PP3d::SortEntityVisitor lVisit;
+    iSelect->execVisitorOnEntity( lVisit );
+    
+    if( lVisit.cSetFacets.size() < 2 )
+      {
+        //FAIRE UNE FONCTION D'alerte/log !!!
+        fl_alert( "Command canceled : you must select at least two facets");
+        return nullptr;
+      }
+
+        cout << "Merge Facets Lines:" << lVisit.cSetLines.size()
+             << " Facets:" << lVisit.cSetFacets.size() << endl;
+    
+    // Search line with reverse
+    for( PP3d::LinePtr lLine :  lVisit.cSetLines )
+      {
+        // we keep only the line with a reverse line found
+        PP3d::LinePtr lLineRev = lLine->getReverseLineByOwner();
+        if( lLineRev != nullptr && lVisit.cSetLines.contains(lLineRev) )
+          {
+            lReverseLinesFound.insertObj( lLine );
+            lReverseLinesFound.insertObj( lLineRev );
+
+            // keep their facets
+            PP3d::FacetPtr lFac =  GetOwnerFacetFromLine( lLineRev );
+            if( lFac != nullptr )
+              {
+                lFacetsToMerge.insertObj( lFac );
+                
+                for( PP3d::OwnerPtr lOwner : lFac->getOwners() )
+                  lOwners.insertObj( lOwner );
+              }
+            
+            PP3d::FacetPtr lFac2 =  GetOwnerFacetFromLine( lLine );
+            if( lFac2 != nullptr )
+              {
+                lFacetsToMerge.insertObj( lFac2 );              
+                for( PP3d::OwnerPtr lOwner :lFac2->getOwners() )
+                  lOwners.insertObj(lOwner);
+              }
+          }
+      }
+    
+    cout << "lReverseLinesFound:" << lReverseLinesFound.size()
+         << " lFacetsToMerge:" << lFacetsToMerge.size() << endl ;
+
+    
+    if( lOwners.size() > 1 )
+      {
+        fl_alert( "Command canceled : Selected facets have too many owner");
+        return nullptr;
+      }
+     
+    if( lReverseLinesFound.size() < 1  || lFacetsToMerge.size() < 2 )
+      {
+        fl_alert( "Command canceled : facets are no mergeables ");
+        return nullptr;
+      }
+
+    PP3d::PolyPtr lPoly = nullptr;
+    for(  PP3d::OwnerPtr lOwner:lOwners )
+      {
+        if( lOwner->getType() == PP3d::ShapeType::Poly )
+          lPoly = (PP3d::PolyPtr)lOwner;
+      }
+    
+    if( lPoly == nullptr  )
+      {
+        fl_alert( "Command canceled : Owner of facets are not Polyedre");
+        return nullptr;
+      }
+    
+    
+    if( lPoly->getNbFacets() == 1 )
+      {
+        return nullptr;
+      }
+     
+    // Remove the reverses lines from facets
+    RemoveFromOwners<PPu::HashSetPtr<PP3d::Line> >( lReverseLinesFound );
+    
+
+    PP3d::FacetPtr lNewFac = iBase->getNewFacet();
+    
+    // Put all the remaining lines  from facets found into the new facet
+    // and delete facets
+
+    PP3d::LinePtr lFirstLine = nullptr;
+    PP3d::LinePtr lCurLine   = nullptr;
+
+    // but we must add line in good order !
+    PPu::HashMapPtr<PP3d::PointPtr, PP3d::Line> cHashLines;
+    for(PP3d:: FacetPtr lMergeFacet : lFacetsToMerge )
+      {
+        // Keep lines from facet               
+        PP3d::LinePtrVect lLines = lMergeFacet->getLines();
+        
+        // remove them from the facet
+        RemoveFromOwners<PP3d::LinePtrVect>( lLines );
+        
+        for( PP3d::LinePtr lLine : lLines )
+          {
+            if( lFirstLine == nullptr )
+              {
+                lFirstLine = lCurLine = lLine;
+              }
+            else
+              {              
+                cHashLines.insertObj( lLine->first(), lLine );
+              }
+          }
+      }
+
+    cout << "hash lines:" << cHashLines.size() << endl;
+    
+    if( lCurLine != nullptr )
+      {
+        cout << " create new facet ";
+        for( PP3d::PIndex i=0; i< cHashLines.size()+1; i++ )
+          {
+            cout << " i:" << i ;
+            lNewFac->addLine( lCurLine );
+            lCurLine = cHashLines.findObj( lCurLine->second() );
+            if( lCurLine == lFirstLine || lCurLine == nullptr)
+              break;
+          }
+      }    
+    
+
+    for(PP3d:: FacetPtr lMergeFacet : lFacetsToMerge )
+      {
+        // Remove the merge facet from the owner 
+        lPoly->removeFacet( lMergeFacet ); // ->removeFromOwners();
+
+        // eliminate the merge facet
+        iBase->freeFacet( lMergeFacet );
+      }
+    
+    iBase->validEntity( lNewFac, true );
+
+    
+    lPoly->addFacet( lNewFac );
+    return lNewFac;
+  }
+  //----------------------------------------
+  void Canvas3d::bridgeFacets()
   {
     if( TheSelect.getSelectType() == PP3d::SelectType::Facet
         && TheSelect.getNbSelected() == 2 )

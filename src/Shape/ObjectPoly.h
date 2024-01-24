@@ -31,7 +31,9 @@ namespace PP3d {
     }	//    ShapePoints( VectPoint3d& pPoints, std::vector<Facet>& pFacet;
 		
     bool       isVoid()   const override { return cShape == nullptr; }
-    EntityPtr  getShape() override { return cShape; }
+    void       removeShape() override { cShape = nullptr; }
+    EntityPtr  getShape()    override { return cShape; }
+    
     Poly*      getPoly()           { return cShape; }
     ObjectType getObjType() const override { return ObjectType::ObjPoly; }
     ShapeType  getSubType() const override { return ShapeType::Poly; };

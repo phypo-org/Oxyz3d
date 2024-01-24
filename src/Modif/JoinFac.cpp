@@ -190,13 +190,13 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
       for(  ; lIndexB < lLastIndexB; lIndexB++ )
         {
           // Modify indexB for anti-twisting
-            int lIndexBFinal = (lIndexB + lFirstLineB) % lFb->getNbLines();
+          int lIndexBFinal = (lIndexB + lFirstLineB); // % lFb->getNbLines();
             // int lIndexBFinal = (lIndexB + lFirstLineB);
             //   if( lIndexBFinal > (long)(lFb->getNbLines()-1) )
             //     {
             //       lIndexBFinal -=  lFb->getNbLines();          
             //      }
-          lVectLineB.push_back(  lFb->getLine( lIndexBFinal));
+          lVectLineB.push_back(  lFb->getLineModulo( lIndexBFinal));
           cout << "  " <<  lIndexB;
         }
       lRest = lLastIndexFloatB-lIndexB; // must be reported at the next round   
