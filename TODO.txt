@@ -61,7 +61,15 @@ Faire un autre bridge avec des points ajoués comme pour Wings3D
 ---- Destruction d'entity :
 
 - Faire la destruction de Ligne
-- Faire la destruction de facette
+
+
+XXXXXXX Faire la destruction de facette
+XXXXXXX        bug: s'il y a plusieurs facettes disjointe la deuxieme devient
+XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
+
+- Faire la fusion des facettes si on detruit un point ou une ligne
+
+
 - Debuger la destruction des points
 
 

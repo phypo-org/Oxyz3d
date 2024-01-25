@@ -922,11 +922,8 @@ namespace M3d {
     pMenu.add( StrMenu_ModifyShape "/" StrMenu_MergeShapeFacets , "", LAMBDA
                //LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
                
-               PP3d::FacetPtr lFac = lCanvas->mergeFacets( &TheBase, &TheSelect );
-               if( lFac != nullptr )
+               if( lCanvas->mergeFacets( &TheBase, &TheSelect ))
                  {
-                   TheSelect.removeAll();
-                   TheSelect.addEntity( lFac );
                    PushHistory();	    
                    TheCreat.redrawAll(PP3d::Compute::FacetAll);
                  }
@@ -1782,161 +1779,6 @@ namespace M3d {
     return 0;
   }
   //----------------------------------------
-  PP3d::FacetPtr Canvas3d::mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect )
-  {
-    PPu::HashSetPtr<PP3d::Line>    lReverseLinesFound; // Set pour eviter les doublons
-    PPu::HashSetPtr<PP3d::Facet>   lFacetsToMerge;  // Set pour eviter les doublons
-    PPu::HashSetPtr<PP3d::Entity>  lOwners;  // Set pour eviter les doublons
-
-    // Il suffit de supprimer les lignes communes aux facettes, de detruire les facettes
-    // concernées et d'en creer une avec les lignes qui reste (it's so easy :) 
-
-    
-    PP3d::SortEntityVisitor lVisit;
-    iSelect->execVisitorOnEntity( lVisit );
-    
-    if( lVisit.cSetFacets.size() < 2 )
-      {
-        //FAIRE UNE FONCTION D'alerte/log !!!
-        fl_alert( "Command canceled : you must select at least two facets");
-        return nullptr;
-      }
-
-        cout << "Merge Facets Lines:" << lVisit.cSetLines.size()
-             << " Facets:" << lVisit.cSetFacets.size() << endl;
-    
-    // Search line with reverse
-    for( PP3d::LinePtr lLine :  lVisit.cSetLines )
-      {
-        // we keep only the line with a reverse line found
-        PP3d::LinePtr lLineRev = lLine->getReverseLineByOwner();
-        if( lLineRev != nullptr && lVisit.cSetLines.contains(lLineRev) )
-          {
-            lReverseLinesFound.insertObj( lLine );
-            lReverseLinesFound.insertObj( lLineRev );
-
-            // keep their facets
-            PP3d::FacetPtr lFac =  GetOwnerFacetFromLine( lLineRev );
-            if( lFac != nullptr )
-              {
-                lFacetsToMerge.insertObj( lFac );
-                
-                for( PP3d::OwnerPtr lOwner : lFac->getOwners() )
-                  lOwners.insertObj( lOwner );
-              }
-            
-            PP3d::FacetPtr lFac2 =  GetOwnerFacetFromLine( lLine );
-            if( lFac2 != nullptr )
-              {
-                lFacetsToMerge.insertObj( lFac2 );              
-                for( PP3d::OwnerPtr lOwner :lFac2->getOwners() )
-                  lOwners.insertObj(lOwner);
-              }
-          }
-      }
-    
-    cout << "lReverseLinesFound:" << lReverseLinesFound.size()
-         << " lFacetsToMerge:" << lFacetsToMerge.size() << endl ;
-
-    
-    if( lOwners.size() > 1 )
-      {
-        fl_alert( "Command canceled : Selected facets have too many owner");
-        return nullptr;
-      }
-     
-    if( lReverseLinesFound.size() < 1  || lFacetsToMerge.size() < 2 )
-      {
-        fl_alert( "Command canceled : facets are no mergeables ");
-        return nullptr;
-      }
-
-    PP3d::PolyPtr lPoly = nullptr;
-    for(  PP3d::OwnerPtr lOwner:lOwners )
-      {
-        if( lOwner->getType() == PP3d::ShapeType::Poly )
-          lPoly = (PP3d::PolyPtr)lOwner;
-      }
-    
-    if( lPoly == nullptr  )
-      {
-        fl_alert( "Command canceled : Owner of facets are not Polyedre");
-        return nullptr;
-      }
-    
-    
-    if( lPoly->getNbFacets() == 1 )
-      {
-        return nullptr;
-      }
-     
-    // Remove the reverses lines from facets
-    RemoveFromOwners<PPu::HashSetPtr<PP3d::Line> >( lReverseLinesFound );
-    
-
-    PP3d::FacetPtr lNewFac = iBase->getNewFacet();
-    
-    // Put all the remaining lines  from facets found into the new facet
-    // and delete facets
-
-    PP3d::LinePtr lFirstLine = nullptr;
-    PP3d::LinePtr lCurLine   = nullptr;
-
-    // but we must add line in good order !
-    PPu::HashMapPtr<PP3d::PointPtr, PP3d::Line> cHashLines;
-    for(PP3d:: FacetPtr lMergeFacet : lFacetsToMerge )
-      {
-        // Keep lines from facet               
-        PP3d::LinePtrVect lLines = lMergeFacet->getLines();
-        
-        // remove them from the facet
-        RemoveFromOwners<PP3d::LinePtrVect>( lLines );
-        
-        for( PP3d::LinePtr lLine : lLines )
-          {
-            if( lFirstLine == nullptr )
-              {
-                lFirstLine = lCurLine = lLine;
-              }
-            else
-              {              
-                cHashLines.insertObj( lLine->first(), lLine );
-              }
-          }
-      }
-
-    cout << "hash lines:" << cHashLines.size() << endl;
-    
-    if( lCurLine != nullptr )
-      {
-        cout << " create new facet ";
-        for( PP3d::PIndex i=0; i< cHashLines.size()+1; i++ )
-          {
-            cout << " i:" << i ;
-            lNewFac->addLine( lCurLine );
-            lCurLine = cHashLines.findObj( lCurLine->second() );
-            if( lCurLine == lFirstLine || lCurLine == nullptr)
-              break;
-          }
-      }    
-    
-
-    for(PP3d:: FacetPtr lMergeFacet : lFacetsToMerge )
-      {
-        // Remove the merge facet from the owner 
-        lPoly->removeFacet( lMergeFacet ); // ->removeFromOwners();
-
-        // eliminate the merge facet
-        iBase->freeFacet( lMergeFacet );
-      }
-    
-    iBase->validEntity( lNewFac, true );
-
-    
-    lPoly->addFacet( lNewFac );
-    return lNewFac;
-  }
-  //----------------------------------------
   void Canvas3d::bridgeFacets()
   {
     if( TheSelect.getSelectType() == PP3d::SelectType::Facet
@@ -1987,6 +1829,230 @@ namespace M3d {
 
       }
   }
+  //----------------------------------------
+  bool Canvas3d::mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect )
+  {
+    // Il suffit de supprimer les lignes communes aux facettes, de detruire les facettes
+    // concernées et d'en creer une avec les lignes qui reste (it's so easy :) 
+    // mais il peut y avoir plusieurs groupes de facettes séparés, voir plusieur polyedre concerné
+    // ce qui complique le probléme
+    
+    PPu::HashSetPtr<PP3d::Facet>   lFacetsToMerge;  // Set pour eviter les doublons
+    PPu::HashSetPtr<PP3d::Line>    lReverseLinesFound; // Set pour eviter les doublons
+    PPu::HashSetPtr<PP3d::Entity>  lOwners;  // Set pour eviter les doublons
+ 
+    PPu::HashSetPtr<PP3d::Facet>  lNewFacets; 
+
+    PP3d::SortEntityVisitor lVisit;
+    iSelect->execVisitorOnEntity( lVisit );
+    
+    if( lVisit.cSetFacets.size() < 2 )
+      {
+        //FAIRE UNE FONCTION D'alerte/log !!!
+        fl_alert( "Command canceled : you must select at least two facets");
+        return false;
+      }
+
+    
+    cout << "Merge Facets " << std::dec 
+         << " Pts:" <<  lVisit.cSetPoints.size() <<  ":" << lVisit.cVectPoints.size()
+         << " Lines:" << lVisit.cSetLines.size() <<  ":" << lVisit.cVectLines.size()
+         << " Facets:" << lVisit.cSetFacets.size() << endl;
+    
+    //=================================================
+    // Search and store line with reverse into lFacetsToMerge
+    int j=0;
+    for( PP3d::LinePtr lLine :  lVisit.cSetLines )
+      {
+        cout << " j:"<< std::dec <<  j++ ;
+        // we keep only the line with a reverse line found
+        PP3d::LinePtr lLineRev = lLine->getReverseLineByOwner();
+        if( lLineRev != nullptr && lVisit.cSetLines.contains(lLineRev) )
+          {
+            lReverseLinesFound.insertObj( lLine );
+            lReverseLinesFound.insertObj( lLineRev );
+
+            // keep their facets
+            PP3d::FacetPtr lFac =  GetOwnerFacetFromLine( lLineRev );
+            if( lFac != nullptr )
+              {
+                for( PP3d::OwnerPtr lOwner : lFac->getOwners() )
+                  {
+                    if( lOwner->getType() != PP3d::ShapeType::Poly )
+                      {
+                        cout << "Owner is not a Poly" << endl;
+                        continue; // On ne veut que des facettes de Polyedres
+                      }
+                    lOwners.insertObj( lOwner );
+                  }
+                lFacetsToMerge.insertObj( lFac );              
+            }
+            
+            PP3d::FacetPtr lFac2 =  GetOwnerFacetFromLine( lLine );
+            if( lFac2 != nullptr )
+              {
+                lFacetsToMerge.insertObj( lFac2 );              
+                for( PP3d::OwnerPtr lOwner :lFac2->getOwners() )
+                  lOwners.insertObj(lOwner);
+              }
+          }
+      }
+    //=================================================
+      
+    if( lReverseLinesFound.size() < 1  || lFacetsToMerge.size() < 2 )
+      {
+        fl_alert( "Command canceled : facets are no mergeables ");
+        return false;
+      }
+   
+    cout << " lReverseLinesFound:" << lReverseLinesFound.size()
+         << " lFacetsToMerge:" << lFacetsToMerge.size()
+         << " Owner:" << lOwners.size() << endl ;
+    
+        // Remove the reverses lines from facets
+    
+    RemoveFromOwners<PPu::HashSetPtr<PP3d::Line> >( lReverseLinesFound );
+    
+ 
+    PP3d::PolyPtr lPoly = nullptr;
+    //=================================================
+    // Pour chaque poly
+    for(  PP3d::OwnerPtr lOwner:lOwners )
+      {        
+        lPoly = (PP3d::PolyPtr)lOwner;
+        if( lPoly == nullptr  )
+          {
+            fl_alert( "Command canceled : Owner of facets are not Polyedre");
+            continue;
+          }
+    
+    
+        if( lPoly->getNbFacets() == 1 )
+          {
+            continue;
+          }
+
+        // Tant que le traitement utilise les facettes
+        PP3d::PIndex lMemoNbFacetsToMerge = 0;
+        while( lFacetsToMerge.size() != lMemoNbFacetsToMerge )
+          {
+            cout << "lFacetsToMerge:" << lFacetsToMerge.size()
+                 << " memo:" << lMemoNbFacetsToMerge << endl;
+            
+            lMemoNbFacetsToMerge = lFacetsToMerge.size();
+            PP3d::FacetPtr lFac =  mergeFacetsOneRound( iBase, lPoly, lFacetsToMerge );
+            
+            if( lFac )
+              {
+                lNewFacets.insertObj( lFac ); 
+              }
+          }
+      }
+   //=================================================
+
+    if( lNewFacets.size() > 0 )
+      {
+        for( PP3d::FacetPtr lFac : lNewFacets )
+          TheSelect.addEntity( lFac );
+        return true;
+      }
+    return false;
+  }
+  //----------------------------------------
+  // Resoud le probleme pour un groupe de facette et un polyedre
+    PP3d::FacetPtr Canvas3d::mergeFacetsOneRound( PP3d::DataBase * iBase,
+                                                  PP3d::PolyPtr    lPoly,
+                                                  PPu::HashSetPtr<PP3d::Facet>  &  lFacetsToMerge )
+  {     
+    PP3d::FacetPtr lNewFac = iBase->getNewFacet();
+    
+    // Put all the remaining lines  from facets found into the new facet
+    // and delete facets
+
+    PP3d::LinePtr lFirstLine = nullptr;
+    PP3d::LinePtr lCurLine   = nullptr;
+
+ 
+    PPu::HashSetPtr<PP3d::Facet>   lFacetsToDelete;
+    
+    // We must add lines in good order !
+    
+    { // first sort them
+      PPu::HashMapPtr<PP3d::PointPtr, PP3d::Line> cHashLines;
+      
+      for(PP3d::FacetPtr lMergeFacet : lFacetsToMerge )
+        {          
+          if( lMergeFacet->myPoly() != lPoly )
+            {
+              cout << "Not the good poly" << endl;
+              continue;  // not the good poly
+            }
+          
+          // Keep lines from facet               
+          PP3d::LinePtrVect lLines = lMergeFacet->getLines();
+          
+
+          
+          for( PP3d::LinePtr lLine : lLines )
+            {
+              if( lFirstLine == nullptr )
+                {
+                  lFirstLine = lCurLine = lLine;
+                }
+              else
+                {              
+                  cHashLines.insertObj( lLine->first(), lLine );
+              }
+            }
+        }
+      cout.setf(std::ios_base::dec, std::ios_base::basefield);
+      cout << "merge lines:" << cHashLines.size()+1 << endl;
+
+     
+    if( lCurLine != nullptr )
+      {          
+        cout << " create new facet ";
+        PP3d::PIndex i=0;
+        for( i=0; i< cHashLines.size()+1; i++ )
+          {
+            // Pour ne detruire que les facettes utilisées
+            PP3d::FacetPtr lFac = lCurLine->myFacet();
+            if( lFac != nullptr )
+              lFacetsToDelete.insertObj( lFac );
+            
+            lCurLine->removeFromOwners();
+            
+            cout << " i:" << i ;
+            lNewFac->addLine( lCurLine );
+            PP3d::PointPtr lCurPt = lCurLine->second();
+            lCurLine = cHashLines.findObj(lCurPt );
+            
+           
+            
+            if( lCurLine == lFirstLine || lCurLine == nullptr)
+              break;
+          }
+      }     
+    }
+
+    cout << " remove facet nb:" << lFacetsToDelete.size() << endl;
+
+    for(PP3d:: FacetPtr lFacetToDel : lFacetsToDelete )
+      {
+        // Remove the merge facet from the owner 
+        lPoly->removeFacet( lFacetToDel ); // ->removeFromOwners();
+        lFacetsToMerge.removeObj( lFacetToDel );
+        // eliminate the merge facet
+        iBase->freeFacet( lFacetToDel );
+      }
+    
+    iBase->validEntity( lNewFac, true );
+    
+    lPoly->addFacet( lNewFac );
+    
+    return lNewFac;
+  }
+
   //***************************************
 
 

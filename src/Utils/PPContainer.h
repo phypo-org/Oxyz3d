@@ -27,7 +27,14 @@ namespace PPu {
     {
       this->erase( iObjPtr );
     }
-  };
+     //--------------------------------------
+    template <class CONTAINER>
+    void removeObjs(  CONTAINER iCont  )
+    {
+      for( OBJECT* lObjPtr: iCont )
+        this->erase( lObjPtr );
+    }
+ };
  
   //**************************************
 

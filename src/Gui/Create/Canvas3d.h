@@ -144,9 +144,14 @@ namespace M3d {
     //=========== Functions =============
     void bridgeFacets();
 
-    PP3d::FacetPtr mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect);
-    //=========== MENUS =================
+    bool mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect);
+  protected:
+    PP3d::FacetPtr mergeFacetsOneRound( PP3d::DataBase * iBase,
+                                        PP3d::PolyPtr    lPoly,
+                                        PPu::HashSetPtr<PP3d::Facet>  &  lFacetsToMerge );
 
+    //=========== MENUS =================
+      public:
     void traceMode() const;
 		
     friend class Win3d;

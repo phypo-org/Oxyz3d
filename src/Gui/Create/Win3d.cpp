@@ -8,6 +8,7 @@
 #include "SelFunct.h"
 
 #include "Gui/MyFloatInput.h"
+#include <FL/Fl_File_Chooser.H>
 
 
 namespace M3d {
@@ -447,20 +448,55 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File    StrMenu_OpenBase,    "^o", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
-                                                            Fl_File_Chooser::SINGLE,
-                                                            "Open Oxyz3d database");	      
-                 lFc->callback( OpenBaseCB );
-                 lFc->show();
+                 //                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
+                 //                                                            Fl_File_Chooser::SINGLE,
+                 //                                                            "Open Oxyz3d database");	      
+                 //                 lFc->callback( OpenBaseCB );
+                 //                 lFc->show();
+
+                 char* lFile =  fl_file_chooser(  "Open Oxyz3d database",
+                                                                    "*.oxyz", nullptr );
+                 if( lFile != nullptr )
+                   {
+                     	// Une Nlle base
+	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+	
+	TheSelect.removeAll();
+
+	std::string lFilename = lFile;
+	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
+	if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
+	  {
+	    //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
+	    
+	    PushHistory(); // on sauve l'ancienne base dans l'historique
+	    
+	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
+	    //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
+	    TheCreat.setDatabase( luBase, false ); // on prend la nlle base
+	    //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;
+	    
+	    MyPref.cLastSave = lFilename;
+	    TheCreat.redrawAll(PP3d::Compute::FacetAll);
+	  }
+	else
+	  {
+	    fl_alert( "Open file <%s> failed", lFilename.c_str() );
+	  }
+ 
+                   }
+
+                 
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 
                  Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
                                                             Fl_File_Chooser::SINGLE,
                                                             "Import Oxyz3d database");	      
-                 lFc->callback( MergeBaseCB );
+                 //  lFc->callback( MergeBaseCB );
                  lFc->show();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL,this, FL_MENU_DIVIDER);
