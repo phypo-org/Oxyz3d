@@ -1,4 +1,4 @@
-ROOT_POS=../
+ROOT_POS=../../
 
 
 include $(ROOT_POS)../Makefile.common

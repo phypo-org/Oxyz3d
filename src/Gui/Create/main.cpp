@@ -10,6 +10,8 @@
 
 #include "Dialogs.h"
 
+#include <iostream>
+
 using namespace M3d;
 
 
@@ -17,6 +19,8 @@ using namespace M3d;
 
 int main(int argc, char **argv) 
 {
+  PPu::ErrLog::Instance().init( & std::cout, & std::cerr, nullptr );
+  
   std::vector<std::string> lVectParam;    
 
  

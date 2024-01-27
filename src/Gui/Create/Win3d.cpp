@@ -490,7 +490,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
-    cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
+    /*   cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  
                  Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
@@ -500,7 +500,7 @@ namespace M3d {
                  lFc->show();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL,this, FL_MENU_DIVIDER);
-
+    */
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBase,    "^s",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::

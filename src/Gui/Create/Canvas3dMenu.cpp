@@ -840,13 +840,13 @@ namespace M3d {
                    lVisit.addOwnersOf( lVisitPt ); // on recupere les owners des points
                    if( lVisit.cVectPolys.size() == 0)
                      {
-                       fl_alert( "No polyedre found for select points ");
+                       WARN_DIAG( "No polyedre found for select points ");
                        return;
                      }
 	    
                    if( lVisit.cSetPolys.size() > 1)
                      {
-                       fl_alert( "Selected points have not the same owner");
+                       WARN_DIAG( "Selected points have not the same owner");
                        cout << "Selected points have not the same owner" << endl;
                        for( PP3d::EntityPtr lEntity : lVisit.cVectPolys )
                          {
@@ -902,7 +902,7 @@ namespace M3d {
                      {
                        if(lNbErr == 0 )
                          {		    
-                           fl_alert( "No polyedre found for select points ");
+                           WARN_DIAG( "No polyedre found for select points ");
                          }
                        lNbErr++;
                      }
@@ -1346,7 +1346,7 @@ namespace M3d {
                      if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
                      if( TheSelect.getNbSelected() < 2)
                        {
-                         fl_alert( "At least two facets needed");
+                         WARN_DIAG( "At least two facets needed");
                          return;
                        }
                      // first facet of selection only use for give normal
@@ -1849,7 +1849,7 @@ namespace M3d {
     if( lVisit.cSetFacets.size() < 2 )
       {
         //FAIRE UNE FONCTION D'alerte/log !!!
-        fl_alert( "Command canceled : you must select at least two facets");
+        WARN_DIAG( "Command canceled : you must select at least two facets");
         return false;
       }
 
@@ -1901,7 +1901,7 @@ namespace M3d {
       
     if( lReverseLinesFound.size() < 1  || lFacetsToMerge.size() < 2 )
       {
-        fl_alert( "Command canceled : facets are no mergeables ");
+        WARN_DIAG( "Command canceled : facets are no mergeables ");
         return false;
       }
    
@@ -1922,7 +1922,7 @@ namespace M3d {
         lPoly = (PP3d::PolyPtr)lOwner;
         if( lPoly == nullptr  )
           {
-            fl_alert( "Command canceled : Owner of facets are not Polyedre");
+            WARN_DIAG( "Command canceled : Owner of facets are not Polyedre");
             continue;
           }
     
