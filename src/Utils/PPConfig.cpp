@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "PPString.h"
-
+#include "PPDbgUtils.h"
 
 namespace PPu {
 
@@ -44,7 +44,7 @@ namespace PPu {
 
   bool PPConfig::readFile( std::istream &pIn  )
   {
-    char lLine[100000];
+    char lLine[200000];
   
     std::string lCurrentSection = "None";
     
@@ -83,7 +83,7 @@ namespace PPu {
 	char* lEgal = ::strchr(lCurrent, '=');
 	if( lEgal == nullptr )
 	  {
-	    DBG_INI(  "ReadIni error in section " << lCurrentSection << " >>>" );
+	    DBG_CONF(  "ReadIni error in section " << lCurrentSection << " >>>" );
 	    continue;
 	  }
 	*lEgal  = '\0';
@@ -94,7 +94,7 @@ namespace PPu {
 
 	if( lVar.length() == 0  )
 	  {
-	    DBG_INI( lCurrentSection << " >>>" << lLine );
+	    DBG_CONF( lCurrentSection << " >>>" << lLine );
 	    continue;
 	  }
 	std::string lKey = lCurrentSection;
@@ -115,12 +115,13 @@ namespace PPu {
     return true;
   }
 
- // utilisé par le RuleManager pour generer le fichier de config !
+ // utilisé pour generer le fichier de config !
   //--------------------------------------
   //--------------------------------------
   bool PPConfig::writeToFile( const std::string& iFileName  )
   {
     try {
+      // FAITE UN RENAME DE L'ANCIEN FICHIER
       std::ofstream lFileIni( iFileName,  std::ios::binary | std::ios::trunc );
       if( lFileIni )
 	{	  
@@ -177,7 +178,7 @@ namespace PPu {
   {   
     for( int i=1; i< iArgc-1; i++ )
       {	
-	DBG_INI( "PPConfig::readParam param : " << iArgv[i] );
+	DBG_CONF( "PPConfig::readParam param : " << iArgv[i] );
 	
 	if( cFilePathParam == iArgv[i] )
 	  {
@@ -212,7 +213,7 @@ namespace PPu {
     if( lIterator  != cData.end() )
       {
 	ioValue   = lIterator->second;
-	DBG_INI( "iniReadString [" << iSection << "]" << iVariable << "=" << ioValue );
+	DBG_CONF( "iniReadString [" << iSection << "]" << iVariable << "=" << ioValue );
 
 	return true;
       }

@@ -141,7 +141,7 @@ namespace PPu {
       return  lFullname;
     }
    //----------------------------------------------------  
-
+    static bool GetCurrentDir( std::string & oDir);   
     static bool DoMkdir( const std::string &, const mode_t iMode=DefaultDirMode, const mode_t iUMask = DefaultDirMask  );    
     static bool DoMkSubdir( const std::string & iRoot, const std::string & iSub, const mode_t iMode=DefaultDirMode, const mode_t iUMask=DefaultDirMask );
     static bool RemoveFile(const std::string &iFilename);

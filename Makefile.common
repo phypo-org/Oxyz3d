@@ -54,6 +54,7 @@ TARGET_DIR=$(REL_DIR)
 #---------------------------------------------
 
 
+
 ifdef DBG_LOG
 FLAGS_COMPIL_EXT += -DDBG_SESAM_ACTIVATED
 TARGET_DIR=$(DBG_DIR)

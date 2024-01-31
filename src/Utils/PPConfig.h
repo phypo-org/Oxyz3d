@@ -9,7 +9,7 @@
 #include <map>
 
 
-#include "ErrLog.h"
+#include "PPErrLog.h"
 
 
 #include "PPNonCopyable.h"
@@ -43,6 +43,7 @@ namespace PPu {
       bool readFile( int iArgc, char *iArgv[] );
       bool readConfigFiles();
 
+      bool writeToFile() { return writeToFile( cName ); }
       bool writeToFile( const std::string& iFileName  );
       bool writeToStream( std::ostream & oOut  ) const;
 

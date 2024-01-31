@@ -20,14 +20,15 @@
 #else
 #include <unistd.h>
 #endif
+#include <limits.h>
 
 #include <fcntl.h>
 #include <fstream> 
 #include <sstream> 
 #include <iostream>
 
-#include "ErrLog.h"
-
+#include "PPErrLog.h"
+#include "PPDbgUtils.h"
 
 
 
@@ -41,23 +42,22 @@ namespace PPu {
   const char* PPFile::sSepDirStr="/";
 #endif
 
-  std::string PPFile::sDirHTTP  = "HTTP/";
-  std::string PPFile::sDirDNSA  = "DNS_ANSWER/";
-  std::string PPFile::sDirDNSQ  = "DNS_QUERY/";
-  std::string PPFile::sDirSMTP  = "SMTP/";
-  std::string PPFile::sDirIP    = "IP/";
-  std::string PPFile::sDirX509  = "X509/";
-  std::string PPFile::sDirOther = "Other/";
 
-  // mdel ajouter pour test avec le dpi
-  std::string PPFile::sDirFile = "File/";
-  std::string PPFile::sDirCerts = "certs/";
-
-  // Pour Yara
-  std::string PPFile::sDirScanYara= "FOR_SCAN/";
 
   //************************************
 
+  bool PPFile::GetCurrentDir( std::string & oDir)
+  {
+    char lBuffer[PATH_MAX];
+    
+   if (getcwd(lBuffer, sizeof(lBuffer)) != nullptr) {
+     oDir = lBuffer;
+     return true;
+   }
+   ERRNO_LOG(  "PPFile::GetCurrentDir failed - " );
+   
+   return false;
+  }
   //----------------------------------------------------  
   bool PPFile::DoMkdir( const std::string & iPath, const mode_t iMode, const mode_t iUMask  )
   {
@@ -77,8 +77,7 @@ namespace PPu {
         if (_mkdir(iPath.c_str()) != 0 && errno != EEXIST)
 #else
        if (::mkdir(iPath.c_str(), iMode) != 0 && errno != EEXIST)
-#endif
-  
+#endif  
 	  {
 	    lStatus = false;	    
 	    
@@ -89,8 +88,7 @@ namespace PPu {
     else
       if (!S_ISDIR(lStat.st_mode))
 	{
-	  // File exists but is not a directory 
-	    
+	  // File exists but is not a directory 	    
 	  lStatus = false;
 	  errno = ENOTDIR;
 	  ERRNO_LOG("DoMkdir Create <<<" << iPath << ">>> not a directory" );
@@ -98,12 +96,7 @@ namespace PPu {
 	    
     return lStatus;
   }
-  //---------------------------------------------------------
-  // on veut extraire une  une les chaine d'un
-  
-  //---------------------------------------------------------	      
-  // TODO : remplacer par qq chose de mieux ?
-  
+  //---------------------------------------------------------  
   bool PPFile::DoMkSubdir( const std::string & iRoot, const std::string &  iSub, const mode_t iMode, const mode_t iUMask ) 
   {
     if( iSub.length() == 0)
@@ -333,45 +326,7 @@ namespace PPu {
 	ERR_LOG(  "PPFile::CopyFile -  failed - Exception : " << except.what() );
 	return false;
       }
-	/*
-    
-    int lFdIn = ::open( iIn.c_str(), O_RDONLY );
-    if( lFdIn == -1 )
-      {
-	ERRNO_LOG(  "CopyFile : Fail to open file for reading : " << iIn);
-	return false;
-      }
-    
-    int lFdOut = ::open( iOut.c_str(), O_WRONLY | O_CREAT | O_TRUNC, iMode );
-    if( lFdOut == -1 )
-      {
-	ERRNO_LOG(  "CopyFile : Fail to open file for writing : " << iOut);
-	return false;
-      }
 
-    // We want the data size of file in
-    off_t lEndPos = ::lseek( lFdIn, 0, SEEK_END );
-    if( lEndPos < 0 || ::lseek( lFdIn, 0, SEEK_SET ) < 0 )
-      {
-	ERRNO_LOG(  "CopyFile : Fail to get size for reading file : " << iIn);
-	return false;	
-      }
-    
-    DBG_FIL( "::tee " << lFdIn << " " << lFdOut << " " << lEndPos );
-
-    ssize_t lCode = ::tee( lFdIn, lFdOut, lEndPos, SPLICE_F_NONBLOCK );
-    if( lCode < 0 )
-      {
-	ERRNO_LOG(  "CopyFile : Fail to copy data (tee) : " << iIn << " to " << iOut );       
-	return false;
-      }
-    
-    if( lCode != lEndPos )
-      {
-	ERR_LOG( "CopyFile : Fail to copy data : size don't match : " << lCode << "<>" << lEndPos << " file " << iIn << " -> " << iOut);
-	return false;
-      }
-	*/
 
     return true;
   }

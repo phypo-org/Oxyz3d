@@ -1,25 +1,26 @@
-#include "ErrLog.h"
+#include "PPErrLog.h"
 
 #include <FL/fl_ask.H>
 
 namespace PPu {
 
   using namespace std;
-  
+
+  int PPErrLog::sVerbose=0;
 
   //***************************************************
-  ErrLog::ErrLog()
+  PPErrLog::PPErrLog()
   {
     ;
   }
   //-----------------------------------------------
-  ErrLog::~ErrLog()
+  PPErrLog::~PPErrLog()
   {
     ;
   }  
   //-----------------------------------------------
   void
-  ErrLog::init( std::ostream *iOut, std::ostream *iErr, std::ostream *iConsoleOut )
+  PPErrLog::init( std::ostream *iOut, std::ostream *iErr, std::ostream *iConsoleOut )
   {
     cOut = iOut;
     cErr = iErr;
@@ -27,7 +28,7 @@ namespace PPu {
   }
   //-----------------------------------------------
   std::ostream &
-  ErrLog::initMsg( LogTypeMsg iTypeMsg, bool iAlert )
+  PPErrLog::initMsg( LogTypeMsg iTypeMsg, bool iAlert )
   {
     cTypeMsg = iTypeMsg;
     cAlert   = iAlert;
@@ -36,7 +37,7 @@ namespace PPu {
   }
   //-----------------------------------------------
   void
-  ErrLog::trace()
+  PPErrLog::trace()
   {
     if( cTypeMsg == LogMsgInfo)
       {
@@ -76,13 +77,13 @@ namespace PPu {
   }
   //-----------------------------------------------
   const std::string &
-  ErrLog::GetLogTypeMsg  ( LogTypeMsg iTyp)
+  PPErrLog::GetLogTypeMsg  ( LogTypeMsg iTyp)
   {
     return LogTypeMsgStr[iTyp];
   }
   //-----------------------------------------------  
   const std::string  &
-  ErrLog::GetAlertTypeMsg( LogTypeMsg iTyp)
+  PPErrLog::GetAlertTypeMsg( LogTypeMsg iTyp)
   {
     return AlertTypeMsgStr[iTyp];
   }  

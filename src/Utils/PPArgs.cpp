@@ -1,5 +1,5 @@
 #include "PPArgs.h"
-#include "ErrLog.h"
+#include "PPErrLog.h"
 #include "PPString.h"
 
 #include "string.h"

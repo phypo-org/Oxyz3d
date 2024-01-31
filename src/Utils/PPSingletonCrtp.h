@@ -12,7 +12,7 @@ class PPSingletonCrtp : public virtual PPNonCopyable{
   static inline CLASS_CHILD* sInstance = nullptr;
   
 public:
-  static inline CLASS_CHILD& Instance()
+  static inline CLASS_CHILD & Instance()
   {
     if( sInstance == nullptr )
       {

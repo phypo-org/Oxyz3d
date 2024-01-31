@@ -154,6 +154,8 @@ namespace M3d {
     ,cDatabase( pDatabase )
   {    
     //================
+    // cMenubar.label("");
+    cMenubar.position( 0, 0 );
      cY = cMenubar.h();
     int lH = (int)(((float)cMenubar.h())*0.6f);
     int lW = 50;
@@ -425,7 +427,7 @@ namespace M3d {
 			
     //=================================================================
 		
-
+    
     
     //================================
     ////////////////    cMenubar.add(StrMenu_File, "",MyMenuCallback, this);
@@ -455,52 +457,55 @@ namespace M3d {
                  //                 lFc->show();
 
                  char* lFile =  fl_file_chooser(  "Open Oxyz3d database",
-                                                                    "*.oxyz", nullptr );
+                                                  "*.oxyz", nullptr );
                  if( lFile != nullptr )
                    {
-                     	// Une Nlle base
-	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+                     // Une Nlle base
+                     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
 	
-	TheSelect.removeAll();
+                     TheSelect.removeAll();
 
-	std::string lFilename = lFile;
-	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
-	if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
-	  {
-	    //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
-	    
-	    PushHistory(); // on sauve l'ancienne base dans l'historique
-	    
-	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	    //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
-	    TheCreat.setDatabase( luBase, false ); // on prend la nlle base
-	    //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;
-	    
-	    MyPref.cLastSave = lFilename;
-	    TheCreat.redrawAll(PP3d::Compute::FacetAll);
-	  }
-	else
-	  {
-	    fl_alert( "Open file <%s> failed", lFilename.c_str() );
-	  }
- 
-                   }
-
-                 
+                     std::string lFilename = lFile;
+                     //	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
+                     if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
+                       {
+                         //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;	    
+                         PushHistory(); // on sauve l'ancienne base dans l'historique	    
+                         luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
+                         //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
+                         TheCreat.setDatabase( luBase, false ); // on prend la nlle base
+                         //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;	    
+                         MyPref.cLastSave = lFilename;
+                         TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                       }
+                     else
+                       {
+                         ERR_DIAG( "Open file " << lFilename << " failed." );
+                       } 
+                   }                 
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
-    /*   cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
+    cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
-                                                            Fl_File_Chooser::SINGLE,
-                                                            "Import Oxyz3d database");	      
-                 //  lFc->callback( MergeBaseCB );
-                 lFc->show();
+              char* lFile =  fl_file_chooser(  "Merge Oxyz3d database",
+                                                  "*.oxyz", nullptr );
+                 if( lFile != nullptr )
+                   {
+                     PushHistory();
+                     
+                     std::string lFilename = lFile;
+                     if( OpenBase( TheCreat.getDatabase(), lFilename, false ) ) // on change les id de la base lu
+                       {
+                         TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                       }
+                     else
+                       {
+                         ERR_DIAG( "Merge file " << lFilename << " failed." );
+                       } 
+                   }                                                                            
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL,this, FL_MENU_DIVIDER);
-    */
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBase,    "^s",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -508,7 +513,7 @@ namespace M3d {
                    {
                      if( SaveBase( TheCreat.getDatabase(), MyPref.cLastSave, 0 ) == false )
                        {
-                         fl_alert( "Saving database in <%s> failed",  MyPref.cLastSave.c_str());
+                         ERR_DIAG( "Saving database in " << MyPref.cLastSave << " failed" );
                        }
                    }
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -643,7 +648,7 @@ namespace M3d {
     
     cMenubar.add( StrMenu_Select StrMenu_SelectLess,   "",  LAMBDA
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                  fl_alert( "Less not implemented");
+                  INFO_DIAG( "Less not implemented");
 
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   ADBMAL, this);
@@ -716,12 +721,12 @@ namespace M3d {
                    {			
                      if( TheCreat.addAxis( lVisit.cVectPoints[lSz-2], lVisit.cVectPoints[lSz-1]) ==false)
                        {
-                         fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+                         ERR_LOG( "Creation of axe failed, perhaps same coordinates ?" );
                        }
                    }
                  else
                    {
-                     fl_alert( "We must have at least two points to make an axis");
+                     INFO_LOG( "We must have at least two points to make an axis");
                    }		     
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
@@ -735,11 +740,11 @@ namespace M3d {
                    {			
                      if( TheCreat.addAxis( lVisit.cVectLines[0]->first(), lVisit.cVectLines[0]->second()) ==false)
                        {
-                         fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+                         ERR_LOG( "Creation of axe failed, perhaps same coordinates ?" );
                        }
                    }
                  else {
-                   fl_alert( "We must have at least a line to make an axis");
+                   INFO_LOG( "We must have at least a line to make an axis");
                  }		     
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
@@ -759,11 +764,11 @@ namespace M3d {
                      
                      if( TheCreat.addAxis( lCenter, lNorm ) == false)
                        {
-                         fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+                         ERR_LOG( "Creation of axe failed, perhaps same coordinates ?" );
                        }			
                    }
                  else {
-                   fl_alert( "We must have at least on facet selected to make an axe with the normal");
+                   INFO_LOG( "We must have at least on facet selected to make an axe with the normal");
                  }               
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
@@ -777,12 +782,12 @@ namespace M3d {
                      PP3d::Point3d lNorm   = lVisit.cVectPoints[1]->get();
                      if( TheCreat.addAxis( lCenter, lNorm ) == false)
                        {
-                         fl_alert( "Creation of axe failed, perhaps same coordinates ?" );
+                         ERR_LOG( "Creation of axe failed, perhaps same coordinates ?" );
                        }					      
                    }
                  else
                    {
-                     fl_alert( "We must have two distinct points");
+                     INFO_LOG( "We must have two distinct points");
                    }
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
@@ -1065,7 +1070,7 @@ namespace M3d {
     //================================
 
 		
-    cuCanvas3d->cPopup = new	Fl_Menu_Button( 0, 0, 1, 1, "Popup");
+    cuCanvas3d->cPopup = new	Fl_Menu_Button( 100, 100, 1, 1, ""); // 100, 100 ne pas enlever
 
     
     end();

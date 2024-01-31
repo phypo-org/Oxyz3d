@@ -166,66 +166,6 @@ namespace M3d {
       }
   }
 
-  //-------------------------------------------
-  void OpenBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
-			  void            *cData)	// I - Data
-  {    
-    printf(" ReadCB filename = \"%s\"\n",  cFc->value() ?  cFc->value() : "(null)");        
-    
-    if( cFc->value()  )
-      {
-	// Une Nlle base
-	std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-	
-	TheSelect.removeAll();
-
-	std::string lFilename = cFc->value();
-	//	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
-	if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
-	  {
-	    //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
-	    
-	    PushHistory(); // on sauve l'ancienne base dans l'historique
-	    
-	    luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-	    //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
-	    TheCreat.setDatabase( luBase, false ); // on prend la nlle base
-	    //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;
-	    
-	    MyPref.cLastSave = lFilename;
-	    TheCreat.redrawAll(PP3d::Compute::FacetAll);
-	  }
-	else
-	  {
-	    fl_alert( "Open file <%s> failed", lFilename.c_str() );
-	  }
-      }
-  } 
-  //-------------------------------------------
-  // on ajoute a la base courante la nlle base
-  
-  void MergeBaseCB( Fl_File_Chooser *cFc,	// I - File chooser
-			    void            *cData)	// I - Data
-  {    
-    printf(" ReadCB filename = \"%s\"\n",  cFc->value() ?  cFc->value() : "(null)");        
-    
-    if( cFc->value()  )
-      {
-	PushHistory(); 
-
-	std::string lFilename = cFc->value();
-	if( OpenBase( TheCreat.getDatabase(), lFilename, false)) // On change les ID !!!!!!!!!!!!!!!!!!!!!
-	  {
-	    MyPref.cLastSave = lFilename;
-	    TheCreat.redrawAll(PP3d::Compute::FacetAll);
-	  }
-	else
-	  {
-	    fl_alert( "Open file <%s> failed", lFilename.c_str() );
-	    // A FAIRE : Restore de la base
-	  }
-      }
-  }
    //-------------------------------------------
   void ExportStlCB( Fl_File_Chooser * cFc, void * iUseSelect)
   {    

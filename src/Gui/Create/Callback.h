@@ -61,8 +61,6 @@ extern bool OpenBase( PP3d::DataBase * ioDatabase,const std::string & iName, boo
 extern bool ExportD3dObj( PP3d::DataBase * ioDatabase, const std::string & iName, void* iUseSelect );
 extern bool ImportD3dObj( PP3d::DataBase * ioDatabase, const std::string & iName );
 extern void SaveBaseCB( Fl_File_Chooser *cFc, void            *cData );
-extern void OpenBaseCB( Fl_File_Chooser *cFc, void            *cData);
-extern void MergeBaseCB( Fl_File_Chooser *cFc, void            *cData);
 extern void ExportD3dObjCB( Fl_File_Chooser *cFc, void            *cData);
 extern void ImportD3dObjCB( Fl_File_Chooser *cFc, void            *cData);
 extern void UndoCB(Fl_Widget*w, void*pData);

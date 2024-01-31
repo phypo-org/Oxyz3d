@@ -60,6 +60,7 @@ namespace M3d {
 
     Fl_Light_Button * cFileAutoSave;
     MyIntInput      * cFileAutoSaveFrequency;
+    MyIntInput      * cNbFileCycling;
     Fl_File_Input   * cFileDefaultDir;
  
 
@@ -94,7 +95,7 @@ namespace M3d {
     {
       Preference::Instance().resetToFile();
     }
-    
+
     //----------------------------------------
 #undef  GET_INT_VALUE
 #define GET_INT_VALUE(A) MyPref.A = atoi( DiagPref.A->value())
@@ -119,6 +120,14 @@ namespace M3d {
 	
       GET_BOOL_VALUE( cFileAutoSave);
       GET_INT_VALUE(  cFileAutoSaveFrequency );
+      if( MyPref.cFileAutoSaveFrequency < 30 )  MyPref.cFileAutoSaveFrequency = 30;
+      if( MyPref.cFileAutoSaveFrequency > 300 ) MyPref.cFileAutoSaveFrequency = 300;
+
+        
+      GET_INT_VALUE( cNbFileCycling );
+      if( MyPref.cNbFileCycling < 1 )  MyPref.cNbFileCycling = 1;
+      if( MyPref.cNbFileCycling > 10 ) MyPref.cNbFileCycling = 10;
+
       GET_FILE_VALUE( cFileDefaultDir );
 
       
@@ -178,9 +187,10 @@ namespace M3d {
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "File");
 	  lX = lMarge+300;;
 	  lY = lMarge;
-	  INTPUT_BOOL( cFileAutoSave,          "Auto save");
-	  INTPUT_INT(  cFileAutoSaveFrequency, "Auto save frequency");
-	  INTPUT_FILE( cFileDefaultDir,        "Default base path" );
+	  INTPUT_BOOL( cFileAutoSave,          "Autosave enabled");
+	  INTPUT_INT(  cFileAutoSaveFrequency, "Delay between autosav in seconds");
+	  INTPUT_INT(  cNbFileCycling,         "Number of cycling files");
+	  INTPUT_FILE( cFileDefaultDir,        "Name of autosav folder" );
 	  
 	  lGr->end();
 	  Fl_Group::current()->resizable(lGr);
@@ -278,12 +288,16 @@ namespace M3d {
       lY = lHgroup+lMarge*8;      
       Create<Fl_Button>( lMarge, lY, 75, 25, "OK", (Fl_Callback*)OkCB);     
       
-      Create<Fl_Button>( lMarge+200, lY, 75, 25, "Cancel", (Fl_Callback*)CancelCB );
+      Create<Fl_Button>( lMarge+150, lY, 75, 25, "Cancel", (Fl_Callback*)CancelCB );
       
-      Create<Fl_Button>( lMarge+400, lY, 75, 25, "Default", (Fl_Callback*)DefaultCB);     
+      Create<Fl_Button>( lMarge+300, lY, 75, 25, "Default", (Fl_Callback*)DefaultCB);     
       
-      Create<Fl_Button>( lMarge+600, lY, 100, 25, "Reload file", (Fl_Callback*)ReloadCB );
-      
+      Create<Fl_Button>( lMarge+450, lY, 100, 25, "Reload file", (Fl_Callback*)ReloadCB );
+      Create<Fl_Button>( lMarge+600, lY, 100, 25, "Save to file",
+                          [](Fl_Widget *w, void *pUserData) {
+                            Preference::Instance().saveInCurrentIni();
+                          });
+
       
       cMyWindow->end();		
       cMyWindow->show( 0, nullptr);

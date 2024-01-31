@@ -9,32 +9,47 @@
 #include "Gui/Preference.h"
 
 #include "Dialogs.h"
+#include "Gui/AgentAutoSav.h"
+
 
 #include <iostream>
 
 using namespace M3d;
+using namespace std;
 
 
 //-------------------------------------------
 
 int main(int argc, char **argv) 
 {
-  PPu::ErrLog::Instance().init( & std::cout, & std::cerr, nullptr );
+  PPu::PPErrLog::Instance().init( & std::cout, & std::cerr, nullptr );
   
   std::vector<std::string> lVectParam;    
 
- 
+  //---------------- Preference ------------------
+  TheCreat.getConfig().setFilename( "Oxyz3d.ini");
   if( TheCreat.getConfig().readFile( argc, argv) == false )
     {
       WARN_LOG( "Config file not found : " <<  TheCreat.getConfig().getFilename() );
-    }
-  
+    }  
 
   MyPref.initFromIni( TheCreat.getConfig() );
+
   
   PPu::PPArgs lArgs( argc, argv );
   MyPref.initFromArg( lArgs );
+  //---------------- Preference ------------------
+  {
+    std::string cTmp;
+    if( PPu::PPFile::GetCurrentDir(cTmp) )
+      {
+        MyPref.cCurrentDir = cTmp;
+      }
+  }
+  MyPref.initFromArgs(lArgs );
+
   
+
   Fl::use_high_res_GL(1);
  
  
@@ -62,7 +77,9 @@ int main(int argc, char **argv)
 
 
   
- 
+  AgentAutoSav lAutoSav; 
+  lAutoSav.run();
+  
   return Fl::run();
 }
 

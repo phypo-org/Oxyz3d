@@ -10,6 +10,8 @@
 #include "SavRead.h"
 #include "Selection.h"
 
+#include "Utils/PPErrLog.h"
+
 namespace PP3d {
 
 
@@ -28,31 +30,39 @@ namespace PP3d {
           lOut.open( iSavName );
           if( lOut.good() )
             {
-              std::cout << "<<<" <<  lOs.str()  << ">>>" << std::endl;
+              VERBOSELN4( "UndoHistory::sav " <<  lOs.str() );
               lOut << lOs.str() << std::flush ;
             }
         }
-  	
-	if( cCurrent >= 0 && cHistoSav.size() && cCurrent != getLast() )
-	  {
-	    //	    std::cout << "HISTO ERASE " << +cCurrent+1 << std::endl;
-	    cHistoSav.erase( cHistoSav.begin()+cCurrent+1, cHistoSav.end());
-	  }
+
+
+        if( cCurrent >= 0 && cHistoSav.size() && cCurrent != getLast() )
+          {
+            //	    std::cout << "HISTO ERASE " << +cCurrent+1 << std::endl;
+            cHistoSav.erase( cHistoSav.begin()+cCurrent+1, cHistoSav.end());
+          }
 	  
-	if( cHistoSav.size() >= cMaxHisto )
-	  {
-	    cHistoSav.erase(cHistoSav.begin());
-	  }
+        if( cHistoSav.size() >= cMaxHisto )
+          {
+            cHistoSav.erase(cHistoSav.begin());
+          }
 
-	cHistoSav.push_back( lOs.str() );
-	cCurrent = getLast();
+        { //==== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK ====
+          std::unique_lock<std::mutex> lock(cMyMutex);
+          
+          cHistoSav.push_back( lOs.str() );
+          cCurrent = getLast();
 	
-	//   std::cout << "###################################################" << std::endl;
-	//std::cout <<  "UndoHistory::sav "<< cCurrent << "<<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
-	// std::cout << "###################################################" << std::endl;
+          cLastTimeSav = PPu::PPDate::GetCurrentDateTimeFloat70();
+        }//===== UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK ====
+         
+        
+        //   std::cout << "###################################################" << std::endl;
+        //std::cout <<  "UndoHistory::sav "<< cCurrent << "<<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
+        // std::cout << "###################################################" << std::endl;
 
-	//	std::cout <<  "UndoHistory::sav <<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
-	 
+        //	std::cout <<  "UndoHistory::sav <<<<<"<< lOs.str() << ">>>>>>>>>>>>" << std::endl;
+          
 	return true;
       }
     return false;
@@ -60,14 +70,24 @@ namespace PP3d {
   //------------------------------ 
   bool UndoHistory::readPrev( DataBase & oDb, Selection *ioSel )
   {
+   { //===== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK =====
+      std::unique_lock<std::mutex> lock(cMyMutex);
 
-    if( cCurrent <= 0 )
-      {
-	cCurrent = 0;
-	return false;
-      }
+      
+      if( cCurrent <= 0 )
+        {
+          cCurrent = 0;
+          return false;
+        }
+
+      cLastTimeSav = PPu::PPDate::GetCurrentDateTimeFloat70();
     
-    cCurrent--;
+      cCurrent--;
+  
+    }//===== UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK =====
+
+
+    
 
     //    std::cout << "###################################################" << std::endl;
     //      std::cout <<  "UndoHistory::readPrev "<< cCurrent
@@ -84,7 +104,10 @@ namespace PP3d {
   //------------------------------ 
   bool  UndoHistory::readNext( DataBase & oDb, Selection *ioSel )
   {    
-    cCurrent++;
+    { //==== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK ====
+      std::unique_lock<std::mutex> lock(cMyMutex);
+
+      cCurrent++;
     if( cCurrent <= 0 )
       cCurrent = 1;
     
@@ -93,6 +116,11 @@ namespace PP3d {
 	cCurrent = getLast();
 	return false;
       }
+    
+    cLastTimeSav = PPu::PPDate::GetCurrentDateTimeFloat70();
+  
+    }//==== UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK ====
+
    
     // std::cout << "###################################################" << std::endl;
     // std::cout <<  "UndoHistory:readNext "<< cCurrent << " <<<<<"<< cHistoSav[cCurrent] << ">>>>>>>>>>>>" << std::endl;
@@ -106,25 +134,55 @@ namespace PP3d {
   //------------------------------ 
   void UndoHistory::cancelLastSav()
   {
-    cHistoSav.pop_back();
-    cCurrent = cHistoSav.size();
+    { //==== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK ====
+      std::unique_lock<std::mutex> lock(cMyMutex);
+
+      cHistoSav.pop_back();
+      cCurrent = cHistoSav.size();
+      
+    }//==== UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK ====
   }
+  //------------------------------ 
 
   void UndoHistory::setMaxHisto( size_t iVal ) {
     if( iVal < 4 )
       iVal = 4;
+
+    if( iVal >1024 )
+      iVal = 1024;
     
     size_t lOldMaxHisto = cMaxHisto;
     
     cMaxHisto = iVal;
 
     if( cMaxHisto < lOldMaxHisto )
-      {	
-	cHistoSav.erase( cHistoSav.begin(), cHistoSav.begin()-(lOldMaxHisto-cMaxHisto));	      cCurrent -= lOldMaxHisto-cMaxHisto;
+      { //==== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK ====      
+        std::unique_lock<std::mutex> lock(cMyMutex);
+
+
+      cHistoSav.erase( cHistoSav.begin(), cHistoSav.begin()-(lOldMaxHisto-cMaxHisto));	      cCurrent -= lOldMaxHisto-cMaxHisto;
 	if( cCurrent < 0 )
 	  cCurrent = 0;
-      }
+      } //==== UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK  UNLOCK ====
   }
+  //------------------------------ 
+  bool UndoHistory::externalThread_getSav(  PPu::PPDateTimeFloat70 iLastTimeSav, std::string & oResult )
+  {
+    //==== LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK  LOCK ====
+    std::unique_lock<std::mutex> lock(cMyMutex);
 
+    VERBOSELN3( "UndoHistory::externalThread_getSav last sav:" <<  iLastTimeSav
+             << " cLastTimeSav:" << cLastTimeSav << " diff:" << cLastTimeSav-iLastTimeSav );
+    if( cLastTimeSav <= iLastTimeSav ) return false;
+
+    VERBOSELN3( "UndoHistory::externalThread_getSav2 getLast:" <<  getLast()  );
+      
+    if( getLast() <= 0 )
+      return false;
+
+    oResult =  cHistoSav[ getLast()];
+
+    return true;
+  }
   //*************************************
 }

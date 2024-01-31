@@ -16,6 +16,8 @@ namespace M3d {
   class Preference : public virtual PPSingletonCrtp<Preference>{
       
   public:
+
+    std::string cCurrentDir=".";
     //Interface
     float cMouseWheel=15;
 
@@ -25,12 +27,13 @@ namespace M3d {
     const std::string sSaveDefault = "default.oxyz";
     std::string cLastSave = sSaveDefault;
 
-    
+    // AutoSave
     bool cFileAutoSave = true;
-    int  cFileAutoSaveFrequency= 5;
-    std::string cFileDefaultDir="Base";
-    
-    
+    int  cFileAutoSaveFrequency= 60;
+    int  cNbFileCycling= 3;
+    std::string cFileDefaultDir="3d/autosave";    
+     // AutoSave
+   
       
     //Dbg
     int cDbgEvt = 0;
@@ -59,11 +62,13 @@ namespace M3d {
       
     Preference();
     
-    void initFromIni( PPu::PPConfig & iConfig );    
-    void saveInIni( PPu::PPConfig & iConfig );    
-    void initFromArg( PPu::PPArgs   & iArgs );
-    void resetToDefault();
-    void resetToFile();
+    void initFromIni    ( PPu::PPConfig & iConfig );    
+    void initFromArgs   (  PPu::PPArgs & iArgs );    
+    bool saveInIni      ( PPu::PPConfig & iConfig );    
+    bool saveInCurrentIni ( );    
+    void initFromArg    ( PPu::PPArgs   & iArgs );
+    void resetToDefault ();
+    void resetToFile    ();
   };
   //*********************************
 
