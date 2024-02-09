@@ -17,6 +17,8 @@ namespace M3d {
       
   public:
 
+    static  std::vector<const char*> sSchemesStr;
+
     std::string cCurrentDir=".";
     //Interface
     float cMouseWheel=15;

@@ -75,8 +75,9 @@ namespace PPu {
       bool get ( const char* iSection, const char* iVariable, long double & oValue );
       bool get ( const char* iSection, const char* iVariable, bool & oValue );
 
-      bool set ( const char* iSection, const char* iVariable, const std::string &  oValue );
-      
+      bool set ( const char* iSection, const char* iVariable, const std::string & iValue );
+      bool set ( const char* iSection, const char* iVariable, const char* iValue );
+
       template <class TYPE>
       bool set( const char* iSection, const char* iVariable, const TYPE iValue )
       {

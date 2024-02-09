@@ -8,8 +8,17 @@
 #include "Shape/DebugVars.h"
 #include "Create/Creation.h"
 
-namespace M3d {
+#include <algorithm>
 
+#include <FL/Fl.H>
+
+namespace M3d {
+  std::vector<const char*> Preference::sSchemesStr= {
+    "none",
+    "plastic",
+    "gtk+",
+    "gleam"
+  };
   
   //*********************************
   Preference::Preference()
@@ -28,7 +37,9 @@ namespace M3d {
 #define INIT_HISTO( VAR ) iConfig.get( "Histo",  "Histo" #VAR, cHisto ## VAR  )
 #define INIT_FILE( VAR )  iConfig.get( "File",   "File"  #VAR, cFile ## VAR  )
 
-  //---------------------------------------
+#define INIT_VIEW( VAR )  iConfig.get( "View",   "View"  #VAR, cView ## VAR  )
+  
+ //---------------------------------------
   void Preference::resetToDefault()
   {
     cLastSave              = sSaveDefault;
@@ -77,7 +88,13 @@ namespace M3d {
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
     INIT_FILE( DefaultDir  );
-   
+
+    std::string lTmp;
+    if( iConfig.get( "View", "Scheme", lTmp ) )
+      {
+        if( std::find( sSchemesStr.begin(), sSchemesStr.end(), lTmp) != std::end(sSchemesStr))
+       Fl::scheme(lTmp.c_str() );		// change scheme
+      }
   }
   //---------------------------------------
   void Preference::initFromArgs( PPu::PPArgs & iArgs )
@@ -136,6 +153,14 @@ namespace M3d {
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
     INIT_FILE( DefaultDir  );
+
+    const char* lTmp = Fl::scheme();
+    if( lTmp != nullptr )
+      {
+        iConfig.set( "View", "Scheme", lTmp );
+      }
+
+    
     return  Creation::Instance().getConfig().writeToFile(); 
   }
   //---------------------------------------
@@ -182,6 +207,15 @@ namespace M3d {
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
     INIT_FILE( DefaultDir  );
+
+
+    
+    std::string lTmp;
+    if( iArgs.get( "Scheme", lTmp ) )
+      {
+        if( std::find( sSchemesStr.begin(), sSchemesStr.end(), lTmp) != std::end(sSchemesStr))
+            Fl::scheme(lTmp.c_str() );		// change scheme
+      }
   }
   //*********************************
  

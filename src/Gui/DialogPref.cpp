@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <fstream>
 
+
 #include <stdlib.h>
 #include <math.h>
 
@@ -38,10 +39,20 @@
 
 
 
+
+
 #define DiagPref M3d::DialogPref::Instance()
 
 namespace M3d {
+  /*
 
+  Preference::sSchemesStr= {
+    "none",
+    "plastic",
+    "gtk+",
+    "gleam"
+  };
+  */
   //************************
   class DialogPref  : public virtual PPSingletonCrtp<DialogPref>{
 
@@ -64,6 +75,7 @@ namespace M3d {
     Fl_File_Input   * cFileDefaultDir;
  
 
+    Fl_Choice       *cViewSchemeChoice;
 
 
     MyIntInput* cDbgEvt ;
@@ -77,6 +89,9 @@ namespace M3d {
     MyIntInput* cDbgTree;
     MyIntInput* cDbgFil;
     MyIntInput* cDbgIni;
+
+
+    
 
     
     //----------------------------------------
@@ -162,6 +177,8 @@ namespace M3d {
 #define INTPUT_VAR_INT(A,V,B) { A = new MyIntInput( lX, lY, 50, lH, B, V ); lY += A->h() + lMarge; ; A->value( std::to_string(V).c_str()); A->align(Fl_Align(  FL_ALIGN_LEFT) ); }
 
 #define INTPUT_BOOL(A,B) { A =  new Fl_Light_Button( lX0, lY, 250, lH, B ); lY += A->h() + lMarge; A->value( MyPref.A ); }
+
+    
   //----------------------------------------
     void init()
     {
@@ -241,11 +258,38 @@ namespace M3d {
 	//===================================
 	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "View");
-	  lX = lMarge;
+	  lX = lMarge+100;
 	  lY = lMarge;
+    
+          //-----------  Scheme  ------------
+          cViewSchemeChoice =  new Fl_Choice(lX,lY,140,25, "Appearance" );
+          const char * cCurrentSchemeStr = Fl::scheme();
+          size_t cCurrentScheme = 0;
+          for( size_t i=0; i< Preference::sSchemesStr.size(); i++ )
+            {
+              cViewSchemeChoice->add( Preference::sSchemesStr[i] );
+              if( cCurrentSchemeStr != nullptr && strcmp( cCurrentSchemeStr, Preference::sSchemesStr[i] ) == 0 )
+                {
+                  cCurrentScheme = i;
+                }
+            }
+          cViewSchemeChoice->value(cCurrentScheme);
+
+          cViewSchemeChoice->callback((Fl_Callback *) [](Fl_Widget *w, void *pUserData)
+                                     {
+                                       Fl_Choice  *lChoice = (Fl_Choice*)pUserData;
+                                       const char *lName = lChoice->text();
+                                       if ( lName ) {
+                                         Fl::scheme(lName);		// change scheme
+                                       }
+                                     }, cViewSchemeChoice);
+          //-----------  Scheme  ------------
+
 	  lGr->end();
 	  lGr->hide();
-	  Fl_Group::current()->resizable(lGr);
+      
+    	  Fl_Group::current()->resizable(lGr);
+ 
 	}
 	//===================================	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Debug");

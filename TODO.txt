@@ -2,7 +2,7 @@
 XXXXXXX - Grid
 XXXXXX  - Remplacer les callback par des lambda
 XXXXXXX - Ajouter un bouton et un niveau de selection supplementaire pour les
-  objets/groups (qui ne fait que desactive la selection des groupes)
+XXXXXXX  objets/groups (qui ne fait que desactive la selection des groupes)
 
 
 XXXXXX - Revoir l'architecture générale du code
@@ -13,7 +13,6 @@ XXXXXXX - Supprimer la base transform et remplacer par une propriete du genre
   les uns ou les autres
  ==>  faire une branche dans git pour tester
 
-=====================================================
 
 XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
   ObjectGroup, soit sous forme d'un GroupId commun à tout les objets
@@ -22,6 +21,22 @@ XXXXXXX  - Ajouter la notion de groupe d'objets , soit sous forme d'un
    . groupes recursif pouvant contenir d'autre groupes ?
    . possibilités de visualiser les membres d'un groupe (couleur) ?
    . possibilités d'ajouter ou de retirer des objets d'un groupes
+
+XXXXXXX Faire la destruction de facette
+XXXXXXX        bug: s'il y a plusieurs facettes disjointe la deuxieme devient
+XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
+
+
+XXXXXX - Ameliorer la gestion du dialogue de la sauvegarde et du chargement
+
+
+=====================================================
+- Import pour les .stl
+
+
+- avoir des menus avec une icones commes dans Wings (ajouter a fltk ? )
+- Normaliser les dimensions des objets 3d crées
+- Ajouter de nouvelles primitives (recuperer celles faites pour wings)
 
 
 
@@ -42,10 +57,6 @@ ccccc - Permettre la saisie de valeur au clavier pour les modifications
   
 
 
-- Mettre plus de fonctions de dessins 3d de Database dans un objet View et
- le mettre ainsi que l'objets de dessins dans un repertoire VIEW
-
-
 - mettre en place la sauvegarde de plan (comme pour les vecteurs) ne
   . mettre que deux points ?
   
@@ -63,18 +74,10 @@ Faire un autre bridge avec des points ajoués comme pour Wings3D
 - Faire la destruction de Ligne
 
 
-XXXXXXX Faire la destruction de facette
-XXXXXXX        bug: s'il y a plusieurs facettes disjointe la deuxieme devient
-XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
-
 - Faire la fusion des facettes si on detruit un point ou une ligne
 
 
 - Debuger la destruction des points
-
-
-- Ameliorer la gestion du dialogue de la sauvegarde et du chargement
-
 
 
 - Ameliorer l'interface des aimants (Magnets)
@@ -89,6 +92,17 @@ XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
 
 - Faire une tortue3d en logo pour générer des objets.
 
+=====================================================
+
+FAIRE DES ATELIERS (un peut comme Canvas3D qui peut etre considéré
+comme l'atelier de creation 3D)
+
+- Atelier transformation ?
+- Atelier articulation ?
+- Atelier animation ?
+- Atelier Couleur, lumiere, texture ...
+- Atelier 2D ?
+
 Atelier Scene :
   Avoir un autre niveau de database/visualisation/ergonomie avec des
   alias qui pointe vers les objets (un peu comme les sprites dans
@@ -98,8 +112,10 @@ Atelier Scene :
   différents
   . Aucune modificatins possibles des objets eux memes
   
-- Atelier transformation ?
-- Atelier articulation ?
-- Atelier animation ?
-- Atelier Couleur, lumiere, texture ...
-- Atelier 2D ?
+=====================================================
+
+- Transformer la lib Utils en PPUtils et la sortir d'Oxyz3d pour la
+  mettre dans Git !
+
+- Faire un repertoire Test directement dans Dev
+

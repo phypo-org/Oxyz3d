@@ -47,12 +47,12 @@ using namespace std;
 
 namespace M3d {
 
-#define StrMenu_Primitiv2D    "Primitive 2D      ..."
+#define StrMenu_Primitiv2D   "" // "Primitive 2D/"
 	
 #define StrMenu_CreateFacet     "Facet      ..."
 #define StrMenu_CreatePlane     "Plane      ..."
   
-#define StrMenu_Primitiv3D    "Primitive 3D      ..."
+#define StrMenu_Primitiv3D   "" // "Primitive 3D/"
 #define StrMenu_CreateCylinder  "Cylinder   ..."
 #define StrMenu_CreateSphere    "Sphere     ..."
 #define StrMenu_CreateCube      "Cube       ..."
@@ -62,7 +62,7 @@ namespace M3d {
 #define StrMenu_CreateDodec     "Dodecaedre ..."
 #define StrMenu_CreateIcosahe   "Icosaedre  ..."
 	
-#define StrMenu_CreateShape          "New Shape "
+#define StrMenu_CreateShape        "" //  "From input points/"
 #define StrMenu_CreateShapeLine       "Line"
 #define StrMenu_CreateShapePolyline   "Polyline"
 #define StrMenu_CreateShapeFacet      "Facet"
@@ -1375,64 +1375,74 @@ namespace M3d {
   {
     pMenu.label( " Create ");
     
+     pMenu.add( StrMenu_Primitiv3D StrMenu_CreateCube ,    "^c",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
+               }, this); 
+
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateCylinder, "y",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER );
+               }, this);  
+    
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateSphere,   "s",   
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::SPHERE  );
+               }, this, FL_MENU_DIVIDER);  
+  
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateTetra,    "^t",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TETRA );
+               }, this);   
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreatePyramid,  "^p",  
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PYRAMID  );
+               }, this);   
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateOcto,     "^o",   
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
+               }, this);  
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateDodec,    "^d",   
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::DODEC  );
+               }, this);  
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateIcosahe,  "^i", 
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
+               }, this, FL_MENU_DIVIDER);
+
+    
+
+    //==============
+    pMenu.add( StrMenu_CallDialoDiagSub, "", LAMBDA
+               CallDialogSubDiv( slFlagDialog, lCanvas );
+               ADBMAL, this, FL_MENU_DIVIDER);
+
+
+    
     int lMenuFlagActif=0;
-    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreateFacet, "^c",
+    pMenu.add( StrMenu_Primitiv2D StrMenu_CreateFacet, "^c",
                [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::FACET_N  );
                }, this);
 
     
-    pMenu.add( StrMenu_Primitiv2D "/" StrMenu_CreatePlane,    "",  
+    pMenu.add( StrMenu_Primitiv2D  StrMenu_CreatePlane,    "",  
                [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
-               }, this);
-
- 
-
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCylinder, "y",  
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CYLINDER );
-               }, this);  
-    
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateSphere,   "s",   
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::SPHERE  );
-               }, this);  
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateCube ,    "^c",  
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
-               }, this);   
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateTetra,    "^t",  
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TETRA );
-               }, this);   
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreatePyramid,  "^p",  
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PYRAMID  );
-               }, this);   
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateOcto,     "^o",   
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::OCTO  );
-               }, this);  
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateDodec,    "^d",   
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::DODEC  );
-               }, this);  
-    pMenu.add( StrMenu_Primitiv3D "/" StrMenu_CreateIcosahe,  "^i", 
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
                }, this, FL_MENU_DIVIDER);
 
+ 
     // Ajouter sphere (2 types differents)
     // Ajouter cone
     // Ajouter cylindre (revolution) (disque,  anneau si troue)
@@ -1452,7 +1462,7 @@ namespace M3d {
 	lMenuFlagActif=0;
       }
     
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeLine, "", LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeLine, "", LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if( TheInput.getNbCurrentPoints() == 2 )
                 {
@@ -1473,7 +1483,7 @@ namespace M3d {
       {
  	lMenuFlagActif=0;
       }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeFacet, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if( TheInput.getNbCurrentPoints() >= 3 )
                 {
@@ -1488,7 +1498,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL , this,lMenuFlagActif);
     
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacetP, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeFacetP, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if( TheInput.getNbCurrentPoints() >= 3 )
                 {
@@ -1504,7 +1514,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL, this,lMenuFlagActif);
     
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeFacet2P, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeFacet2P, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if( strcmp( m->label(), StrMenu_CreateShapeFacet2P ) == 0)
                 {
@@ -1530,7 +1540,7 @@ namespace M3d {
       {
  	lMenuFlagActif=0;
       }
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapePolyline, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapePolyline, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
@@ -1546,7 +1556,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this,   lMenuFlagActif);
     
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSpline, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeBSpline, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
@@ -1562,7 +1572,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
         
-    pMenu.add(StrMenu_CreateShape "/" StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
+    pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
@@ -1578,6 +1588,8 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
 
+
+    
     //===== Revol
     lMenuFlagActif = 0;
     if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
@@ -1620,11 +1632,6 @@ namespace M3d {
                CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_ENTRY  );
                ADBMAL, this, FL_MENU_DIVIDER | lMenuFlagActif);
 
-
-    //==============
-    pMenu.add( StrMenu_CallDialoDiagSub, "", LAMBDA
-               CallDialogSubDiv( slFlagDialog, lCanvas );
-               ADBMAL, this, FL_MENU_DIVIDER); 
 
   }
   //-------------------------------------------

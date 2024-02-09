@@ -617,6 +617,82 @@ namespace M3d {
     
     cMenubar.add( StrMenu_Edit   StrMenu_Undo,         "", UndoCB, this, FL_MENU_DIVIDER);
     cMenubar.add( StrMenu_Edit   StrMenu_Redo,         "", RedoCB, this, FL_MENU_DIVIDER);
+
+
+    //================================
+		
+    cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 // Mettre un RAII
+                 //		if( cFlagDialogPerspectiv )
+                 //			return;
+					 
+                 //		cFlagDialogPerspectiv = true;
+                 CallDialogPerspectiv( lCanvas,  lCanvas->getKamera() );
+                 //			cFlagDialogPerspectiv = false;
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this, FL_MENU_DIVIDER);
+    
+    cMenubar.add("&View/" StrMenu_ViewReset,  "o",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.reset(); 
+                 lKamera.raz45(); 
+                 lKamera.scaleTo(1.0);
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this, FL_MENU_DIVIDER);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlongX, "x",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razX(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlongY, "y",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razY(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlongZ, "z",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razZ(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlong_X, "",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razXInv(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlong_Y, "",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razYInv(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    
+    cMenubar.add("&View/" StrMenu_ViewAlong_Z, "", LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 lKamera.razZInv(); 
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+                 
+    
+    cMenubar.add("&View/" StrMenu_ViewRecenterOnSelection, "",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 
+                 lWin3d->recenterOnSelection(lKamera);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+
+
     
     //================================
     
@@ -700,7 +776,7 @@ namespace M3d {
     //================================
    
     
-    cMenubar.add("&Utils/" StrMenu_DefDefaultAxis  , "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefDefaultAxis  , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  if( TheCreat.setCurrentAxis( TheSelect.getSelectionVect()[0] ))
                    {
@@ -709,10 +785,10 @@ namespace M3d {
                    }
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
-    //    cMenubar.add("&Utils/X StrMenu_DefDefaultPlane", "", MyMenuCallback, this);
-    //    cMenubar.add("&Utils/X StrMenu_DefDefaultTrans", "", MyMenuCallback, this, FL_MENU_DIVIDER);
+    //    cMenubar.add("&Tools/X StrMenu_DefDefaultPlane", "", MyMenuCallback, this);
+    //    cMenubar.add("&Tools/X StrMenu_DefDefaultTrans", "", MyMenuCallback, this, FL_MENU_DIVIDER);
 
-    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisPoints  , "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_CreateAxis "/" StrMenu_SetAxisPoints  , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::SortEntityVisitorPoint lVisit;		    
                  TheSelect.execVisitorOnEntity(lVisit);
@@ -731,7 +807,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
-    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisLine    , "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_CreateAxis "/" StrMenu_SetAxisLine    , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::SortEntityVisitorLine lVisit;		    
                  TheSelect.execVisitorOnEntity(lVisit);
@@ -750,7 +826,7 @@ namespace M3d {
                  ADBMAL, this);
     
     
-    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisNormal  , "", LAMBDA
+    cMenubar.add("&Tools/" StrMenu_CreateAxis "/" StrMenu_SetAxisNormal  , "", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::SortEntityVisitorPointFacet lVisit;		    
                  TheSelect.execVisitorOnEntity(lVisit);
@@ -773,7 +849,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
-    cMenubar.add("&Utils/" StrMenu_CreateAxis "/" StrMenu_SetAxisInput  , "", LAMBDA
+    cMenubar.add("&Tools/" StrMenu_CreateAxis "/" StrMenu_SetAxisInput  , "", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::SortEntityVisitorPoint lVisit;
                  if( TheInput.execVisitorOnCurrentLine( lVisit ) && lVisit.cVectPoints.size() >= 2 )
@@ -795,7 +871,7 @@ namespace M3d {
   
 
 	       
-    cMenubar.add("&Utils/" StrMenu_PutOnGround ,    "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_PutOnGround ,    "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::VisitorMinMax lVisitMinMax;
                  TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
@@ -811,7 +887,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_PutUnderGround , "", LAMBDA
+    cMenubar.add("&Tools/" StrMenu_PutUnderGround , "", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::VisitorMinMax lVisitMinMax;
                  TheSelect.execVisitorOnlyOnObjects( lVisitMinMax );
@@ -827,7 +903,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_PutEachOnGround ,    "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_PutEachOnGround ,    "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
 
@@ -848,7 +924,7 @@ namespace M3d {
                  PushHistory();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
-    cMenubar.add("&Utils/" StrMenu_PutEachUnderGround , "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_PutEachUnderGround , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  const std::vector<PP3d::EntityPtr> & lVectSel =  TheSelect.getSelectionVect(); 
 
@@ -870,7 +946,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_Recenter , "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_Recenter , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  PP3d::VisitorMinMax lVisitMinMax;
                  TheSelect.execVisitorOnlyOnObjects( lVisitMinMax );
@@ -888,31 +964,31 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this,   FL_MENU_DIVIDER);
   
-    cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheCreat.setInputPlane( InputPlaneType::X );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneY, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneY, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheCreat.setInputPlane( InputPlaneType::X );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZ, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZ, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheCreat.setInputPlane( InputPlaneType::Z );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneFree, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneFree, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  TheCreat.setInputPlane( InputPlaneType::Free );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Utils/" StrMenu_DefInputPlane "/" StrMenu_PlaneHeight, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_PlaneHeight, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  double lVal = TheCreat.getInputPlaneHeight();
                  if( CallDialogInputDouble( "Plane height", lVal ) )
@@ -925,7 +1001,7 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this,   FL_MENU_DIVIDER );
   
-    cMenubar.add("&Utils/" StrMenu_RoundInput, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_RoundInput, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  double lVal = TheCreat.getInputPlaneHeight();
                  if( CallDialogInputDouble( "Rounding input", lVal ) )
@@ -935,78 +1011,6 @@ namespace M3d {
                  PushHistory();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
-    //================================
-		
-    cMenubar.add("&View/" StrMenu_DialogPerspectivSettings, "^p",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 // Mettre un RAII
-                 //		if( cFlagDialogPerspectiv )
-                 //			return;
-					 
-                 //		cFlagDialogPerspectiv = true;
-                 CallDialogPerspectiv( lCanvas,  lCanvas->getKamera() );
-                 //			cFlagDialogPerspectiv = false;
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this, FL_MENU_DIVIDER);
-    
-    cMenubar.add("&View/" StrMenu_ViewReset,  "o",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.reset(); 
-                 lKamera.raz45(); 
-                 lKamera.scaleTo(1.0);
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this, FL_MENU_DIVIDER);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlongX, "x",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razX(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlongY, "y",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razY(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlongZ, "z",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razZ(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlong_X, "",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razXInv(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlong_Y, "",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razYInv(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-    
-    cMenubar.add("&View/" StrMenu_ViewAlong_Z, "", LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 lKamera.razZInv(); 
-                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
-                 
-    
-    cMenubar.add("&View/" StrMenu_ViewRecenterOnSelection, "",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 
-                 lWin3d->recenterOnSelection(lKamera);
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this);
       
     //================================
     cMenubar.add("&Win/" StrMenu_Create3dView, "^v", LAMBDA

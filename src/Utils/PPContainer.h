@@ -5,7 +5,18 @@
 #include <unordered_map>
 
 namespace PPu {
+
   
+    //*******************************************************  
+  template <class OBJECT>
+  class VectPtrDel: public std::vector<OBJECT*>  {
+  public:
+    virtual ~VectPtrDel() { free(); }     
+    void free() {
+      for( OBJECT* lObj : *this ) { delete lObj; }
+      this->clear();
+    }    
+  };
    //**************************************
 
   template <class OBJECT >
