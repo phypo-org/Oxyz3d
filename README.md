@@ -13,6 +13,8 @@ sudo apt-get install libxfixes-dev
 sudo apt-get install libpng-dev
 sudo apt-get install libjpeg-dev
 
+sudo apt-get install libxrender1
+sudo apt-get install libxrudender-dev
 
 //=================
 dpkg -L libX11-dev
