@@ -16,5 +16,11 @@ sudo apt-get install libjpeg-dev
 sudo apt-get install libxrender1
 sudo apt-get install libxrudender-dev
 
+sudo apt-get install libxcursor1
+sudo apt-get install libxcursor-dev
+
+sudo apt-get install libfontconfig1
+sudo apt-get install libfontconfig1-dev
+
 //=================
 dpkg -L libX11-dev
