@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=Oxyz3d.exe
+Icon=Oxyz3d
+Name=Oxyz3d
+Terminal=false
+StartupNotify=true
+Comment=3d modeling
+Categories=X-3d

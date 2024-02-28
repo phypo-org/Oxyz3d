@@ -9,6 +9,8 @@
 
 #include <string>
 
+#include <FL/Fl_Color_Chooser.H>
+
 
 namespace M3d {
   //*********************************
@@ -59,6 +61,10 @@ namespace M3d {
 
     // Spline 
     int cBSplineMaille=8;
+
+
+    //View
+    //    Fl_Color cCanvasBG = FL_BLACK;
 
      friend class PPSingletonCrtp;
       

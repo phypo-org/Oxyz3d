@@ -16,6 +16,7 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_File_Input.H>
+#include <FL/Fl_Color_Chooser.H>
 
 #include <sstream>
 #include <stdlib.h>
@@ -91,7 +92,7 @@ namespace M3d {
     MyIntInput* cDbgIni;
 
 
-    
+    Fl_Button*  cBgColorButton;
 
     
     //----------------------------------------
@@ -283,8 +284,27 @@ namespace M3d {
                                          Fl::scheme(lName);		// change scheme
                                        }
                                      }, cViewSchemeChoice);
+          
           //-----------  Scheme  ------------
-
+         lY += cViewSchemeChoice->h() + lMarge;
+         /*
+          cBgColorButton =  new Fl_Button( lX, lY, 120, 25, "color"); 
+          cBgColorButton->tooltip("Background color of view");
+          cBgColorButton->callback((Fl_Callback *) []( Fl_Widget *w, void *pUserData)
+                                     {
+                                       Fl_Button* lButton =(Fl_Button*) pUserData;
+                                       
+                                       uchar r,g,b;
+                                       Fl::get_color( Preference::nstance().cCanvasBG , r, g, b);
+                                       if (fl_color_chooser( 0, r, g, b))
+                                         {
+                                           Fl::set_color( Preference::Instance().cCanvasBG, r, g, b);
+                                           lButton->labelcolor( fl_contrast(FL_BLACK, c) );
+                                           lButton->redraw();
+                                         }
+                                       //                                       Preference::Instance().
+                                     }, cBgColorButton);
+         */
 	  lGr->end();
 	  lGr->hide();
       
