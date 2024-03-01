@@ -22,30 +22,39 @@ using namespace std;
 
 int main(int argc, char **argv) 
 {
+  MyPref.initDefaultPaths();
+  
   PPu::PPErrLog::Instance().init( & std::cout, & std::cerr, nullptr );
   
-  std::vector<std::string> lVectParam;    
-
-  //---------------- Preference ------------------
-  TheCreat.getConfig().setFilename( "Oxyz3d.ini");
-  if( TheCreat.getConfig().readFile( argc, argv) == false )
-    {
-      WARN_LOG( "Config file not found : " <<  TheCreat.getConfig().getFilename() );
-    }  
-
-  MyPref.initFromIni( TheCreat.getConfig() );
-
-  
   PPu::PPArgs lArgs( argc, argv );
-  MyPref.initFromArg( lArgs );
+  std::string lVal;
+ 
+  if( lArgs.get(  "-HomePath", lVal ) )
+    {      
+      MyPref.initDefaultPaths( lVal );
+      cout << "HomePath:" << lVal << endl;
+    }
+  
+  
   //---------------- Preference ------------------
-  {
-    std::string cTmp;
-    if( PPu::PPFile::GetCurrentDir(cTmp) )
-      {
-        MyPref.cCurrentDir = cTmp;
-      }
-  }
+  std::string lName("Oxyz3d.ini"); 
+  TheCreat.getConfig().setFilename( PPu::PPFile::JoinPathNames( MyPref.cConfigPath, lName));
+
+  std::cout << "%%%%% PREFRENCE:" << PPu::PPFile::JoinPathNames( MyPref.cConfigPath, lName) << std::endl;
+  
+  if( TheCreat.getConfig().readFile() == false )
+    {
+      WARN_LOG( "Config file not found : " <<  TheCreat.getConfig().getFilename() );  
+    }
+  else
+    INFO_LOG( "Read config file : " <<  TheCreat.getConfig().getFilename() );  
+
+  std::cout << "Read config file : " <<  TheCreat.getConfig().getFilename()  << std::endl;
+  
+  MyPref.initFromIni( TheCreat.getConfig() );  
+  MyPref.initFromArg( lArgs );
+  
+  //---------------- Preference ------------------
   MyPref.initFromArgs(lArgs );
 
   
@@ -56,7 +65,7 @@ int main(int argc, char **argv)
   M3d::Creation::Instance().createNewWin3d( 1000, 800 );
   //  M3d::Creation::Instance().redrawObjectTree();	
 
-  std::string lVal;
+
   if( lArgs.get(  "-load", lVal ) )
     {
       if( PP3d::MyRead::Read(lVal.c_str(),

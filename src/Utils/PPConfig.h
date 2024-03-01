@@ -41,7 +41,10 @@ namespace PPu {
       bool readFile( const std::string & iFile );
       bool readFile( std::istream &pIn );
       bool readFile( int iArgc, char *iArgv[] );
-      bool readConfigFiles();
+      bool readFile()
+      {
+        return readFile( cName );
+      }
 
       bool writeToFile() { return writeToFile( cName ); }
       bool writeToFile( const std::string& iFileName  );

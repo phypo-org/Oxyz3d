@@ -258,7 +258,7 @@ namespace M3d {
 
     lX = 200;
     //========================		
-    Fl_Image* lPixDeploy = MyImage::LoadImage("Icons/deploy_graph.png", Creation::sIconSmallSize);
+    Fl_Image* lPixDeploy = MyImage::LoadImage( ICON_PATH "/deploy_graph.png", Creation::sIconSmallSize);
 
     MyToggleButton*
       lButDeploy = new MyToggleButton( lX, 0, Creation::sIconSmallSize,

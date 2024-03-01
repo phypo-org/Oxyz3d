@@ -3,7 +3,17 @@ echo $0
 
 cd "$(dirname "$0")"
 
-pwd
 
-export LD_LIBRARY_PATH=./Lib
-exec ./Oxyz3d.exe 
+echo "APPIMAGE=$APPIMAGE"
+echo "APPDIR=$APPDIR"
+echo "OWD=$OWD"
+echo "ARGV0=$ARGV0"
+
+PARAM_HOME=" -HomePath=$OWD "
+PARAM_CONFIG=" -ConfigPath=$OWD "
+
+
+export LD_LIBRARY_PATH=./usr/lib
+exec ./usr/bin/Oxyz3d.exe $PARAM_HOME $PARAM_CONFIG
+
+

@@ -38,15 +38,80 @@ namespace M3d {
 #define INIT_FILE( VAR )  iConfig.get( "File",   "File"  #VAR, cFile ## VAR  )
 
 #define INIT_VIEW( VAR )  iConfig.get( "View",   "View"  #VAR, cView ## VAR  )
+
+
+    //--------------------------------------
+
+    // initiaslise les paths avec home path defini
+    void Preference::initDefaultPaths()
+    {
+  
+      cCurrentPath  = PPu::PPFile::JoinPathNames( cHomePath, sBasesName );    
+      cCurrentPath  = PPu::PPFile::JoinPathNames( cCurrentPath, sFileSaveDefault );
+      
+      cFileLastAutoSave  = cCurrentPath;
+        
+      std::cout << "%%% Preference::initDefaultPaths.cCurrentPath =" << cCurrentPath << std::endl;      
+    }
+    //--------------------------------------
+    // redefini les paths avec le nouveau home path
+    void Preference::initDefaultPaths( std::string & iHome )
+    {
+      cHomePath    = iHome;
+      cCurrentPath = iHome;
+      cConfigPath  = iHome;
+      
+       PPu::PPFile::DoMkSubdir( cHomePath, sBasesName );
+       std::cout << "%%% Preference::initDefaultPaths2 " << cHomePath << " | " <<  sBasesName  << std::endl;
+
+      initDefaultPaths();
+      std::cout << "%%% Preference::initDefaultPaths2.cHome ="        << cHomePath << std::endl;      
+      std::cout << "%%% Preference::initDefaultPaths2.cCurrentPath =" << cCurrentPath << std::endl;      
+      std::cout << "%%% Preference::initDefaultPaths2.cConfigPath ="  << cConfigPath << std::endl;      
+   }
+    //--------------------------------------                   
+    // definis les paths avec 
+    void Preference::initCurrentPath( const std::string & iFileBase)
+    {
+      cCurrentPath= PPu::PPFile::WithoutExtension( iFileBase );
+     
+      cFileLastAutoSave  = cCurrentPath;
+      cFileLastAutoSave += cFileAutoSave;
+
+      std::cout << "%%% initCurrentPath cCurrentPath=" <<  cCurrentPath<< std::endl;
+      std::cout << "%%% initCurrentPath cFileLastAutoSave=" << cFileLastAutoSave << std::endl;
+
+     }
+    //--------------------------------------
+    // Renvoie le path du fichier avec la position courante 
+    std::string  Preference::getFileName( const char * iExt )
+    {
+      std::string lTmp = cCurrentPath;
+      lTmp += iExt;
+
+      std::cout << "%%% getFileName " << iExt  << " => " << lTmp <<  std::endl;
+      return lTmp;
+    }
+    //--------------------------------------
+    // Renvoie le path du fichier avec la position courante 
+    std::string  Preference::getCurrentPath()
+    {
+      std::cout << "%%% getCurrentPath=" << cCurrentPath <<  std::endl;
+      return cCurrentPath;
+    }
+    //--------------------------------------
+
+
+
   
  //---------------------------------------
   void Preference::resetToDefault()
   {
-    cLastSave              = sSaveDefault;
-    
+    //cLastSave              = cSaveDefault;
+    initDefaultPaths();
+
     cFileAutoSave          = true;
     cFileAutoSaveFrequency = 60;
-    cFileDefaultDir        = "Base";
     
     cMouseWheel            = 15;
 
@@ -87,7 +152,7 @@ namespace M3d {
       
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
-    INIT_FILE( DefaultDir  );
+    //    INIT_FILE( DefaultDir  );
 
     std::string lTmp;
     if( iConfig.get( "View", "Scheme", lTmp ) )
@@ -152,7 +217,7 @@ namespace M3d {
  
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
-    INIT_FILE( DefaultDir  );
+    //    INIT_FILE( DefaultDir  );
 
     const char* lTmp = Fl::scheme();
     if( lTmp != nullptr )
@@ -206,7 +271,7 @@ namespace M3d {
 
     INIT_FILE( AutoSave  );
     INIT_FILE( AutoSaveFrequency  );
-    INIT_FILE( DefaultDir  );
+    //    INIT_FILE( DefaultDir  );
 
 
     

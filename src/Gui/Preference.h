@@ -4,6 +4,7 @@
 #include "Utils/PPSingletonCrtp.h"
 #include "Utils/PPConfig.h"
 #include "Utils/PPArgs.h"
+#include "Utils/PPFile.h"
 
 #include "Shape/DebugVars.h"
 
@@ -11,6 +12,9 @@
 
 #include <FL/Fl_Color_Chooser.H>
 
+#include <iostream>
+
+#define sOxyz3dExt ".oxyz"
 
 namespace M3d {
   //*********************************
@@ -21,23 +25,33 @@ namespace M3d {
 
     static  std::vector<const char*> sSchemesStr;
 
-    std::string cCurrentDir=".";
     //Interface
     float cMouseWheel=15;
 
-
-    
+    std::string cHomePath     = ".";
+    std::string cCurrentPath  = ".";
+    std::string cConfigPath   = ".";
+    const std::string sBasesName  = "bases";
+                
     //Save
-    const std::string sSaveDefault = "default.oxyz";
-    std::string cLastSave = sSaveDefault;
-
+    const std::string sFileSaveDefault = "default";
+    
     // AutoSave
     bool cFileAutoSave = true;
     int  cFileAutoSaveFrequency= 60;
     int  cNbFileCycling= 3;
-    std::string cFileDefaultDir="3d/autosave";    
+    
+    const std::string sFileAutoSaveDir="autosave";
+    std::string cFileLastAutoSave ;    
      // AutoSave
-   
+
+    void initDefaultPaths();    
+    void initDefaultPaths( std::string & iHome );
+    void initCurrentPath( const std::string & iFileBase);
+    std::string  getFileName( const char * iExt );
+    std::string  getCurrentPath();
+
+    
       
     //Dbg
     int cDbgEvt = 0;
@@ -100,5 +114,13 @@ namespace M3d {
 #define DBG_TREE( A )    if( MyPref.cDbgTree > 0 ) std::cout << "DbgTree1> "<< A << std::endl;
 #define DBG_TREE1( A )   if( MyPref.cDbgTree > 1 ) std::cout << "DbgTree2> "<< A << std::endl;
 #define DBG_TREE2( A )   if( MyPref.cDbgTree > 2 ) std::cout << "DbgTree3> "<< A << std::endl;
+
+
+
+
+#define ICON_PATH "usr/share/icons/"
   
+
+
+
 #endif

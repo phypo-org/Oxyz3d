@@ -6,4 +6,4 @@ Name=Oxyz3d
 Terminal=false
 StartupNotify=true
 Comment=3d modeling
-Categories=X-3d
+Categories=Graphics

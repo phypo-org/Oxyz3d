@@ -59,6 +59,7 @@ namespace M3d {
   bool SaveBase( PP3d::DataBase * ioDatabase, const std::string & iName, void* iUseSelect )
   {
     // FAIRE FICHIER .backup
+    std::cout << "%%% Callback::SaveBase.iName=" << iName << std::endl;
     std::ofstream lOut;						
     lOut.open( iName );
     if( lOut.good() )
@@ -74,7 +75,10 @@ namespace M3d {
 	  }
 	else
 	  {
-	    lRet = lSav.save( *ioDatabase, true,  &TheSelect, nullptr );
+	    if( (lRet = lSav.save( *ioDatabase, true,  &TheSelect, nullptr )))
+              {
+                MyPref.initCurrentPath( iName  );
+              }
 	  }
 	
 	lOut.close();
@@ -157,7 +161,6 @@ namespace M3d {
 
 	if( SaveBase( TheCreat.getDatabase(), lFilename, cData) )
 	  {
-	    MyPref.cLastSave = lFilename;
 	  }
 	else
 	  {

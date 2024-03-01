@@ -35,10 +35,13 @@ namespace M3d {
            PPu::TimeRange lRange;
            
            std::ostringstream  lOs;
-           lOs << MyPref.cCurrentDir  << PPu::PPFile::sSepDirChar
-               << MyPref.cFileDefaultDir << PPu::PPFile::sSepDirChar
-               << "#autosave" << lCyclingFile << "#" ;
+           //          lOs << MyPref.cFileLastAutoSave  << PPu::PPFile::sSepDirChar
+           //               << MyPref.sFileAutoSaveDir << PPu::PPFile::sSepDirChar
+           //            << "#autosave" << lCyclingFile << "#" ;
 
+           std::string lNewDir = MyPref.cCurrentPath  +"_" + MyPref.sFileAutoSaveDir;
+
+           lOs  << lNewDir <<  PPu::PPFile::sSepDirChar << "#autosave" << lCyclingFile << "#" ;
            
 
            if( MyPref.cFileAutoSave )
@@ -46,9 +49,10 @@ namespace M3d {
               std::string lSavBuffer;
                if( PP3d::UndoHistory::Instance().externalThread_getSav( cLastSav, lSavBuffer ) )
                  {
-                   VERBOSELN( "AgentAutoSav::work file " << lOs.str() << " " << lSavBuffer.size());
+                   VERBOSELN( "AgentAutoSav::work file :" << lOs.str() << " " << lSavBuffer.size());
                    
-                   PPu::PPFile::DoMkSubdir( MyPref.cCurrentDir, MyPref.cFileDefaultDir );
+                   PPu::PPFile::DoMkdir(lNewDir);
+                   
                    std::ofstream lOut;						
                    lOut.open( lOs.str() );
                    if( lOut.good() )

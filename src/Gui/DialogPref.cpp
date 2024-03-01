@@ -144,7 +144,7 @@ namespace M3d {
       if( MyPref.cNbFileCycling < 1 )  MyPref.cNbFileCycling = 1;
       if( MyPref.cNbFileCycling > 10 ) MyPref.cNbFileCycling = 10;
 
-      GET_FILE_VALUE( cFileDefaultDir );
+      //  GET_FILE_VALUE( cFileDefaultDir );
 
       
       //Debug
@@ -208,7 +208,7 @@ namespace M3d {
 	  INTPUT_BOOL( cFileAutoSave,          "Autosave enabled");
 	  INTPUT_INT(  cFileAutoSaveFrequency, "Delay between autosav in seconds");
 	  INTPUT_INT(  cNbFileCycling,         "Number of cycling files");
-	  INTPUT_FILE( cFileDefaultDir,        "Name of autosav folder" );
+          //	  INTPUT_FILE( cFileDefaultDir,        "Name of autosav folder" );
 	  
 	  lGr->end();
 	  Fl_Group::current()->resizable(lGr);

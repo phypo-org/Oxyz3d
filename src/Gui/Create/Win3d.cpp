@@ -8,8 +8,10 @@
 #include "SelFunct.h"
 
 #include "Gui/MyFloatInput.h"
+
 #include <FL/Fl_File_Chooser.H>
 
+#include <FL/Fl_File_Chooser.H>
 
 namespace M3d {
 
@@ -85,8 +87,6 @@ namespace M3d {
 #define StrMenu_RoundInput    " Round input value to  ..."
 
 
-
-  
   
   //#define StrMenu_SetPlanePoints "X With three points"
   //  //2#define StrMenu_SetPlaneLines  "X With two connect Lines"
@@ -175,7 +175,7 @@ namespace M3d {
 
 
     //========================		
-    Fl_Image* lPixUndo = MyImage::LoadImage("Icons/undo.png", Creation::sIconSize);
+    Fl_Image* lPixUndo = MyImage::LoadImage(ICON_PATH "/undo.png", Creation::sIconSize);
     
     cButUndo = new MyButton( cX, cY, lW, lH, nullptr,
 			     UndoCB, this, nullptr);
@@ -183,7 +183,7 @@ namespace M3d {
     cButUndo->tooltip("Undo");
     cX += lW;
 	
-    Fl_Image* lPixPush = MyImage::LoadImage("Icons/store.png", Creation::sIconSize);
+    Fl_Image* lPixPush = MyImage::LoadImage(ICON_PATH "/store.png", Creation::sIconSize);
     
     cButStore = new MyButton( cX, cY, lW, lH, nullptr,
                               PushHistoryCB, this, nullptr);
@@ -191,7 +191,7 @@ namespace M3d {
     cButStore->tooltip("Push history");
     cX += lW;
 	
-    Fl_Image* lPixRedo = MyImage::LoadImage("Icons/redo.png", Creation::sIconSize);
+    Fl_Image* lPixRedo = MyImage::LoadImage(ICON_PATH "/redo.png", Creation::sIconSize);
 
     
     cButRedo = new MyButton( cX, cY, lW, lH, nullptr,
@@ -215,7 +215,7 @@ namespace M3d {
 
  
    //========================		
-    Fl_Image* lPixSel = MyImage::LoadImage("Icons/SelectTransformOnOff.png", Creation::sIconSize);
+    Fl_Image* lPixSel = MyImage::LoadImage(ICON_PATH "/SelectTransformOnOff.png", Creation::sIconSize);
 
     MyToggleButton*
       lButSelTran = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -227,7 +227,7 @@ namespace M3d {
    
  
    //========================		
-    lPixSel = MyImage::LoadImage("Icons/magnet.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/magnet.png", Creation::sIconSize);
 
     MyToggleButton*
       lButModeMagnet = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -254,7 +254,7 @@ namespace M3d {
  
  
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/all.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/all.png", Creation::sIconSize);
 
     MyToggleButton* lButSelAll = nullptr ;
     new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -264,7 +264,7 @@ namespace M3d {
     //    lButSelAll->tooltip("Enable selection for all type (execpt transformation)");
  
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/vertex.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/vertex.png", Creation::sIconSize);
 
     MyToggleButton*
       lButSelPt = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -274,7 +274,7 @@ namespace M3d {
     lButSelPt->tooltip("Enable selection for points of objects");
     cX += lW;
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/edge.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/edge.png", Creation::sIconSize);
 
     MyToggleButton*
       lButSelLine = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -284,7 +284,7 @@ namespace M3d {
     lButSelLine->tooltip("Enable selection for lines of objects");
     cX += lW;
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/face.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/face.png", Creation::sIconSize);
 
     MyToggleButton*
       lButFacet = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -294,7 +294,7 @@ namespace M3d {
     lButFacet->tooltip("Enable selection for facets of objects");
     cX += lW;
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/body.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/body.png", Creation::sIconSize);
 
     MyToggleButton*
       lButSelBody = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -305,7 +305,7 @@ namespace M3d {
     cX += lW;
 
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/group.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/group.png", Creation::sIconSize);
 
     MyToggleButton*
       lButSelGroup = new MyToggleButton( cX, cY, lW, lH, nullptr,
@@ -329,7 +329,7 @@ namespace M3d {
     cX += lW;
 
     //========================		
-    lPixSel = MyImage::LoadImage("Icons/skelet.png", Creation::sIconSize);
+    lPixSel = MyImage::LoadImage(ICON_PATH "/skelet.png", Creation::sIconSize);
 
 
     MyToggleButton*
@@ -349,7 +349,7 @@ namespace M3d {
 		
     //========================
 
-    Fl_Image* lPixDif = MyImage::LoadImage("Icons/color.png", Creation::sIconSize);
+    Fl_Image* lPixDif = MyImage::LoadImage(ICON_PATH "/color.png", Creation::sIconSize);
 		
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagLightColor  );
@@ -360,7 +360,7 @@ namespace M3d {
 		
     //========================
 
-    Fl_Image* lPixViewNormal = MyImage::LoadImage("Icons/ViewNormal.png", Creation::sIconSize);
+    Fl_Image* lPixViewNormal = MyImage::LoadImage(ICON_PATH "/ViewNormal.png", Creation::sIconSize);
 		
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cFlagViewNormal );
@@ -372,7 +372,7 @@ namespace M3d {
 
     //========================
 
-    Fl_Image* lPixViewGeo = MyImage::LoadImage("Icons/ViewTransformOnOff.png", Creation::sIconSize);
+    Fl_Image* lPixViewGeo = MyImage::LoadImage(ICON_PATH "/ViewTransformOnOff.png", Creation::sIconSize);
 		
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       CB_ViewTransfrom, this );
@@ -389,7 +389,7 @@ namespace M3d {
     lBut = nullptr;
     
 		
-    Fl_Image* lPixPersp = MyImage::LoadImage("Icons/perspective.png", Creation::sIconSize);
+    Fl_Image* lPixPersp = MyImage::LoadImage(ICON_PATH "/perspective.png", Creation::sIconSize);
 		
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculePerspective, this );
@@ -399,7 +399,7 @@ namespace M3d {
     cX += lW;
     //========================
 		
-    Fl_Image* lPix2 = MyImage::LoadImage("Icons/grid.png", Creation::sIconSize);
+    Fl_Image* lPix2 = MyImage::LoadImage(ICON_PATH "/grid.png", Creation::sIconSize);
 		
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeGridCB, this, &cuCanvas3d->cGridMode );
@@ -408,7 +408,7 @@ namespace M3d {
     lBut->tooltip("On/off for grid");
     cX += lW;
     //========================
-    Fl_Image* lPix1 = MyImage::LoadImage("Icons/axe.png", Creation::sIconSize);
+    Fl_Image* lPix1 = MyImage::LoadImage(ICON_PATH "/axe.png", Creation::sIconSize);
 
     lBut = new MyToggleButton( cX, cY, lW, lH, nullptr,
 			       BasculeBoolCB, this, &cuCanvas3d->cAxisFlag );
@@ -450,88 +450,110 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File    StrMenu_OpenBase,    "^o", LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 //                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
-                 //                                                            Fl_File_Chooser::SINGLE,
-                 //                                                            "Open Oxyz3d database");	      
-                 //                 lFc->callback( OpenBaseCB );
-                 //                 lFc->show();
-
-                 char* lFile =  fl_file_chooser(  "Open Oxyz3d database",
-                                                  "*.oxyz", nullptr );
-                 if( lFile != nullptr )
-                   {
-                     // Une Nlle base
-                     std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
-	
-                     TheSelect.removeAll();
-
-                     std::string lFilename = lFile;
-                     //	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
-                     if( OpenBase( luBase.get(), lFilename, true ) ) // on prend les id de la base lu
-                       {
-                         //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;	    
-                         PushHistory(); // on sauve l'ancienne base dans l'historique	    
-                         luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
-                         //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
-                         TheCreat.setDatabase( luBase, false ); // on prend la nlle base
-                         //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;	    
-                         MyPref.cLastSave = lFilename;
-                         TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                       }
-                     else
-                       {
-                         ERR_DIAG( "Open file " << lFilename << " failed." );
-                       } 
-                   }                 
+                 std::string lFileName = MyPref.getFileName( sOxyz3dExt );
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(lFileName.c_str(), "*" sOxyz3dExt,
+                                                            Fl_File_Chooser::CREATE,
+                                                            "open Oxyz3d base");
+                 
+                 lFc->callback(  [] (Fl_File_Chooser *lFc, void *lData)                   
+                 {
+                   //..................................................
+                   // Une Nlle base
+                   std::unique_ptr<PP3d::DataBase> luBase( new PP3d::DataBase() );
+                   
+                   TheSelect.removeAll();
+                   if( lFc->value() )
+                     {
+                       std::string lName = lFc->value();
+                       //	std::cout << "Before NbSelect " <<  TheSelect.getNbSelected()  << std::endl;
+                       if( OpenBase( luBase.get(), lName, true ) ) // on prend les id de la base lu
+                         {
+                           //	    std::cout << "After NbSelect " <<  TheSelect.getNbSelected()  << std::endl;	    
+                           PushHistory(); // on sauve l'ancienne base dans l'historique	    
+                           luBase->resetIdFromMax(); // on prend en compte les id de la base lu 
+                           //2	    std::cout << "before set " <<  TheSelect.getNbSelected()  << std::endl;
+                           TheCreat.setDatabase( luBase, false ); // on prend la nlle base
+                           //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;	    
+                           TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                           MyPref.initCurrentPath(lName );
+                         }
+                       else
+                         {
+                           ERR_DIAG( "Open file " << lName << " failed." );
+                         }
+                     }                   
+                 } //..................................................
+                   );  
+           
+                 lFc->show();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
+    
     cMenubar.add(StrMenu_File    StrMenu_MergeBase,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-              char* lFile =  fl_file_chooser(  "Merge Oxyz3d database",
-                                                  "*.oxyz", nullptr );
-                 if( lFile != nullptr )
-                   {
-                     PushHistory();
-                     
-                     std::string lFilename = lFile;
-                     if( OpenBase( TheCreat.getDatabase(), lFilename, false ) ) // on change les id de la base lu
+                 std::string lFileName = MyPref.getFileName( sOxyz3dExt );
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(lFileName.c_str(), "*" sOxyz3dExt,
+                                                            Fl_File_Chooser::CREATE,
+                                                            "Merge Oxyz3d base");
+                 
+                 lFc->callback(  [] (Fl_File_Chooser *lFc, void *lData)                   
+                 {
+                   
+                   //..................................................
+                   // Une Nlle base
+                   if( lFc->value() )
+                     {
+                       std::string lName = lFc->value();
+                       PushHistory();
+                       if( OpenBase( TheCreat.getDatabase(), lName, false ) ) // on change les id de la base lu
                        {
                          TheCreat.redrawAll(PP3d::Compute::FacetAll);
                        }
                      else
                        {
-                         ERR_DIAG( "Merge file " << lFilename << " failed." );
+                         ERR_DIAG( "Merge file " << lName << " failed." );
                        } 
                    }                                                                            
+                 } //..................................................
+                   );  
+                 
+                 lFc->show();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL,this, FL_MENU_DIVIDER);
+                 ADBMAL, this);
+    
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBase,    "^s",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 if( MyPref.cLastSave.size() )
+                 if( MyPref.cCurrentPath.size() )
                    {
-                     if( SaveBase( TheCreat.getDatabase(), MyPref.cLastSave, 0 ) == false )
+                     std::string lFileName = MyPref.getFileName(sOxyz3dExt );
+                     
+                     std::cout << "%%% Win3d::saveBase  " << lFileName << std::endl;
+                    if( SaveBase( TheCreat.getDatabase(), lFileName, 0 ) == false )
                        {
-                         ERR_DIAG( "Saving database in " << MyPref.cLastSave << " failed" );
+                         ERR_DIAG( "Saving database in " << lFileName << " failed" );
                        }
-                   }
+                   }                 
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBaseAs,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
+                 std::string lFileName = MyPref.getFileName( sOxyz3dExt );
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(lFileName.c_str(), "*" sOxyz3dExt,
                                                             Fl_File_Chooser::CREATE,
                                                             "Save base as");	   
-                 lFc->callback( SaveBaseCB, 0 );			 
+                      
+                 lFc->callback( SaveBaseCB, 0 );
+            
                  lFc->show();
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     
     cMenubar.add(StrMenu_File    StrMenu_SaveBaseSelect,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.oxyz",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser( MyPref.getFileName( sOxyz3dExt ).c_str(), "*" sOxyz3dExt,
                                                             Fl_File_Chooser::CREATE,
                                                             "Save base as");
                  lFc->callback( SaveBaseCB, (void*)1 );			 
@@ -541,7 +563,7 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportD3dObj,     "^e",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(MyPref.getFileName( ".obj").c_str(), "*.obj",
                                                             Fl_File_Chooser::CREATE,
                                                             "Export in d3d (.obj)");
                  
@@ -552,7 +574,7 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectD3dObj,"",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(MyPref.getFileName( ".obj").c_str(), "*.obj",
                                                             Fl_File_Chooser::CREATE,
                                                             "Export selection in d3d (.obj)");
                  
@@ -563,7 +585,7 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportStl,     "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.stl",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(MyPref.getFileName( ".stl").c_str(), "*.stl",
                                                             Fl_File_Chooser::CREATE,
                                                             "Export in stl (*.stl)");
                  
@@ -574,7 +596,7 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File StrMenu_Export StrMenu_ExportSelectStl,"",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.stl",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(MyPref.getFileName( ".stl").c_str(), "*.stl",
                                                             Fl_File_Chooser::CREATE,
                                                             "Export selection in stl (*.stl)");
                  
@@ -586,7 +608,7 @@ namespace M3d {
     
     cMenubar.add(StrMenu_File StrMenu_Import StrMenu_ImportD3dObj,  "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*.obj",
+                 Fl_File_Chooser* lFc = new Fl_File_Chooser(MyPref.getFileName( ".obj").c_str(), "*.obj",
                                                             Fl_File_Chooser::SINGLE,
                                                             "Import d3d file (.obj)");	      
                  lFc->callback( ImportD3dObjCB );					
@@ -778,7 +800,8 @@ namespace M3d {
     
     cMenubar.add("&Tools/" StrMenu_DefDefaultAxis  , "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 if( TheCreat.setCurrentAxis( TheSelect.getSelectionVect()[0] ))
+                 if(  TheSelect.getNbSelected()
+                      && TheCreat.setCurrentAxis( TheSelect.getSelectionVect()[0] ))
                    {
                      
                      TheSelect.removeAll();			
