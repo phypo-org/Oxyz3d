@@ -26,6 +26,7 @@
 *.a
 *.lib
 
+
 src/Win/Debug
 src/Win/Release
 Fichiers3D
@@ -50,3 +51,4 @@ callgrind*
 *.valgrind
 core
 core.*
+Install/AppImage

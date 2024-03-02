@@ -1,6 +1,9 @@
 #!/bin/bash
 
 
-InstallAppImage.sh ../../Install/AppImage/
-cd ../../Install/AppImage
-export set ARCH=x86_64;~/Bin/appimagetool Oxyz3d
+rm-rf AppImage
+mkdir -p AppImage
+
+InstallAppImage.sh AppImage/
+cd AppImage
+export set ARCH=x86_64; appimagetool Oxyz3d
