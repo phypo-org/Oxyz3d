@@ -9,12 +9,15 @@ namespace PP3d {
   // il faudrait detecter si des points sont sur l'axe et ne les creer qu'une fois !
   
   PolyPtr Maker::CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
-				       bool pFlagCloseRevol,
-				       bool pFlagCloseSeg,
-				       bool pFlagCloseSegEnd,
-				       bool pCloseHight,
-				       bool pCloseLow,
-                                       bool iFlagGrid,
+                                       CloseRevol  iFlagCloseRevol,
+                                       CloseSeg    iFlagCloseSeg,
+                                       CloseSegEnd iFlagCloseSegEnd,
+                                       CloseHight  iCloseHight,
+                                       CloseLow    iCloseLow,
+                                       WithGrid    iFlagGrid,
+                                       Point3d  *  iGearDecal,
+                                       PIndex      iGearMod,
+                                       bool        iGearInv,
 				       long double iEpsilon )
   {
     if( pNbPas <= 0 || pFacet == nullptr  )
@@ -23,6 +26,8 @@ namespace PP3d {
 
     PIndex  lNbLine = pNbPas;
 
+
+    std::cout << "Maker::CreatePoly4FromFacet Gear:" << (void*)  iGearDecal << std::endl;
 		
     std::vector<PointPtr> lPointsPtr;
 		
@@ -34,10 +39,10 @@ namespace PP3d {
       {
 	if( lLine->getSecond() !=  pFacet->getLines()[0]->getFirst() )
 	  {
-	    lPointsPtr.push_back( new Point(lLine->getSecond()->get() ) );
+	    lPointsPtr.push_back( new Point(lLine->getSecond()->get() ));      
 	    p++;
 	  }
-      }		
+      }	
 	
 
     PIndex  lNbCol  = lPointsPtr.size() ;
@@ -49,17 +54,16 @@ namespace PP3d {
 
     // les autres sont multiplie par la matrice iterativement(pb de precision?) // il faudrait recalculer la matrice a partir de l'angle veritable !!!!!!!!!!!
     // Il faudrait aussi reperer que certain point sont les memes (sommet de cone par ex :) dans ce cas il faudrait ne creer qu'un seul point
-    
-
+   
     
     for( PIndex l=1; l< lNbLine; l++ )
       {
 	for( PIndex lCol=0; lCol < lNbCol; lCol++, p++ )
 	  {
 	    ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
-	    
-	    Point3d lPt3d( lPointsPtr[p-lNbCol]->get()*pMat );
-	    
+            
+            Point3d lPt3d = lPointsPtr[p-lNbCol]->get()*pMat;                         
+              
 	    PointPtr lTmpPt = nullptr;	    
 
 	    // Ou essaye de detecte si le point existe deja !!!
@@ -73,24 +77,52 @@ namespace PP3d {
 		  }
 	      }
 	    if( lTmpPt == nullptr )
-	      lTmpPt = new Point( lPt3d );
+              {
+                lTmpPt = new Point( lPt3d );
+              }
 	    
 	    lPointsPtr.push_back(lTmpPt );
 	  }
       }
+
+    
+    //--------- Pour Gear !!!
+   if( iGearDecal != nullptr && iGearMod >= 2 )
+      {
+        int ppp=0;
+        for( PIndex l=0; l< lNbLine; l++ )
+          {
+            if( l > 0 )
+              *iGearDecal *= pMat; 
+            
+            for( PIndex lCol=0; lCol < lNbCol; lCol++, ppp++ )
+              {
+                ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
+                
+                if( iGearDecal != nullptr && iGearMod >= 2 && (l%iGearMod) == 0)
+                  {
+                    if( iGearInv )
+                      lPointsPtr[ppp]->get() -= *iGearDecal;
+                    else
+                      lPointsPtr[ppp]->get() += *iGearDecal;
+                  }
+              }
+          }
+      }
+    //-------- Pour Gear !!!
 
 
     //    std::cout << "Points:" << lPointsPtr.size() << std::endl;
 
 
     FacetPtr lFacetHight = nullptr;
-    if( pCloseHight )
+    if( iCloseHight == CloseHight::Yes )
       {
 	lFacetHight = new Facet();
       }
 		
     FacetPtr lFacetLow = nullptr;
-    if( pCloseLow )
+    if( iCloseLow  == CloseLow::Yes)
       {
 	lFacetLow = new Facet();
       }
@@ -98,7 +130,7 @@ namespace PP3d {
     PolyPtr luPoly =  new Poly();
 
 
-    if( pFlagCloseRevol )
+    if( iFlagCloseRevol == CloseRevol::Yes )
       {
 	lNbLine++;
       }
@@ -137,13 +169,13 @@ namespace PP3d {
 
 
 	    // Fermeture a 360
-	    if( pFlagCloseRevol && lLine == lNbLine-2 )  
+	    if( ( iFlagCloseRevol == CloseRevol::Yes)  && lLine == lNbLine-2 )  
 	      {
 		C = lPointsPtr[  lCol + 1 ];
 		D = lPointsPtr[  lCol  ];
 	      }
 
-	    if( pFlagCloseSeg && lCol == 0)
+	    if( (iFlagCloseSeg == CloseSeg::Yes) && lCol == 0)
 	      {
 		lMemFirstA = A;
 		lMemFirstD = D;
@@ -168,7 +200,7 @@ namespace PP3d {
 	      }						
 	  }
 				
-	if( pFlagCloseSeg && lMemFirstA )
+	if( (iFlagCloseSeg == CloseSeg::Yes) && lMemFirstA )
 	  {
 	    FacetPtr lFacet = new Facet();                // nouvelle facette vide sans id
 	    lFacet->addTrueLine( new Line( B, lMemFirstA ));
@@ -179,7 +211,7 @@ namespace PP3d {
 	  }
       }
 	
-    if( pFlagCloseSegEnd )
+    if( iFlagCloseSegEnd == CloseSegEnd::No)
       {
 	// pour toutes les facettes cree en bordure
 	// on prend la premiere ligne		
@@ -234,7 +266,7 @@ namespace PP3d {
 	}
         //:::::::::::::::::::::::::::::::::
 
-        if( iFlagGrid == false || lNewFacet0->getNbLines() <= 4 )
+        if( iFlagGrid == WithGrid::Yes || lNewFacet0->getNbLines() <= 4 )
           {		 						
             luPoly->addFacet( lNewFacet0 );
             luPoly->addFacet( lNewFacet1 );              

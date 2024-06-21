@@ -8,23 +8,32 @@
 
 
 namespace PP3d {
-
+          enum class  CloseRevol  { Yes, No };  
+          enum class  CloseSeg    { Yes, No };
+          enum class  CloseSegEnd { Yes, No };
+          enum class  CloseHight  { Yes, No };
+          enum class  CloseLow    { Yes, No };
+          enum class  WithGrid    { Yes, No };
 
 	//****************************************
-	class Maker{
+  
+	class Maker{ 
 		
 	public:
 
 	static constexpr long double  kEpsilon=1e-10;
 	  
 	  static PolyPtr CreatePoly4FromFacet( FacetPtr pFacet, PIndex pNbPas, Mat4& pMat,
-					       bool iFlagClose,
-					       bool iFlagCloseSeg,
-					       bool iFlagCloseSegEnd,
-					       bool iCloseHight,
-					       bool iCloseLow,
-                                               bool iFlagGrid = false,
-					       long double  iEpsilon = kEpsilon);
+					       CloseRevol  iFlagCloseRevol,
+					       CloseSeg    iFlagCloseSeg,
+					       CloseSegEnd iFlagCloseSegEnd,
+					       CloseHight  iCloseHight,
+					       CloseLow    iCloseLow,
+                                               WithGrid    iFlagGrid = WithGrid::No,
+                                               Point3d  *  iGearDecal=0,
+                                               PIndex      iGearMod  =0,
+                                               bool        iGearInv  =false,
+					       long double iEpsilon = kEpsilon);
           
           static GLuint QuadrangulerConcave( Facet & iFacet, FacetPtrVect & oFacVect );
           

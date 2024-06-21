@@ -33,6 +33,7 @@
 //Tout mettre dans le Dialogue
 
 using namespace std;
+using namespace PP3d;
 
 namespace M3d {
 
@@ -460,8 +461,12 @@ namespace M3d {
         if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
           {                    
             PP3d::Mat4 lMatTran = lMatRecenter * lMatMov * lMatGrow * lMatRot * lMatSpin * lMatZero;
-            PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, false,
-                                                                       lFlagCloseSeg, lFlagCloseSegEnd, false, false );
+            PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
+                                                                       CloseRevol::No,
+                                                                       lFlagCloseSeg    ? CloseSeg::Yes    : CloseSeg::No,
+                                                                       lFlagCloseSegEnd ? CloseSegEnd::Yes : CloseSegEnd::No,
+                                                                       CloseHight::No,
+                                                                       CloseLow::No );
             if( lShape != nullptr )
               {
                 TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Spiral", lShape ) );  

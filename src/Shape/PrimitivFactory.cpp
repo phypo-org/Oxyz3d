@@ -276,7 +276,7 @@ namespace PP3d{
       PrimFacet(2, 7, 3),
       PrimFacet(7, 10, 3),
       PrimFacet(7, 6, 10),
-      PrimFacet(7, 11, 6),
+      PrimFacet(7, 11, 6), 
       PrimFacet(11, 0, 6),
       PrimFacet(0, 1, 6),
       PrimFacet(6, 1, 10),
@@ -361,7 +361,11 @@ namespace PP3d{
       }
 
     
-    
+
+    std::cout << "PrimitivFactory::CreateCylinder Gear:" << iParam->cCheckGear
+              << " : " << iParam->cParam1
+              << " : "<< iParam->cParam2
+              << std::endl;
     
     PP3d::Mat4 lMatRot;
     lMatRot.initRotY( -M_PIx2 / iParam->cNbU );
@@ -371,24 +375,76 @@ namespace PP3d{
       {
 	iName = "Cone";
 	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  true, false, false, true, false );       	
+                                            CloseRevol::Yes,
+                                            CloseSeg::No,
+                                            CloseSegEnd::No,
+                                            CloseHight::Yes,
+                                            CloseLow::No );       	
       }
 
     if( iParam->cTop == 0 )
       {
 	iName = "Cone";
 	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  true, false, false, false, true );       	
+                                            CloseRevol::Yes,
+                                            CloseSeg::No,
+                                            CloseSegEnd::No,
+                                            CloseHight::No,
+                                            CloseLow::Yes );       	
       }
       
   
     if( iParam->cCheckHole == false )
-       return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-    					  true, false, false, true, true );
+      {
+        if( iParam->cCheckGear == false )
+          {
+            return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+                                                CloseRevol::Yes,
+                                                CloseSeg::No,
+                                                CloseSegEnd::No,
+                                                CloseHight::Yes,
+                                                CloseLow::Yes);
+          }
+        else
+          {
+            PIndex lInter= (PIndex) iParam->cParam1;
+            Point3d lTmpPt( iParam->cParam2, 0, 0);
+            
+            return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+                                                CloseRevol::Yes,
+                                                CloseSeg::No,
+                                                CloseSegEnd::No,
+                                                CloseHight::Yes,
+                                                CloseLow::Yes,
+                                                WithGrid::No,
+                                                &lTmpPt, lInter,iParam->cCheckGearInv );
+                                                
+         }
+      }
     
-
-    return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					true, true, false, false, false );
+    if( iParam->cCheckGear == false )
+      {        
+        return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+                                            CloseRevol::Yes,
+                                            CloseSeg::Yes,
+                                            CloseSegEnd::No,
+                                            CloseHight::No,
+                                            CloseLow::No);
+      }
+    
+      PIndex lInter= (PIndex) iParam->cParam1;      
+      Point3d lTmpPt( iParam->cParam2,  0, 0);
+    
+      return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
+                                          CloseRevol::Yes,
+                                          CloseSeg::Yes,
+                                          CloseSegEnd::No,
+                                          CloseHight::No,
+                                          CloseLow::No,
+                                          WithGrid::No,
+                                          &lTmpPt,lInter,iParam->cCheckGearInv );
+  
+       
   }
   //************************
   Poly*  PrimitivFactory::CreatePlane(  PrimitivParam * iParam, std::string & iName )
@@ -447,11 +503,20 @@ namespace PP3d{
     if( iParam->cHeight == 0 )
          {
            return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
-                                               false, false, false, false, false );
+                                               CloseRevol::No,
+                                               CloseSeg::No,
+                                               CloseSegEnd::No,
+                                               CloseHight::No,
+                                               CloseLow::No );
          }
 
     return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbV+1, lMat,
-                                        false, true, true, false, false, true ); //pFlagCloseSeg, pFlagCloseSegEnd
+                                        CloseRevol::No,
+                                        CloseSeg::Yes,
+                                        CloseSegEnd::Yes,
+                                        CloseHight::No,
+                                        CloseLow::No,
+                                        WithGrid::Yes ); //pFlagCloseSeg, pFlagCloseSegEnd
     // phipo 20231219 Old false, true, true, true, false ); //pFlagCloseSeg, pFlagCloseSegEnd, pCloseHight
 
   }
@@ -525,11 +590,19 @@ namespace PP3d{
 	lFacet.inverseLines();
     
 	return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  true, false, false, false, false );       	
+                                            CloseRevol::Yes,
+                                            CloseSeg::No,
+                                            CloseSegEnd::No,
+                                            CloseHight::No,
+                                            CloseLow::No );       	
        }
   
     return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
-					  true, false, false, false, false );       	
+                                        CloseRevol::Yes,
+                                        CloseSeg::No,
+                                        CloseSegEnd::No,
+                                        CloseHight::No,
+                                        CloseLow::No );       	
   }
 
 	

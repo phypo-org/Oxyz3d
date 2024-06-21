@@ -27,6 +27,8 @@
 #include "Shape/Object.h"
 #include "Shape/Maker.h"
 
+
+using namespace PP3d;
 //Tout mettre dans le Dialogue
 
 using namespace std;
@@ -289,8 +291,12 @@ namespace M3d {
 			
 	PP3d::Mat4 lMatTran = lMatRecenter * lMatRot *  lMatZero;					
 
-	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran, lFlagClose,
-								   lFlagCloseSeg, lFlagCloseSegEnd, lFlagCloseHight, lFlagCloseLow );
+	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
+                                                                   lFlagClose       ? CloseRevol::Yes  : CloseRevol::No,
+								   lFlagCloseSeg    ? CloseSeg::Yes    : CloseSeg::No,
+                                                                   lFlagCloseSegEnd ? CloseSegEnd::Yes : CloseSegEnd::No,
+                                                                   lFlagCloseHight  ? CloseHight::Yes  : CloseHight::No,
+                                                                   lFlagCloseLow    ? CloseLow::Yes    : CloseLow::No );
 	if( lShape != nullptr )
 	  {
 	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  

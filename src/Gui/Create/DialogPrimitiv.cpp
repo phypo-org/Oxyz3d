@@ -66,7 +66,10 @@ namespace M3d {
     MyCheckbutton * cCheckDouble      = nullptr; 
     MyCheckbutton * cCheckHole        = nullptr; 
 
-    
+    MyCheckbutton * cCheckGear        = nullptr; 
+    MyCheckbutton * cCheckGearInv        = nullptr; 
+   MySlider      * cSliderGearThickness = nullptr; 
+    MySlider      * cSliderGear       = nullptr; 
     
     MySlider * cSliderSize;
 	
@@ -120,6 +123,20 @@ namespace M3d {
 
       
       if( cCheckHole)        lParam.cCheckHole   = (cCheckHole->value() != 0 );
+      
+      if( cCheckGear && cCheckGear->value() )
+        {
+          std::cout << "maj::Gear !" << std::endl;
+          lParam.cCheckGear   = (cCheckGear->value() != 0 );
+          lParam.cCheckGearInv= (cCheckGearInv->value() != 0 );
+          lParam.cParam1      = cSliderGear->value();
+          lParam.cParam2      = cSliderGearThickness->value();
+          if(lParam.cCheckGearInv==false)
+            {
+              lParam.cTop        -= lParam.cParam2;
+              lParam.cBottom     -= lParam.cParam2;
+            }
+        }
       
       
       
@@ -214,10 +231,12 @@ namespace M3d {
       int lX_G1 = lX;
       int lX_SL = lX+lX/4;
       int lX2   = lX + lW+ lX*3;
+      int lX1   = lX + lW;
+      int lX3   = lX2 + lW+ lX*3;
 
       int lY = 20;
 
-      int lMul = 14;
+      int lMul = 16;
       
       if( pType == PP3d::PrimitivFactory::Type::FACET_N )
 	lMul += 4;
@@ -263,7 +282,7 @@ namespace M3d {
 	  //============================================
 	  else if(  pType == PP3d::PrimitivFactory::Type::PLANE )
 	    {
-	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*6,
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*7,
 					 PP3d::PrimitivFactory::GetTypeName(cMyType));
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
@@ -304,7 +323,7 @@ namespace M3d {
 	  //============================================
 	  else if(  pType == PP3d::PrimitivFactory::Type::CYLINDER )
 	    {
-	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*6,
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*8,
 					 PP3d::PrimitivFactory::GetTypeName(cMyType));
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
@@ -318,10 +337,10 @@ namespace M3d {
 	      lY += lYStep;
 
 	      cSliderTop = new MySlider( lX_SL, lY, lW, lH, "Top radius", MajCB, this, 0, 100 );
-	      cSliderTop->value( 1 );
+	      cSliderTop->value( 2 );
 	  
 	      cSliderBottom = new MySlider( lX2, lY, lW, lH, "Bottom radius", MajCB, this, 0, 100 );
-	      cSliderBottom->value( 1 );
+	      cSliderBottom->value( 2 );
 	      lY += lYStep;
 	      lY += lYStep;
 
@@ -337,6 +356,20 @@ namespace M3d {
 	      cSliderThickness->value( 0.1 );
 	      lY += lYStep;
 
+	      cCheckGear = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 ); 
+	      cCheckGearInv = new MyCheckbutton( lX2, lY, 30,15, "Inverse", MajCB, this, 0 ); 
+	      lY += lYStep;
+	   
+	    
+          
+	      cSliderGear = new MySlider( lX, lY, lW, lH, "Gear Nb", MajCB, this, 2, 10 );
+	      cSliderGear->value( 2 );
+              cSliderGearThickness = new MySlider( lX2, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
+	      cSliderGearThickness->value( 0.5 );
+	      lY += lYStep;
+     	      lY += lYStep;
+         
+              
 	      cGroupExt->end();	      	      
 	    }
 	  //============================================

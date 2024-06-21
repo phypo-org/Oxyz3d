@@ -83,6 +83,8 @@ namespace PP3d{
     bool cCheckInvRot=false;
     bool cCheckDouble=false;  // doubleface
     bool cCheckHole=false;
+    bool cCheckGear=false;
+    bool cCheckGearInv=false;
 
     long double cLength=0;
     long double cWidth=0;
