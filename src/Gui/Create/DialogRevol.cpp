@@ -45,16 +45,23 @@ namespace M3d {
 
     Fl_Double_Window* cMyWindow=nullptr;
 
-    MySlider* cSliderPas;
-    MySlider* cSliderAngle;
+    MySliderInt* cSliderPas= nullptr;
+    MySlider* cSliderAngle= nullptr;
 	
 	
-    MySlider* cSliderPosX;
-    MySlider* cSliderPosY;
-    MySlider* cSliderPosZ;
+    MySlider* cSliderPosX= nullptr;
+    MySlider* cSliderPosY= nullptr;
+    MySlider* cSliderPosZ= nullptr;
 	
-    MyCheckbutton* cCheckTore; 
-    MyCheckbutton* cCheckSeal; 
+    MyCheckbutton* cCheckTore= nullptr; 
+    MyCheckbutton* cCheckSeal= nullptr;
+
+
+    MyCheckbutton  * cCheckGear     = nullptr; 
+    MyCheckbutton  * cCheckGearInv  = nullptr; 
+    MySliderFloat  * cGearThickness = nullptr; 
+    MySliderInt    * cGearFrequency = nullptr; 
+  
     //	MyCheckbutton* cCheckCloseLow; 
     //	MyCheckbutton* cCheckCloseSeg;
 
@@ -69,7 +76,7 @@ namespace M3d {
 
     void init(  TypeRevol pType )
     {
-       std::cout << "*********************************** init  **************************" << std::endl;
+       std::cout << "*********************************** DialogRevol::init  **************************" << std::endl;
      cMyType = pType;
 
       int lX = 20;
@@ -77,30 +84,44 @@ namespace M3d {
       int lW = 300;
       int lH = 20;
       int lYStep = 40;
+      int lX2   = lX + lW+ lX*3;
 
-      cMyWindow = new Fl_Double_Window(500, 511, "Revolution");
+      cMyWindow = new Fl_Double_Window(500, 520, "Revolution");
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
 
    
-      cSliderPas =  new MySlider(lX+5, lY, lW, lH, "Iterations", SliderCB, this, 1, 360 );
+      cSliderPas =  new MySliderInt(lX+5, lY, lW, lH, "Iterations", MajCB, this, 1, 360 );
       cSliderPas->value( 4 );
       lY += lYStep;
 	 
-      cSliderAngle =  new MySlider(lX+5, lY, lW, lH, "Angle", SliderCB, this, 0.1, 360 );
+      cSliderAngle =  new MySliderFloat(lX+5, lY, lW, lH, "Angle", MajCB, this, 0.1, 360 );
       cSliderAngle->value( 360 );
       lY += lYStep;
 	 
-      cCheckTore = new MyCheckbutton( lX, lY, 30,15, "Tore", CheckCB, this, 0 );
-      cCheckTore->callback((Fl_Callback*)CheckCB, this );
+      cCheckTore = new MyCheckbutton( lX, lY, 30,15, "Tore", MajCB, this, 0 );
+      cCheckTore->callback((Fl_Callback*)MajCB, this );
       cCheckTore->value( false );
       lY += lYStep;;
-      cCheckSeal = new MyCheckbutton( lX, lY, 30,15, "Seal", CheckCB, this, 0 );
-      cCheckSeal->callback((Fl_Callback*)CheckCB, this );
+      cCheckSeal = new MyCheckbutton( lX, lY, 30,15, "Seal", MajCB, this, 0 );
+      cCheckSeal->callback((Fl_Callback*)MajCB, this );
 
       cCheckSeal->value( false );
       lY += lYStep;;
- 
 
+      
+      cCheckGear    = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 ); 
+      cCheckGearInv = new MyCheckbutton( lX2, lY, 30,15, "Inverse", MajCB, this, 0 ); 
+      lY += lYStep;
+	   	              
+      cGearFrequency = new MySliderInt( lX, lY, lW, lH, "Frequency", MajCB, this, 2, 10 );
+      cGearFrequency->value( 2 );
+      lY += lYStep;
+
+      cGearThickness = new MySliderFloat( lX, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
+      cGearThickness->value( 0.5 );
+      lY += lYStep;
+
+      
       
       if( cMyType != TypeRevol::RevolAxis )	
       {  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
@@ -109,15 +130,15 @@ namespace M3d {
 
 	o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
+	cSliderPosX = new MySliderFloat(lX+5, lY, lW, lH, "X", MajCB, this, -100, 100 );
 	cSliderPosX->value( 0 );
 	lY += lYStep;
  
-	cSliderPosY = new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
+	cSliderPosY = new MySliderFloat(lX+5, lY, lW, lH, "Y", MajCB, this, -100, 100 );
 	cSliderPosY->value( 0 );
 	lY += lYStep;
  
-	cSliderPosZ = new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
+	cSliderPosZ = new MySliderFloat(lX+5, lY, lW, lH, "Z", MajCB, this, -100, 100 );
 	cSliderPosZ->value( 0 );
 	lY += lYStep;
 
@@ -143,8 +164,9 @@ namespace M3d {
 		
       cMyWindow->show( 0, nullptr);
 	
-      std::cout << "*********************************** FIN DIALOGUE **************************" << std::endl;
-      maj();
+      std::cout << "*********************************** fin init **************************" << std::endl;
+    
+     maj();
       
       //      while( Fl::wait() && MyDiag.cMyWindow != nullptr );
 
@@ -156,8 +178,8 @@ namespace M3d {
     //************************
     void maj()
     {
-
-      std::cout << "DialogRevol::maj " << this << std::endl;
+      std::cout << "DialogRevol::maj " << this << " G:" << cCheckGear->cUserData1 << std::endl;
+      
      
       PP3d::Point3d lCenter;
 
@@ -226,7 +248,17 @@ namespace M3d {
 
       //	int lNbPas = 30 ; // pour les tests 
     
-		
+      
+      /*      if( cCheckGear && cCheckGear->value() )
+        {
+          // std::cout << "maj::Gear !" << std::endl;
+            {
+              lParam.cTop        -= lParam.cParam2;
+              lParam.cBottom     -= lParam.cParam2;
+            }
+        }
+      */
+ 		
 
       double lAngle  = lAngleTotal / lNbPas;
 		
@@ -255,20 +287,24 @@ namespace M3d {
 	PP3d::Mat4 lMatZero;
 	lMatZero.initMove( lNCenter ); //on se positionne en zero;
 
-						
+        
+        Point3d lTmpPt;					
 	PP3d::Mat4 lMatRot;
 	switch( cMyType )
 	  {
 	  case TypeRevol::RevolX :
 	    lMatRot.initRotX( -M_PI*lAngle/180 );
+            lTmpPt.z() =cGearThickness->value();
 	    break;
 									
 	  case TypeRevol::RevolY :
 	    lMatRot.initRotY( -M_PI*lAngle/180 );
+            lTmpPt.z() =cGearThickness->value();
 	    break;
 					
 	  case TypeRevol::RevolZ :
 	    lMatRot.initRotZ( -M_PI*lAngle/180 );
+            lTmpPt.x() =cGearThickness->value();
 	    break;
 
 	  case TypeRevol::RevolAxis :
@@ -282,6 +318,8 @@ namespace M3d {
 		  cout << "Angle:" << -M_PI*lAngle/180.0 << endl;
 		  lMatRot.initRotAxis( lAxis,  -M_PI*lAngle/180.0 );
 		}
+              
+              lTmpPt = lAxis * cGearThickness->value();
 	    }
 	    break;
 	  
@@ -290,13 +328,19 @@ namespace M3d {
 	  }					
 			
 	PP3d::Mat4 lMatTran = lMatRecenter * lMatRot *  lMatZero;					
+      
 
 	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
                                                                    lFlagClose       ? CloseRevol::Yes  : CloseRevol::No,
 								   lFlagCloseSeg    ? CloseSeg::Yes    : CloseSeg::No,
                                                                    lFlagCloseSegEnd ? CloseSegEnd::Yes : CloseSegEnd::No,
                                                                    lFlagCloseHight  ? CloseHight::Yes  : CloseHight::No,
-                                                                   lFlagCloseLow    ? CloseLow::Yes    : CloseLow::No );
+                                                                   lFlagCloseLow    ? CloseLow::Yes    : CloseLow::No,
+                                                                   WithGrid::No,
+                                                                   (cCheckGear->value() ?  &lTmpPt : nullptr),
+                                                                    cGearFrequency->value(), cCheckGearInv->value()
+                                                                   );
+        
 	if( lShape != nullptr )
 	  {
 	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
@@ -307,55 +351,26 @@ namespace M3d {
     }
 
     //----------------------------------------
-
+    static void MajCB( Fl_Widget*, void*pUserData )
+    {
+      Diag.maj();
+    }
+   //----------------------------------------
     static void CancelCB( Fl_Widget*, void* pUserData ) {
- 
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
+      
+       std::cout << "CANCEL" << std::endl;
+
       TheInput.cancelCurrentCreation();
 
       TheCreat.redrawAllCanvas3d( PP3d::Compute::FacetAll );
 
-      Fl::delete_widget( lDialog->cMyWindow );
+      Fl::delete_widget( Diag.cMyWindow );
       Diag.cMyWindow = nullptr;
-    }
-    //----------------------------------------
-    static void SliderCB( Fl_Widget*, void*pUserData )
-    {
-      std::cout << "DialogRevol::SliderCB " << pUserData << std::endl;
-
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      std::cout << "DialogRevol::SliderCB " << lDialog->cSliderPas->value() << std::endl;
-      lDialog->maj();
-    }
-    //----------------------------------------
-    static  void SizeCB( Fl_Widget*, void*pUserData )
-    {
-      std::cout << "DialogRevol::SizeCB " << pUserData << std::endl;
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      // lDialog->cSizeSliderX->value(  atof(wSizeX->value()) );
-      lDialog->maj();
-    }
-    //----------------------------------------
-    static void SizeSliderCB( Fl_Widget*, void*pUserData )
-    {
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      lDialog->maj(); 
-    }
-    //----------------------------------------
-    static void CheckCB( Fl_Widget*, void*pUserData )
-    {
-      //	std::cout << "DialogRevol::CheckCB " << pUserData << std::endl;
-      //  MyCheckbutton *lCheck= reinterpret_cast<MyCheckbutton*>(pUserData);
-      //  (*lCheck->cCallback)(pWidget, lCheck->cUserData);  
-																											 
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      lDialog->maj(); 
     }
     //----------------------------------------
     static void OkCB( Fl_Widget*, void*pUserData )
     {
-      DialogRevol* lDialog = reinterpret_cast<DialogRevol*>(pUserData);
-      lDialog->maj();
+      Diag.maj();
       PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
       if( lObj != nullptr )
 	{
@@ -368,7 +383,7 @@ namespace M3d {
       TheCreat.redrawAll(PP3d::Compute::FacetAll);
 
 
-      Fl::delete_widget(lDialog->cMyWindow);  // Normly if I am understand the documentation, it will destroy all the children
+      Fl::delete_widget(Diag.cMyWindow);  // Normly if I am understand the documentation, it will destroy all the children
       Diag.cMyWindow = nullptr;
     }
     //************************

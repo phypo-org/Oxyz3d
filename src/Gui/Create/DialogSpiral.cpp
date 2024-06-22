@@ -48,7 +48,7 @@ namespace M3d {
     
     Fl_Double_Window* cMyWindow=nullptr;
 
-    MySlider* cSliderPas= nullptr;
+    MySliderInt* cSliderPas= nullptr;
     MySlider* cSliderAngle= nullptr;
 
     MySlider* cSliderMoveX= nullptr;
@@ -115,7 +115,7 @@ namespace M3d {
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
 
    
-      cSliderPas =  new MySlider(lX+5, lY, lW, lH, "Iterations", SliderCB, this, 1, 360 );
+      cSliderPas =  new MySliderInt(lX+5, lY, lW, lH, "Iterations", SliderCB, this, 1, 360 );
       cSliderPas->value( 4 );
       lY += lYStep;
 	 

@@ -53,9 +53,9 @@ namespace M3d {
     std::string  cName;
 
     Fl_Group *      cGroupExt         = nullptr;
-    MySlider *      cSliderU          = nullptr;
-    MySlider *      cSliderV          = nullptr;
-    MySlider *      cSliderW          = nullptr;
+    MySliderInt *      cSliderU          = nullptr;
+    MySliderInt *      cSliderV          = nullptr;
+    MySliderInt *      cSliderW          = nullptr;
     MySlider *      cSliderLength     = nullptr;
     MySlider *      cSliderWidth      = nullptr;
     MySlider *      cSliderHeight     = nullptr;
@@ -68,8 +68,8 @@ namespace M3d {
 
     MyCheckbutton * cCheckGear        = nullptr; 
     MyCheckbutton * cCheckGearInv        = nullptr; 
-   MySlider      * cSliderGearThickness = nullptr; 
-    MySlider      * cSliderGear       = nullptr; 
+    MySlider      * cSliderGearThickness = nullptr; 
+    MySliderInt   * cSliderGearFrequency = nullptr; 
     
     MySlider * cSliderSize;
 	
@@ -126,10 +126,10 @@ namespace M3d {
       
       if( cCheckGear && cCheckGear->value() )
         {
-          std::cout << "maj::Gear !" << std::endl;
+          // std::cout << "maj::Gear !" << std::endl;
           lParam.cCheckGear   = (cCheckGear->value() != 0 );
           lParam.cCheckGearInv= (cCheckGearInv->value() != 0 );
-          lParam.cParam1      = cSliderGear->value();
+          lParam.cParam1      = cSliderGearFrequency->value();
           lParam.cParam2      = cSliderGearThickness->value();
           if(lParam.cCheckGearInv==false)
             {
@@ -263,7 +263,7 @@ namespace M3d {
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Number of point", MajCB, this, 3, 64 );
+	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Number of point", MajCB, this, 3, 64 );
 	      cSliderU->value( 4 );
 	      lY += lYStep;
 	      /*
@@ -298,10 +298,10 @@ namespace M3d {
 	      lY += lYStep;
               
              
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Div Length", MajCB, this, 1, 128 );
+	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Div Length", MajCB, this, 1, 128 );
 	      cSliderU->value( 4 );
 	      lY += lYStep;              
-	      cSliderV = new MySlider( lX_SL, lY, lW, lH, "Div Width", MajCB, this, 1, 128 );
+	      cSliderV = new MySliderInt( lX_SL, lY, lW, lH, "Div Width", MajCB, this, 1, 128 );
 	      cSliderV->value( 4 );
 	      lY += lYStep;
 
@@ -328,7 +328,7 @@ namespace M3d {
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
+	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
 	      cSliderU->value( 16 );
 	      lY += lYStep;
 
@@ -359,11 +359,9 @@ namespace M3d {
 	      cCheckGear = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 ); 
 	      cCheckGearInv = new MyCheckbutton( lX2, lY, 30,15, "Inverse", MajCB, this, 0 ); 
 	      lY += lYStep;
-	   
-	    
-          
-	      cSliderGear = new MySlider( lX, lY, lW, lH, "Gear Nb", MajCB, this, 2, 10 );
-	      cSliderGear->value( 2 );
+	   	              
+	      cSliderGearFrequency = new MySliderInt( lX, lY, lW, lH, "Frequency", MajCB, this, 2, 50 );
+	      cSliderGearFrequency->value( 2 );
               cSliderGearThickness = new MySlider( lX2, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
 	      cSliderGearThickness->value( 0.5 );
 	      lY += lYStep;
@@ -380,11 +378,11 @@ namespace M3d {
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
-	      cSliderU = new MySlider( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
+	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
 	      cSliderU->value( 16 );
 	      lY += lYStep;
 	      
-	      cSliderV = new MySlider( lX_SL, lY, lW, lH, "Slices", MajCB, this, 3, 128 );
+	      cSliderV = new MySliderInt( lX_SL, lY, lW, lH, "Slices", MajCB, this, 3, 128 );
 	      cSliderV->value( 8 );
 	      lY += lYStep;
 
@@ -505,10 +503,6 @@ namespace M3d {
       cMyWindow->show( 0, nullptr);
       maj();
 
-
-      // BON il y un probleme avec la sortie, mauvais  utilisation (j'ai eu tord de suivre les exemples ... ), ça marche quand meme, mais il faut faire attention !
-
-      //while (Fl::wait() && cContinue );
     }
    //----------------------------------------
     static void MajCB( Fl_Widget*, void*pUserData )

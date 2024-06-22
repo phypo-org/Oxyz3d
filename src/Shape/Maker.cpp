@@ -62,7 +62,7 @@ namespace PP3d {
 	  {
 	    ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
             
-            Point3d lPt3d = lPointsPtr[p-lNbCol]->get()*pMat;                         
+            Point3d lPt3d( lPointsPtr[p-lNbCol]->get()*pMat );                         
               
 	    PointPtr lTmpPt = nullptr;	    
 
@@ -211,7 +211,7 @@ namespace PP3d {
 	  }
       }
 	
-    if( iFlagCloseSegEnd == CloseSegEnd::No)
+    if( iFlagCloseSegEnd == CloseSegEnd::Yes)
       {
 	// pour toutes les facettes cree en bordure
 	// on prend la premiere ligne		
@@ -266,7 +266,7 @@ namespace PP3d {
 	}
         //:::::::::::::::::::::::::::::::::
 
-        if( iFlagGrid == WithGrid::Yes || lNewFacet0->getNbLines() <= 4 )
+        if( iFlagGrid == WithGrid::No || lNewFacet0->getNbLines() <= 4 )
           {		 						
             luPoly->addFacet( lNewFacet0 );
             luPoly->addFacet( lNewFacet1 );              

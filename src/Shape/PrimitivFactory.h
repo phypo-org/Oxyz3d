@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES // for C++
 #define ___USE_GNU
 #include <cmath>
+#include <sstream>
 
 #include "ObjectPoly.h"
 #include "PP3dType.h"
@@ -98,6 +99,28 @@ namespace PP3d{
     long double cParam1=0;
     long double cParam2=0;
     long double cParam3=0;
+
+    std::ostream & write( std::ostream & pOut )
+    {
+      pOut << " U:"  << cNbU
+           << " V:"  << cNbV
+           << " W:"  << cNbW
+           << " Ir:" << cCheckInvRot
+           << " De:"  << cCheckDouble
+           << " H:"  << cCheckHole
+           << " G:"  << cCheckGear
+           << " Gi:" << cCheckGearInv
+           << " Lg:" << cLength
+           << " Wh:" << cWidth
+           << " Ht:" << cHeight
+           << " Tp:" << cTop
+           << " Bm:" << cBottom
+           << " Ts:" << cThickness
+           << " P1:" << cParam1
+           << " P2:" << cParam2
+           << " P3:" << cParam3;
+      return pOut;
+    }
   };
 
 
