@@ -67,10 +67,10 @@ namespace M3d {
     MyCheckbutton * cCheckHole        = nullptr; 
 
     MyCheckbutton * cCheckGear        = nullptr; 
-    MyCheckbutton * cCheckGearInv        = nullptr; 
     MySlider      * cSliderGearThickness = nullptr; 
-    MySliderInt   * cSliderGearFrequency = nullptr; 
-    
+    MySliderInt   * cSliderGearFrequency1 = nullptr; 
+    MySliderInt   * cSliderGearFrequency2 = nullptr; 
+
     MySlider * cSliderSize;
 	
     MySlider * cSliderPosX;
@@ -128,14 +128,12 @@ namespace M3d {
         {
           // std::cout << "maj::Gear !" << std::endl;
           lParam.cCheckGear   = (cCheckGear->value() != 0 );
-          lParam.cCheckGearInv= (cCheckGearInv->value() != 0 );
-          lParam.cParam1      = cSliderGearFrequency->value();
-          lParam.cParam2      = cSliderGearThickness->value();
-          if(lParam.cCheckGearInv==false)
-            {
-              lParam.cTop        -= lParam.cParam2;
-              lParam.cBottom     -= lParam.cParam2;
-            }
+          lParam.cParam1      = cSliderGearFrequency1->value();
+          lParam.cParam2      = cSliderGearFrequency2->value();
+          lParam.cParam3      = cSliderGearThickness->value();
+            
+          lParam.cTop        -= lParam.cParam3;
+          lParam.cBottom     -= lParam.cParam3;            
         }
       
       
@@ -323,7 +321,7 @@ namespace M3d {
 	  //============================================
 	  else if(  pType == PP3d::PrimitivFactory::Type::CYLINDER )
 	    {
-	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*8,
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*9,
 					 PP3d::PrimitivFactory::GetTypeName(cMyType));
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
@@ -351,24 +349,28 @@ namespace M3d {
 	      */
 	      
 	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Tube", MajCB, this, 0 ); 
-	   
+	    
+              
 	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Thickness", MajCB, this, 0.0001, 100 );
 	      cSliderThickness->value( 0.1 );
 	      lY += lYStep;
+	      lY += lYStep;
 
-	      cCheckGear = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 ); 
-	      cCheckGearInv = new MyCheckbutton( lX2, lY, 30,15, "Inverse", MajCB, this, 0 ); 
-	      lY += lYStep;
-	   	              
-	      cSliderGearFrequency = new MySliderInt( lX, lY, lW, lH, "Frequency", MajCB, this, 2, 50 );
-	      cSliderGearFrequency->value( 2 );
+	      cCheckGear = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 );
               cSliderGearThickness = new MySlider( lX2, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
-	      cSliderGearThickness->value( 0.5 );
+              cSliderGearThickness->value( 0.5 );
 	      lY += lYStep;
+
+	      cSliderGearFrequency1 = new MySliderInt( lX, lY, 200, lH, "Frequency", MajCB, this, 1, 50 );
+	      cSliderGearFrequency1->value( 1 );
+
+	      cSliderGearFrequency2 = new MySliderInt( lX2, lY, 200, lH, "Frequency", MajCB, this, 1, 50 );
+	      cSliderGearFrequency2->value( 1 );
      	      lY += lYStep;
          
-              
-	      cGroupExt->end();	      	      
+               
+	      cGroupExt->end();
+    	      
 	    }
 	  //============================================
 	  if( pType == PP3d::PrimitivFactory::Type::SPHERE )

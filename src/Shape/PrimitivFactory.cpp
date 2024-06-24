@@ -337,7 +337,13 @@ namespace PP3d{
 	|| (iParam->cTop ==0 && iParam->cCheckHole )
 	)
       {
-	std::cerr  << "*** Error : PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
+	std::cerr  << "*** Error : PrimitivFactory::CreateCylinder - Bad parameter : " << iParam <<std::endl;
+        
+        std::cerr  << "NbU:"<< iParam->cNbU
+                   << " Thickness:" <<  iParam->cThickness
+                   << " Bottom:" << iParam->cBottom
+                   <<  " Height:" << iParam->cHeight
+                   << " Top:" << iParam->cTop  <<  std::endl;
 	return nullptr;
       }
     
@@ -407,9 +413,11 @@ namespace PP3d{
           }
         else
           {
-            PIndex lInter= (PIndex) iParam->cParam1;
-            Point3d lTmpPt( iParam->cParam2, 0, 0);
-            
+            PIndex lMod1= (PIndex) iParam->cParam1;      
+            PIndex lMod2= (PIndex) iParam->cParam2;      
+            Point3d lTmpPt( iParam->cParam3,  0, 0);
+    
+  
             return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
                                                 CloseRevol::Yes,
                                                 CloseSeg::No,
@@ -417,7 +425,7 @@ namespace PP3d{
                                                 CloseHight::Yes,
                                                 CloseLow::Yes,
                                                 WithGrid::No,
-                                                &lTmpPt, lInter,iParam->cCheckGearInv );
+                                                &lTmpPt, lMod1, lMod2 );
                                                 
          }
       }
@@ -432,8 +440,9 @@ namespace PP3d{
                                             CloseLow::No);
       }
     
-      PIndex lInter= (PIndex) iParam->cParam1;      
-      Point3d lTmpPt( iParam->cParam2,  0, 0);
+      PIndex lMod1= (PIndex) iParam->cParam1;      
+      PIndex lMod2= (PIndex) iParam->cParam2;      
+      Point3d lTmpPt( iParam->cParam3,  0, 0);
     
       return Maker::CreatePoly4FromFacet( &lFacet, iParam->cNbU, lMatRot,
                                           CloseRevol::Yes,
@@ -442,7 +451,7 @@ namespace PP3d{
                                           CloseHight::No,
                                           CloseLow::No,
                                           WithGrid::No,
-                                          &lTmpPt,lInter,iParam->cCheckGearInv );
+                                          &lTmpPt,lMod1, lMod2 );
   
        
   }

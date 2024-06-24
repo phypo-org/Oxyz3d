@@ -31,8 +31,8 @@ namespace PP3d {
 					       CloseLow    iCloseLow,
                                                WithGrid    iFlagGrid = WithGrid::No,
                                                Point3d  *  iGearDecal=0,
-                                               PIndex      iGearMod  =0,
-                                               bool        iGearInv  =false,
+                                               PIndex      iGearMod1  =0,
+                                               PIndex      iGearMod2  =0,
 					       long double iEpsilon = kEpsilon);
           
           static GLuint QuadrangulerConcave( Facet & iFacet, FacetPtrVect & oFacVect );

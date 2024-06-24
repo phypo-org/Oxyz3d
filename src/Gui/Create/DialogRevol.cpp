@@ -58,10 +58,10 @@ namespace M3d {
 
 
     MyCheckbutton  * cCheckGear     = nullptr; 
-    MyCheckbutton  * cCheckGearInv  = nullptr; 
     MySliderFloat  * cGearThickness = nullptr; 
-    MySliderInt    * cGearFrequency = nullptr; 
-  
+    MySliderInt    * cGearFreq1 = nullptr; 
+    MySliderInt    * cGearFreq2 = nullptr; 
+
     //	MyCheckbutton* cCheckCloseLow; 
     //	MyCheckbutton* cCheckCloseSeg;
 
@@ -78,15 +78,29 @@ namespace M3d {
     {
        std::cout << "*********************************** DialogRevol::init  **************************" << std::endl;
      cMyType = pType;
+ 
+ 
 
-      int lX = 20;
-      int lY= 30;
       int lW = 300;
       int lH = 20;
-      int lYStep = 40;
+      
+      int lYStep = lH*2;
+      
+      int lX = 20; 
+      
+      int lX_G0 = lX/2;
+      int lW_G0 = lW*2.5 ; // +lX*5;
+      int lX_G1 = lX;
+      int lX_SL = lX+lX/4;
       int lX2   = lX + lW+ lX*3;
+      int lX1   = lX + lW;
+      int lX3   = lX2 + lW+ lX*3;
 
-      cMyWindow = new Fl_Double_Window(500, 520, "Revolution");
+      int lY = 20;
+
+      int lMul = 14;
+      
+      cMyWindow = new Fl_Double_Window( lW_G0+lX*2,  lYStep*lMul, "Revolution");
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
 
    
@@ -110,18 +124,18 @@ namespace M3d {
 
       
       cCheckGear    = new MyCheckbutton( lX, lY, 30,15, "Gear", MajCB, this, 0 ); 
-      cCheckGearInv = new MyCheckbutton( lX2, lY, 30,15, "Inverse", MajCB, this, 0 ); 
-      lY += lYStep;
-	   	              
-      cGearFrequency = new MySliderInt( lX, lY, lW, lH, "Frequency", MajCB, this, 2, 10 );
-      cGearFrequency->value( 2 );
-      lY += lYStep;
 
-      cGearThickness = new MySliderFloat( lX, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
+      cGearThickness = new MySliderFloat( lX2, lY, lW, lH, "Gear Thickness", MajCB, this, 0.0001, 100 );
       cGearThickness->value( 0.5 );
       lY += lYStep;
-
-      
+	   	              
+      cGearFreq1 = new MySliderInt( lX, lY, 200, lH, "Freq1", MajCB, this, 1, 100 );
+      cGearFreq1->value( 1 );
+      cGearFreq2 = new MySliderInt( lX2, lY, 200, lH, "Freq2", MajCB, this, 1, 100 );
+      cGearFreq2->value( 1 );
+      lY += lYStep;
+      lY += lYStep;
+ 
       
       if( cMyType != TypeRevol::RevolAxis )	
       {  Fl_Group* o = new Fl_Group(lX, lY, lW+20, lH*7, "Position:");
@@ -176,8 +190,7 @@ namespace M3d {
   protected:   
 
     //************************
-    void maj()
-    {
+    void maj()   {
       std::cout << "DialogRevol::maj " << this << " G:" << cCheckGear->cUserData1 << std::endl;
       
      
@@ -338,8 +351,7 @@ namespace M3d {
                                                                    lFlagCloseLow    ? CloseLow::Yes    : CloseLow::No,
                                                                    WithGrid::No,
                                                                    (cCheckGear->value() ?  &lTmpPt : nullptr),
-                                                                    cGearFrequency->value(), cCheckGearInv->value()
-                                                                   );
+                                                                    cGearFreq1->value(), cGearFreq2->value() );
         
 	if( lShape != nullptr )
 	  {

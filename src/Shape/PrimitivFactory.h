@@ -85,8 +85,7 @@ namespace PP3d{
     bool cCheckDouble=false;  // doubleface
     bool cCheckHole=false;
     bool cCheckGear=false;
-    bool cCheckGearInv=false;
-
+    
     long double cLength=0;
     long double cWidth=0;
     long double cHeight=0;
@@ -109,7 +108,6 @@ namespace PP3d{
            << " De:"  << cCheckDouble
            << " H:"  << cCheckHole
            << " G:"  << cCheckGear
-           << " Gi:" << cCheckGearInv
            << " Lg:" << cLength
            << " Wh:" << cWidth
            << " Ht:" << cHeight

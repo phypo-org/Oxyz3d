@@ -16,8 +16,8 @@ namespace PP3d {
                                        CloseLow    iCloseLow,
                                        WithGrid    iFlagGrid,
                                        Point3d  *  iGearDecal,
-                                       PIndex      iGearMod,
-                                       bool        iGearInv,
+                                       PIndex      iGearMod1,
+                                       PIndex      iGearMod2,
 				       long double iEpsilon )
   {
     if( pNbPas <= 0 || pFacet == nullptr  )
@@ -55,7 +55,6 @@ namespace PP3d {
     // les autres sont multiplie par la matrice iterativement(pb de precision?) // il faudrait recalculer la matrice a partir de l'angle veritable !!!!!!!!!!!
     // Il faudrait aussi reperer que certain point sont les memes (sommet de cone par ex :) dans ce cas il faudrait ne creer qu'un seul point
    
-    
     for( PIndex l=1; l< lNbLine; l++ )
       {
 	for( PIndex lCol=0; lCol < lNbCol; lCol++, p++ )
@@ -85,7 +84,7 @@ namespace PP3d {
 	  }
       }
 
-    
+    /*
     //--------- Pour Gear !!!
    if( iGearDecal != nullptr && iGearMod >= 2 )
       {
@@ -99,7 +98,7 @@ namespace PP3d {
               {
                 ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
                 
-                if( iGearDecal != nullptr && iGearMod >= 2 && (l%iGearMod) == 0)
+                if( iGearMod >= 2 && (l%iGearMod) == 0)
                   {
                     if( iGearInv )
                       lPointsPtr[ppp]->get() -= *iGearDecal;
@@ -107,6 +106,45 @@ namespace PP3d {
                       lPointsPtr[ppp]->get() += *iGearDecal;
                   }
               }
+          }
+      }
+    //-------- Pour Gear !!!
+    */
+    
+    //--------- Pour Gear !!!
+   if( iGearDecal != nullptr )
+      {        
+        PIndex lGearMode1=0;
+        PIndex lGearMode2=0;
+
+        int ppp=0;
+        for( PIndex l=0; l< lNbLine; l++ )
+          {
+            if( l > 0 )
+              *iGearDecal *= pMat; 
+            
+            for( PIndex lCol=0; lCol < lNbCol; lCol++, ppp++ )
+              {
+                ////	    std::cout << ">>>Points:" << p << " " << p-lNbCol  << std::endl;
+                if(lGearMode1< iGearMod1 )
+                  {                                     
+                    lPointsPtr[ppp]->get() += *iGearDecal;
+                  }
+               }
+
+            if(lGearMode1< iGearMod1 )
+              {
+                lGearMode1++;
+              }
+            else
+              if( lGearMode2< iGearMod2-1 )
+                {
+                  lGearMode2++;
+                }
+              else
+                {
+                  lGearMode1 = lGearMode2 =0;
+                }                          
           }
       }
     //-------- Pour Gear !!!
