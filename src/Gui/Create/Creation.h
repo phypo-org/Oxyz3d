@@ -24,6 +24,8 @@
 
 #include "TransformType.h"
 
+#include "Gui/ImgModel.h"
+
 
 
 #define PushHistory() PP3d::UndoHistory::Instance().sav( *Creation::Instance().getDatabase(), &TheSelect, Creation::Instance().autoSave() )
@@ -61,8 +63,7 @@ namespace M3d{
       
   protected:    
     std::unique_ptr<PP3d::DataBase>       cuDatabaseTmp; // Objects temporaires !!!!!!!!!!!
-    
-    
+   
   public:
 
     PP3d::Selection                       cSelectTransform;
@@ -258,7 +259,31 @@ namespace M3d{
    const char * autoSave();
 
     //---------------------------
-    void info( const std::string & iStr );  
+    void info( const std::string & iStr );
+
+
+  protected:
+     ImgModel * cModelImg = nullptr;
+    
+  public:
+    
+    ImgModel * getModelImg() { return cModelImg; }
+    void loadModelImage( const std::string & iVal )
+    {
+      if( cModelImg != nullptr )
+        {
+          delete cModelImg;
+          cModelImg = nullptr;
+        }
+      ImgModel * lTmpIM = new ImgModel();
+      if( lTmpIM->loadImage( iVal.c_str() ) == false )
+        {
+          delete lTmpIM;
+        }
+      else cModelImg = lTmpIM;
+    }
+    
+    
     
  };
   //************************************

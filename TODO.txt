@@ -28,7 +28,20 @@ XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
 
 
 XXXXXX - Ameliorer la gestion du dialogue de la sauvegarde et du chargement
+=====================================================
 
+IL FAUT ABSOLUMENT :::: AFFICHER LE MODE COURANT ET LES SOUSMODE
+   MAGENT:DRAG par exemple en bas de l'ecran avant le message courant
+   !!!
+   il faudrait au moins trois textes:
+      1 pour le mode/sous mode
+      1 pour l'action en cours
+      1 pour 1 message d'erreur ou autre
+
+ou alors mettre systemeatiquement le mode/sous/mode etc avant le text
+info
+il faudrait aussi 1 console !!!!
+      
 
 =====================================================
 - Import pour les .stl

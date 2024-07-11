@@ -143,6 +143,8 @@ namespace M3d {
               {               
                 if( Fl::event_ctrl() ) // CTRL
                   {
+                    AINFO( "New input point");
+
                     DBG_ACT(" **************** cUserActionSaisie " );
                     std::cout << " **************** cUserActionSaisie " << std::endl;
                     userInputPoint(true );              
@@ -156,7 +158,8 @@ namespace M3d {
                     
                     std::cout << " **************** cUserActionSaisie SHIFT " << lId  << std::endl;
                     DBG_ACT(" **************** cUserActionSaisie Hightlight  "  << lId );
-                    
+                    AINFO( "Input point find entity");
+
                     userInputPoint(  TheCreat.getDatabase()->findEntity( lId)  );
                     userActionPrepare(  );        
             
@@ -173,6 +176,8 @@ namespace M3d {
           {
             if( Fl::event_button() == FL_LEFT_MOUSE )
               {
+                                    AINFO( "End drag input point");
+
                 userDragInputPt(pEvent, true );
                 userActionTerminate(  );
                 changeUserMode( ModeUser::MODE_BASE );
@@ -184,6 +189,7 @@ namespace M3d {
           {
             if( userActionIsRun() )
               {
+                                    AINFO( "Drag input point");
                 userDragInputPt(pEvent, false);
                 return 1;
               }
@@ -206,6 +212,9 @@ namespace M3d {
               
                 if( cMouseLastPosZ != -1 )
                   {
+                    AINFO( "input move plane");
+
+                    
                     TheCreat.setInputPlaneHeight( TheCreat.getInputPlaneHeight()
                                                   + (Fl::event_y()-cMouseLastPosZ)/10.0) ; // ?????????????
                     userInputPoint( cMouseLastPosX, cMouseLastPosY, false ); // just view the possible position of point
@@ -218,7 +227,8 @@ namespace M3d {
             else
               {
                 //   std::cout << " NO " << std::endl;           
-              
+                AINFO( "input move position");
+                                  
                 cMouseLastPosX = Fl::event_x();
                 cMouseLastPosY = Fl::event_y();
                 cMouseLastPosZ = -1;

@@ -224,8 +224,28 @@ namespace M3d {
         lTmpViewInputPolyObject =   & cViewInputObjectMagnet;
       }
     
-    //===========================================================	
-    drawUtils();  //Grid, cursor ...
+    //===========================================================
+
+  drawUtils();  //Grid,  ...
+
+       
+  if( TheCreat.getModelImg() != nullptr )
+      {
+          glDepthFunc(GL_LESS);                 
+          glDepthMask( GL_FALSE );        
+          glDisable( GL_LIGHTING );
+
+    
+        TheCreat.getModelImg()->draw();
+
+
+        
+           glEnable(GL_LIGHTING);       
+           glDepthMask( GL_TRUE );     
+           glDisable( GL_BLEND );             
+ 
+      }
+  
 
     if( cFlagCursor3d )
       {
@@ -234,7 +254,9 @@ namespace M3d {
 		
     //  cViewProps.cDebug = cDebug;
     cViewGen.cFlagViewNormal = cFlagViewNormal;
- 
+   
+
+    
 
     // Draw the 3d view of object
     ///////////    TheCreat.getDatabase()->recomputeAll( );      // AFAIRE : optimiser c'est couteux de le faire a chaque fois

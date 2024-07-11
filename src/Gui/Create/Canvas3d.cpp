@@ -314,35 +314,41 @@ namespace M3d {
     
    if( (lResult = handleCamera( pEvent )) !=0 )
       {
+        AINFO( "Camera");        
         return lResult;
       }
    //   std::cout << "after hdl camera" << std::endl;
    if( (lResult = handleMenu( pEvent )) !=0 )
       {
+        AINFO( "Menu");
         return lResult;
       }
    
    //    std::cout << "after hdl menu" << std::endl;
    if( (lResult = handleInput( pEvent )) !=0 )
       {
+        AINFO( "Input");
         return lResult;
       }
      //std::cout << "after hdl magnet" << std::endl;
 
     if( (lResult = handleMagnet( pEvent )) !=0 )
       {
+        AINFO( "Magnet");
         return lResult;
       }
    
    if( (lResult = handleSelect( pEvent )) !=0 )
       {
+        AINFO( "Select");
         return lResult;
       }
    //    std::cout << "after hdl select" << std::endl;
  
    if( (lResult = handleTransform( pEvent )) !=0 )
       {
-        return lResult;
+        AINFO( "Transform");
+       return lResult;
       }
    //   std::cout << "after hdl transform" << std::endl;
    
@@ -366,14 +372,18 @@ namespace M3d {
 		  //=======================
 		case FL_Escape:
 		  userActionCancel( );
+                  AINFO( "---");
+
 		  break;
 		  //=======================
 		case	FL_Tab:
-		  DBG_EVT_NL( " TAB" );
+  		  DBG_EVT_NL( " TAB" );
 
                   cout << "TAB " << endl;
 		  if( getUserMode() == ModeUser::MODE_TRANSFORM )
 		    {
+                      AINFO( "Selection input");
+             
                       //CallDialogKeepFloatInit( this );
 		      userTransformSelectionInput(pEvent);
 		    }		  
@@ -391,6 +401,8 @@ namespace M3d {
 			  PP3d::Entity* iEntity = TheCreat.getDatabase()->findEntity( lId);
 			  if( iEntity != nullptr)
 			    {
+                             AINFO( "Insert Entity points");
+ 
 			      PP3d::SortEntityVisitorPoint  lVisit;
 			      iEntity->execVisitor( lVisit );
 
@@ -400,12 +412,15 @@ namespace M3d {
 				}
 			      lFlagRedrawAll = true;
 			    }
-	  
+                          else AINFO( "Entity not found");
 			}
 		      else
 			{		      
 			  if( setCursor3dPosition(Fl::event_x(), Fl::event_y() ))
 			    {
+                              AINFO( "Insert selected point");
+
+                              
 			      PP3d::Point3d lResult = TheCreat.getDatabase()->getCursorPosition();			
 			      TheCreat.roundInput( lResult );
 			      TheInput.insertCurrentLineSelectPoint( lResult, TheBase); 
@@ -418,10 +433,12 @@ namespace M3d {
 		case FL_BackSpace:
 		  if( getUserMode() == ModeUser::MODE_DRAG )
 		    {
+                      AINFO( "BackSpace - Delete select input point");
 		      TheInput.delCurrentLineSelectPoint(TheBase); 
 		    }
 		  else if( getUserMode() == ModeUser::MODE_BASE )
 		    {		      
+                      AINFO( "Delete last input point");
 		      TheInput.delLastPoint ();
 		    }
 		  
@@ -431,10 +448,14 @@ namespace M3d {
 		case FL_Delete:
                   if( TheSelect.getSelectType() ==  PP3d::SelectType::Facet )
                     {
+                      AINFO( "Del - Delete facet");
+
                       mergeFacets(&TheBase, &TheSelect);
                     }
                   else
                     {
+                      AINFO( "Del - Delete selection");
+                      
                       TheSelect.deleteAllFromDatabase( *TheCreat.getDatabase());
                     }
 		  lFlagRedrawAll = true;
@@ -447,11 +468,13 @@ namespace M3d {
 		case 0xffab:
 		  SelFunct::SelectMore( TheSelect, TheBase );
 		    
+                      AINFO( "Select more");
 		  TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheCreat.redrawObjectTree();
 		  break;
 		
 		case 0xffad:
+                      AINFO( "Select less");
 		  SelFunct::SelectLess( TheSelect, TheBase );
 		    
 		  TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
@@ -468,6 +491,8 @@ namespace M3d {
 					
 	      if( strcmp( lStr, ANNULE_ACTION )==0)
 		{
+                  AINFO( "Cancel action");
+
 		  userActionTerminate( );
 		  TheCreat.setCurrentTransformType( Transform::Nothing );
 		}
@@ -475,6 +500,7 @@ namespace M3d {
 		{
 		  if( getUserMode() == ModeUser::MODE_BASE )
 		    {
+                      AINFO( "Cancel selection");
                       PushHistory();
 		      TheSelect.removeAll();
 		    }
@@ -516,11 +542,15 @@ namespace M3d {
 		      cout << "CTRL" << endl;
 		      if( Fl::event_shift() )
 			{
+                               AINFO( "Redo");
+
 			  cout << "Shift" << endl;
 			  RedoCB( &cMyWin3d, nullptr ); 
 			}
 		      else
 			{
+                          AINFO( "Undo");
+
 			  UndoCB( &cMyWin3d, nullptr  ); 
 			  
 			}
@@ -614,6 +644,8 @@ namespace M3d {
                 else
                   if( CMP_KEY(SMOOTH))
                     {
+                      AINFO( "Subdivide");
+
                       subdiveCatmullClark( true );                      
                     }
 	    
