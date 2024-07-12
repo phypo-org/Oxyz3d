@@ -13,7 +13,7 @@
 #include "Utils.h"
 
 namespace M3d{
-
+  
 
   //************************************
   Creation::Creation()	
@@ -23,9 +23,9 @@ namespace M3d{
   {
     std::cout << "========= Creation::Creation" << std::endl;
     
-		
+    /*
 
-#ifdef USING_LUA
+#ifdef USING_LUA 
     M3d::ShapeLua::SetPrototype();
     cLua = (M3d::ShapeLua*)M3d::ShapeLua::GetOrCreateSession("Lua", &std::cout );
 	
@@ -37,17 +37,19 @@ namespace M3d{
     cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
     cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
 #endif    
+    */
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
   //-----------------------------------
   Creation::~Creation()
-  {
+  {    
+     
 #ifdef USING_LUA
     delete cLua;
     cLua = nullptr;
-#endif    
-  }
+#endif     
+  }  
   //-----------------------------------
   //-----------------------------------
   //-----------------------------------

@@ -491,8 +491,9 @@ namespace M3d {
 	      case FL_TREE_REASON_CLOSED:  lEntity->setTreeOpen(false); break;
 	      case FL_TREE_REASON_SELECTED: ;
 	      case FL_TREE_REASON_DRAGGED: ;
-	      case FL_TREE_REASON_DESELECTED: ;
+	      case FL_TREE_REASON_DESELECTED: ;                
 	      case FL_TREE_REASON_NONE:;
+                //     case FL_TREE_REASON_RESELECTED : ;// for fltk 1.4
 	      }
 	  }
       }

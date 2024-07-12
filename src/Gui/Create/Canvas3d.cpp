@@ -187,11 +187,11 @@ namespace M3d {
     // On 
     switch( TheCreat.getInputPlane() )
       {
-      case InputPlaneType::X : lOk = lLineV.intersectPlanX( iResult, TheCreat.getInputPlaneHeight() );
+      case InputPlaneType::XY : lOk = lLineV.intersectPlanZ( iResult, TheCreat.getInputPlaneHeight() );
 	break;
-      case InputPlaneType::Y : lOk = lLineV.intersectPlanY( iResult, TheCreat.getInputPlaneHeight() );
+      case InputPlaneType::XZ : lOk = lLineV.intersectPlanY( iResult, TheCreat.getInputPlaneHeight() );
 	break;
-      case InputPlaneType::Z : lOk = lLineV.intersectPlanZ( iResult, TheCreat.getInputPlaneHeight() );
+      case InputPlaneType::ZY : lOk = lLineV.intersectPlanX( iResult, TheCreat.getInputPlaneHeight() );
 	break;
         
       case InputPlaneType::Free : { //??????????????????

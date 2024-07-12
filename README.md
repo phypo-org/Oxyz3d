@@ -24,3 +24,16 @@ sudo apt-get install libfontconfig1-dev
 
 //=================
 dpkg -L libX11-dev
+
+
+
+//=================
+gtk !
+sudo apt install libgtk-4-dev
+sudo apt install libgtkmm-3.0-dev
+
+
+pkg-config --cflags gtk4
+pkg-config --libs gtk4
+cc `pkg-config --cflags gtk4` hello.c -o hello `pkg-config --libs gtk4`
+gtkmm

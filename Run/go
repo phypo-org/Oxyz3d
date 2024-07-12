@@ -5,8 +5,13 @@ export LD_LIBRARY_PATH=${MYGCC}lib64
 
 # Debug/Oxyz3d.exe -load "Fichiers3D/titi.oxyz" $*
 # ../Debug/Oxyz3d.exe -load toto.oxyz
-../Debug/Oxyz3d.exe toto.jpg
-# ../Debug/Oxyz3d.exe  -v -img Elef.png
+
+
+
+../Debug/Oxyz3d.exe -img Elef.png
+
+
+# ../Debug/Oxyz3d.exe  -img toto.jpg
 #  -load toto.oxyz
 # -load "vaisseau.oxyz -load 3d/Test" $*
 

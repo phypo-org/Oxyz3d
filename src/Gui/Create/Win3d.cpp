@@ -1,4 +1,4 @@
-// #include "config.h"
+#include "config.h"
 
 
 #include "Gui/Win3dBase.h"
@@ -77,9 +77,9 @@ namespace M3d {
 
 
 #define StrMenu_DefInputPlane  "Define input plane"
-#define StrMenu_InputPlaneX    " : X plane"
-#define StrMenu_InputPlaneY    " : Y plane"
-#define StrMenu_InputPlaneZ    " : Z plane"
+#define StrMenu_InputPlaneXY   " : XY plane"
+#define StrMenu_InputPlaneXZ   " : XZ plane"
+#define StrMenu_InputPlaneZY   " : ZY plane"
 #define StrMenu_InputPlaneFree " : Free plane " // (3 points or 2 lines needed)"
 #define StrMenu_PlaneHeight    " : Plane height ..."
 
@@ -987,21 +987,21 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this,   FL_MENU_DIVIDER);
   
-    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneX, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneXY, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 TheCreat.setInputPlane( InputPlaneType::X );
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 ADBMAL, this );
-  
-    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneY, "",  LAMBDA
-                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 TheCreat.setInputPlane( InputPlaneType::X );
+                 TheCreat.setInputPlane( InputPlaneType::XY );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   
-    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZ, "",  LAMBDA
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneXZ, "",  LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                 TheCreat.setInputPlane( InputPlaneType::Z );
+                 TheCreat.setInputPlane( InputPlaneType::XZ );
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this );
+  
+    cMenubar.add("&Tools/" StrMenu_DefInputPlane "/" StrMenu_InputPlaneZY, "",  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 TheCreat.setInputPlane( InputPlaneType::ZY );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this );
   

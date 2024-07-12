@@ -1,4 +1,4 @@
-
+ 
 #include "Canvas3d.h"
 
 //#include <config.h>
@@ -211,7 +211,7 @@ namespace M3d {
 	drawForSelect();
 	return ;
       }
-    
+     
     beginDraw();
    
     
@@ -227,10 +227,11 @@ namespace M3d {
     //===========================================================
 
   drawUtils();  //Grid,  ...
-
+ 
        
   if( TheCreat.getModelImg() != nullptr )
       {
+        
           glDepthFunc(GL_LESS);                 
           glDepthMask( GL_FALSE );        
           glDisable( GL_LIGHTING );
@@ -284,14 +285,14 @@ namespace M3d {
     if( getUserMode() == ModeUser::MODE_SELECT_RECT )
       {	
 	drawSelectRect();
-      }
+      }   
     /*
      // draw magnet
     if( getGlobalMode() == GlobalMode::MAGNET
       && ( getUserMode() == ModeUser::MODE_DRAG || getUserMode() == ModeUser::MODE_TRANSFORM) )
       {
-	drawMagnet( cMagnet );
-      }
+	drawMagnet( cMagnet ); 
+      }  
     */
     endDraw();
   }  

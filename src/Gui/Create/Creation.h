@@ -46,7 +46,7 @@ namespace M3d{
       DeformProportinal,
       };
 
-  enum class InputPlaneType { X, Y, Z, Free };
+  enum class InputPlaneType { XY, XZ, ZY, Free };
   
   //************************************
   // Creation est un singleton 
@@ -91,7 +91,7 @@ namespace M3d{
 
     TypeDeform      cCurrentDeform = TypeDeform::Nothing;
     
-    InputPlaneType cInputPlaneType   = InputPlaneType::Y;
+    InputPlaneType cInputPlaneType   = InputPlaneType::XY;
     double         cInputPlaneHeight = 0;
 
     double         cRoundingInput =0; // no rounding if 0
@@ -253,7 +253,7 @@ namespace M3d{
       
       oPtZero =  lAxis.getA();
       oAxis = lAxis.getB();
-      return true;
+      return true; 
    }
     //---------------------------
    const char * autoSave();
@@ -275,16 +275,11 @@ namespace M3d{
           delete cModelImg;
           cModelImg = nullptr;
         }
-      ImgModel * lTmpIM = new ImgModel();
-      if( lTmpIM->loadImage( iVal.c_str() ) == false )
-        {
-          delete lTmpIM;
-        }
-      else cModelImg = lTmpIM;
+      std::cout << "CALL TO : Creation loadImage:" <<iVal << std::endl;
+ 
+      cModelImg = new ImgModel(iVal);
+      //      cModelImg->loadTexture(iVal.c_str());
     }
-    
-    
-    
  };
   //************************************
 

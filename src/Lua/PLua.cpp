@@ -148,7 +148,7 @@ namespace PLua{
     ,cLuaState( nullptr)
     ,cCurrentStream(nullptr)
   {
-    OS_TRACE( "PLuaSession::PLuaSession 1 Prototype " );
+    //// OS_TRACE( "PLuaSession::PLuaSession 1 Prototype " );
   }
 
   //------------------------------------------------
