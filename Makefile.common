@@ -2,6 +2,9 @@
 # include fltk-config --includedir
 
 include ${FLTK_PATH}/makeinclude
+# ATTENTION  il y a un .SLIENT dans makeinclude, pour le neutraliser
+override MAKEFLAGS :=
+
 
 
 ifndef FLAGS_COMPIL_EXT

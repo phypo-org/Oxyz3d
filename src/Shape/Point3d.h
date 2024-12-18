@@ -186,13 +186,13 @@ namespace PP3d {
     //-----------------------------------------	
     //--------------- Vecteur -----------------
     //-----------------------------------------	
-    TFLOAT square(){
+    TFLOAT square(){          
       return  cX*cX + cY*cY +  cZ*cZ;
     }
   
     
     // si c'est une distance entre deux point
-    TFLOAT distanceSquare()
+    TFLOAT distanceSquare() 
     {
       return square();
     }
@@ -203,7 +203,11 @@ namespace PP3d {
     {
       return std::sqrt( distanceSquare() );
     }
-    TFLOAT mag()
+    TFLOAT mag() // magnitude 
+    {
+      return distance();
+    }
+    TFLOAT norm() //  
     {
       return distance();
     }
@@ -220,7 +224,8 @@ namespace PP3d {
     static double GetAngleRadBetween( TPoint3d a, TPoint3d b )
     {
       long double lProduitScalaire = Dot( a, b );
-      long double lProduitNorme = std::sqrt( a.square()*b.square() );
+            // long double lProduitNorme =  a.norm()*b.norm() );
+      long double lProduitNorme = std::sqrt( a.square()*b.square() ); // optimisation 
       if( lProduitNorme != 0 )
 	{
 	  long double lResult  = lProduitScalaire/lProduitNorme;
@@ -242,6 +247,8 @@ namespace PP3d {
     static double GetSignedAngleRadBetween( TPoint3d  from, TPoint3d to, TPoint3d axis)
     {
       double lAngle = GetAngleRadBetween(from, to);
+      if( std::isnan(lAngle  ))
+        return lAngle;
       
       float cross_x = from.cY * to.cZ - from.cZ * to.cY;
       float cross_y = from.cZ * to.cX - from.cX * to.cZ;
@@ -252,24 +259,6 @@ namespace PP3d {
      
       return lAngle;
     }
-    //--------------------------------
-    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
-    static bool isNegAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
-    {       
-      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
-      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
-      float cross_z = from.cX * to.cY - from.cY * to.cX;
-      return ( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z) < 0;
-    }
-     //--------------------------------
-    // Mettre un epsilon !!!
-    static bool isPositifAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
-    {       
-      float cross_x = from.cY * to.cZ - from.cZ * to.cY;
-      float cross_y = from.cZ * to.cX - from.cX * to.cZ;
-      float cross_z = from.cX * to.cY - from.cY * to.cX;
-      return ( axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z) > 0;
-    }
      //--------------------------------
     static double signedAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
     {       
@@ -277,6 +266,18 @@ namespace PP3d {
       float cross_y = from.cZ * to.cX - from.cX * to.cZ;
       float cross_z = from.cX * to.cY - from.cY * to.cX;
       return axis.cX * cross_x + axis.cY * cross_y + axis.cZ * cross_z;
+    }
+    //--------------------------------
+    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
+    static bool isNegAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {       
+      return signedAngle( from, to, axis ) < 0;
+    }
+     //--------------------------------
+    // Mettre un epsilon !!!
+    static bool isPositifAngle( TPoint3d  from, TPoint3d to, TPoint3d axis)
+    {            
+      return signedAngle( from, to, axis ) > 0;
     }
     //--------------------------------	
     TFLOAT dot( TPoint3d b )

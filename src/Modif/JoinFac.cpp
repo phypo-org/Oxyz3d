@@ -113,11 +113,16 @@ int CreateFacetsByJoinLines( DataBase * iBase,
 }
 
 //--------------------------------------------------
+// Dans certain cas il faudrait inverser le sens des facettes
+// Actuellement on ne le fait pas, peut etre en comparant les normales ?
+// Sinon c'est à l'utilisateur de le faire, ce qui est génant
+
 bool Modif::JoinTwoFacets( DataBase * iBase,
                            FacetPtr iF1,
                            FacetPtr iF2,
                            std::vector<FacetPtr> & oNewFacets,
-                           bool iMiddleSquare  )
+                           bool iMiddleSquare,
+                           bool iInv, int iDecal  )
 {
   FacetPtr lFa, lFb;
 
@@ -140,14 +145,16 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
  
   cout <<  lFa->getNbLines() << "  " << lFb->getNbLines() << "   -->   Ratio = " << lRatio << endl << endl;
 
+  if( iInv )
+    lFa->inverseLines();
   
-  lFa->inverseLines();
   PointPtr lPtA = lFa->getPoint( 0 );
 
   // Find the point of  Fb closest to the first point of Fa
   // to try to reduce the twisting of facets
   
   PIndex lFirstLineB = 0;
+  /*
   double lMinDist2= std::numeric_limits<double>::max();
   
   for( PIndex i=0; i< lFb->getNbLines(); i++ )
@@ -160,14 +167,21 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
           lFirstLineB = i;
         }
     }
-   ;
-  cout << "Min line distance : " << lFirstLineB << " with " << std::sqrt(lMinDist2) <<  endl;
+    cout << "Min line distance : " << lFirstLineB << " with " << std::sqrt(lMinDist2) <<  endl;
+ 
+  */
 
+  lFirstLineB=iDecal;
   
   std::vector<LinePtr>  lVectLineB;
   int lNbCreate = 0;
 
   // lFirstLineB  =0;
+
+  // Les facettes n'ont pas forcement le meme nombre de points
+  // il va falloir eventuellement racordé un point d'une facette à plusieurs de l'autre
+  // Rest sert à déclenché le changement de point en ajoutant lRation
+  
   double lRest = 0;
   PIndex lBeginIndexB = 0;
 
@@ -212,6 +226,12 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
   //=====================================
 
   //   IL faut detruire les deux facettes et aussi leurs lignes !!!!
+  //   c'est a l'appelant de le faire !
+
+
+  
+
+  
 
   return lNbCreate > 0 ;
 }

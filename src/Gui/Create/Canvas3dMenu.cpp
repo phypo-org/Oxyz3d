@@ -168,7 +168,8 @@ namespace M3d {
 #define StrMenu_ExtrudePath StrMenu_Extrude  " path"
 #define StrMenu_ExtrudePathNorm StrMenu_Extrude  " path norm"
 
-#define StrMenu_BridgeFac "Bridge between two facettes"
+#define StrMenu_BridgeFac  "Bridge between two facettes"
+
 
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
@@ -1288,18 +1289,86 @@ namespace M3d {
                       {
                       lMenuFlagActif = FL_MENU_INACTIVE;
                       }*/
-          
-          pMenu.add( StrMenu_BridgeFac, "", LAMBDA
+
+
+          //============================================================
+          pMenu.add( StrMenu_BridgeFac "/decal 0", "", LAMBDA
                      //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets();
+                     lCanvas->bridgeFacets(true, 0);
                      PushHistory();
                      TheCreat.redrawAll(PP3d::Compute::FacetAll);
                      
                      //:::::::::::::::::::::::::::::::::::::::::
                      ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-          
-                       
+       
+          pMenu.add( StrMenu_BridgeFac "/decal 1", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(true, 1);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+         pMenu.add( StrMenu_BridgeFac "/decal 2", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(true, 2);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+         pMenu.add( StrMenu_BridgeFac "/decal 3", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(true, 3);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
 	  
+             //============================================================
+          pMenu.add( StrMenu_BridgeFac "/rdecal 0", "", LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(false, 0);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+          pMenu.add( StrMenu_BridgeFac "/rdecal 1", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(false, 1);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+         pMenu.add( StrMenu_BridgeFac "/rdecal 2", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(false, 2);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+         pMenu.add( StrMenu_BridgeFac "/rdecal 3", "" , LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->bridgeFacets(false, 3);
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
+       
+         //============================================================
+
+
           pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
                      if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
                      PP3d::Point3d lAxis(1,0,0);
@@ -1786,7 +1855,7 @@ namespace M3d {
     return 0;
   }
   //----------------------------------------
-  void Canvas3d::bridgeFacets()
+  void Canvas3d::bridgeFacets( bool iInv, int iDecal)
   {
     if( TheSelect.getSelectType() == PP3d::SelectType::Facet
         && TheSelect.getNbSelected() == 2 )
@@ -1805,13 +1874,14 @@ namespace M3d {
         
         if( lPolyA == nullptr || lPolyB == nullptr )
           {
+            WARN_DIAG( "At least a facet does not belong to a polyhedron");
             return ;
           }
         
 
         PP3d::FacetPtrVect lNewFacets;
         
-        PP3d::Modif::JoinTwoFacets( &TheBase, lFacetA, lFacetB, lNewFacets, true ); 
+        PP3d::Modif::JoinTwoFacets( &TheBase, lFacetA, lFacetB, lNewFacets, true, iInv, iDecal ); 
         
       
         lPolyA->addFacet(lNewFacets);
@@ -1835,6 +1905,9 @@ namespace M3d {
           }
 
       }
+    else {
+      WARN_DIAG( "You must select exactly 2 facets");
+   }
   }
   //----------------------------------------
   bool Canvas3d::mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect )

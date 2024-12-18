@@ -142,7 +142,7 @@ namespace M3d {
     void deleteSelection();
 
     //=========== Functions =============
-    void bridgeFacets();
+    void bridgeFacets(bool iInv=true, int iDecal=0);
 
     bool mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect);
   protected:

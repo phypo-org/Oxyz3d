@@ -115,7 +115,7 @@ namespace PP3d{
                                FacetPtr iF1,
                                FacetPtr iF2,
                                std::vector<FacetPtr> & oNewFacets,
-                               bool iMiddleSquare  );
+                               bool iMiddleSquare, bool iInv, int iDecal  );
     
 
 #ifdef  USING_CGAL  
