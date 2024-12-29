@@ -613,9 +613,86 @@ namespace PP3d{
                                         CloseHight::No,
                                         CloseLow::No );       	
   }
-
-	
   //************************
+  // Code venant plus ou moins de ChatGPT et de Claude (mais ils font un peu n'importe quoi)
+  // plus ou moins corrigé par moi 
+  Poly * PrimitivFactory::CreateTrapezohedron(  PrimitivParam * iParam, std::string & iName )
+  {
+    std::vector<Point3d>  lPoints;
+    std::vector<PrimFacet> lFacets;
+
+    double height = iParam->cHeight;
+    float radius  = iParam->cWidth/2.0f;  // Radius of the bottom pentagon
+
+ 
+    const int sides = iParam->cNbU; // Pentagonal base
+
+    
+    float angleStep = 2.0f * M_PI / sides;    
+    float halfStep = angleStep/2.0f;
+
+    float PHI=1.0f;
+    if(sides==5)
+      {
+        PHI = (1.0 + sqrt(5)) / 2.0f;  // Nombre d'or ; sides = 5
+     }
+    else
+      {        
+        PHI =  1.0 + 0.5 * cos(2.0f*M_PI/sides);  // Nombre d'or ; sides = 5
+      }
+
+    
+    double h_pent =( height * (PHI - 1) / PHI) *0.3f;    // Hauteur des pentagones
+
+    // ???
+
+    //  height = radius * sqrt(PHI);           // Hauteur des pôles
+    //  radius = radius / sqrt(PHI);      // Rayon des pentagones
+    // ????
+    
+
+    if( iParam->cLength > 0 )
+      h_pent =iParam->cLength;
+    
+    
+    //    float height = radius * sqrt(PHI);     // Hauteur optimale
+    // float height = radius * k;
+    
+    // Generate lPoints for the bottom and top bases
+    for (int i = 0; i < sides; ++i)
+      {
+        float angle = i * angleStep;
+        
+        // Bottom base
+        lPoints.push_back (Point3d( radius * cos(angle), h_pent,
+                                    radius * sin(angle))); 
+        // Top base
+        lPoints.push_back(Point3d( radius * cos(angle + halfStep), -h_pent,
+                                   radius * sin(angle + halfStep) ));
+      }
+    
+    int mod = lPoints.size();
+    
+    // Add the top and bottom poles
+    lPoints.push_back(Point3d(0.0f,height, 0.0f));    // Top pole
+    int top = lPoints.size()-1; // Index of the bottom pole
+    
+    lPoints.push_back(Point3d(0.0f, -height,  0.0f));   // Bottom pole
+    int bottom = lPoints.size()-1; // Index of the bottom pole
+    
+    // Generate faces (connect the bases)
+    for (int i = 0; i < mod; i+=2)
+      {        
+        lFacets.push_back(PrimFacet( top,      i, i+1, (i+2)%mod ));
+        lFacets.push_back(PrimFacet( bottom, i+1, i, (i+mod-1)%mod ));
+      }
+    
+    return CreatePoly( lPoints, lFacets );
+  }	
+
+  //***************************************************************************************
+  //***************************************************************************************
+  //***************************************************************************************
 
   Poly * PrimitivFactory::CreatePoly( Point3d * pPoints, size_t pSzPt, PrimFacet * pFacets, size_t pSzFac )
   {
@@ -638,6 +715,47 @@ namespace PP3d{
     for( size_t f=0; f< pSzFac ; f++ )              // pour toutes les PrimFacet
       {
 	PrimFacet& lPrimFacet  = pFacets[f];
+				
+	Facet* lCurFacet = new Facet();                // nouvelle facette vide sans id
+	uint i=0;
+	
+	for( ; i< lPrimFacet.size()-1; i++ ) // pour les points de la facette courante
+	  {					 
+	    Line* lLine = new Line( lPointsPtr[ lPrimFacet[i]] , lPointsPtr[ lPrimFacet[i+1]] );
+	    lCurFacet->addLine( lLine );
+	  }
+	Line* lLine = new Line( lPointsPtr[ lPrimFacet[i]] , lPointsPtr[ lPrimFacet[0]] );
+	lCurFacet->addLine( lLine );
+			
+	lPoly->addFacet( lCurFacet );
+      }
+						
+	 
+    return lPoly;
+  }
+  //************************
+
+  Poly * PrimitivFactory::CreatePoly( std::vector<Point3d> &iPoints, std::vector<PrimFacet> & iFacets)
+  {
+    size_t lSzPt  = iPoints.size();
+    size_t lSzFac = iFacets.size();
+    std::cout << " ====================== PrimitivFactory::CreatePoly " << lSzPt << " " << lSzFac << std::endl;
+
+		
+    Poly* lPoly = new Poly();           //mettre unique_ptr
+
+
+    // on creer les points 
+    std::vector<Point*> lPointsPtr( lSzPt );		
+    for( size_t p =0; p< lSzPt; p++)
+      {
+	lPointsPtr[p]= new Point( iPoints[p] ); // points sans id
+      }
+				
+		
+    for( size_t f=0; f< lSzFac ; f++ )              // pour toutes les PrimFacet
+      {
+	PrimFacet& lPrimFacet  = iFacets[f];
 				
 	Facet* lCurFacet = new Facet();                // nouvelle facette vide sans id
 	uint i=0;
@@ -713,7 +831,8 @@ namespace PP3d{
       case PrimitivFactory::Type::OCTO    : return "Octoedre";			
       case PrimitivFactory::Type::DODEC   : return "Dodecaedre";
       case PrimitivFactory::Type::ICOSAHED: return "Icosedre";
-      }
+      case PrimitivFactory::Type::TRAPEZOHEDRON: return "Trapezoedre pentagonal";
+    }
     return "unknown";
   }
 
@@ -739,6 +858,7 @@ namespace PP3d{
       case PrimitivFactory::Type::OCTO    : lPoly = CreatePoly( sOctoPt,  6, sOctoIdx,  8 );	 break;
       case PrimitivFactory::Type::DODEC   : lPoly = CreatePoly( sDodePt,  20, sDodeIdx, 12 );	 break;
       case PrimitivFactory::Type::ICOSAHED: lPoly = CreatePoly( sIcoPt,   12, sIcoIdx,  20 );	 break;
+      case PrimitivFactory::Type::TRAPEZOHEDRON: lPoly = CreateTrapezohedron( iParam, iName );	 break;
 
 	//	case PrimitivFactory::Type::TETRA : lPoly = CreateTetra( );	 break;	
       default : return nullptr;

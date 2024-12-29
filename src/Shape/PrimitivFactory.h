@@ -137,6 +137,7 @@ namespace PP3d{
 	OCTO,
 	DODEC,
 	ICOSAHED,
+        TRAPEZOHEDRON
       //			CYLINDER, CONE, DISK, PARTIAL_DISK, SPHERE, TORUS, WIRETORUS
 	};
 
@@ -149,6 +150,7 @@ namespace PP3d{
 		
     static Poly * Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam=nullptr  );
     static Poly * CreatePoly( Point3d * pPoints, size_t pSzPt, PrimFacet * pFacets, size_t pSzFac );
+    static Poly * CreatePoly( std::vector<Point3d> &iPoints, std::vector<PrimFacet> & iFacets );
     static Facet * CreateFacet( std::vector<Point3d> & pPoints,  PrimFacet & pFacet, bool pClose );
     static Facet & SetFacet( Facet & pCurFacet, std::vector<Point3d> & pPoints, PrimFacet & pPrimFacet, bool pClose );
 
@@ -156,6 +158,7 @@ namespace PP3d{
     static Poly * CreatePlane(  PrimitivParam * iParam, std::string & iName );
     static Poly * CreateCylinder(  PrimitivParam * iParam, std::string & iName );
     static Poly * CreateSphere(  PrimitivParam * iParam, std::string & iName );
+    static Poly * CreateTrapezohedron(  PrimitivParam * iParam, std::string & iName );
   };
   //************************
 }

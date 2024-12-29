@@ -44,6 +44,8 @@
 #include "SelFunct.h"
 
 
+#include "WarpPointer.h"
+
 using namespace std;
 
 
@@ -62,6 +64,7 @@ namespace M3d {
     float lDy = (float)(cMouseLastPosY - lY);
     cMouseLastPosX = lX;
     cMouseLastPosY = lY;
+    
     
     lDx /= 10.;   // MODIFIER EN FONCTION DE LA TRANSFORMATION !!!
     lDy /= 10.;   // MODIFIER EN FONCTION DE LA TRANSFORMATION !!!
@@ -530,14 +533,14 @@ namespace M3d {
           }
       }
 
-    if( pEvent ==FL_DRAG)
+    //    if( pEvent ==FL_DRAG)
       {
         if(  getUserMode() == ModeUser::MODE_TRANSFORM )
           {
             if( userActionIsRun() ) 
               {
 		userTransformSelection(pEvent);
-                setCursor3dPosition( Fl::event_x(), Fl::event_y());
+                //    setCursor3dPosition( Fl::event_x(), Fl::event_y());
                 TheCreat.redrawAllCanvas3d(PP3d::Compute::Nothing); // a cause du curseur ou break;
                 return 1;
               }

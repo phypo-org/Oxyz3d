@@ -235,7 +235,7 @@ namespace M3d {
       int lY = 20;
 
       int lMul = 16;
-      
+      /*
       if( pType == PP3d::PrimitivFactory::Type::FACET_N )
 	lMul += 4;
       else if(  pType == PP3d::PrimitivFactory::Type::PLANE )
@@ -244,6 +244,9 @@ namespace M3d {
 	lMul += 6;
       else if(  pType == PP3d::PrimitivFactory::Type::SPHERE )
 	lMul += 6;
+     else if(  pType == PP3d::PrimitivFactory::Type::TRAPEZOHEDRON )
+	lMul += 6;
+      */
 
 
       cMyWindow = new Fl_Double_Window( lW_G0+lX*2, lYStep*lMul, "Primitive");
@@ -373,6 +376,34 @@ namespace M3d {
     	      
 	    }
 	  //============================================
+	  else if(  pType == PP3d::PrimitivFactory::Type::TRAPEZOHEDRON )
+	    {
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*7,
+					 PP3d::PrimitivFactory::GetTypeName(cMyType));
+	      cGroupExt->box(FL_ENGRAVED_FRAME);
+	      lY += lYStep;
+	      
+	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Sections", MajCB, this, 3, 128 );
+	      cSliderU->value( 5 );
+	      lY += lYStep;
+
+	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.00001, 100 );
+	      cSliderHeight->value( 1 );
+	      lY += lYStep;
+	      
+	      cSliderWidth = new MySlider( lX_SL, lY, lW, lH, "Width", MajCB, this, 0.00001, 50 );
+	      cSliderWidth->value( 1 );
+	      lY += lYStep;
+              
+	      cSliderLength = new MySlider( lX_SL, lY, lW, lH,  "Length", MajCB, this, 0, 100 );
+	      cSliderLength->value( 0 );
+	      lY += lYStep;	  
+	     
+	      cGroupExt->end();
+    	      
+	    }
+	  //============================================
+          else
 	  if( pType == PP3d::PrimitivFactory::Type::SPHERE )
 	    {
 	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*6,
@@ -498,7 +529,10 @@ namespace M3d {
       { Fl_Button* o = new Fl_Button(125, lY, 75, 25, "OK");
 	o->callback((Fl_Callback*)OkCB, this );
       } // Fl_Button* o
-	 
+
+      lY += lYStep;
+      
+      cMyWindow->size(  lW_G0+lX*2, lY );
 
       cMyWindow->end();
 		

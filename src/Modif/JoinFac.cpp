@@ -122,7 +122,7 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
                            FacetPtr iF2,
                            std::vector<FacetPtr> & oNewFacets,
                            bool iMiddleSquare,
-                           bool iInv, int iDecal  )
+                           bool iInv, int iDecal  )  // unuseds
 {
   FacetPtr lFa, lFb;
 
@@ -154,24 +154,38 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
   // to try to reduce the twisting of facets
   
   PIndex lFirstLineB = 0;
-  /*
-  double lMinDist2= std::numeric_limits<double>::max();
-  
-  for( PIndex i=0; i< lFb->getNbLines(); i++ )
+
+  // find the couple of line in the two facet that have the minus angle between then
+  double lMinAngle = std::numeric_limits<double>::max();
+  PIndex lFirstLineA = 0;
+
+  for( PIndex a=0; a< lFa->getNbLines(); a++ )
     {
-      LinePtr lLineB = lFb->getLine(i);
-      double lDist2 = Point3d::DistanceSquare( *lPtA, *(lLineB->first()) );
-      if( lDist2 < lMinDist2 )
+      Point3d lVectA =  lFa->getLine( a )->getVector3d();
+      lVectA.normalize();
+        
+      for( PIndex b=0; b< lFb->getNbLines(); b++ )
         {
-          lMinDist2 = lDist2;
-          lFirstLineB = i;
+          Point3d lVectB =  lFb->getLine( b )->getVector3d();
+          lVectB.normalize();
+          
+          double lAngle = Point3d::GetAngleRadBetween( lVectA, lVectB );
+          
+          cout << "a b: " << a << '-' << b << " = " << lAngle <<    endl;
+          
+          if( lAngle < lMinAngle )
+            {
+              lMinAngle = lAngle;
+              lFirstLineB = b;
+              lFirstLineA = a;
+            }
         }
     }
-    cout << "Min line distance : " << lFirstLineB << " with " << std::sqrt(lMinDist2) <<  endl;
- 
-  */
+    cout << "**************************************************" <<  endl;
+    cout << "Min line distance : " << lFirstLineA << "-" << lFirstLineB << " with "    << lMinAngle <<  endl;
+    cout << "**************************************************" <<  endl;
 
-  lFirstLineB=iDecal;
+    // lFirstLineB=iDecal;
   
   std::vector<LinePtr>  lVectLineB;
   int lNbCreate = 0;
@@ -189,7 +203,7 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
   // for all the lines of lFa
   for( long lIndexA = 0; lIndexA  < (long)lFa->getNbLines(); lIndexA++ )
     {
-      LinePtr lLineA = lFa->getLine( lIndexA );
+      LinePtr lLineA = lFa->getLine( (lIndexA+lFirstLineA)% lFa->getNbLines()); 
      
       PIndex lIndexB = lBeginIndexB;
       double lLastIndexFloatB  = lBeginIndexB + lRatio + lRest; // therorical last index for lFb

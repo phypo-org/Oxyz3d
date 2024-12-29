@@ -66,8 +66,6 @@ namespace M3d {
 
     int       cMouseLastPosZ=-1;
 
-
-    
   public:
    Canvas3dBase( Win3dBase & pW3d, int pX, int pY, int pW, int  pH, const char *l ); 
     virtual ~Canvas3dBase();

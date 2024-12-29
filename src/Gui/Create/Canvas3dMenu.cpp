@@ -61,6 +61,7 @@ namespace M3d {
 #define StrMenu_CreateOcto      "Octoedre   ..."
 #define StrMenu_CreateDodec     "Dodecaedre ..."
 #define StrMenu_CreateIcosahe   "Icosaedre  ..."
+#define StrMenu_CreateTrapezohedron   "Trapezohedron  ..."
 	
 #define StrMenu_CreateShape        "" //  "From input points/"
 #define StrMenu_CreateShapeLine       "Line"
@@ -173,7 +174,8 @@ namespace M3d {
 
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
-  
+#define StrMenu_PutFacetOnZeroGround   "Put facet on ground at origin"
+
 #define StrMenu_Align     "Align"  
 #define StrMenu_AlignOnX  "Align Facet Normal on X axe"
 #define StrMenu_AlignOnY  "Align Facet Normal on Y axe"
@@ -1284,15 +1286,52 @@ namespace M3d {
                        //:::::::::::::::::::::::::::::::::::::::::
                        ADBMAL, this);
         
-          /*          
+  	  if( TheSelect.getNbSelected() == 1 )
+	    pMenu.add( StrMenu_PutFacetOnZeroGround, "", LAMBDA
+                       //:::::::::::::::::::::::::::::::::::::::::
+                       if( TheSelect.getSelectType() == PP3d::SelectType::Facet
+                           && TheSelect.getNbSelected() == 1 )
+                         {
+                           PP3d::FacetPtr lFacetToMove = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
+                           
+                           PP3d::Vector3d lNormToMove =  -lFacetToMove->getNormal(); // l'inverse !!!
+                           PP3d::Vector3d lNormDest(0,-1,0);
+                           PP3d::Mat4 lMatAlign;
+                           lMatAlign.rotateAlign( lNormDest, lNormToMove  ); 
+	
+                           PP3d::Point3d lPtToMove = lFacetToMove->getCenter3d();
+                           PP3d::Point3d lPtDest(lPtToMove);
+
+                           PP3d::OwnerEntityVisitor lVisit;	
+                           lVisit.addOwnersOf( lFacetToMove );
+	
+                           for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
+                             {                           for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
+
+                               lPoly->execVisitor( lVisit ) ; // je sais, c'est tres limite comme code !
+                             }
+
+                           for( PP3d::PointPtr lPtr :  lVisit.cVectPoints )
+                             {
+                               lPtr->get() -= lPtToMove;  // Deplacement en zero
+                               lPtr->get() *= lMatAlign;  // Rotation alignement
+                               // lPtr->get() += lPtToMove; reprend ca place 
+                             }
+	
+                           PushHistory();
+                           TheCreat.redrawAll(PP3d::Compute::FacetAll);	 	
+                         }                    
+                       //:::::::::::::::::::::::::::::::::::::::::
+                       ADBMAL, this);
+        
+         /*          
                       if( TheSelect.getNbSelected() != 2 )
                       {
                       lMenuFlagActif = FL_MENU_INACTIVE;
                       }*/
+ 
 
-
-          //============================================================
-          pMenu.add( StrMenu_BridgeFac "/decal 0", "", LAMBDA
+          pMenu.add( StrMenu_BridgeFac, "", LAMBDA
                      //:::::::::::::::::::::::::::::::::::::::::
                      lCanvas->bridgeFacets(true, 0);
                      PushHistory();
@@ -1300,74 +1339,7 @@ namespace M3d {
                      
                      //:::::::::::::::::::::::::::::::::::::::::
                      ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-          pMenu.add( StrMenu_BridgeFac "/decal 1", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(true, 1);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-         pMenu.add( StrMenu_BridgeFac "/decal 2", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(true, 2);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-         pMenu.add( StrMenu_BridgeFac "/decal 3", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(true, 3);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-	  
-             //============================================================
-          pMenu.add( StrMenu_BridgeFac "/rdecal 0", "", LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(false, 0);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-          pMenu.add( StrMenu_BridgeFac "/rdecal 1", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(false, 1);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-         pMenu.add( StrMenu_BridgeFac "/rdecal 2", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(false, 2);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-         pMenu.add( StrMenu_BridgeFac "/rdecal 3", "" , LAMBDA
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     lCanvas->bridgeFacets(false, 3);
-                     PushHistory();
-                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                     
-                     //:::::::::::::::::::::::::::::::::::::::::
-                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
-       
-         //============================================================
-
+     
 
           pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
                      if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
@@ -1489,6 +1461,11 @@ namespace M3d {
                }, this, FL_MENU_DIVIDER);
 
     
+    pMenu.add( StrMenu_Primitiv3D StrMenu_CreateTrapezohedron,  "^t", 
+               [](Fl_Widget *w, void *pUserData)
+               {      
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::TRAPEZOHEDRON  );
+               }, this, FL_MENU_DIVIDER);
 
     //==============
     pMenu.add( StrMenu_CallDialoDiagSub, "", LAMBDA

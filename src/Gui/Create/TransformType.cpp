@@ -11,8 +11,7 @@ namespace M3d{
   }
   //----------------------------------------------------
   double &      TransformHelper::value()
-  {
-    
+  {    
     switch( cTransfType )
       {
       case  Transform::Nothing: throw std::out_of_range("TransformHelper::value Nothing");
