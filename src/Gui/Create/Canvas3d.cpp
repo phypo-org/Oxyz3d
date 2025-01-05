@@ -63,7 +63,8 @@ namespace M3d {
     cViewPropsTransform.cColorFacetSelect.set(0.,1.0,0.);
     cViewPropsTransform.cColorLineHighlight.set(0.1,1.0,0.1);
     
-   
+
+    
     cViewInputCursor.cColorPoint.set( 1, 0.9, 0.1, 0.8);
     cViewInputCursor.cColorLine.set( 0.9, 0.5, 0.3, 0.8);
     
@@ -312,11 +313,13 @@ namespace M3d {
 
     // ATTENTION L'ORDRE D'APPEL EST IMPORTANT !!!!!
     
+    //======================================
    if( (lResult = handleCamera( pEvent )) !=0 )
       {
         AINFO( "Camera");        
         return lResult;
       }
+    //======================================
    //   std::cout << "after hdl camera" << std::endl;
    if( (lResult = handleMenu( pEvent )) !=0 )
       {
@@ -324,23 +327,40 @@ namespace M3d {
         return lResult;
       }
    
+    //======================================
    //    std::cout << "after hdl menu" << std::endl;
    if( (lResult = handleInput( pEvent )) !=0 )
       {
-        AINFO( "Input");
+        AINFO( "Input " << TheCreat.getDatabase()->getCursorPosition() );
+
+        
         return lResult;
       }
      //std::cout << "after hdl magnet" << std::endl;
+    //======================================
 
     if( (lResult = handleMagnet( pEvent )) !=0 )
       {
         AINFO( "Magnet");
         return lResult;
       }
-   
+    //======================================
    if( (lResult = handleSelect( pEvent )) !=0 )
       {
-        AINFO( "Select");
+        size_t lNbSel = TheSelect.getNbSelected();
+
+        if( TheSelect.getSelectType() == PP3d::SelectType::Line ) // car il y a deux ligne pour les facette ? // Mais pour les vrai lignes ?          
+          lNbSel /= 2;
+        
+        if( lNbSel == 1  )
+         {
+           AINFO( "Selection " << TheSelect.getStrSelectType() << '>' <<  TheSelect.getSelectionVect()[0]->getStringInfo());        
+          }
+        else
+          {
+            AINFO( "Selection " << TheSelect.getStrSelectType() << ":" << lNbSel);
+          }        
+    //        AINFO( "Select");
         return lResult;
       }
    //    std::cout << "after hdl select" << std::endl;
@@ -352,7 +372,8 @@ namespace M3d {
       }
    //   std::cout << "after hdl transform" << std::endl;
    
-   
+   //======================================
+  
 
    
    switch( pEvent )
@@ -379,7 +400,7 @@ namespace M3d {
 		case	FL_Tab:
   		  DBG_EVT_NL( " TAB" );
 
-                  cout << "TAB " << endl;
+                  cout << "TAB Canvas3d " << endl;
 		  if( getUserMode() == ModeUser::MODE_TRANSFORM )
 		    {
                       AINFO( "Selection input");

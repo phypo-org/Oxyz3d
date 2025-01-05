@@ -74,7 +74,7 @@ namespace M3d {
     }
     void setMeasurement( int lPosScale )
     {
-      double lScale = exp10(lPosScale-12);
+      double lScale =  pow( 10, lPosScale-12);
       setMeasurement( lScale, lPosScale );
     }
 

@@ -127,6 +127,7 @@ namespace PP3d{
     
   public:
     enum class Type{
+      NONE,
       FACET_N,
 	CYLINDER,
 	SPHERE,
@@ -142,12 +143,12 @@ namespace PP3d{
 	};
 
     //    static constexpr long double M_PIx2 = 3.14159265358979323846*2;
-    static constexpr long double M_PIx2 = M_PIl*2;
+    static constexpr long double M_PIx2 = M_PI*2;
 
     
     static long double sMinSz;
     static const char* GetTypeName(PrimitivFactory::Type pType);
-		
+    static PrimitivFactory::Type GetTypeFromName(const char* pName);	
     static Poly * Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam=nullptr  );
     static Poly * CreatePoly( Point3d * pPoints, size_t pSzPt, PrimFacet * pFacets, size_t pSzFac );
     static Poly * CreatePoly( std::vector<Point3d> &iPoints, std::vector<PrimFacet> & iFacets );

@@ -13,7 +13,36 @@ namespace PP3d {
   struct ObjProps;
 
   enum class ViewMode{ FULL, SKELETON };
+
+
+#undef TestEnumViewMode  
+#define TestEnumViewMode(TYPE) case ViewMode::TYPE : return #TYPE;
+  
+  inline static const char * GetStrViewMode( ViewMode pType)
+  {
+    switch(pType){ 
+    TestEnumViewMode( FULL );
+    TestEnumViewMode( SKELETON );
+    }
+    return "FULL";
+  }
  
+#undef TestEnumViewMode  
+#define TestEnumViewMode(TYPE) if(  ::strcmp( pStr, #TYPE ) == 0 ) return ViewMode::TYPE;
+  
+  inline static ViewMode GetViewModeFromStr( const char* pStr )
+  {
+    TestEnumViewMode( FULL );
+    TestEnumViewMode( SKELETON );
+    return ViewMode::FULL;
+  }
+
+  inline std::ostream& operator << ( std::ostream& pOs, ViewMode pType )
+  {
+    pOs <<  GetStrViewMode ( pType );
+    return pOs;
+  }
+   
   //******************************
   class ViewProps{
 

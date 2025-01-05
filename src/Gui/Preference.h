@@ -7,6 +7,8 @@
 #include "Utils/PPFile.h"
 
 #include "Shape/DebugVars.h"
+#include "Shape/ColorRGBA.h"
+#include "Shape/ViewProps.h"
 
 #include <string>
 
@@ -80,7 +82,33 @@ namespace M3d {
     //View
     //    Fl_Color cCanvasBG = FL_BLACK;
 
-     friend class PPSingletonCrtp;
+    //    Draw3d
+    int   cDraw3d_LineWidth = 4;
+    PP3d::ColorRGBA cDraw3d_ColorLine;
+    PP3d::ColorRGBA cDraw3d_ColorLineSelect;
+    
+    PP3d::ColorRGBA cDraw3d_ColorFacet;
+    PP3d::ColorRGBA cDraw3d_ColorFacetSelect;
+    PP3d::ColorRGBA cDraw3d_ColorLineHighlight;
+    
+    PP3d::ColorRGBA cDraw3d_InputCursor_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputCursor_ColorLine;
+
+    PP3d::ColorRGBA cDraw3d_InputPoly_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputPoly_ColorLine;
+    
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorLine;
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorFacet;
+    
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorLine;
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorFacet;
+    
+    PP3d::ViewMode cDraw3d_ObjectMagnet_ViewMode  = PP3d::ViewMode::SKELETON;
+    
+
+    friend class PPSingletonCrtp;
       
     Preference();
     

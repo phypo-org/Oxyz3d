@@ -43,6 +43,7 @@ namespace M3d {
   	if( Fl::event_button() == FL_LEFT_MOUSE)
           {
             std::cout << "*** handleSelect LEFT_MOUSE" << std::endl;
+            
             if( getUserMode() == ModeUser::MODE_BASE )    //DEBUT MODE_SELECT
               {
                 cSelectMode = PP3d::SelectMode::Undefine;
@@ -119,6 +120,10 @@ namespace M3d {
               }
           }
       }
+    //    AINFO( "Select " << GetStrSelectType() << ":" << TheSelect.getNbSelected() );
+
+
+    
     return 0;
   }
   

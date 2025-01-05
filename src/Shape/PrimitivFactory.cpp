@@ -466,7 +466,10 @@ namespace PP3d{
 	std::cerr << "*** Error : PrimitivFactory::CreateCylinder - Bad parameter" << std::endl;
 	return nullptr;
       }
+
+    bool lHole =  iParam->cCheckHole;
     
+
     std::cout << "PrimitivFactory::CreatePlane" << std::endl;
 
     int lNbU = iParam->cNbU;
@@ -815,12 +818,31 @@ namespace PP3d{
   
 
   //************************
+#define CASE_STR(A) if( strcmp( #A, iName ) == 0 ) { return  PrimitivFactory::Type::A; } else
 
+  PrimitivFactory::Type  PrimitivFactory::GetTypeFromName(const char* iName)
+  {  
+    CASE_STR(FACET_N )
+    CASE_STR(CYLINDER)
+    CASE_STR(SPHERE  ) 
+    CASE_STR(PLANE  ) 
+    CASE_STR(CUBE    )
+    CASE_STR(TETRA   )
+    CASE_STR(PYRAMID )		 
+    CASE_STR(OCTO    )		
+    CASE_STR(DODEC   ) 
+    CASE_STR(ICOSAHED)
+    CASE_STR(TRAPEZOHEDRON)
+    return PrimitivFactory::Type::NONE;
+
+    return PrimitivFactory::Type::NONE;
+  }
+  //-----------------------------------------
   const char* PrimitivFactory::GetTypeName(PrimitivFactory::Type pType)
   {
-
     switch( pType )
       {
+      case PrimitivFactory::Type::NONE: return "None";
       case PrimitivFactory::Type::FACET_N : return "Facet";
       case PrimitivFactory::Type::CYLINDER: return "Cylinder";
       case PrimitivFactory::Type::SPHERE  : return "Sphere";
@@ -832,10 +854,10 @@ namespace PP3d{
       case PrimitivFactory::Type::DODEC   : return "Dodecaedre";
       case PrimitivFactory::Type::ICOSAHED: return "Icosedre";
       case PrimitivFactory::Type::TRAPEZOHEDRON: return "Trapezoedre pentagonal";
-    }
+      }
     return "unknown";
   }
-
+ 
   //************************	
   Poly* PrimitivFactory::Create( PrimitivFactory::Type pType, std::string & iName, PrimitivParam * iParam )
   {

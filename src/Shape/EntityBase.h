@@ -15,6 +15,7 @@
 #include <set>
 #include <unordered_set>
 #include <vector>
+#include <sstream>
 
 
 #include "Point3d.h"
@@ -150,13 +151,18 @@ namespace PP3d {
 	  << " " << (void*)&pEntity ;
       return pOs;
     }
+    virtual std::string  getStringInfo( ){
+          std::ostringstream lStr;  
+          lStr << getStrType();
+          return lStr.str();
+    }
 		
 
     virtual void execVisitor( EntityVisitor& pVisit )     = 0;
     virtual void execVisitor( EntityVisitorNode& pVisit ) = 0;
 
 			
-    void move   ( Point3d p );
+    void move   ( Point3d  p );
     void scale  ( Point3d p ); // A n'utiliser que si l'objet est centre sur l'origine !
     void modify ( Mat4& pMat );
 

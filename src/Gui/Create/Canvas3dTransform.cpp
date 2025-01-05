@@ -44,7 +44,6 @@
 #include "SelFunct.h"
 
 
-#include "WarpPointer.h"
 
 using namespace std;
 
@@ -77,7 +76,7 @@ namespace M3d {
   { 
     Transform lCurrent= TheCreat.getCurrentTransformType();
 
-    std::cout << "currentValTransf:" << TheCreat.currentValTransf() << std::endl;
+    //  std::cout << "**** userTransformSelectionInput currentValTransf:" << TheCreat.currentValTransf() << std::endl;
     
     if( CallDialogInputDouble( "Value", TheCreat.currentValTransf(), [&]( double ioVal, bool  ioRun ) {
 
@@ -510,7 +509,40 @@ namespace M3d {
       {
         return 0;
       }
-           
+
+    if( pEvent == FL_KEYDOWN )
+      {
+        std::cout << " Canvas3d::handleTransform FL_KEYDOWN" << std::endl;
+        if(  Fl::event_key() >= 256 )
+          {
+            std::cout << " Canvas3d::handleTransform Fl::event_key() >= 256 = " << Fl::event_key() << std::endl;
+          switch(  Fl::event_key() )
+              {
+                //=======================
+              case FL_Escape:
+                userActionCancel( );
+                AINFO( "Cancel Transformation");
+                return 1;
+                
+		  break;
+		  //=======================
+              case	FL_Tab:
+                DBG_EVT_NL( " TAB" );
+                
+                cout << "TAB Canvas3dTransform " << endl;
+                if( getUserMode() == ModeUser::MODE_TRANSFORM )
+                  {
+                    AINFO( "Transform input ");
+                    
+                    //CallDialogKeepFloatInit( this );
+                    userTransformSelectionInput(pEvent);
+                  }		  
+                return 1;
+               break;
+                //=======================
+              }
+          }
+      }
        
     if( pEvent == FL_PUSH )
       {        

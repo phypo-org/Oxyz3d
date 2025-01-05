@@ -65,6 +65,13 @@ namespace PP3d {
       pOs << ((Entity&)pEntity) <<  " " << pEntity.get() ;
       return pOs;
     }
+
+
+   virtual std::string  getStringInfo( ){
+     std::ostringstream lStr;  
+     lStr << Entity::getStringInfo() << " " << cPt;
+     return lStr.str();
+   }
   };
   //*********************************************
 

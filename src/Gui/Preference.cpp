@@ -28,6 +28,7 @@ namespace M3d {
     ,cDbgFil( PPuDbg.cDbgFile )
     ,cDbgIni( PPuDbg.cDbgConf )
   {
+    resetToDefault();    
   }
   //---------------------------------------
   //#define INIT_ALL_DBG() 
@@ -38,6 +39,14 @@ namespace M3d {
 #define INIT_FILE( VAR )  iConfig.get( "File",   "File"  #VAR, cFile ## VAR  )
 
 #define INIT_VIEW( VAR )  iConfig.get( "View",   "View"  #VAR, cView ## VAR  )
+
+#define INIT_DRAW3D( VAR )  iConfig.get( "Draw3d",   "Draw3d"  #VAR, cDraw3d_ ## VAR  )
+  
+#define INIT_COLOR_DRAW3D( VAR )  { std::string tmp; PP3d::ColorRGBA Col; \
+  if( iConfig.get( "Draw3d",   "Draw3d"  #VAR, tmp )) { \
+      if( Col.fromStringFloats(  tmp ) == false)        \
+        std::cerr <<  #VAR << " read failed" << std::endl; \
+      else   VAR = Col; } }
 
 
     //--------------------------------------
@@ -115,6 +124,36 @@ namespace M3d {
     
     cMouseWheel            = 15;
 
+    // Draw3d
+    cDraw3d_LineWidth = 4;
+    
+    cDraw3d_ColorLine.set( 0.,1.0,0. );
+    cDraw3d_ColorLineSelect.set(0.,0.8,0.);
+
+    cDraw3d_ColorFacet.set(0.,0.7,0.);
+    cDraw3d_ColorFacetSelect.set(0.,1.0,0.);
+    cDraw3d_ColorLineHighlight.set(0.1,1.0,0.1);
+
+    
+    cDraw3d_InputCursor_ColorPoint.set( 1, 0.9, 0.1, 0.8);
+    cDraw3d_InputCursor_ColorLine.set( 0.9, 0.5, 0.3, 0.8);
+
+ 
+    cDraw3d_InputPoly_ColorPoint.set( 0.7, 0.4, 0.1, 0.7);
+    cDraw3d_InputPoly_ColorLine.set( 0.6, 0.5, 0.2, 0.7 );    
+    
+    cDraw3d_InputObject_ColorPoint.set( 0.4, 1, 0.4, 0.5);
+    cDraw3d_InputObject_ColorLine.set( 0.4, 0.8, 0.3, 0.4);
+    cDraw3d_InputObject_ColorFacet.set( 0.2, 0.4, 0.2, 0.3 );
+
+    
+    cDraw3d_ObjectMagnet_ColorPoint.set ( 0.5, 0.5, 1, 0.1);
+    cDraw3d_ObjectMagnet_ColorLine.set  ( 0.4, 0.4, 1, 0.1);
+    cDraw3d_ObjectMagnet_ColorFacet.set ( 0.3, 0.3, 1, 0.05 );
+    cDraw3d_ObjectMagnet_ViewMode = PP3d::ViewMode::SKELETON;
+
+    
+    //Debug
     cDbgEvt = cDbgAct = cDbgTree = cDbgDrw = cDbgBaz = cDbgSel = cDbgFil = cDbgIni = 0;
     
   }
@@ -124,9 +163,9 @@ namespace M3d {
     resetToDefault();
     initFromIni( Creation::Instance().getConfig() );    
   }
-  //---------------------------------------
-  //---------------------------------------
-  //---------------------------------------
+  //------------------------------------------------
+  //------------------------------------------------
+  //------------------------------------------------
   void Preference::initFromIni( PPu::PPConfig & iConfig )
   {
     INIT_DBG( Evt );
@@ -160,6 +199,34 @@ namespace M3d {
         if( std::find( sSchemesStr.begin(), sSchemesStr.end(), lTmp) != std::end(sSchemesStr))
        Fl::scheme(lTmp.c_str() );		// change scheme
       }
+
+
+
+    INIT_DRAW3D( LineWidth );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLine );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLineSelect );    
+
+    INIT_COLOR_DRAW3D( cDraw3d_ColorFacet  );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorFacetSelect );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLineHighlight );
+
+    
+    INIT_COLOR_DRAW3D( cDraw3d_InputCursor_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputCursor_ColorLine);
+
+    INIT_COLOR_DRAW3D( cDraw3d_InputPoly_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputPoly_ColorLine);
+    
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorLine);
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorFacet);
+    
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorLine);
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorFacet);
+    
+    // PP3d::ViewMode cDraw3d_ObjectMagnet_ViewMode
+    
   }
   //---------------------------------------
   void Preference::initFromArgs( PPu::PPArgs & iArgs )
@@ -187,6 +254,13 @@ namespace M3d {
 
 #undef INIT_FILE  
 #define INIT_FILE( VAR )  iConfig.set( "File", "File" #VAR,  cFile ## VAR  )
+
+#undef INIT_DRAW3D 
+#define INIT_DRAW3D( VAR )  iConfig.set( "Draw3d", #VAR, VAR )
+  
+#undef INIT_COLOR_DRAW3D
+#define INIT_COLOR_DRAW3D( VAR ) iConfig.set( "Draw3d", #VAR, VAR.toStringFloats() )
+
 
   //---------------------------------------
   bool Preference::saveInCurrentIni()
@@ -226,6 +300,32 @@ namespace M3d {
       }
 
     
+
+    INIT_DRAW3D( cDraw3d_LineWidth );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLine );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLineSelect );    
+
+    INIT_COLOR_DRAW3D( cDraw3d_ColorFacet  );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorFacetSelect );
+    INIT_COLOR_DRAW3D( cDraw3d_ColorLineHighlight );
+
+    
+    INIT_COLOR_DRAW3D( cDraw3d_InputCursor_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputCursor_ColorLine);
+
+    INIT_COLOR_DRAW3D( cDraw3d_InputPoly_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputPoly_ColorLine);
+    
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorLine);
+    INIT_COLOR_DRAW3D( cDraw3d_InputObject_ColorFacet);
+    
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorPoint);
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorLine);
+    INIT_COLOR_DRAW3D( cDraw3d_ObjectMagnet_ColorFacet);
+
+
+    
     return  Creation::Instance().getConfig().writeToFile(); 
   }
   //---------------------------------------
@@ -244,6 +344,11 @@ namespace M3d {
   
 #undef INIT_FILE  
 #define INIT_FILE( VAR )  iArgs.get( "File" #VAR, cFile  ## VAR )
+
+#undef INIT_DRAW3D 
+#define INIT_DRAW3D( VAR )  iArgs.get( "Draw3d" #VAR,  VAR )
+#undef INIT_COLOR_DRAW3D
+#define INIT_COLOR_DRAW3D( VAR ) { std::string lTmp = iArgs.get( "Draw3d",  #VAR ); fromStringFloats
 
   //---------------------------------------
   void Preference::initFromArg( PPu::PPArgs & iArgs )
@@ -281,6 +386,8 @@ namespace M3d {
         if( std::find( sSchemesStr.begin(), sSchemesStr.end(), lTmp) != std::end(sSchemesStr))
             Fl::scheme(lTmp.c_str() );		// change scheme
       }
+
+    
   }
   //*********************************
  

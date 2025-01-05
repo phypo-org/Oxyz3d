@@ -283,16 +283,16 @@ namespace M3d {
 	  //============================================
 	  else if(  pType == PP3d::PrimitivFactory::Type::PLANE )
 	    {
-	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*7,
+	      cGroupExt = new Fl_Group(lX_G0, lY, lW_G0, lYStep*6,
 					 PP3d::PrimitivFactory::GetTypeName(cMyType));
 	      cGroupExt->box(FL_ENGRAVED_FRAME);
 	      lY += lYStep;
 	      
 	      cSliderLength = new MySlider( lX_SL, lY, lW, lH, "Length", MajCB, this, 0.1, 100 );
-	      cSliderLength->value( 4 );
+	      cSliderLength->value( 1 );
 	      lY += lYStep;	  
 	      cSliderWidth = new MySlider( lX_SL, lY, lW, lH, "Width", MajCB, this, 0.1, 100 );
-	      cSliderWidth->value( 4 );
+	      cSliderWidth->value( 1 );
 	      lY += lYStep;
 	      cSliderHeight = new MySlider( lX_SL, lY, lW, lH, "Height", MajCB, this, 0.1, 100 );
 	      cSliderHeight->value( 1 );
@@ -300,10 +300,10 @@ namespace M3d {
               
              
 	      cSliderU = new MySliderInt( lX_SL, lY, lW, lH, "Div Length", MajCB, this, 1, 128 );
-	      cSliderU->value( 4 );
+	      cSliderU->value( 1 );
 	      lY += lYStep;              
 	      cSliderV = new MySliderInt( lX_SL, lY, lW, lH, "Div Width", MajCB, this, 1, 128 );
-	      cSliderV->value( 4 );
+	      cSliderV->value( 1 );
 	      lY += lYStep;
 
 
@@ -313,11 +313,11 @@ namespace M3d {
 		  lY += lYStep;
 	      */
 	      
-	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Grid", MajCB, this, 0 ); 
+              //	      cCheckHole = new MyCheckbutton( lX, lY, 30,15, "Grid", MajCB, this, 0 ); 
 	   
-	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Thickness", MajCB, this, 0.0001, 100 );
-	      cSliderThickness->value( 0.1 );
-	      lY += lYStep;
+              //	      cSliderThickness = new MySlider( lX2, lY, lW, lH, "Thickness", MajCB, this, 0.0001, 100 );
+              //	      cSliderThickness->value( 0.1 );
+              //	      lY += lYStep;
 
 	      cGroupExt->end();	      	      
 	    }

@@ -79,6 +79,35 @@ namespace M3d {
     Fl_Choice       *cViewSchemeChoice;
 
 
+   //    Draw3d
+    MyIntInput     *cDraw3d_LineWidth;
+    /*
+    PP3d::ColorRGBA cDraw3d_ColorLine;
+    PP3d::ColorRGBA cDraw3d_ColorSelect;
+    
+    PP3d::ColorRGBA cDraw3d_ColorFacet;
+    PP3d::ColorRGBA cDraw3d_ColorFacetSelect;
+    PP3d::ColorRGBA cDraw3d_ColorLineHighlight;
+    
+    PP3d::ColorRGBA cDraw3d_InputCursor_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputCursor_ColorLine;
+
+    PP3d::ColorRGBA cDraw3d_InputPoly_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputPoly_ColorLine;
+    
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorLine;
+    PP3d::ColorRGBA cDraw3d_InputObject_ColorFacet;
+    
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorPoint;
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorLine;
+    PP3d::ColorRGBA cDraw3d_ObjectMagnet_ColorFacet;
+    */
+    Fl_Choice      *cDraw3d_ObjectMagnet_ViewMode;
+
+
+
+    
     MyIntInput* cDbgEvt ;
     MyIntInput* cDbgAct ;
     MyIntInput* cDbgDrw;
@@ -111,15 +140,20 @@ namespace M3d {
     {
       Preference::Instance().resetToFile();
     }
-
     //----------------------------------------
 #undef  GET_INT_VALUE
 #define GET_INT_VALUE(A) MyPref.A = atoi( DiagPref.A->value())
+
+#undef  GET_COLOR
+#define GET_COLOR(A) if( MyPref.A.fromStringFloats( DiagPref.A->value())==false){ std::err << "Error GET_COLOR" << #A << std::endl; }
+
     
 #undef  GET_BOOL_VALUE
 #define GET_BOOL_VALUE(A)  MyPref.A = DiagPref.A->value() == 1;
 #define GET_FILE_VALUE(A)  MyPref.A = DiagPref.A->value();
-  
+
+
+    
  static void OkCB( Fl_Widget*, void*pUserData )
     {  
       Creation::Instance().redrawAll(PP3d::Compute::FacetAll);
@@ -146,6 +180,22 @@ namespace M3d {
 
       //  GET_FILE_VALUE( cFileDefaultDir );
 
+
+    //    Draw3d
+      GET_INT_VALUE(cDraw3d_LineWidth );
+      /*
+      GET_COLOR( cDraw3d_ColorLine );
+      GET_COLOR( cDraw3d_ColorLineSelect );
+      
+      GET_COLOR( cDraw3d_ColorFacet );
+      GET_COLOR( cDraw3d_ColorFacetSelect );      
+      GET_COLOR( cDraw3d_ColorLineHighlight);
+      
+      GET_COLOR( cDraw3d_InputCursor_ColorPoint );
+      GET_COLOR( cDraw3d_InputCursor_ColorLine );
+      */
+
+      //    cDraw3d_ObjectMagnet_ViewMode
       
       //Debug
       GET_INT_VALUE(cDbgEvt);
@@ -159,6 +209,7 @@ namespace M3d {
       GET_INT_VALUE(cDbgTree);
       GET_INT_VALUE(cDbgFil);
       GET_INT_VALUE(cDbgIni);
+
 
 	     
       Fl::delete_widget( DiagPref.cMyWindow);
@@ -288,8 +339,8 @@ namespace M3d {
           //-----------  Scheme  ------------
          lY += cViewSchemeChoice->h() + lMarge;
          /*
-          cBgColorButton =  new Fl_Button( lX, lY, 120, 25, "color"); 
-          cBgColorButton->tooltip("Background color of view");
+          cBgColorButton =  new Fl_Button( lX, lY, 120, 25, "Background color"); 
+          cBgColorButton->tooltip("Background color of 3d view");
           cBgColorButton->callback((Fl_Callback *) []( Fl_Widget *w, void *pUserData)
                                      {
                                        Fl_Button* lButton =(Fl_Button*) pUserData;
@@ -311,6 +362,62 @@ namespace M3d {
     	  Fl_Group::current()->resizable(lGr);
  
 	}
+	//=============== Draw3d ====================
+        { Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Draw3d");
+	  lX = lMarge+100;
+	  lY = lMarge;
+    
+      
+	  INTPUT_INT( cDraw3d_LineWidth , "Line width" );
+ 
+          //----------- Draw3d ------------
+          cDraw3d_ObjectMagnet_ViewMode =  new Fl_Choice(lX,lY,140,25, "Magnet Mode" );
+          cDraw3d_ObjectMagnet_ViewMode->add( "Full" );
+           cDraw3d_ObjectMagnet_ViewMode->add( "Skeleton" );
+         if( MyPref.cDraw3d_ObjectMagnet_ViewMode ==  PP3d::ViewMode::SKELETON )
+            cDraw3d_ObjectMagnet_ViewMode->value(0);
+          else
+            cDraw3d_ObjectMagnet_ViewMode->value(1);
+          
+          cDraw3d_ObjectMagnet_ViewMode->callback( (Fl_Callback *) [](Fl_Widget *w, void *pUserData)
+                                                   {
+                                       Fl_Choice  *lChoice = (Fl_Choice*)pUserData;
+                                       std::string lName = lChoice->text();
+                                       if ( lName == "Skeleton") 
+                                         MyPref.cDraw3d_ObjectMagnet_ViewMode = PP3d::ViewMode::SKELETON;
+                                       else
+                                         MyPref.cDraw3d_ObjectMagnet_ViewMode = PP3d::ViewMode::FULL;                                         
+                                     }, cDraw3d_ObjectMagnet_ViewMode );
+          
+          //-----------  Scheme  ------------
+         lY += cViewSchemeChoice->h() + lMarge;
+         /*
+          cBgColorButton =  new Fl_Button( lX, lY, 120, 25, "Background color"); 
+          cBgColorButton->tooltip("Background color of 3d view");
+          cBgColorButton->callback((Fl_Callback *) []( Fl_Widget *w, void *pUserData)
+                                     {
+                                       Fl_Button* lButton =(Fl_Button*) pUserData;
+                                       
+                                       uchar r,g,b,a;
+                                       if (fl_color_chooser( 0, MyPref.cDraw3d_ColorLine.cR,
+                                                             MyPref.cDraw3d_ColorLine.cG,
+                                                             MyPref.cDraw3d_ColorLine.cB ))
+                                         {
+                                           lButton->labelcolor( fl_contrast(FL_BLACK, c) );
+                                           lButton->redraw();
+                                         }
+                                       //                                       Preference::Instance().
+                                     }, cBgColorButton);
+         */
+	  lGr->end();
+	  lGr->hide();
+      
+    	  Fl_Group::current()->resizable(lGr);
+ 
+	}
+
+
+        
 	//===================================	
 	{ Fl_Group* lGr = new Fl_Group( lMarge, lMarge, lWgroup, lHgroup, "Debug");
 	  lX = lMarge+300;

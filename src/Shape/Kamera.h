@@ -14,7 +14,7 @@ namespace PP3d {
 
   public:
     enum class ModeKamera {MODE_ORTHO, MODE_PERPECTIVE};
-	
+ 	
   public:
 
     ModeKamera  cModeKamera;
@@ -69,8 +69,33 @@ namespace PP3d {
     static const char *GetMeasurement( int iPosScale ); // return the univeral unity 
     static int         GetNbMeasurement( ); // return the total number of unity
     static int         GetDefaultMeasurement();
+
+
+
+  friend inline std::ostream& operator << ( std::ostream& pOs, Kamera::ModeKamera pVal )
+    {
+      switch( pVal )
+        {
+        case Kamera::ModeKamera::MODE_ORTHO: pOs      <<"Orhto"; break;
+        case Kamera::ModeKamera::MODE_PERPECTIVE: pOs <<"Persp"; break;
+      }
+      return pOs;
+    }
+
+        
+    friend  std::ostream & operator << ( std::ostream & pOs, Kamera & pKam )
+    {
+      pOs <<  pKam.cModeKamera
+          << " Pos:" <<  pKam.position2() ;
+      
+      return pOs;
+    }
+
   };
   //***************************************
+
+   
+  
 }
 
 #endif

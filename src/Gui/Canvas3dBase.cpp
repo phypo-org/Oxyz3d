@@ -73,7 +73,7 @@ namespace M3d {
     double lSz           = 2E-10;  // taille minimale en millimetre de la grille de chaque coté de l'axe
 	
     long lPosScale =  (long)(log10(lScale*2.5)+12);  // On recupere l'echelle par rapport a 1E-6 nanometre (2.5 arbitraire, à changer pour l'effet de seuil)
-    lSz  *= exp10(lPosScale);      // on modifie la taille de la grille en fonction de l'echelle 
+    lSz  *= pow(10,lPosScale);      // on modifie la taille de la grille en fonction de l'echelle 
 
     std::string lMesurement= "";
     //    double lDivision = 0;

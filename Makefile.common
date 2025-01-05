@@ -1,3 +1,17 @@
+OS := $(shell uname)
+
+GCC_OPT=
+ifeq ($(OS), Linux)
+    PLATFORM = linux
+else ifeq ($(OS), Darwin)
+    PLATFORM = macos
+else ifeq ($(OS), MINGW64_NT) # Windows sous MSYS2/MinGW
+    PLATFORM = windows
+else
+    PLATFORM = unknown
+endif
+
+
 # include ${FLTK_PATH}/makeinclude
 # include fltk-config --includedir
 
@@ -21,16 +35,16 @@ endif
 
 
 
-ifdef NO_LUA
-
-INC_LUA= -DLUA_NOT_USE
-LIB_LUA=
-
-else
+ifdef USING_LUA
 
 INC_LUA= -I/usr/include/lua5.4
 LIB_LUA= -L/usr/lib/x86_64-linux-gnu -llua5.4
 FLAGS_COMPIL_EXT += -DUSING_LUA
+
+else
+
+INC_LUA= -DLUA_NOT_USE
+LIB_LUA=
 
 endif
 
@@ -45,6 +59,18 @@ LIB_CGAL=  -lboost_thread  -lgmp
 
 endif
 
+
+ifdef USING_OPENAL
+
+FLAGS_COMPIL_EXT += -DUSE_SOUND
+
+INC_OPENAL=-I$(OPENAL_INC)
+LIB_OPENAL=-L$(OPENAL_LIB) -lopenal   -lsndfile
+
+else
+INC_OPENAL=
+LIB_OPENAL=
+endif
 
 
 
@@ -124,8 +150,12 @@ endif
 IGNORE=-Wno-format-nonliteral -Wno-unused-parameter -Wno-unused-variable -Wno-cast-function-type -Wno-error=cast-function-type -Wno-conversion -Wno-shadow
 
 
+ifeq ($ PLATFORM, "linux")
+     GCC_OPT=-Wl,-z,relro,now$(STRIP_LINK),
+endif
+
 CCFLAGS= -std=c++20 -m64   -Wall -Werror -Wextra -Wformat=2 \
-		-Wl,-z,relro,-z,now$(STRIP_LINK) -Wconversion -fPIE $(IGNORE) -Wpedantic -Wstack-protector -fstack-protector-all \
+		$(GCC_OPT) -Wconversion -fPIE $(IGNORE) -Wpedantic -Wstack-protector -fstack-protector-all \
 		-D_REENTRANT $(OPTIM) \
 		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \
 		$(FLAGS_COMPIL_EXT)
@@ -136,18 +166,18 @@ CCFLAGS= -std=c++20 -m64   -Wall -Werror -Wextra -Wformat=2 \
 
 # Parametres de link
 #-------------------
-LDFLAGS= -pie -lpthread -ldl -lm 
+LDFLAGS= -static-libgcc -static-libstdc++ -pie -lpthread -ldl -lm 
 
 
 # Les includes
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA) $(INC_CGAL)
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA) $(INC_CGAL) $(INC_OPENAL)
  
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_CGAL)
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_CGAL) $(LIB_OPENAL)
 
 # -lpython3.6m

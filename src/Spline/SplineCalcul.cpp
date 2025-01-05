@@ -88,7 +88,7 @@ namespace PP3d {
   
     /*	oPoles[0] = oPoles[1] ;  */
   
-    delete Xi;
+    delete [] Xi;
   }
   //--------------------------------------
 

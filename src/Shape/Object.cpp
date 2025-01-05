@@ -12,7 +12,7 @@
 #include "EntityVisitorPicking.h"
 
 #include <algorithm>
-
+#include <sstream> 
 
 namespace PP3d{
   //********************************
@@ -347,6 +347,14 @@ namespace PP3d{
     
     return 0;
   }
-
+  //---------------------------
+    std::string  Object::getStringInfo( )
+  {
+    std::ostringstream lStr;  
+    lStr  << GetStrObjectType( getObjType() )
+         << ':'<<  getName()  ;
+    return lStr.str(); // Va faire temporaire du string 
+  }
+	
  //********************************
 }

@@ -35,7 +35,7 @@ namespace PP3d {
     PointPtr&     second()                   { return cPoints.second;}
 
     Point3d       getVector3d()              { return (second()->get() - first()->get()); }
-
+    double        length()                   { return getVector3d().distance();}
     Point3d       getCenter3d()  override    { Point3d lRes = (second()->get() + first()->get()); lRes/=2; return lRes; };
      
     void set( PointPtr lA, PointPtr lB )
@@ -83,7 +83,15 @@ namespace PP3d {
       pOs << ((Entity&)pEntity) <<  " " << pEntity.first() << " " << pEntity.second() ;
       return pOs;
     }
-
+    
+  virtual std::string  getStringInfo( ){
+     std::ostringstream lStr;  
+     lStr << Entity::getStringInfo()
+          << " " << first()->getStringInfo()
+          << "  " << second()->getStringInfo()
+          << " length:" << length();
+     return lStr.str();
+  }
     
     Facet* myFacet() { return (Facet*) firstOwner(); }
     

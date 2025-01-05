@@ -50,12 +50,11 @@ namespace M3d {
 #define StrMenu_Primitiv2D   "" // "Primitive 2D/"
 	
 #define StrMenu_CreateFacet     "Facet      ..."
-#define StrMenu_CreatePlane     "Plane      ..."
+#define StrMenu_CreateCube     "Cube,Plane      ..."
   
 #define StrMenu_Primitiv3D   "" // "Primitive 3D/"
-#define StrMenu_CreateCylinder  "Cylinder   ..."
-#define StrMenu_CreateSphere    "Sphere     ..."
-#define StrMenu_CreateCube      "Cube       ..."
+#define StrMenu_CreateCylinder  "Cylinder,Tube,Gear   ..."
+#define StrMenu_CreateSphere    "Sphere,Tore     ..."
 #define StrMenu_CreateTetra     "Tetraede   ..."
 #define StrMenu_CreatePyramid   "Pyramide   ..."
 #define StrMenu_CreateOcto      "Octoedre   ..."
@@ -1416,12 +1415,14 @@ namespace M3d {
   {
     pMenu.label( " Create ");
     
-     pMenu.add( StrMenu_Primitiv3D StrMenu_CreateCube ,    "^c",  
+    
+    pMenu.add( StrMenu_Primitiv2D  StrMenu_CreateCube,    "",  
                [](Fl_Widget *w, void *pUserData)
                {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::CUBE  );
-               }, this); 
+                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
+               }, this, FL_MENU_DIVIDER);
 
+ 
     pMenu.add( StrMenu_Primitiv3D StrMenu_CreateCylinder, "y",  
                [](Fl_Widget *w, void *pUserData)
                {      
@@ -1458,7 +1459,7 @@ namespace M3d {
                [](Fl_Widget *w, void *pUserData)
                {      
                  CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::ICOSAHED  );
-               }, this, FL_MENU_DIVIDER);
+               }, this);
 
     
     pMenu.add( StrMenu_Primitiv3D StrMenu_CreateTrapezohedron,  "^t", 
@@ -1482,13 +1483,6 @@ namespace M3d {
                }, this);
 
     
-    pMenu.add( StrMenu_Primitiv2D  StrMenu_CreatePlane,    "",  
-               [](Fl_Widget *w, void *pUserData)
-               {      
-                 CallDialogPrimitiv(  PP3d::PrimitivFactory::Type::PLANE  );
-               }, this, FL_MENU_DIVIDER);
-
- 
     // Ajouter sphere (2 types differents)
     // Ajouter cone
     // Ajouter cylindre (revolution) (disque,  anneau si troue)

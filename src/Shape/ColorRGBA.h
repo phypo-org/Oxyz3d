@@ -3,6 +3,10 @@
 
 #include "PP3dType.h"
 
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
 namespace PP3d {
 
   //********************************************************
@@ -151,6 +155,30 @@ namespace PP3d {
       pOs << "r:" << pCol.cR << " g:" << pCol.cG << " b:" << pCol.cB << " a:" << pCol.cA; 
       return pOs;
     }
+
+    //------------------------------------------
+    std::string toStringFloats() const {
+      std::ostringstream oss;
+      oss << std::fixed << std::setprecision(3) // Fixe à trois décimales
+          << cR << ", "
+          << cG << ", "
+          << cB << ", "
+          << cA;
+      return oss.str();
+    }
+ 
+
+    bool fromStringFloats(const std::string& str) {
+        std::istringstream iss(str);
+        float r, g, b, a;
+        char comma;
+        if (iss >> r >> comma >> g >> comma >> b >> comma >> a) {
+            set(r, g, b, a);
+            return true;
+        }
+        return false;
+    }
+    
   };
 	
   //********************************************************

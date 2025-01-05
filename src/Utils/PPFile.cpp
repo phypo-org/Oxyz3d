@@ -380,7 +380,7 @@ namespace PPu {
 	 ERRNO_LOG(  "ReadFileLines exception " <<  iEx.what() << " <<<" << iFileName << ">>>"  );
 	 return 0;
        }
-    return ((int32_t)ioLines.size()); 
+    return ((size_t)ioLines.size()); 
   }
   //---------------------------------------------------------
   bool PPFile::WriteFile( const std::string &iFileName, const char* oStr, size_t iSz )

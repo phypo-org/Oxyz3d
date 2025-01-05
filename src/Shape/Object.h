@@ -32,6 +32,17 @@ namespace PP3d {
 
   enum ClassType { ClassTypeVoid=0, ClassTypeObj=1, ClassTypeGeo=2, ClassTypeAll=0xFFFF };
   
+  inline static const char* GetStrClassType( ClassType pType )
+  {
+    switch( pType )
+      {
+      case ClassType::ClassTypeVoid:  return "ClassTypeVoid";
+      case ClassType::ClassTypeObj:   return "ClassTypeObj";
+      case ClassType::ClassTypeGeo:  return "ClassTypeGeo";
+      case ClassType::ClassTypeAll:  return "ClassTypeAll";
+      }
+    return "ClassType::unknown";
+  }
 		
   enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
   inline static const char* GetStrObjectType( ObjectType pType )
@@ -168,7 +179,7 @@ namespace PP3d {
     //virtual void drawSelectionGL( ViewProps& pViewProps );
     const std::string&   getName()      const     { return cName; }
     void                 rename( const char* pName) { cName = pName; }
-
+    virtual  std::string getStringInfo();
 	
 		
     void   setVisible( bool pVisible=true ) { cMyProps.cVisible = pVisible; } 

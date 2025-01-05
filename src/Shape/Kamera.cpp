@@ -215,10 +215,13 @@ namespace PP3d{
   //------------------------------------------------  
    void Kamera::setScaleToMeasurement( int iPosScale )
    {
-     double lScale = exp10(iPosScale-12)/2.5;
+     double lScale = pow(10,iPosScale-12)/2.5;
      lScale = 1.0/lScale;
      setScale( lScale );
-   }
+  }
+  
+  
+ 
   //------------------------------------------------
   #define lTabMesurementSize 43
   static  const char *lTabMesurement[lTabMesurementSize]={

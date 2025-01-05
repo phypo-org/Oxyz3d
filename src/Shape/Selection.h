@@ -118,7 +118,7 @@ namespace PP3d {
     }
     const std::unordered_set<EntityPtr>& getSelection() { return cSelectObj;}
     const std::vector<EntityPtr> &       getSelectionVect() { return cSelectObjVect; }
-
+    
 
     size_t getNbSelected() { return cSelectObj.size();  }
 									
@@ -129,9 +129,11 @@ namespace PP3d {
     void               changeSelectType( SelectType pType, SortEntityVisitor & lVisit  );
     void               addGoodEntityFor( std::vector<EntityPtr> &iVect);
     SelectType&        getSelectType() { return  cSelectType; }
+    
     static const char* GetStrSelectType(SelectType);
     static SelectType  GetSelectTypeFromStr( const char* pStr );
 
+    const char*        getStrSelectType() { return GetStrSelectType( getSelectType());}
     //    void   changeSelectGroup( bool lVal ) { cSelectGroup = lVal; }
     //    bool   isSelectGroup() { return cSelectGroup; }
 

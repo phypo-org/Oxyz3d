@@ -74,6 +74,8 @@ vpath %.cpp $(WLIB)  $(SPLIB) $(GLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
 
 
 
+
+
 # compilation, link ,clean ...
 #-------------------------------
 
@@ -92,7 +94,6 @@ $(OTARGET_LIB): $(OBJECTS)
 	ar cq  $(OTARGET_LIB) -o  $@  $^
 	$(STRIP_CMD) $(OTARGET_LIB)
 	   
-
 clean:
 	rm -rf $(OBJDIR) $(DBG_DIR) $(REL_DIR) 
 	rm -rf *.o *.a *.exe core $(OTARGET)

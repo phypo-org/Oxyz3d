@@ -17,10 +17,17 @@ inline  void SplitTime( PPDateTime70 pTime, PPDateUTC iUTC, int32_t* aaaa, int32
     struct tm TM;
     TM2 = & TM;
 
+#if  defined(_WIN32) || defined(_WIN64)
+    if( iUTC == PPDateUTC::UTC )
+      ::gmtime_s    ( &TM, (time_t*) &pTime);
+    else
+      ::localtime_s (&TM, (time_t*)&pTime );
+#else    
     if( iUTC == PPDateUTC::UTC )
       ::gmtime_r    ((time_t*) &pTime, &TM);
     else
       ::localtime_r ((time_t*)&pTime, &TM );
+#endif
 
     
     if( aaaa )
