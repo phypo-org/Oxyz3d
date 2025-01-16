@@ -117,6 +117,9 @@ namespace PP3d{
                                std::vector<FacetPtr> & oNewFacets,
                                bool iMiddleSquare, bool iInv, int iDecal  );
     
+    static bool LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr lPath,
+                                     std::vector<FacetPtr> & oNewFacets, bool iFlagJoin  );
+   
 
 #ifdef  USING_CGAL  
     static void CGAL_DuoSabin();

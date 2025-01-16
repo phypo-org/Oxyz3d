@@ -359,7 +359,7 @@ namespace PP3d {
       {
 	if( iFlagDelete && cCurrentCreation != nullptr )
 	  {
-	    cCurrentCreation->deleteAllHierarchy();
+            cCurrentCreation->deleteAllHierarchy();
 	  }
 	
 	cCurrentCreation = pCurrentCreation;

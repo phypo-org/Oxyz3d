@@ -113,9 +113,6 @@ int CreateFacetsByJoinLines( DataBase * iBase,
 }
 
 //--------------------------------------------------
-// Dans certain cas il faudrait inverser le sens des facettes
-// Actuellement on ne le fait pas, peut etre en comparant les normales ?
-// Sinon c'est à l'utilisateur de le faire, ce qui est génant
 
 bool Modif::JoinTwoFacets( DataBase * iBase,
                            FacetPtr iF1,

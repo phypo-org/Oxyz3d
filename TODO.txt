@@ -30,7 +30,7 @@ XXXXXXX        un trou, de meme il faudrait gerer s'il y a plusieurs polyedre
 XXXXXX - Ameliorer la gestion du dialogue de la sauvegarde et du chargement
 =====================================================
 
-IL FAUT ABSOLUMENT :::: AFFICHER LE MODE COURANT ET LES SOUSMODE
+xxx IL FAUT ABSOLUMENT :::: AFFICHER LE MODE COURANT ET LES SOUSMODE
    MAGENT:DRAG par exemple en bas de l'ecran avant le message courant
    !!!
    il faudrait au moins trois textes:
@@ -47,13 +47,13 @@ il faudrait aussi 1 console !!!!
 - Import pour les .stl
 
 
-- avoir des menus avec une icones commes dans Wings (ajouter a fltk ? )
+- avoir des menus avec une icones commes dans Wings (ajouter a fltk ?)
 - Normaliser les dimensions des objets 3d crées
 - Ajouter de nouvelles primitives (recuperer celles faites pour wings)
 
 
 
-ccccc - Permettre la saisie de valeur au clavier pour les modifications
+XXXXX - Permettre la saisie de valeur au clavier pour les modifications
   interactive à la souris . Enlever DialogKeepFloat
   
   Actuellment on fournit un Dx (c'est pas terrible) remplacer par la
@@ -76,10 +76,13 @@ ccccc - Permettre la saisie de valeur au clavier pour les modifications
 
 XXXXXX - Bridge
        Debugger la destruction de l'un des objets quand il y a fusion       
-Faire un autre bridge avec des points ajoués comme pour Wings3D
 
+- Slide
 - Bevel
+- Notion de trajectoire avec duplication et raccordement à chque étape
+- (+ transformation eventuelle)
 - etc
+
 
 
 ---- Destruction d'entity :

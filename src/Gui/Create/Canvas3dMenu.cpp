@@ -75,7 +75,6 @@ namespace M3d {
 #define StrMenu_Spline "Splines"
 #define StrMenu_MuteBSplineToPolyline    "Mute BSpline to Polyline"
 #define StrMenu_CreatPolylineFromBSpline "Generate Polyline from BSpline"
-
 #define  StrMenu_ModifyShape "Modify shape"
   
 #define  StrMenu_CreateShapeAddFacet "Add new Facet to shape"
@@ -83,20 +82,24 @@ namespace M3d {
 #define  StrMenu_MergeShapeFacets "Merge facets of a shape"
 
 
-#define StrMenu_Revol     "New Revolution "
+#define StrMenu_Revol     "Create Object from Revolution of Input points"
 #define StrMenu_RevolX    "Revol X ..."
 #define StrMenu_RevolY    "Revol Y ..."
 #define StrMenu_RevolZ    "Revol Z ..."
 #define StrMenu_RevolAxis "Revol current axis..."
 
-  
-#define StrMenu_Spiral_Input     "New Spiral from Input"
-#define StrMenu_Spiral_SelObjects     "New Spiral select's objects"
+#define StrMenu_Lofting_Input "Create Object from Lofting with Input points"
+    
+#define StrMenu_Spiral_Input     "Create Object from Spiral of Input points"
+#define StrMenu_Spiral_SelObjects  "New Spiral from select's objects"
 #define StrMenu_SpiralX     "Spiral X ..."
 #define StrMenu_SpiralY     "Spiral Y ..."
 #define StrMenu_SpiralZ     "Spiral Z ..."
 #define StrMenu_SpiralAxis  "Spiral current axis..."
 
+
+
+  
 #define StrMenu_CallDialoDiagSub     "New Subdivide ..."
 
 #define StrMenu_Demo1            "Demo 1"
@@ -804,7 +807,7 @@ namespace M3d {
                    //LLLLLLLLLLLLLLLLLLLLLLLLL
                    PP3d::SortEntityVisitorPoint lVisit;
                    TheSelect.execVisitorOnEntity( lVisit );
-                   
+                  
                    if( PP3d::Modif::ConnectPoints( lVisit.cVectPoints, TheCreat.getDatabase() ))
                      {
                        PushHistory();
@@ -970,8 +973,6 @@ namespace M3d {
                    CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );   
                    ADBMAL, this, FL_MENU_DIVIDER );
       }
-    // ======= SPIRAL ========
-
 
     //=========== GROUP ===========
     if( TheSelect.getSelectType() == PP3d::SelectType::Object )
@@ -1394,6 +1395,23 @@ namespace M3d {
                      TheSelect.removeEntity( TheSelect.getSelectionVect()[0] );                     
                      Align( lAxis ); 
                      ADBMAL, this);
+
+
+
+    
+          // ======= LOFTING  ========
+          
+          lMenuFlagActif = 0;
+          if( TheInput.getNbCurrentPoints() <  2  )  lMenuFlagActif=FL_MENU_INACTIVE;
+          
+          
+          if( TheSelect.getNbSelected() < 1 )
+            lMenuFlagActif=FL_MENU_INACTIVE;
+          
+          pMenu.add( StrMenu_Lofting_Input, "", LAMBDA
+                     CallDialogLofting( TypeOfInput::INPUT_ENTRY  );
+                     ADBMAL, this, lMenuFlagActif);       
+          
         }
 	break;
         
@@ -1629,15 +1647,15 @@ namespace M3d {
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
 
 
-    
     //===== Revol
     lMenuFlagActif = 0;
-    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
-
-    pMenu.add( StrMenu_Revol "/" StrMenu_RevolX, "^x", LAMBDA
-               CallDialogRevol( TypeRevol::RevolX  );               
-               ADBMAL, this, lMenuFlagActif);
+    if( TheInput.getNbCurrentPoints() <  1  )  lMenuFlagActif=FL_MENU_INACTIVE;
     
+    
+    pMenu.add( StrMenu_Revol "/" StrMenu_RevolX, "^x", LAMBDA
+                 CallDialogRevol( TypeRevol::RevolX  );               
+                 ADBMAL, this, lMenuFlagActif);
+      
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolY, "^y",  LAMBDA
                CallDialogRevol( TypeRevol::RevolY  );     
                ADBMAL, this, lMenuFlagActif);
@@ -1645,25 +1663,21 @@ namespace M3d {
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolZ, "^z",  LAMBDA
                CallDialogRevol( TypeRevol::RevolZ  );
                ADBMAL, this, lMenuFlagActif);
- 
-    lMenuFlagActif = 0;
+    
     pMenu.add( StrMenu_Revol "/" StrMenu_RevolAxis, "",  LAMBDA
                CallDialogRevol( TypeRevol::RevolAxis  );
-               ADBMAL, this, lMenuFlagActif);
+                 ADBMAL, this, lMenuFlagActif);
+    
 
-
-    //====== Spiral 
-    lMenuFlagActif = 0;
-    if( TheInput.getNbCurrentPoints() < 1 ) lMenuFlagActif=FL_MENU_INACTIVE;
-      
+    //====== Spiral       
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralX, "^x", LAMBDA
                CallDialogSpiral( TypeRevol::RevolX, TypeOfInput::INPUT_ENTRY );
                ADBMAL, this, lMenuFlagActif);
-    
+      
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralY, "^y", LAMBDA
                CallDialogSpiral( TypeRevol::RevolY, TypeOfInput::INPUT_ENTRY  );
                ADBMAL, this, lMenuFlagActif);
-    
+      
     pMenu.add( StrMenu_Spiral_Input "/" StrMenu_SpiralZ, "^z", LAMBDA
                CallDialogSpiral( TypeRevol::RevolZ, TypeOfInput::INPUT_ENTRY  );
                ADBMAL, this, lMenuFlagActif);
@@ -1828,26 +1842,49 @@ namespace M3d {
   //----------------------------------------
   void Canvas3d::bridgeFacets( bool iInv, int iDecal)
   {
-    if( TheSelect.getSelectType() == PP3d::SelectType::Facet
-        && TheSelect.getNbSelected() == 2 )
+    if( TheSelect.getSelectType() != PP3d::SelectType::Facet
+        || TheSelect.getNbSelected() != 2 )
       {
-        PP3d::FacetPtr lFacetA = (PP3d::FacetPtr)TheSelect.getSelectionVect()[0];
-        PP3d::FacetPtr lFacetB = (PP3d::FacetPtr)TheSelect.getSelectionVect()[1];
-        
-        PP3d::PolyPtr lPolyA = nullptr;
-        PP3d::PolyPtr lPolyB = nullptr;
+        WARN_DIAG( "You must select exactly 2 facets");
+        return;
+      }
 
-        if( lFacetA->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
-          lPolyA = (PP3d::PolyPtr) lFacetA->firstOwner();
+
+    if( TheSelect.getFirst()->getType() != PP3d::ShapeType::Facet
+        ||  TheSelect.getSecond()->getType() != PP3d::ShapeType::Facet )
+        {
+        WARN_DIAG( "Must be true Facets");
+        return;
+      }
+   
+      
+    PP3d::FacetPtr lFacetA = (PP3d::FacetPtr)TheSelect.getFirst();
+    PP3d::FacetPtr lFacetB = (PP3d::FacetPtr)TheSelect.getSecond();
         
-        if( lFacetB->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
-          lPolyB = (PP3d::PolyPtr) lFacetB->firstOwner();
-        
-        if( lPolyA == nullptr || lPolyB == nullptr )
-          {
-            WARN_DIAG( "At least a facet does not belong to a polyhedron");
-            return ;
-          }
+ 
+    if( lFacetA->firstOwner() == nullptr 
+        || lFacetB->firstOwner()  == nullptr  )
+        {
+        WARN_DIAG( "Facet must belong to polyhedron");
+        return;
+      }
+    
+    
+    
+    PP3d::PolyPtr lPolyA = nullptr;
+    PP3d::PolyPtr lPolyB = nullptr;
+
+    if( lFacetA->firstOwner()->getType() == PP3d::ShapeType::Poly )
+      lPolyA = (PP3d::PolyPtr) lFacetA->firstOwner();
+    
+    if( lFacetB->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
+      lPolyB = (PP3d::PolyPtr) lFacetB->firstOwner();
+    
+    if( lPolyA == nullptr || lPolyB == nullptr )
+      {
+        WARN_DIAG( "At least a facet does not belong to a polyhedron");
+        return ;
+      }
         
 
         PP3d::FacetPtrVect lNewFacets;
@@ -1874,10 +1911,8 @@ namespace M3d {
                 TheBase.deleteEntityIfVoid( lOwner );
               }
           }
-
-      }
     else {
-      WARN_DIAG( "You must select exactly 2 facets");
+    
    }
   }
   //----------------------------------------

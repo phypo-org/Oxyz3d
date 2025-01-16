@@ -119,6 +119,10 @@ namespace PP3d {
     const std::unordered_set<EntityPtr>& getSelection() { return cSelectObj;}
     const std::vector<EntityPtr> &       getSelectionVect() { return cSelectObjVect; }
     
+    EntityPtr getFirst() { if( getNbSelected() > 0 ) return getSelectionVect()[0]; return nullptr; }
+    EntityPtr getSecond(){ if( getNbSelected() > 1 ) return getSelectionVect()[1]; return nullptr; }
+    EntityPtr getThird() { if( getNbSelected() > 2 ) return getSelectionVect()[2]; return nullptr; }
+
 
     size_t getNbSelected() { return cSelectObj.size();  }
 									
