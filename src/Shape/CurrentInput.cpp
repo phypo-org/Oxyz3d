@@ -187,7 +187,8 @@ namespace PP3d {
 
     Object* lTmp = cCurrentCreation;
     iBase.addObject( lTmp );
-
+    std::cout << "+++++ validCurrentCreation :" << cCurrentCreation << std::endl;
+         
     
 	
     cCurrentCreation = nullptr;
@@ -357,6 +358,8 @@ namespace PP3d {
   {
     if( cCurrentCreation != pCurrentCreation )
       {
+        std::cout << "----- swapCurrentCreation old:" << cCurrentCreation<< " --> " <<  pCurrentCreation << std::endl;
+
 	if( iFlagDelete && cCurrentCreation != nullptr )
 	  {
             cCurrentCreation->deleteAllHierarchy();

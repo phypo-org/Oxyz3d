@@ -119,7 +119,7 @@ namespace PP3d {
       return ;
      
     VectDouble3 lNodes;
-    getFacet()->getPoints( lNodes ); // get the originals points
+    getFacet()->getCopyPointsWithDuplicate( lNodes ); // get the originals points
     std::cout << "*********** makePoles nodes:"  << lNodes.size() << std::endl;
 
     //     for( size_t j = 0; j <  lNodes.size(); j++ )

@@ -1895,7 +1895,8 @@ namespace M3d {
         lPolyA->addFacet(lNewFacets);
         lPolyA->removeFacet(lFacetA);
         lPolyB->removeFacet(lFacetB);
-
+        
+     
         if( lPolyA != lPolyB )
           {
             PP3d::FacetPtrVect lFacsB = lPolyB->getFacets();
@@ -1910,9 +1911,10 @@ namespace M3d {
               { 
                 TheBase.deleteEntityIfVoid( lOwner );
               }
-          }
+            TheBase.validEntity(lPolyA, true ); 
+         }
     else {
-    
+         TheBase.validEntity(lPolyA, true ); 
    }
   }
   //----------------------------------------

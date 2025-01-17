@@ -64,7 +64,7 @@ namespace PP3d {
     for( PointPtr lPt : lVisit.getPoints() )
       {
 	lPt->cPt *= pMat;
-      }
+      } 
   }
   //---------------------------
   void Entity::deleteAllHierarchy()
@@ -72,8 +72,13 @@ namespace PP3d {
     SortVisitorEntity lVisit(false);  //SortEntityVisitor
     execVisitor( lVisit );
 
+    std::cout << "@@@@@@@@@@@ deleteAllHierarchy:" << std::endl;
     for( auto lEntity : lVisit.cSetAllEntity )
-      delete lEntity;
+      {
+        std::cout << lEntity << "   " ;
+        delete lEntity;
+      }
+    std::cout << "@@@@@@@@@@@ deleteAllHierarchy End" << std::endl;
   }
   //---------------------------
   /*
@@ -122,6 +127,18 @@ namespace PP3d {
     pVisit.execEndNode(  getPoints().second, this );
     pVisit.execEndNode(  this, nullptr );
   }
+  //-------------------------------------	
+  /* OLD
+  void Line::execVisitor( EntityVisitorNode& pVisit )
+  {		
+    pVisit.execNode(  this, nullptr );
+    pVisit.execNode(  getPoints().first, this );
+    pVisit.execEndNode(  getPoints().first, this );
+    pVisit.execNode(  getPoints().second, this );
+    pVisit.execEndNode(  getPoints().second, this );
+    pVisit.execEndNode(  this, nullptr );
+  }
+  */
   //------------------------------- 
   LinePtr Line::getReverseLineByPoint() {
     
@@ -248,13 +265,26 @@ namespace PP3d {
   Facet* Facet::duplicate() const
   {
     VectPoint3d lPts;    
-    if( getPoints( lPts ) > 0 )
+    if( getCopyPointsWithDuplicate( lPts ) > 0 )
       {
         FacetPtr lNewFac = new Facet();
-        for( Point3d & lPt : lPts.getVector() )
+
+           
+        PIndex lSize = lPts.getVector().size();
+        if( isClose() )
           {
-            lNewFac->addPoint( lPt );
-          }      
+            lSize--;
+          }
+        
+        for( PIndex i=0; i< lSize; i++ )
+          {
+            lNewFac->addPoint( lPts.getVector()[i] );
+          }
+          if( isClose() )
+            {
+              lNewFac->closeFacet();
+            }
+          
         return lNewFac;
       }
     return nullptr;
@@ -289,6 +319,7 @@ namespace PP3d {
     return lCenter;
   }
  //-------------------------------------
+  // Attention le dernier points est duplique si fermé !!!!
   PointPtr Facet::getPoint( PIndex iPos ) 
   {
     PointPtr lPt = nullptr;
@@ -301,29 +332,52 @@ namespace PP3d {
 	else
 	  {
 	    lPt = cLines[iPos-1]->getSecond();
-	  }
+	  } 
       }
     return lPt;
   }
-
   //-------------------------------------
-   int  Facet::getPoints( VectDouble3 & oPts ) const
+  // Attention le dernier points est duplique  si fermé!!!!
+   int  Facet::getCopyPointsWithDuplicate( VectDouble3 & oPts ) const
    {
     if(  cLines.size() > 0 )
-      {
+      {        
         oPts.add( *(cLines[0]->getFirst()) );
-        
-        for( LinePtr lLine : cLines )
-          {
-            oPts.add( *(lLine->getSecond()));
+
+        PIndex lSz =  cLines.size();        
+        //       if( isClose() )
+        //        lSz-- ; // le dernier point est le premier !
+            
+        for( PIndex i = 0; i< lSz; i++ )
+          {            
+            oPts.add( *(cLines[i]->getSecond()) );
           }
+          //        for( LinePtr lLine : cLines )
+          //          {
+          //            oPts.add( *(lLine->getSecond()));
+          //          }
       }
     
     return  oPts.size();
   }
   //-------------------------------------
-  int  Facet::getPoints( VectPoint3d & oPts ) const
+  // Attention le dernier points est duplique si fermé !!!!
+  int  Facet::getCopyPointsWithDuplicate( VectPoint3d & oPts ) const
   {
+    if(  cLines.size() > 0 )
+      {        
+        oPts.add( *(cLines[0]->getFirst()) );
+
+        PIndex lSz =  cLines.size();        
+        //     if( isClose() )
+        //         lSz-- ; // le dernier point est le premier !
+            
+        for( PIndex i = 0; i< lSz; i++ )
+          {            
+            oPts.add( *(cLines[i]->getSecond()) );
+          }
+      }
+        /*
     if(  cLines.size() > 0 )
       {
         oPts.add( *(cLines[0]->getFirst()) );
@@ -331,9 +385,9 @@ namespace PP3d {
         for( LinePtr lLine : cLines )
           {
             oPts.add( *(lLine->getSecond()));
-          }
+          } 
       }
-    
+        */
     return  oPts.size();
   }
   //-------------------------------------

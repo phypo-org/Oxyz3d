@@ -66,6 +66,7 @@ namespace PP3d{
     // FAIRE PLUS MALIN ! notament pour les facettes
     void execPoint( Point* pPoint ) override
     {
+      //      std::cout << " execPoint:" << pPoint <<"  ";
       cPoints.insert( pPoint );
     }
   };
@@ -87,7 +88,7 @@ namespace PP3d{
     // FAIRE PLUS MALIN ! notament pour les facettes
     void execPoint( Point* pPoint ) override
     {
-      std::cout << (void*) pPoint << std::endl;
+      //      std::cout << (void*) pPoint << std::endl;
     }
   }; 
   //**********************************

@@ -6,6 +6,10 @@
 
 using namespace PP3d;
 using namespace std;
+
+
+#define COUT if( false ) cout
+
 //--------------------------------------------------
 FacetPtr CreateFacetSquare(  DataBase * iBase,
                              LinePtr iLineA,
@@ -29,7 +33,7 @@ FacetPtr CreateFacetSquare(  DataBase * iBase,
     {
       lFacPtr->inverseLines();
     }
-  iBase->validEntity( lFacPtr, true );
+  //  iBase->validEntity( lFacPtr, true );// Phipo 20250116 for Lofting
   
   
   return lFacPtr;
@@ -52,7 +56,7 @@ FacetPtr CreateFacetTriangle( DataBase * iBase,
     {
       lFacPtr->inverseLines();
     }
-  iBase->validEntity( lFacPtr, true );
+  // iBase->validEntity( lFacPtr, true ); //Phipo 20250116 for Lofting
  
   return lFacPtr;
 }
@@ -69,12 +73,12 @@ int CreateFacetsByJoinLines( DataBase * iBase,
   
   int lNbTriangle = (lSz-1)/2;
   
-  cout << "   CreateFacetsByJoinLines Sz:" << lSz << " Square:" << lSquare<< " NbTri:" <<  lNbTriangle << endl;
+  COUT << "   CreateFacetsByJoinLines Sz:" << lSz << " Square:" << lSquare<< " NbTri:" <<  lNbTriangle << endl;
   
   int i=0;
   for( i = 0 ; i< lNbTriangle; i++ )
     {
-      cout << "   G    i:" << i << endl;
+      COUT << "   G    i:" << i << endl;
       oNewFacets.push_back( CreateFacetTriangle( iBase, iLine->first(), iVectLine[ i ], true ));
     }
 
@@ -83,12 +87,12 @@ int CreateFacetsByJoinLines( DataBase * iBase,
     {
       if(iMiddleSquare )
         {
-          cout << "   MO4    i:" << i << endl;
+          COUT << "   MO4    i:" << i << endl;
           oNewFacets.push_back( CreateFacetSquare( iBase, iLine, iVectLine[i], true ));
         }
       else
         {
-          cout << "   MO3    i:" << i << endl;
+          COUT << "   MO3    i:" << i << endl;
           oNewFacets.push_back( CreateFacetTriangle( iBase, iLine->first(), iVectLine[i], true ));
           oNewFacets.push_back( CreateFacetTriangle( iBase, iVectLine[i]->first(), iLine, false ));
         }
@@ -96,23 +100,24 @@ int CreateFacetsByJoinLines( DataBase * iBase,
     }
   else
     {
-          cout << "   M     i:" << i << endl;
+          COUT << "   M     i:" << i << endl;
           oNewFacets.push_back( CreateFacetTriangle( iBase, iVectLine[i]->first(), iLine, false ));
     }
   
 
   for( ; i< lSz; i++ )
     {
-      cout << "   D     i:" << i << endl;
+      COUT << "   D     i:" << i << endl;
       oNewFacets.push_back( CreateFacetTriangle( iBase, iLine->second(), iVectLine[i], true) );
     }
 
-  cout << "   CreateFacetsByJoinLines nb Fac:" <<  lNbTriangle << oNewFacets.size() << endl;
+  COUT << "   CreateFacetsByJoinLines nb Fac:" <<  lNbTriangle << oNewFacets.size() << endl;
 
   return oNewFacets.size();
 }
 
 //--------------------------------------------------
+// Beware ! iF1 and iF2 can be modified
 
 bool Modif::JoinTwoFacets( DataBase * iBase,
                            FacetPtr iF1,
@@ -136,11 +141,11 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
       lFb = iF1;
     }
   
-  cout << "*****************" << endl;
+  COUT << "*****************" << endl;
   
   double lRatio = lFb->getNbLines() / (double)lFa->getNbLines();  // Ratio between lines of lFa and lFb
  
-  cout <<  lFa->getNbLines() << "  " << lFb->getNbLines() << "   -->   Ratio = " << lRatio << endl << endl;
+  COUT <<  lFa->getNbLines() << "  " << lFb->getNbLines() << "   -->   Ratio = " << lRatio << endl << endl;
 
   if( iInv )
     lFa->inverseLines();
@@ -168,7 +173,7 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
           
           double lAngle = Point3d::GetAngleRadBetween( lVectA, lVectB );
           
-          cout << "a b: " << a << '-' << b << " = " << lAngle <<    endl;
+          COUT << "a b: " << a << '-' << b << " = " << lAngle <<    endl;
           
           if( lAngle < lMinAngle )
             {
@@ -178,9 +183,9 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
             }
         }
     }
-    cout << "**************************************************" <<  endl;
-    cout << "Min line distance : " << lFirstLineA << "-" << lFirstLineB << " with "    << lMinAngle <<  endl;
-    cout << "**************************************************" <<  endl;
+    COUT << "**************************************************" <<  endl;
+    COUT << "Min line distance : " << lFirstLineA << "-" << lFirstLineB << " with "    << lMinAngle <<  endl;
+    COUT << "**************************************************" <<  endl;
 
     // lFirstLineB=iDecal;
   
@@ -206,7 +211,7 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
       double lLastIndexFloatB  = lBeginIndexB + lRatio + lRest; // therorical last index for lFb
       PIndex lLastIndexB = (PIndex)(lLastIndexFloatB+0.1); // practical last index for lFb
 
-      cout << "***  A=" << lIndexA
+      COUT << "***  A=" << lIndexA
            << "       B=" << lBeginIndexB << " to " << lLastIndexFloatB
            << " -> " << lLastIndexB<< endl;
 
@@ -222,13 +227,13 @@ bool Modif::JoinTwoFacets( DataBase * iBase,
             //       lIndexBFinal -=  lFb->getNbLines();          
             //      }
           lVectLineB.push_back(  lFb->getLineModulo( lIndexBFinal));
-          cout << "  " <<  lIndexB;
+          COUT << "  " <<  lIndexB;
         }
       lRest = lLastIndexFloatB-lIndexB; // must be reported at the next round   
 
       lBeginIndexB = lIndexB;
       
-      cout << "*  Rest: " <<  lRest  << " next beginB: " << lBeginIndexB << endl;
+      COUT << "*  Rest: " <<  lRest  << " next beginB: " << lBeginIndexB << endl;
       
 
       lNbCreate += CreateFacetsByJoinLines( iBase, lLineA, lVectLineB, oNewFacets, iMiddleSquare );

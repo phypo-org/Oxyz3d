@@ -76,6 +76,8 @@ namespace M3d {
    //----------------------------------------
     void init( TypeOfInput iTypeInput )
     {
+             PushHistory();
+
       std::cout << "*********************************** init  **************************" << std::endl;
       cMyTypeInput = iTypeInput;
 
@@ -187,11 +189,16 @@ namespace M3d {
       
       if( PP3d::Modif::LoftingFacFromPath( &TheBase, (PP3d::FacetPtr)TheSelect.getFirst(), TheInput.getCurrentLine(), lNewFacets, lFlagJoint ) )
         {                 
-           PP3d::PolyPtr lShape = TheBase.getNewPoly();          
+          PP3d::PolyPtr lShape = TheBase.getNewPoly();          
           lShape->addFacet(lNewFacets);
           
-          TheInput.swapCurrentCreation( new PP3d::ObjectPoly(  "Lofting", lShape ) );  
-        }   
+          PP3d::ObjectPoly* lObjPoly =  new PP3d::ObjectPoly(  "Lofting", lShape );
+          
+       PushHistory();
+         
+          std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
+          TheInput.swapCurrentCreation( lObjPoly );  
+       }   
       
       TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
       

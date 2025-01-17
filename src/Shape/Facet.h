@@ -27,14 +27,14 @@ namespace PP3d {
 	
     void closeFacet();
     
-    bool isClose()
+    bool isClose() const
     {
       if( cLines.size() <= 1 )
         return false;
       
       return cLines[0]->first() == cLines[ cLines.size()-1]->second();
     }
-    bool isClosable()
+    bool isClosable() const
     {
       if( cLines.size() <= 1 )
         return false;
@@ -125,13 +125,14 @@ namespace PP3d {
     }
     bool         clear() override  { cLines.clear(); return Entity::clear(); }
     
-    Facet*       duplicate() const;
+    Facet*       duplicate() const; // Beware of close
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
     PointPtr     getPoint( PIndex iPos );
-    int          getPoints( VectDouble3 & oPts ) const;
-    int          getPoints( VectPoint3d & oPts ) const;
+    
+    int          getCopyPointsWithDuplicate( VectDouble3 & oPts ) const;
+    int          getCopyPointsWithDuplicate( VectPoint3d & oPts ) const;
     
     void         removeLine( LinePtr iLine ) // phipo 20240124
     {

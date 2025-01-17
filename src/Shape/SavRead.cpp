@@ -54,7 +54,7 @@ namespace PP3d {
     //	cOut << TokPoint << std::endl;
 
     for( auto lPairEntity :  lEntities )
-      {	
+      {
 	if( lPairEntity.second->getType() != ShapeType::Point )
 	  continue;
 	
