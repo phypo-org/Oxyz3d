@@ -72,13 +72,13 @@ namespace PP3d {
     SortVisitorEntity lVisit(false);  //SortEntityVisitor
     execVisitor( lVisit );
 
-    std::cout << "@@@@@@@@@@@ deleteAllHierarchy:" << std::endl;
+    //  std::cout << "@@@@@@@@@@@ deleteAllHierarchy:" << std::endl;
     for( auto lEntity : lVisit.cSetAllEntity )
       {
         std::cout << lEntity << "   " ;
         delete lEntity;
       }
-    std::cout << "@@@@@@@@@@@ deleteAllHierarchy End" << std::endl;
+    //    std::cout << "@@@@@@@@@@@ deleteAllHierarchy End" << std::endl;
   }
   //---------------------------
   /*

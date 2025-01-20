@@ -22,8 +22,11 @@ namespace PP3d {
       : ObjectPolylines( pName, pFacet )
       , cClosedSpline( iClosed)
     {;}
+    virtual ~ObjBSpline();
 		
     ObjectType getObjType() const override { return ObjectType::ObjBSpline; }
+    
+    FacetPtr getSplinePts() { return cSplinePts; }
 
     
     //------------------------------------

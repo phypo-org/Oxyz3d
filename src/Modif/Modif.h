@@ -13,6 +13,12 @@
 #include <map>
 #include <vector>
 
+template<typename Enum>
+constexpr auto to_underlying(Enum e) noexcept {
+    return static_cast<std::underlying_type_t<Enum>>(e);
+}
+
+
 namespace PP3d{
 
   static double sGoldNumber = 1.61803398875;
@@ -116,9 +122,43 @@ namespace PP3d{
                                FacetPtr iF2,
                                std::vector<FacetPtr> & oNewFacets,
                                bool iMiddleSquare, bool iInv, int iDecal  );
+
+
+    enum  class LoftingFacPathLocalisation : int { BeginOfPath=0, SelectedFacet=1, Position3d=2 };
+   inline  static  std::string LoftingFacPathLocalisationStr[3]={
+      "Begining of path",
+      "Selected facet(change orientation of path to facet normal)",
+      "Defined position"
+    };
+
+
+    static const std::string & GetStrLoftingFacPathLocalisation(LoftingFacPathLocalisation pEnum) { return  LoftingFacPathLocalisationStr[ to_underlying(pEnum) ]; }
+
+    static LoftingFacPathLocalisation  GetLoftingFacPathLocalisation( const std::string & iTxt )
+    {
+      for( size_t i=0; i<3; i++)
+        {
+          if( iTxt==LoftingFacPathLocalisationStr[i])
+            return static_cast<LoftingFacPathLocalisation>(i);
+        }
+      
+      return LoftingFacPathLocalisation::BeginOfPath;
+    }
+
+    
+    struct ParamLoftingFacPath{
+      bool cFlagJoin=true;
+      bool cFlagClose=true;
+      bool cFlagAlign=false;
+      LoftingFacPathLocalisation cLocalisation=LoftingFacPathLocalisation::BeginOfPath;
+      PIndex cNbInterpol=0;
+      double cSpin = 0;
+      double cGrow = 0;      
+      Point3d cPos;
+    };
     
     static bool LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr lPath,
-                                     std::vector<FacetPtr> & oNewFacets, bool iFlagJoin  );
+                                     std::vector<FacetPtr> & oNewFacets, ParamLoftingFacPath & iParam );
    
 
 #ifdef  USING_CGAL  

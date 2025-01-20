@@ -45,7 +45,15 @@ namespace PPu {
       for( OBJECT* lObjPtr: iCont )
         this->erase( lObjPtr );
     }
- };
+    //--------------------------------------
+    // delete all object in the container
+    void callDeleteForAll()
+    {
+     for( OBJECT* lObjPtr: *this )
+        delete lObjPtr;
+     
+     this->clear();
+    } };
  
   //**************************************
 

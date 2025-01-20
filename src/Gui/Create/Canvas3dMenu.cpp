@@ -1267,7 +1267,8 @@ namespace M3d {
 
                            PP3d::OwnerEntityVisitor lVisit;	
                            lVisit.addOwnersOf( lFacetToMove );
-	
+
+                           // Il faut faire bouger tout le reste de l'objet !!!
                            for( PP3d::PolyPtr lPoly: lVisit.cVectPolys )
                              {
                                lPoly->execVisitor( lVisit ) ; // je sais, c'est tres limite comme code !
@@ -1527,6 +1528,7 @@ namespace M3d {
                   PP3d::Object* lShape =TheInput.convertCurrentLineToLine(TheBase);
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
@@ -1548,6 +1550,7 @@ namespace M3d {
                   PP3d::Object* lShape =TheInput.convertCurrentLineToFacet(TheBase);
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
@@ -1564,6 +1567,7 @@ namespace M3d {
                 
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
@@ -1582,6 +1586,7 @@ namespace M3d {
                       
                       if( lShape != nullptr )
                         {
+                          TheBase.addObject( lShape );
                           PushHistory();
                           TheInput.delAllPoint();
                           TheCreat.redrawAll( PP3d::Compute::FacetAll);
@@ -1606,6 +1611,7 @@ namespace M3d {
                 
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
@@ -1638,6 +1644,7 @@ namespace M3d {
                                                                              MyPref.cBSplineMaille, true );
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);

@@ -8,7 +8,6 @@
 
 #include "ViewProps.h"
 
-
 #include "PrimitivFactory.h"
 #include "Light.h"
 #include "Selection.h"
@@ -189,8 +188,7 @@ namespace PP3d {
     iBase.addObject( lTmp );
     std::cout << "+++++ validCurrentCreation :" << cCurrentCreation << std::endl;
          
-    
-	
+    	
     cCurrentCreation = nullptr;
     
     return lTmp;
@@ -244,9 +242,7 @@ namespace PP3d {
                                                                         new Point( lLineInput->getSecond()->get())));
            }
          
-         iBase.addObject( lObjLine );
       }
-    
     			 	
     return lObjLine;
   }
@@ -260,9 +256,7 @@ namespace PP3d {
     FacetPtr lFac    =  lFacInput->duplicate();    
     lFac->closeFacet();
  
-    ObjectFacet* lFacet = new ObjectFacet( "Facet", lFac);    
-    iBase.addObject( lFacet ); 
-			
+    ObjectFacet* lFacet = new ObjectFacet( "Facet", lFac);    			
   
     
     return lFacet;
@@ -280,9 +274,7 @@ namespace PP3d {
     PolyPtr  lPoly   = iBase.getNewPoly();
     lPoly->addFacet( lFac );	
     
-    ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
-    iBase.addObject( lObjPoly );
-  
+    ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );  
 	
     return lObjPoly;
   }
@@ -296,10 +288,8 @@ namespace PP3d {
     FacetPtr lFac      = lFacInput->duplicate();	
     
     ObjBSpline* lObjBSpline = new ObjBSpline( "BSpline", lFac, iClosed );
-    lObjBSpline->makePtsFromPoles( iMaille );
-    
-    iBase.addObject( lObjBSpline );
-
+    lObjBSpline->makePtsFromPoles( iMaille );    
+ 
  //   delete cCurrentLine;
     //  resetCurrentLine();  // DESALLOUER LES OBJETS !!!!!!!
 	
@@ -325,9 +315,7 @@ namespace PP3d {
     lPoly->addFacet( lFac2 );
      
     ObjectPoly* lObjPoly = new ObjectPoly( "Facet", lPoly );
-    iBase.addObject( lObjPoly );			
-			
-   
+			   
     
     return lObjPoly;
   }
@@ -340,9 +328,7 @@ namespace PP3d {
      FacetPtr lFacInput = cCurrentLine->getFacet();
      FacetPtr lFac = lFacInput->duplicate();	
      
-     ObjectPolylines* lObjPoly = new ObjectPolylines( "Polylines", lFac );
-     iBase.addObject( lObjPoly );
-     
+     ObjectPolylines* lObjPoly = new ObjectPolylines( "Polylines", lFac );     
   
      return lObjPoly;
   }

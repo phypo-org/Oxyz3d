@@ -328,7 +328,8 @@ namespace PP3d {
 		      lFacet->setId( lId );
 		      pData.addValidEntityForUndo( lFacet );
 		    }
-		  
+
+                  
 		  lLocalDico.insertObj(  lId, lFacet );
 												
 		  ReadEndLine;

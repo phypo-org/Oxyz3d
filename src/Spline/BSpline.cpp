@@ -6,6 +6,11 @@
 
 namespace PP3d {
   //******************************
+  ObjBSpline::~ObjBSpline()
+  {
+    cSplinePts->deleteAll();
+  }
+  //------------------------------------------
   void ObjBSpline::drawGL( ViewProps& pViewProps )
     {
       //   std::cout << ">>>>>>>>>>>>> ObjBSpline::drawGL" << std::endl;
