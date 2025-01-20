@@ -42,14 +42,14 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
   
 
   FacetPtr lFacOld = iFacOrigin->duplicate();
-  lFacOld->inverseLines();
+  //  lFacOld->inverseLines();
   lFacToDel.insertObj(lFacOld);
   
  
   Point3d  lPtOld  = lFacOld->getCenter3d();
 
   
-  // Get all the point of the facet
+  // Get all the point of the Path
   PP3d::SortEntityVisitorPointFacet lVisit;
   lPath->execVisitor( lVisit );         
   GLuint lNbPt =  (GLuint)lVisit.cVectPoints.size();
@@ -79,9 +79,7 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
   for( GLuint i = 1; i<lNbPt; i++)  // Begining at index 1
     {           
       FacetPtr lFac = lFacOld->duplicate();   // duplicate the old facet and store them
-     lFacToDel.insertObj(lFac);
-
-      
+     
       Point3d lMove = lPath->getPoint(i)->get() - lPtOld; // For the next position of the facet
      
       
@@ -97,7 +95,8 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
       //====== Align the facet to the normal of current path ======
       if( iParam.cFlagAlign )
         {
-          if( i == 100000000 ) // first time  ???? bug ???? 
+          /*
+          if( i == 1 ) // first time  ???? bug ???? 
             {
               PointPtrSet lOldPoints;
               VisitorGetPoints lOldVisit(lOldPoints);
@@ -105,7 +104,7 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
               
               AlignFacetToNorm( lFacOld, lMove, lOldPoints );
             }
-
+          */
           AlignFacetToNorm( lFac, lMove, lPoints );        
         }
       //====== end align ======
@@ -115,16 +114,21 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
       //======== Join the facet ==========
       if(iParam.cFlagJoin )
         {
+          lFacToDel.insertObj(lFac); // delete facet
+
+    
           std::cout << "========== JoinTwoFacets" <<std::endl;
           JoinTwoFacets( iBase, lFacOld, lFac, oNewFacets, true, false, false );
+
           
-          if( iParam.cFlagClose )
+          if( iParam.cFlagClose ) // We must keep the fist and last facet
             {
               if( i == 1 )
                 {
                   oNewFacets.push_back( lFacOld );
-                  lFacToDel.removeObj( lFacOld );                  
+                  lFacToDel.removeObj( lFacOld );               
                 }
+              
               if( i== lNbPt-1 )
                 {
                   oNewFacets.push_back( lFac );  
@@ -136,12 +140,11 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
         {
           if( i == 1 )
             {
-              oNewFacets.push_back( lFacOld );  
+              oNewFacets.push_back( lFacOld );    // keep the first facet
               lFacToDel.removeObj( lFacOld );                  
             }
           
-          oNewFacets.push_back( lFac );           
-          lFacToDel.removeObj( lFac);                  
+          oNewFacets.push_back( lFac ); // keep the facet       
         }
       //======== end join 
       

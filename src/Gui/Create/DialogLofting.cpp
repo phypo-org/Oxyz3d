@@ -209,10 +209,11 @@ void maj()
   std::cout << "DialogLofting::maj0 " <<std::endl;
          
    
-  if( TheInput.getNbCurrentPoints() <  2 || TheInput.getCurrentLine() == nullptr
+  if( cMyTypeInput == TypeOfInput::INPUT_ENTRY
+      && (TheInput.getNbCurrentPoints() <  2 || TheInput.getCurrentLine() == nullptr
       || TheSelect.getSelectType() != PP3d::SelectType::Facet
       || TheSelect.getNbSelected() < 1
-      || TheSelect.getFirst()->getType() != PP3d::ShapeType::Facet )          
+          || TheSelect.getFirst()->getType() != PP3d::ShapeType::Facet ))
     {          
       return;
     }
@@ -237,34 +238,84 @@ void maj()
   PP3d::FacetPtrVect lNewFacets;
 
   
+  PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine()->duplicate();	 
+  ObjBSpline lObjBSpline( "BSplineTmpLofting", lPath, false );
+
+  // ObjectPolylines      * lPath = TheInput.getCurrentLine();
   //========= Interpolation par une BSpline  =========
   if( lParam.cNbInterpol > 0 && TheInput.getNbCurrentPoints() >= 2 )
     {
-      PPAutoPtr<Facet> lFac      = TheInput.getCurrentLine()->duplicate();	
- 
-      ObjBSpline lObjBSpline( "BSplineTmpLofting", lFac, false );
       lObjBSpline.makePtsFromPoles( lParam.cNbInterpol );
-      
-      PP3d::Modif::LoftingFacFromPath( &TheBase, (PP3d::FacetPtr)TheSelect.getFirst(), lObjBSpline.getSplinePts(), lNewFacets, lParam );    }
-  //========= End Interpolation =========
-  else
-    {
-      PP3d::Modif::LoftingFacFromPath( &TheBase, (PP3d::FacetPtr)TheSelect.getFirst(), TheInput.getCurrentLine(), lNewFacets, lParam );
+      lPath = lObjBSpline.getSplinePts();
     }
-    
-  if( lNewFacets.size() > 0 )
-    {
-      PP3d::PolyPtr lShape = TheBase.getNewPoly();          
-      lShape->addFacet(lNewFacets);
-      
-      PP3d::ObjectPoly* lObjPoly =  new PP3d::ObjectPoly(  "Lofting", lShape );
-      
-      std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
-      TheInput.swapCurrentCreation( lObjPoly );  
-    }   
-      
-  TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
-      
+  //========= End Interpolation =========
+
+
+  if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+    {  
+      PP3d::Modif::LoftingFacFromPath( &TheBase, (PP3d::FacetPtr)TheSelect.getFirst(),
+                                       lPath, lNewFacets, lParam );      
+     
+     if(  lNewFacets.size() > 0 )
+       {
+         PP3d::PolyPtr lShape = TheBase.getNewPoly();          
+         lShape->addFacet(lNewFacets);
+         
+         PP3d::ObjectPoly* lObjPoly =  new PP3d::ObjectPoly(  "Lofting", lShape );
+         
+         std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
+         TheInput.swapCurrentCreation( lObjPoly );  
+       }     
+    }
+  else    
+    if( cMyTypeInput == TypeOfInput::INPUT_OBJECT )
+      {
+        //======== INPUT_OBJECT =========       
+        std::unique_ptr<PP3d::DataBase> luTmpBase( new PP3d::DataBase() );
+
+        // On duplique la selection dans la base temporaire
+        //       Utils::DuplicateObject( TheBase,  TheSelect.getSelectionVect(), *luTmpBase );
+        std::stringstream  lDupStr0;
+        Utils::SaveObjectsInStream( TheBase, false, TheSelect.getSelectionVect(), lDupStr0);
+
+
+
+        PP3d::VisitorMinMax lVisitMinMax;
+        TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
+        Point3d  lPtOld  =  lVisitMinMax.getCenter();
+
+        // Get all the point of the Path
+        PP3d::SortEntityVisitorPoint lVisitPath;
+        lPath->execVisitor( lVisitPath );         
+        GLuint lNbPt =  (GLuint)lVisitPath.cVectPoints.size();
+
+        for( GLuint i = 0; i<lNbPt; i++)  // Begining at index 1
+          {            
+            std::stringstream lDupStr( lDupStr0.str() );
+            std::vector<PP3d::EntityPtr> lNewObjs;
+            Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );                 
+            PP3d::VisitorGetPoints<PP3d::PointPtrSet> lVisitPt;
+            for( PP3d::EntityPtr lObjPtr : lNewObjs )
+              lObjPtr->execVisitor( lVisitPt );
+                
+          //====== Move All to the begining of path       
+            Point3d lMove = lPath->getPoint(i)->get() - lPtOld; 
+                  
+            for(  const PP3d::PointPtr lPoint : lVisitPt.getPoints() )
+              {
+                lPoint->get() += lMove ;  // move point
+              }
+          }
+        //======= end move
+
+        
+
+        TheCreat.setDatabaseTmp( luTmpBase ); 
+      }
+
+       //--------------------------------------------------
+
+  TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);    
 }
 //----------------------------------------
 

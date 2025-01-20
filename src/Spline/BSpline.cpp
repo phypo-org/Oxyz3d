@@ -8,7 +8,7 @@ namespace PP3d {
   //******************************
   ObjBSpline::~ObjBSpline()
   {
-    cSplinePts->deleteAll();
+    if( cSplinePts !=nullptr )    cSplinePts->deleteAll();
   }
   //------------------------------------------
   void ObjBSpline::drawGL( ViewProps& pViewProps )

@@ -45,7 +45,7 @@ namespace PP3d {
 	return false;
       }
       cCurrentLineSelectPoint = iId-kMinCurrentLineId;
-      std::cout << "testAndSelectCurrentLinePoint -> " << cCurrentLineSelectPoint << std::endl;
+      //   std::cout << "testAndSelectCurrentLinePoint -> " << cCurrentLineSelectPoint << std::endl;
       return true;
     }
     //-------------------------------------

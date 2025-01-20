@@ -96,6 +96,7 @@ namespace M3d {
 #define StrMenu_SpiralY     "Spiral Y ..."
 #define StrMenu_SpiralZ     "Spiral Z ..."
 #define StrMenu_SpiralAxis  "Spiral current axis..."
+#define StrMenu_Lofting_SelObjects  "Lofting select's objects"
 
 
 
@@ -972,7 +973,14 @@ namespace M3d {
         pMenu.add( StrMenu_Spiral_SelObjects "/" StrMenu_SpiralAxis, "",LAMBDA
                    CallDialogSpiral( TypeRevol::RevolAxis, TypeOfInput::INPUT_OBJECT  );   
                    ADBMAL, this, FL_MENU_DIVIDER );
+
+        //PATH
+        pMenu.add( StrMenu_Lofting_SelObjects, "",LAMBDA
+                   CallDialogLofting( TypeOfInput::INPUT_OBJECT  );   
+                   ADBMAL, this, FL_MENU_DIVIDER );
+     
       }
+    
 
     //=========== GROUP ===========
     if( TheSelect.getSelectType() == PP3d::SelectType::Object )
