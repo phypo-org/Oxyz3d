@@ -305,8 +305,7 @@ namespace M3d {
             lPath->execVisitor( lVisitPath );         
             GLuint lNbPt =  (GLuint)lVisitPath.cVectPoints.size();
             
-            PP3d::Point3d lNormToMove( lPath->getPoint(0)->get());
-            lNormToMove.normalize();
+            PP3d::Point3d lNormToMove( 0,1,0 );
 
             
             PP3d::Mat4 lMatSpin;
@@ -319,9 +318,7 @@ namespace M3d {
              std::cout << std::endl <<"Grow:" << lGrow <<  std::endl << std::endl;
               
             for( GLuint i = 0; i<lNbPt; i++)  // Begining at index 1
-              {
-                lMatSpin.initRotY( lParam.cSpin * i );
-
+              {           
                 std::stringstream lDupStr( lDupStr0.str() );
                 std::vector<PP3d::EntityPtr> lNewObjs;
                 Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );                 
@@ -332,11 +329,22 @@ namespace M3d {
                 //====== Move All to the begining of path       
                 Point3d lMove = lPath->getPoint(i)->get() - lCenter;
 
-                PP3d::Point3d lMoveNorm( lMove );
-                lMoveNorm.normalize();
-                     
+                
                 PP3d::Mat4 lMatAlign;
-                lMatAlign.rotateAlign( lMoveNorm, lNormToMove  ); // for align the two vector  
+                lMatAlign.identity();
+
+                Point3d lDir;
+                if( i == 0 )                  
+                  {
+                    lDir = lPath->getPoint(0)->get() - lPath->getPoint(1)->get();
+                  }
+                else
+                  {                                                    
+                    lDir = lPath->getPoint(i-1)->get() - lPath->getPoint(i)->get();
+                  }
+                lDir.normalize();
+                lMatAlign.rotateAlign( lDir, lNormToMove  ); 
+                 
                 
                 PP3d::Mat4 lMatGrow;                              
                 lMatGrow.initScale( 1+(lGrow*i));
@@ -347,12 +355,14 @@ namespace M3d {
 
                 PP3d::Mat4 lMatTran ;
                 if( lParam.cFlagAlign )
-                  {                                                                  
+                  {
+                    lMatSpin.initRotAxis( lDir, lParam.cSpin * i );
                     ///                    PP3d::Mat4 lMatTran    = lMatMov * lMatGrow * lMatRot ;  // Oldest
                     lMatTran = lMatRecenter * lMatMov * lMatSpin * lMatAlign  * lMatGrow * lMatZero;
                   }
                 else
                   {
+                    lMatSpin.initRotAxis( lNormToMove, lParam.cSpin * i );
                     lMatTran = lMatRecenter * lMatMov *  lMatSpin  * lMatGrow * lMatZero;
                   }
                 
