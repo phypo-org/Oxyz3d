@@ -147,8 +147,8 @@ namespace PP3d{
 
     
     struct ParamLoftingFacPath{
-      bool cFlagJoin=true;
-      bool cFlagClose=true;
+      bool cFlagJoin=false;
+      bool cFlagClose=false;
       bool cFlagAlign=false;
       LoftingFacPathLocalisation cLocalisation=LoftingFacPathLocalisation::BeginOfPath;
       PIndex cNbInterpol=0;

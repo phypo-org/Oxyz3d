@@ -97,42 +97,47 @@ namespace M3d {
       cMyWindow = new Fl_Double_Window( 700, 600, "Lofting");
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
       
-
-      cCheckJoin= new MyCheckbutton( lX, lY, 60, 15, "Join facets", CheckCB, this, 0 );
-      cCheckJoin->callback((Fl_Callback*)CheckCB, this );
-      cCheckJoin->value( true );
-      lX += lXStep/2;
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
+          cCheckJoin= new MyCheckbutton( lX, lY, 60, 15, "Join facets", CheckCB, this, 0 );
+          cCheckJoin->callback((Fl_Callback*)CheckCB, this );
+          cCheckJoin->value( true );
+          lX += lXStep/2;          
       
-      cCheckClose= new MyCheckbutton( lX, lY, 60, 15, "Close extremities", CheckCB, this, 0 );
-      cCheckClose->callback((Fl_Callback*)CheckCB, this );
-      cCheckClose->value( true );
-      lX += lXStep;
-
-      cCheckAlign= new MyCheckbutton( lX, lY, 200, 15, "Align facets normal to path", CheckCB, this, 0 );
-      cCheckAlign->callback((Fl_Callback*)CheckCB, this );
-      cCheckAlign->value( true );
-      lY += lYStep;
-      lY += lYStep;
-      lX = lMemX;
-
-   
+          cCheckClose= new MyCheckbutton( lX, lY, 60, 15, "Close extremities", CheckCB, this, 0 );
+          cCheckClose->callback((Fl_Callback*)CheckCB, this );
+          cCheckClose->value( true );
+          lX += lXStep;
+     
+        }
+          cCheckAlign= new MyCheckbutton( lX, lY, 200, 15, "Align facets normal to path", CheckCB, this, 0 );
+          cCheckAlign->callback((Fl_Callback*)CheckCB, this );
+          cCheckAlign->value( true );
+          lY += lYStep;
+          lY += lYStep;
+          lX = lMemX;
+          
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
       
-      //-----------  Localisation of begin of path  ------------
-      cLocalChoice =  new Fl_Choice( lX+200, lY, 150, 25, "Local of generation" );
-      cLocalChoice->add( "Begining of path" );
-      cLocalChoice->add( "Selected facet(change orientation of path to facet normal)" );
-      cLocalChoice->add( "Defined position" ); 
-      cLocalChoice->value(0);
-            
-      cLocalChoice->callback((Fl_Callback *) [](Fl_Widget *w, void *pUserData)
-                             {
-                               DialogLofting  *lDiagLoft = (DialogLofting*)pUserData;
-                               
-                               std::string lName = lDiagLoft->cLocalChoice->text();
-                               lDiagLoft->cLocalisation = PP3d::Modif::GetLoftingFacPathLocalisation(lName );                               
-                             }, this);      
-      lY += lYStep;
-      lY += lYStep;
+          //-----------  Localisation of begin of path  ------------
+          cLocalChoice =  new Fl_Choice( lX+200, lY, 150, 25, "Local of generation" );
+          cLocalChoice->add( "Begining of path" );
+          cLocalChoice->add( "Selected facet(change orientation of path to facet normal)" );
+          cLocalChoice->add( "Defined position" ); 
+          cLocalChoice->value(0);
+          
+          cLocalChoice->callback((Fl_Callback *) [](Fl_Widget *w, void *pUserData)
+                                 {
+                                   DialogLofting  *lDiagLoft = (DialogLofting*)pUserData;
+                                   
+                                   std::string lName = lDiagLoft->cLocalChoice->text();
+                                   lDiagLoft->cLocalisation = PP3d::Modif::GetLoftingFacPathLocalisation(lName );                               
+                                 }, this);      
+          lY += lYStep;
+          lY += lYStep;
+        }
+
       //-----------  Localisation  ------------
       
    
@@ -146,7 +151,7 @@ namespace M3d {
       cSliderSpin->value( 0 );
       lY += lYStep;
       
-      cSliderGrow =  new MySliderFloat(lX+5, lY, lW, lH, "Grow at each step", SliderCB, this, -5, 5 );
+      cSliderGrow =  new MySliderFloat(lX+5, lY, lW, lH, "Grow at each step", SliderCB, this, 0, 10 );
       cSliderGrow->value( 0 );
       lY += lYStep;
 
@@ -219,17 +224,21 @@ namespace M3d {
       
       PP3d::Modif::ParamLoftingFacPath lParam;
 
-      lParam.cFlagJoin   = (cCheckJoin->value() != 0 );
-      lParam.cFlagClose  = (cCheckClose->value() != 0 );
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+        {
+          lParam.cFlagJoin   = (cCheckJoin->value() != 0 );
+          lParam.cFlagClose  = (cCheckClose->value() != 0 );
+          lParam.cLocalisation = cLocalisation;
+        }
+      
       lParam.cFlagAlign  = (cCheckAlign->value() != 0 );
-
+          //     std::cout << "========== join:" << lParam.cFlagJoin << " " << cCheckJoin->value() << std::endl;
+      
       lParam.cNbInterpol = cSliderInter->value();
-      lParam.cSpin        = cSliderSpin->value();
-      lParam.cGrow        = cSliderGrow->value();
+      lParam.cSpin       = -M_PI*cSliderSpin->value()/180.0;
+      lParam.cGrow       = cSliderGrow->value();
 
-      lParam.cLocalisation = cLocalisation;
-
-      std::cout << "========== join:" << lParam.cFlagJoin << " " << cCheckJoin->value() << std::endl;
+   
       
       PP3d::Point3d lCenter;
 
@@ -282,7 +291,14 @@ namespace M3d {
             PP3d::VisitorMinMax lVisitMinMax;
             TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
             Point3d  lCenter  =  lVisitMinMax.getCenter();
+            
+            PP3d::Mat4 lMatRecenter;
+            lMatRecenter.initMove( lCenter ); //on positionne en fonction du centre de rotation ;
+            PP3d::Point3d lNCenter =  -lCenter;					
+            PP3d::Mat4 lMatZero;
+            lMatZero.initMove( lNCenter ); //on revient a la postion originale en zero;
 
+			
             // Get all the point of the Path
             PP3d::SortEntityVisitorPoint lVisitPath;
             
@@ -291,9 +307,21 @@ namespace M3d {
             
             PP3d::Point3d lNormToMove( lPath->getPoint(0)->get());
             lNormToMove.normalize();
+
             
+            PP3d::Mat4 lMatSpin;
+            lMatSpin.identity();         
+
+            
+            std::cout << std::endl <<"Grow:" << lParam.cGrow <<  std::endl << std::endl;
+            double lGrow = lParam.cGrow / lNbPt;
+            
+             std::cout << std::endl <<"Grow:" << lGrow <<  std::endl << std::endl;
+              
             for( GLuint i = 0; i<lNbPt; i++)  // Begining at index 1
-              {            
+              {
+                lMatSpin.initRotY( lParam.cSpin * i );
+
                 std::stringstream lDupStr( lDupStr0.str() );
                 std::vector<PP3d::EntityPtr> lNewObjs;
                 Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );                 
@@ -303,33 +331,49 @@ namespace M3d {
                 
                 //====== Move All to the begining of path       
                 Point3d lMove = lPath->getPoint(i)->get() - lCenter;
-            
+
+                PP3d::Point3d lMoveNorm( lMove );
+                lMoveNorm.normalize();
+                     
+                PP3d::Mat4 lMatAlign;
+                lMatAlign.rotateAlign( lMoveNorm, lNormToMove  ); // for align the two vector  
+                
+                PP3d::Mat4 lMatGrow;                              
+                lMatGrow.initScale( 1+(lGrow*i));
+
+                
+                PP3d::Mat4 lMatMov;
+                lMatMov.initMove( lMove);
+
+                PP3d::Mat4 lMatTran ;
                 if( lParam.cFlagAlign )
-                  {                                      
-                    PP3d::Point3d lMoveNorm( lMove );
-                    lMoveNorm.normalize();
-              
-                    PP3d::Mat4 lMatAlign;
-                    lMatAlign.rotateAlign( lMoveNorm, lNormToMove  ); // for align the two vector  
-          
-                    for( PP3d::PointPtr lPoint : lVisitPt.getPoints()  )
-                      { 
-                        lPoint->get() -= lCenter;    // put at 0,0,0 
-                        lPoint->get() *= lMatAlign;      // rotation for alignment
-                        lPoint->get() += lCenter;    // move to it's orignal position
-                        lPoint->get() += lMove;
-                      }
+                  {                                                                  
+                    ///                    PP3d::Mat4 lMatTran    = lMatMov * lMatGrow * lMatRot ;  // Oldest
+                    lMatTran = lMatRecenter * lMatMov * lMatSpin * lMatAlign  * lMatGrow * lMatZero;
                   }
-                else                
-                  for(  const PP3d::PointPtr lPoint : lVisitPt.getPoints() )
-                    {
-                      lPoint->get() += lMove ;  // move point                  
-                    }  
-              }            
+                else
+                  {
+                    lMatTran = lMatRecenter * lMatMov *  lMatSpin  * lMatGrow * lMatZero;
+                  }
+                
+            
+                for(  const PP3d::PointPtr lPoint : lVisitPt.getPoints() )
+                  {
+                    /*
+                      lPoint->get() -= lCenter;    // put at 0,0,0 
+                      lPoint->get() *= lMatAlign;      // rotation for alignment
+                        
+                      lPoint->get() += lCenter;    // move to it's orignal position
+                      lPoint->get() += lMove;
+                    */
+                    lPoint->get() *= lMatTran;                
+                  }
+              }
             TheCreat.setDatabaseTmp( luTmpBase ); 
           }
+      
       //--------------------------------------------------
-
+      
       TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);    
     }
     //----------------------------------------

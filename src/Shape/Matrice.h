@@ -110,7 +110,14 @@ namespace PP3d {
       cMat[1][1] *= pY;
       cMat[2][2] *= pZ;			
     }
-    void initScale( const  Point3d & pPt ) { initScale( pPt.cX, pPt.cY, pPt.cZ); }
+     void initScale( PDouble pVal )
+    {
+      identity();
+      cMat[0][0] *= pVal;
+      cMat[1][1] *= pVal;
+      cMat[2][2] *= pVal;			
+    }
+   void initScale( const  Point3d & pPt ) { initScale( pPt.cX, pPt.cY, pPt.cZ); }
     void initScale( const  Double3 & pPt ) { initScale( pPt.x(), pPt.y(), pPt.z()); }
     //-----------------------------
 
@@ -142,6 +149,8 @@ namespace PP3d {
       pOut << '(';
       for ( int k = 0; k < 4; k++ )
 	{
+          if( k != 0 )
+            pOut << ' ';
 	  pOut << '(';
 	  for ( int j = 0; j<4; j++ )
 	    {

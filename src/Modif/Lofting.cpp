@@ -7,25 +7,55 @@ using namespace PP3d;
 using namespace std;
 
 //--------------------------------------------------
-void AlignFacetToNorm( FacetPtr ioFac, Point3d & ioMove, PointPtrSet & ioPoints )
-{  
+void AlignFacetToNorm( bool iFlagAlign, FacetPtr ioFac, Point3d  iDir, Point3d  iMove, PointPtrSet & ioPoints,
+                       double iGrow, double iSpin)
+{
+  PP3d::Mat4 lMatMov;
+  lMatMov.initMove( iMove);
+  
   // recalcul de la normal
   ioFac->computeNormal();
-  PP3d::Vector3d lNormToMove = ioFac->getNormal();
-  
-  ioMove.normalize() ; // it's the direction we want to go
-  
+  PP3d::Vector3d lNormToMove = ioFac->getNormal();  
+  iDir.normalize() ; // it's the direction we want to go  
   PP3d::Mat4 lMatAlign;
-  lMatAlign.rotateAlign( ioMove, lNormToMove  ); // for align the two vector
+  lMatAlign.rotateAlign( iDir, lNormToMove  ); // for align the two vector
   
-  PP3d::Point3d lCenterFac = ioFac->getCenter3d(); // for put at 0,0,0
+  PP3d::Point3d lCenter = ioFac->getCenter3d(); // for put at 0,0,0
+
+  PP3d::Mat4 lMatRecenter;
+  lMatRecenter.initMove( lCenter );
+
+  PP3d::Point3d lNCenter = -lCenter;					
+  PP3d::Mat4 lMatZero;
+  lMatZero.initMove( lNCenter ); //on revient a la postion originale en zero;
+
   
-          
+  PP3d::Mat4 lMatGrow;
+  lMatGrow.initScale( iGrow );
+
+  PP3d::Mat4 lMatSpin;
+  lMatSpin.identity();
+   
+  PP3d::Mat4 lMatTran;
+  if( iFlagAlign )
+    {
+       lMatSpin.initRotAxis( iDir, iSpin );
+       lMatTran = lMatRecenter * lMatMov * lMatSpin * lMatAlign  * lMatGrow * lMatZero;
+    }
+  else
+    {
+      lMatSpin.initRotAxis( lNormToMove, iSpin );
+      lMatTran = lMatRecenter * lMatMov * lMatSpin  * lMatGrow * lMatZero;
+    }
+
+                
   for( PP3d::PointPtr lPoint : ioPoints )
     { 
-      lPoint->get() -= lCenterFac;    // put at 0,0,0 
-      lPoint->get() *= lMatAlign;      // rotation for alignment
-      lPoint->get() += lCenterFac;    // move to it's orignal position              
+      //      lPoint->get() -= lCenter;    // put at 0,0,0 
+      lPoint->get() *= lMatTran;      // rotation for alignment
+
+      
+      //      lPoint->get() += lCenter;    // move to it's orignal position              
     }
 }
 //--------------------------------------------------
@@ -41,97 +71,87 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
             << oNewFacets.size()<< std::endl;
   
 
-  FacetPtr lFacOld = iFacOrigin->duplicate();
-  //  lFacOld->inverseLines();
-  lFacToDel.insertObj(lFacOld);
+  FacetPtr lFacOrg = iFacOrigin->duplicate();
+  lFacOrg->inverseLines();
   
  
-  Point3d  lPtOld  = lFacOld->getCenter3d();
+  Point3d  lPtOrg  ;  //= lFacOrg->getCenter3d();
 
   
-  // Get all the point of the Path
+  
+  FacetPtr lFacLast = lFacOrg->duplicate();
+  lFacToDel.insertObj(lFacLast);
+  
+   // Get all the point of the Path
   PP3d::SortEntityVisitorPointFacet lVisit;
   lPath->execVisitor( lVisit );         
-  GLuint lNbPt =  (GLuint)lVisit.cVectPoints.size();
+  GLuint lNbPtPath =  (GLuint)lVisit.cVectPoints.size();
 
-
+   
   
   //====== Move the facet to the begining of path
   if( iParam.cLocalisation == LoftingFacPathLocalisation::BeginOfPath )
   {
-    Point3d lMove = lPath->getPoint(0)->get() - lPtOld; // for put the facet in the right place
-    PointPtrSet lPoints;
-    VisitorGetPoints lVisit(lPoints);
-    lFacOld->execVisitor( lVisit ); // get all the points without duplicate for move
-    
-    for(  const PP3d::PointPtr lPoint : lPoints )
-      {
-        lPoint->get() += lMove ;  // move point
-      }
+    lPtOrg =  lFacOrg->getCenter3d();
   }
+  else
+    {
+      lPtOrg = lPath->getPoint(0)->get();
+    }
+  
   //======= end move
   
+  // lPtOrg  = lPath->getPoint(0)->get();
 
-  
-  lPtOld  = lPath->getPoint(0)->get();
+  double lGrow = iParam.cGrow / lNbPtPath;
+  double lSpin = iParam.cSpin;
 
   //==============================================
-  for( GLuint i = 1; i<lNbPt; i++)  // Begining at index 1
+  for( GLuint i = 0; i<lNbPtPath; i++)  // Begining at index 1
     {           
-      FacetPtr lFac = lFacOld->duplicate();   // duplicate the old facet and store them
-     
-      Point3d lMove = lPath->getPoint(i)->get() - lPtOld; // For the next position of the facet
-     
+      FacetPtr lFac = lFacOrg->duplicate();   // duplicate the old facet and store them     
+      Point3d lMove = lPath->getPoint(i)->get() - lPtOrg; // For the next position of the facet
+      
       
       PointPtrSet lPoints;
       VisitorGetPoints lVisit(lPoints);
       lFac->execVisitor( lVisit ); // get all the points without duplicate for move 
+
+      if( i== 0 )
+        {
+          Point3d lRien;
+          AlignFacetToNorm( false, lFac, lRien, lMove, lPoints, 1+lGrow*i, lSpin*i );
+        }
+      else
+        {
+         
+          AlignFacetToNorm( iParam.cFlagAlign, lFac,
+                            lPath->getPoint(i-1)->get() - lPath->getPoint(i)->get(),
+                            lMove, lPoints, 1+lGrow*i, lSpin*i );
+        }
      
-      for(  PP3d::PointPtr lPoint : lPoints )
-        {
-          lPoint->get() += lMove ;  // move point
-        }
-
-      //====== Align the facet to the normal of current path ======
-      if( iParam.cFlagAlign )
-        {
-          /*
-          if( i == 1 ) // first time  ???? bug ???? 
-            {
-              PointPtrSet lOldPoints;
-              VisitorGetPoints lOldVisit(lOldPoints);
-              lFac->execVisitor( lOldVisit ); // get all the points without duplicate for move 
-              
-              AlignFacetToNorm( lFacOld, lMove, lOldPoints );
-            }
-          */
-          AlignFacetToNorm( lFac, lMove, lPoints );        
-        }
-      //====== end align ======
-
-      
 
       //======== Join the facet ==========
       if(iParam.cFlagJoin )
         {
           lFacToDel.insertObj(lFac); // delete facet
 
-    
-          std::cout << "========== JoinTwoFacets" <<std::endl;
-          JoinTwoFacets( iBase, lFacOld, lFac, oNewFacets, true, false, false );
-
+          if( i != 0 )
+            JoinTwoFacets( iBase, lFacLast, lFac, oNewFacets, true, false, false );
+          
           
           if( iParam.cFlagClose ) // We must keep the fist and last facet
             {
               if( i == 1 )
-                {
-                  oNewFacets.push_back( lFacOld );
-                  lFacToDel.removeObj( lFacOld );               
+                {   // TESTER LA LOCALISATION, SI COLLER FUSIONNER !!!! AFAIRE 
+                  oNewFacets.push_back( lFacLast );
+                  lFacToDel.removeObj( lFacLast );               
                 }
               
-              if( i== lNbPt-1 )
+              if( i== lNbPtPath-1 )
                 {
-                  oNewFacets.push_back( lFac );  
+                  oNewFacets.push_back( lFac );
+                  lFac->inverseLines();
                   lFacToDel.removeObj( lFac);                  
                 }
             }            
@@ -140,8 +160,8 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
         {
           if( i == 1 )
             {
-              oNewFacets.push_back( lFacOld );    // keep the first facet
-              lFacToDel.removeObj( lFacOld );                  
+              oNewFacets.push_back( lFacLast );  
+              lFacToDel.removeObj( lFacLast );                  
             }
           
           oNewFacets.push_back( lFac ); // keep the facet       
@@ -150,19 +170,19 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
       
 
       
-      lFacOld = lFac;
-      lPtOld  = lPath->getPoint(i)->get();
+      lFacLast = lFac;
+      // lPtOld  = lPath->getPoint(i)->get();
     }
   //================== end of for ===============
 
 
-
+  /*
   
   for( PIndex i=0; i< oNewFacets.size()- ((int)iParam.cFlagClose); i++)
     {
       oNewFacets[i]->inverseLines();  // Pas terrible !!!! 
     }
-
+  */
   
   
   lFacToDel.callDeleteForAll(); // empty the trash
