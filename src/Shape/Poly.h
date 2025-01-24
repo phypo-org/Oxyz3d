@@ -71,6 +71,15 @@ namespace PP3d {
         }
     }
 
+    void giveAllFacetsTo( Poly * ioPoly )
+    {
+      if( ioPoly )
+        {
+          ioPoly->addFacet( getFacets() );
+          removeAllFacet();
+        }
+    }
+
     FacetPtrVect&  getFacets()  { return cFacets; }
     PIndex  getNbFacets() const { return cFacets.size(); }
     void execVisitor( EntityVisitor& pVisit )override;

@@ -124,7 +124,7 @@ namespace PP3d{
                                bool iMiddleSquare, bool iInv, int iDecal  );
 
 
-    enum  class LoftingFacPathLocalisation : int { BeginOfPath=0, SelectedFacet=1, Position3d=2 };
+    enum  class LoftingFacPathLocalisation : int { BeginOfPath=0, SelectedFacet =1, Position3d=2 };
    inline  static  std::string LoftingFacPathLocalisationStr[3]={
       "Begining of path",
       "Selected facet(change orientation of path to facet normal)",
@@ -132,8 +132,8 @@ namespace PP3d{
     };
 
 
-    static const std::string & GetStrLoftingFacPathLocalisation(LoftingFacPathLocalisation pEnum) { return  LoftingFacPathLocalisationStr[ to_underlying(pEnum) ]; }
-
+    static const std::string & GetStrLoftingFacPathLocalisation(LoftingFacPathLocalisation pEnum) { return  LoftingFacPathLocalisationStr[ to_underlying(pEnum) ]; } 
+    
     static LoftingFacPathLocalisation  GetLoftingFacPathLocalisation( const std::string & iTxt )
     {
       for( size_t i=0; i<3; i++)

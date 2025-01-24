@@ -48,6 +48,7 @@ namespace M3d {
   //************************
   class DialogLofting  : public virtual PPSingletonCrtp<DialogLofting>{
     TypeOfInput  cMyTypeInput;
+    bool cFlagExtrude=false;
     
     Fl_Double_Window * cMyWindow  = nullptr;
 
@@ -60,8 +61,11 @@ namespace M3d {
   
     MySliderInt   * cSliderInter   = nullptr;
     MySlider      * cSliderSpin   = nullptr;
-    MySlider      * cSliderGrow   = nullptr;
-    Modif::LoftingFacPathLocalisation  cLocalisation=Modif::LoftingFacPathLocalisation::BeginOfPath;
+    MyCheckbutton *  cCheckInverseSpin  = nullptr;
+
+    MySlider      *  cSliderGrow   = nullptr;
+    MyCheckbutton *  cCheckInverseGrow  = nullptr;
+    /////////    Modif::LoftingFacPathLocalisation  cLocalisation=Modif::LoftingFacPathLocalisation::BeginOfPath;
 
       
     MySlider      *  cSliderCenterPosX   = nullptr;
@@ -80,10 +84,11 @@ namespace M3d {
     bool isAlreadyRunning() { return Diag.cMyWindow != nullptr; }
 
     //----------------------------------------
-    void init( TypeOfInput iTypeInput )
+    void init( TypeOfInput iTypeInput, bool iFlagExtrude )
     {
       std::cout << "*********************************** DialogLofting Init  **************************" << std::endl;
-      
+
+      cFlagExtrude = iFlagExtrude;
       cMyTypeInput = iTypeInput;
 
       int lX = 20;
@@ -97,7 +102,7 @@ namespace M3d {
       cMyWindow = new Fl_Double_Window( 700, 600, "Lofting");
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
       
-      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY && cFlagExtrude == false )
         {
           cCheckJoin= new MyCheckbutton( lX, lY, 60, 15, "Join facets", CheckCB, this, 0 );
           cCheckJoin->callback((Fl_Callback*)CheckCB, this );
@@ -110,33 +115,15 @@ namespace M3d {
           lX += lXStep;
      
         }
-          cCheckAlign= new MyCheckbutton( lX, lY, 200, 15, "Align facets normal to path", CheckCB, this, 0 );
-          cCheckAlign->callback((Fl_Callback*)CheckCB, this );
-          cCheckAlign->value( true );
-          lY += lYStep;
-          lY += lYStep;
-          lX = lMemX;
-          
-      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
-        {
       
-          //-----------  Localisation of begin of path  ------------
-          cLocalChoice =  new Fl_Choice( lX+200, lY, 150, 25, "Local of generation" );
-          cLocalChoice->add( "Begining of path" );
-          cLocalChoice->add( "Selected facet(change orientation of path to facet normal)" );
-          cLocalChoice->add( "Defined position" ); 
-          cLocalChoice->value(0);
+      cCheckAlign= new MyCheckbutton( lX, lY, 200, 15, "Align facets normal to path", CheckCB, this, 0 );
+      cCheckAlign->callback((Fl_Callback*)CheckCB, this );
+      cCheckAlign->value( true );
+      lY += lYStep;
+      lY += lYStep;
+      lX = lMemX;
+
           
-          cLocalChoice->callback((Fl_Callback *) [](Fl_Widget *w, void *pUserData)
-                                 {
-                                   DialogLofting  *lDiagLoft = (DialogLofting*)pUserData;
-                                   
-                                   std::string lName = lDiagLoft->cLocalChoice->text();
-                                   lDiagLoft->cLocalisation = PP3d::Modif::GetLoftingFacPathLocalisation(lName );                               
-                                 }, this);      
-          lY += lYStep;
-          lY += lYStep;
-        }
 
       //-----------  Localisation  ------------
       
@@ -147,12 +134,23 @@ namespace M3d {
       lY += lYStep;
     
  	 
-      cSliderSpin =  new MySliderFloat(lX+5, lY, lW, lH, "Spin each step", SliderCB, this, -120, 120 );
+      cSliderSpin =  new MySliderFloat(lX+5, lY, lW, lH, "Spin", SliderCB, this, 0, 120 );
       cSliderSpin->value( 0 );
+      
+      lX += lXStep+ lW;
+      cCheckInverseSpin  = new MyCheckbutton( lX, lY, 200, 15, "Inverse", CheckCB, this, 0 );
+      cCheckInverseSpin->callback((Fl_Callback*)CheckCB, this );
+      cCheckInverseSpin->value( false );;
+      lX = lMemX;
       lY += lYStep;
       
-      cSliderGrow =  new MySliderFloat(lX+5, lY, lW, lH, "Grow at each step", SliderCB, this, 0, 10 );
+      cSliderGrow =  new MySliderFloat(lX+5, lY, lW, lH, "Grow", SliderCB, this, 0, 100 );
       cSliderGrow->value( 0 );
+      lX += lXStep+ lW;
+      cCheckInverseGrow  = new MyCheckbutton( lX, lY, 200, 15, "Inverse", CheckCB, this, 0 );
+      cCheckInverseGrow->callback((Fl_Callback*)CheckCB, this );
+      cCheckInverseGrow->value( false );;
+      lX = lMemX;
       lY += lYStep;
 
 
@@ -222,22 +220,35 @@ namespace M3d {
           return;
         }
       
+      
       PP3d::Modif::ParamLoftingFacPath lParam;
 
-      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
+      if( cMyTypeInput == TypeOfInput::INPUT_ENTRY && cFlagExtrude == false )
         {
           lParam.cFlagJoin   = (cCheckJoin->value() != 0 );
           lParam.cFlagClose  = (cCheckClose->value() != 0 );
-          lParam.cLocalisation = cLocalisation;
+          lParam.cLocalisation = PP3d::Modif::LoftingFacPathLocalisation::BeginOfPath;              
         }
+      
+      if( cFlagExtrude )
+        {
+          lParam.cFlagJoin   = true;
+          lParam.cFlagClose = true;
+          lParam.cLocalisation = PP3d::Modif::LoftingFacPathLocalisation::SelectedFacet;
+        }
+
       
       lParam.cFlagAlign  = (cCheckAlign->value() != 0 );
           //     std::cout << "========== join:" << lParam.cFlagJoin << " " << cCheckJoin->value() << std::endl;
       
       lParam.cNbInterpol = cSliderInter->value();
       lParam.cSpin       = -M_PI*cSliderSpin->value()/180.0;
-      lParam.cGrow       = cSliderGrow->value();
+      if( cCheckInverseSpin->value() != 0)
+        lParam.cSpin = -lParam.cSpin;
 
+      lParam.cGrow       = cSliderGrow->value();
+      if( cCheckInverseGrow->value() != 0)
+        lParam.cGrow = -lParam.cGrow;
    
       
       PP3d::Point3d lCenter;
@@ -260,19 +271,21 @@ namespace M3d {
 
 
       if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
-        {  
-          PP3d::Modif::LoftingFacFromPath( &TheBase, (PP3d::FacetPtr)TheSelect.getFirst(),
+        {
+          PP3d::FacetPtr lFac = (PP3d::FacetPtr)TheSelect.getFirst();
+          
+          PP3d::Modif::LoftingFacFromPath( &TheBase, lFac,
                                            lPath, lNewFacets, lParam );      
      
-          if(  lNewFacets.size() > 0 )
-            {
+          if( lNewFacets.size() > 0 )
+            {            
               PP3d::PolyPtr lShape = TheBase.getNewPoly();          
               lShape->addFacet(lNewFacets);
-         
+              
               PP3d::ObjectPoly* lObjPoly =  new PP3d::ObjectPoly(  "Lofting", lShape );
-         
+              
               std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
-              TheInput.swapCurrentCreation( lObjPoly );  
+              TheInput.swapCurrentCreation( lObjPoly );                  
             }   
         }
       else    
@@ -434,6 +447,8 @@ namespace M3d {
     //----------------------------------------
     static void CheckCB( Fl_Widget*, void*pUserData )
     {
+      std::cout << " CheckCB CheckCB CheckCB CheckCB CheckCB CheckCB CheckCB" << std::endl;
+                                                                                 
       DialogLofting* lDialog = reinterpret_cast<DialogLofting*>(pUserData);
       lDialog->maj(); 
     }
@@ -446,17 +461,41 @@ namespace M3d {
       //=============================
       if(  lDialog->cMyTypeInput == TypeOfInput::INPUT_ENTRY )
         {
-          PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
-   
-          if( lObj != nullptr )
-            {
-              lObj->rename(  "Lofting"  );
+          PP3d::FacetPtr lFac = (FacetPtr)TheSelect.getFirst();
+
+          TheSelect.removeAll();
+          
+          PP3d::PolyPtr lShape = lFac->myPoly();
+          if( lDialog->cFlagExtrude && lShape )
+            {                              
+              lFac->removeFromOwners();
+              TheBase.freeFacet( lFac );
+              
+              PP3d::ObjectPoly* lObjPoly =  (PP3d::ObjectPoly*)TheInput.getCurrentCreation();
+              PP3d::PolyPtr lPoly = lObjPoly->getPoly();
+              TheInput.swapCurrentCreation( nullptr, false );
+
+              lPoly->giveAllFacetsTo( lShape );              
+              lPoly->removeFromOwners(); // inutile sans doute
+              
+              TheBase.freePoly( lPoly );              
+              delete lObjPoly;
+              TheBase.validEntity(lShape);              
             }
+            else
+              {
+                PP3d::Object* lObj = TheInput.validCurrentCreation(TheBase);
+        
+                if( lObj != nullptr )
+                  {
+                    lObj->rename(  "Lofting"  );
+                  }
+              }
         }
       else
         if(  lDialog->cMyTypeInput == TypeOfInput::INPUT_OBJECT )
-          {
-            TheCreat.validateDatabaseTmp();
+          {         
+            TheCreat.validateDatabaseTmp();              
           }
       //=============================
           
@@ -473,13 +512,13 @@ namespace M3d {
 
     
   //************************
-extern void CallDialogLofting( TypeOfInput iTypeInput )
+  extern void CallDialogLofting( TypeOfInput iTypeInput, bool iFlagExtrude )
 {
   cout << "CallDialogLofting " <<  endl;
       
   if( Diag.isAlreadyRunning() == false )
     {
-      Diag.init( iTypeInput  );     
+      Diag.init( iTypeInput, iFlagExtrude  );     
     }
 }
 //************************

@@ -142,8 +142,8 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
           
           if( iParam.cFlagClose ) // We must keep the fist and last facet
             {
-              if( i == 1 )
-                {   // TESTER LA LOCALISATION, SI COLLER FUSIONNER !!!! AFAIRE 
+              if( i == 1 && iParam.cLocalisation != LoftingFacPathLocalisation::SelectedFacet )
+                {  
                   oNewFacets.push_back( lFacLast );
                   lFacToDel.removeObj( lFacLast );               
                 }
@@ -168,7 +168,6 @@ bool Modif::LoftingFacFromPath(  DataBase * iBase, FacetPtr iFacOrigin, FacetPtr
         }
       //======== end join 
       
-
       
       lFacLast = lFac;
       // lPtOld  = lPath->getPoint(i)->get();

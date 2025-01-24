@@ -130,8 +130,9 @@ namespace PP3d{
     PrimFacet( lA, lE, lB ),
     PrimFacet( lA, lD, lE ),
     PrimFacet( lA, lC, lD ),
-    PrimFacet( lC, lB, lE, lD)
-  };
+       PrimFacet( lC, lB, lE, lD)
+       // PrimFacet( lD, lE, lB, lC)
+ };
 		
   //************************ OCTOEDRE ******************
 		

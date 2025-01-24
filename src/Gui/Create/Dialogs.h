@@ -29,7 +29,7 @@ extern void CallDialogRevol( TypeRevol pTypeRevol );
 
 extern void CallDialogRevol( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
 extern void CallDialogSpiral( TypeRevol iTypeRevol, TypeOfInput iTypeInput );
-extern void CallDialogLofting( TypeOfInput iTypeInput );
+extern void CallDialogLofting( TypeOfInput iTypeInput, bool iFlagExtrude );
 // extern void CallDialogSpiral( bool& pFlagAlreadyExist, M3d::Canvas3d* pCanvas, TypeRevol pType );
 extern bool CallDialogInputInt( const char* iLabel, int & ioVal);
 

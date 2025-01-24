@@ -171,7 +171,9 @@ namespace M3d {
 #define StrMenu_ExtrudeTrans StrMenu_Extrude  " current axis"
 #define StrMenu_ExtrudePath StrMenu_Extrude  " path"
 #define StrMenu_ExtrudePathNorm StrMenu_Extrude  " path norm"
+#define StrMenu_ExtrudeLofting  StrMenu_Extrude" lofting"
 
+  
 #define StrMenu_BridgeFac  "Bridge between two facettes"
 
 
@@ -976,7 +978,7 @@ namespace M3d {
 
         //PATH
         pMenu.add( StrMenu_Lofting_SelObjects, "",LAMBDA
-                   CallDialogLofting( TypeOfInput::INPUT_OBJECT  );   
+                   CallDialogLofting( TypeOfInput::INPUT_OBJECT, false  );   
                    ADBMAL, this, FL_MENU_DIVIDER );
      
       }
@@ -1134,6 +1136,25 @@ namespace M3d {
                            }
                          //:::::::::::::::::::::::::::::::::::::::::
                          ADBMAL, this);
+
+
+
+              //:::::::::::::::::::::::::::::::::::::::::
+              int lMenuFlagActif = 0;
+              if( TheInput.getNbCurrentPoints() <  2  )
+                lMenuFlagActif=FL_MENU_INACTIVE;
+                         
+          
+              if( TheSelect.getNbSelected() < 1 )
+                lMenuFlagActif=FL_MENU_INACTIVE;
+                         
+              pMenu.add(  StrMenu_ExtrudeLofting, "", LAMBDA
+                          CallDialogLofting( TypeOfInput::INPUT_ENTRY, true  );
+                          ADBMAL, this, lMenuFlagActif);   
+              //:::::::::::::::::::::::::::::::::::::::::
+              
+                         
+              
 
               
               pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", LAMBDA                         
@@ -1418,7 +1439,7 @@ namespace M3d {
             lMenuFlagActif=FL_MENU_INACTIVE;
           
           pMenu.add( StrMenu_Lofting_Input, "", LAMBDA
-                     CallDialogLofting( TypeOfInput::INPUT_ENTRY  );
+                     CallDialogLofting( TypeOfInput::INPUT_ENTRY, false  );
                      ADBMAL, this, lMenuFlagActif);       
           
         }
