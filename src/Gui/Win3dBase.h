@@ -45,12 +45,16 @@ namespace M3d {
     long                    cCurrentMeasurementUnit=0;
     int                     cSzOutputInfo=20;
 
+
+    std::string             cName;
+ 
   public:
       
     Fl_Output      *        cInfoOutput;
       
     Fl_Native_File_Chooser  *cFileChooser = nullptr;
-     
+
+    
 
   public:
     
@@ -63,6 +67,13 @@ namespace M3d {
     friend class Canvas3d;
     int getId()  { return cWinId; }
     virtual Canvas3dBase & getCanvas() = 0;
+
+    void writeInfoTitle( const std::string iInfo ){
+      std::string lTmp( cName );
+      lTmp += " - ";
+      lTmp += iInfo;
+      label( lTmp.c_str());
+    }
  
     void setMeasurement( double iScale, long lPosScale )
     {

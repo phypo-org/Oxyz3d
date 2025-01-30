@@ -37,7 +37,7 @@ namespace M3d {
   double lX = lua_tonumber( pLua, 1) ;
   double lY = lua_tonumber( pLua, 2) ;
   double lZ = lua_tonumber( pLua, 3) ;
-	
+  
   //  std::cout << "************ lX:" << lX <<  " lY:" << lY << " lZ:" << lZ << std::endl;
   
   TheInput.addPointToCurrentLine( Point3d(lX,lY,lZ) ); 
@@ -150,7 +150,7 @@ namespace M3d {
    
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
-  CLUA_OPEN_CODE( LUA_exportAll, 1);
+  CLUA_OPEN_CODE( LUA_exportAll2Obj, 1);
   
   if( lua_isstring(pLua, 1) )
     {     
@@ -223,27 +223,28 @@ namespace M3d {
   {
     ShapeLua::sLibSep=0;
     //=====================
-    registerFunction( "", "help",     PLuaSession::LUA_ListLibraryFonction );
+    registerFunction( "", "help", "h",  "List the functions",  PLuaSession::LUA_ListLibraryFonction );
 
     //=====================
-    registerFunction( "Win",   "NewCanvas3d",         LUA_NewCanvas3d );
-    //=====================		      
-    registerFunction( "Shape", "AddCurrentPoint",     LUA_AddCurrentPointXYZ  );
-    registerFunction( "", "p",     LUA_AddCurrentPointXYZ  );
-    
-    registerFunction( "Shape", "CurrentToFacet",      LUA_CurrentToFacet  );
-    registerFunction( "", "facet",      LUA_CurrentToFacet  );
-    
-    registerFunction( "Shape", "CurrentToPolyline",       LUA_CurrentToPoly );
-     registerFunction( "", "lines",       LUA_CurrentToPoly );
-   //=====================
-    registerFunction( "Win",  "RedrawCanvas",        LUA_RedrawAllCanvas3d   );
-    registerFunction( "Win",  "RedrawAll",           LUA_RedrawAll   );
-    registerFunction( "",  "redraw",           LUA_RedrawAll   );
+    registerFunction( "Win",   "NewCanvas3d", "",  "Open a new 3d windows",     LUA_NewCanvas3d );
     //=====================
-    registerFunction( "",      "save",                LUA_saveAll  );
-    registerFunction( "",      "load",                LUA_load  );
-    registerFunction( "",      "export",              LUA_exportAll  );
+    
+    registerFunction( "Shape", "AddCurrentPoint", "p", "Adding a point to the current input (3 arguments)",    LUA_AddCurrentPointXYZ  );
+    //    registerFunction( "", "p",  "Adding a point to the current input (3 arguments)",    LUA_AddCurrentPointXYZ  );
+    
+    registerFunction( "Shape", "CurrentToFacet", "f", "Transform current inpu to facet",     LUA_CurrentToFacet  );
+    //    registerFunction( "",      "facet",  "Transform current inpu to facet",     LUA_CurrentToFacet  );
+    
+    registerFunction( "Shape", "CurrentToPolyline", "l",  "Transform current inpu to polyline",      LUA_CurrentToPoly );
+    //     registerFunction( "",     "lines",   "Transform current inpu to polyline",     LUA_CurrentToPoly );
+   //=====================
+    registerFunction( "Win",  "RedrawCanvas", "", "Actualise the canvas",       LUA_RedrawAllCanvas3d   );
+    registerFunction( "Win",   "RedrawAll",   "R",  "Actualise all windows",       LUA_RedrawAll   );
+    //    registerFunction( "",      "redraw",    "Actualise all windows",       LUA_RedrawAll   );
+    //=====================
+    registerFunction( "",      "save",  "",  "save database. Need name",           LUA_saveAll  );
+    registerFunction( "",      "load",  "",  "load a database. Need name",         LUA_load  );
+    registerFunction( "",      "exportObj", "",  "export database to .obj. Need name",         LUA_exportAll2Obj  );
     //=====================
   }	
   //****************************************

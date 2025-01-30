@@ -23,7 +23,7 @@ namespace M3d{
   {
     std::cout << "========= Creation::Creation" << std::endl;
     
-    /*
+    
 
 #ifdef USING_LUA 
     M3d::ShapeLua::SetPrototype();
@@ -37,7 +37,7 @@ namespace M3d{
     cLua->doCode("ShapeAddCurrentPoint(2,4,6)");
     cLua->doCode("ShapeAddCurrentPoint(4,5,7)");
 #endif    
-    */
+    
   }
   //-----------------------------------
   //	TODO  MAKE Database AutoSave 
@@ -184,7 +184,15 @@ namespace M3d{
         }
       return false;
     }
-
+ //-------------------------------------------
+  void Creation::changeCurrentPath( const std::string & iStr )
+  {
+    MyPref.initCurrentPath(iStr);
+    for( std::unique_ptr<Win3d> &lWin : cAllWin3d )
+      {
+        lWin->writeInfoTitle( iStr );
+      }
+  }
   
  
   //************************************

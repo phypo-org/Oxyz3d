@@ -97,7 +97,9 @@ namespace PLua{
   //------------------------------------------------
   //------------------------------------------------
   bool 
-  PLuaSession::registerFunction( const std::string& iLibName, const std::string& iName, CLibraryFonction iFtn )
+  PLuaSession::registerFunction( const std::string& iLibName,  const std::string& iName,
+                                 const std::string& iAbbrev, const std::string& iHelp,
+                                 CLibraryFonction iFtn )
   {
     PCOUT << "registerFunction " << iLibName << " "<<  iName;
 
@@ -113,7 +115,20 @@ namespace PLua{
 
 	
     lua_register( cLuaState, lStr.c_str(),  iFtn );
-    cVectRegisterFtn.insert( { lStr, iFtn } );
+    cVectRegisterFtn.insert( { lStr, { iName, lStr, iAbbrev, iHelp, iFtn }} );
+
+
+    if( iAbbrev.size() > 0 )
+      {
+        lStr = "";
+        if( sLibSep != 0 )
+          {
+            lStr = sLibSep;
+          }
+        lStr += iAbbrev;
+        
+        lua_register( cLuaState, lStr.c_str(),  iFtn );
+      }
 
     return true;
   }
@@ -502,8 +517,8 @@ namespace PLua{
     }
   else
     lua_pushboolean( pLua, 0 );
-
-
+ 
+ 
   CLUA_CLOSE_CODE(1)
   //------------------------------------------------
   CLUA_OPEN_CODE( (PLuaSession::LUA_ListLibraryFonction), 0)
@@ -511,7 +526,10 @@ namespace PLua{
   //lOut << "Params:" << lNbParams << std::endl;
   for( auto lPair: lLuaSession.cVectRegisterFtn )
     {
-      lOut << lPair.first << std::endl;
+      lOut << lPair.first << "\t: " << lPair.second.cHelp;
+        if( lPair.second.cAbbrev.size()> 0 )
+          lOut << "\t -> " <<  lPair.second.cAbbrev;
+      lOut << std::endl;
       PCOUT << lPair.first << std::endl;
       lua_pushstring( pLua, lPair.first.c_str() );
     }

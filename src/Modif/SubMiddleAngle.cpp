@@ -101,28 +101,28 @@ bool Modif::SubDivAngle( DataBase * iBase,
 		iBase->validEntity( lCentralFacPtr, true );// VALIDATION (a optimiser)		  
 	      }    
 	}
-    } // fin facettes
-    
 
       // On elimine les anciennes facettes
-  for( FacetPtr lOldFacet : iOldFacets )
-    {
-      PolyPtr lPoly = (PolyPtr) lOldFacet->firstOwner();
-      if( lPoly )
-	{
-	  lPoly->removeFacet( lOldFacet );
+      for( FacetPtr lOldFacet : iOldFacets )
+        {
+          PolyPtr lPoly = (PolyPtr) lOldFacet->firstOwner();
+          if( lPoly )
+            {
+              lPoly->removeFacet( lOldFacet );
 	}
-      
-      /*    for( LinePtr lLine : lOldFacet->getLines() )
-	{
-	  lLine->removeFromOwners();
-	  iBase->freeLine( lLine );	  
-	}      
-      */
-      //     lOldFacet->removeFromOwners();
-      iBase->freeFacet( lOldFacet );
-    }
+          
+          /*    for( LinePtr lLine : lOldFacet->getLines() )
+                {
+                lLine->removeFromOwners();
+                iBase->freeLine( lLine );	  
+                }      
+          */
+          //     lOldFacet->removeFromOwners();
+          iBase->freeFacet( lOldFacet );
+        }
+    } // fin facettes
   
+
   return true;
 }
 //--------------------------------------------------------

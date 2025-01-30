@@ -342,7 +342,8 @@ namespace M3d {
     
     std::vector<PP3d::EntityPtr> lNewFacets;
     
-    if( PP3d::Modif::SubDivAngle( TheCreat.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints, lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
+    if( PP3d::Modif::SubDivAngle( TheCreat.getDatabase(), lVisit.cSetFacets, lVisit.cSetPoints,
+                                  lNewFacets, PP3d::SubDivFacetType::ANGLE_FACET_MARGE, PP3d::SubDivSelectType::SELECT_CENTRAL, 0.0 ))
       {
         TheSelect.removeAll();
         TheSelect.addGoodEntityFor(lNewFacets);  

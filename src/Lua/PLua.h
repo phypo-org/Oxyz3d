@@ -59,7 +59,7 @@ namespace PLua {
 
   public:
     typedef int (*CLibraryFonction)(lua_State*); 
-    bool registerFunction( const std::string& pLibName, const std::string& pName, CLibraryFonction pFtn);
+    bool registerFunction( const std::string& pLibName, const std::string& pName, const std::string& iAbbrev,  const std::string& iHelp, CLibraryFonction pFtn);
 
   protected:
     virtual PLuaSession* getNewPrototypeSession(   const std::string& iSessionName, std::ostream* iStream );
@@ -146,8 +146,17 @@ namespace PLua {
 
   protected:
 
+    //    phipo 202501
+    struct StructFtn{
+      std::string      cFtnName;
+      std::string      cName;
+      std::string      cAbbrev;
+      std::string      cHelp;
+      CLibraryFonction cFtn;
+    };
 
-    std::map<std::string, CLibraryFonction> cVectRegisterFtn; // tableau des fonctions deja enregistrer
+    //   std::map<std::string, CLibraryFonction> cVectRegisterFtn; // tableau des fonctions deja enregistrer
+    std::map<std::string, StructFtn> cVectRegisterFtn; // tableau des fonctions deja enregistrer
 
     // la structure qui stocke les fonctions de registration
     struct CLibraryRegisterFunctionStruct{

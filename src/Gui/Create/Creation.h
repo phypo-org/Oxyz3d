@@ -200,6 +200,7 @@ namespace M3d{
       
 	
     void setCursorPosition( PP3d::Point3d& pPos);
+    void changeCurrentPath( const std::string & iStr );
 
     //---------------------------
     bool addAxis( PP3d::Point3d & lA, PP3d::Point3d & lB )

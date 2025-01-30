@@ -343,8 +343,8 @@ int main(int argc, char **argv)
       if( PP3d::MyRead::Read(lVal.c_str(),
 			     *Creation::Instance().getDatabase(), &TheSelect ))
 	{
-	  Creation::Instance().redrawAll(PP3d::Compute::FacetAll
-					    );
+	  Creation::Instance().redrawAll(PP3d::Compute::FacetAll );
+          Creation::Instance().changeCurrentPath(lVal);
 	}
     }
   

@@ -3,6 +3,7 @@
 
 #include "Win3dBase.h"
 #include "Canvas3dBase.h"
+#include "Preference.h"
 
 #include "Create/Creation.h"
 
@@ -15,8 +16,9 @@ namespace M3d {
   //****************************************
 
 Win3dBase::Win3dBase(const char*pName, int pW, int pH )
-    :Fl_Window( pW, pH, pName )
-    ,cMenubar(0,0,10000, 30)
+  :Fl_Window( pW, pH, pName )
+  ,cMenubar(0,0,10000, 30)
+  ,cName(pName)
   {      
     initWin(  pW, pH);
  //    cX += lW;
@@ -90,6 +92,8 @@ Win3dBase::Win3dBase(const char*pName, int pW, int pH )
   {
     cInfoOutput->value(iStr.c_str());
   }
+ 
+   
   //****************************************
 
 } // namespace

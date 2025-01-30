@@ -1,4 +1,12 @@
 
+- Flaten Normal !!!
+- Affichage du fichier courant dans le titre de la fenetre !
+- Slide
+- Bevel
+- Connection plusieurs points (actuellment 2 en meme temps)
+=====================================================
+
+
 XXXXXXX - Grid
 XXXXXX  - Remplacer les callback par des lambda
 XXXXXXX - Ajouter un bouton et un niveau de selection supplementaire pour les
@@ -41,15 +49,16 @@ xxx IL FAUT ABSOLUMENT :::: AFFICHER LE MODE COURANT ET LES SOUSMODE
 ou alors mettre systemeatiquement le mode/sous/mode etc avant le text
 info
 il faudrait aussi 1 console !!!!
-      
-
 =====================================================
+====================================================
 - Import pour les .stl
 
 
 - avoir des menus avec une icones commes dans Wings (ajouter a fltk ?)
-- Normaliser les dimensions des objets 3d crées
-- Ajouter de nouvelles primitives (recuperer celles faites pour wings)
+- Normaliser les dimensions des objets 3d crées et les transformation
+ en focntion de l'echelle courante
+- Avoir un mode de type de selection automatique ???
+xx - Ajouter de nouvelles primitives (recuperer celles faites pour wings)
 
 
 
@@ -77,10 +86,10 @@ XXXXX - Permettre la saisie de valeur au clavier pour les modifications
 XXXXXX - Bridge
        Debugger la destruction de l'un des objets quand il y a fusion       
 
-- Slide
-- Bevel
-- Notion de trajectoire avec duplication et raccordement à chque étape
-- (+ transformation eventuelle)
+
+XXXXXX - Notion de trajectoire avec duplication et raccordement à chque étape
+XXXXXX - (+ transformation eventuelle)
+       - Reste a faire sur plusieurs objets à la fois
 - etc
 
 

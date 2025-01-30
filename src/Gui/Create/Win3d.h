@@ -38,8 +38,7 @@ namespace M3d {
 
     void setUndoRedoState();
     void recenterOnSelection(PP3d::Kamera & i);
-
-    
+ 
     //   Canvas3dBase * createCanvas( int pX, int pY, int pW, int pH, const char* iName) override
     //  {
     //    return new Canvas3d( *this, pX, pY, pW, pH, iName);

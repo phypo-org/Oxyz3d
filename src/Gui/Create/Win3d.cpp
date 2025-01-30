@@ -59,7 +59,8 @@ namespace M3d {
 #define StrMenu_InvertSelect    "Invert selection"
 
 #define StrMenu_DeleteSelect    "Delete selection"
- 
+ #define StrMenu_DeleteInput    "Delete all input point"
+
 #define StrMenu_AddSelectCopyToInput "Add selection to input (copy)"
   
 #define StrMenu_SelectSimilarNormal  "Similar normal ..." // A FAIRE
@@ -150,7 +151,7 @@ namespace M3d {
   //****************************************
 
   Win3d::Win3d(const char*pName, int pW, int pH, PP3d::DataBase & pDatabase )
-    :Win3dBase( "Oxyd3d : 3d view", pW, pH )
+    :Win3dBase( "Oxyd3d :3d view ", pW, pH )
     ,cDatabase( pDatabase )
   {    
     //================
@@ -475,7 +476,7 @@ namespace M3d {
                            TheCreat.setDatabase( luBase, false ); // on prend la nlle base
                            //	    std::cout << "After set " <<  TheSelect.getNbSelected()  << std::endl;	    
                            TheCreat.redrawAll(PP3d::Compute::FacetAll);
-                           MyPref.initCurrentPath(lName );
+                           TheCreat.changeCurrentPath( lName );
                          }
                        else
                          {
@@ -631,6 +632,20 @@ namespace M3d {
     cMenubar.add( StrMenu_Edit   StrMenu_DeleteSelect, "",  LAMBDA
                   //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                   TheSelect.deleteAllFromDatabase( *TheCreat.getDatabase());
+                  PushHistory();			    
+                  TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+                  TheCreat.redrawObjectTree();
+                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                  ADBMAL, this);
+    
+    cMenubar.add( StrMenu_Edit   StrMenu_Undo,         "", UndoCB, this, FL_MENU_DIVIDER);
+    cMenubar.add( StrMenu_Edit   StrMenu_Redo,         "", RedoCB, this, FL_MENU_DIVIDER);
+
+    //================================ 
+    cMenubar.add( StrMenu_Edit   StrMenu_DeleteInput, "",  LAMBDA
+                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                   PushHistory();			    
+                  TheInput.delAllPoint();
                   PushHistory();			    
                   TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
                   TheCreat.redrawObjectTree();
