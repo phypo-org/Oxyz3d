@@ -1,4 +1,5 @@
 USING_LUA=1
+USING_PYTHON=1
 
 include Makefile.common
 

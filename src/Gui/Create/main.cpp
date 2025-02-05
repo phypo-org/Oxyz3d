@@ -354,6 +354,13 @@ int main(int argc, char **argv)
     {
       CallConsoleLua();     
     }
+#endif
+  
+#ifdef USING_PYTHON
+  if( lArgs.exist( "-python" ) != -1 )
+    {
+      CallConsolePython();     
+    }
 #endif  
   PP3d::UndoHistory::Instance().sav( *Creation::Instance().getDatabase(), &TheSelect );
 

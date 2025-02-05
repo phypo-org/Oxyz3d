@@ -46,8 +46,10 @@ extern void CallDialogMagnet( M3d::Magnet & iMagnet );
 extern void CloseDialogMagnet();
 extern void MajDialogMagnet();
 
-
+#ifdef USING_PYTHON
 Fl_Double_Window* CallConsolePython();
+#endif
+
 Fl_Double_Window* CallConsoleSystem();
 
 #ifdef USING_LUA

@@ -49,6 +49,21 @@ LIB_LUA=
 endif
 
 
+ifdef USING_PYTHON
+# INC_PYTHON = -I/usr/include/python3.10
+# LIB_PYTHON =  -Lpython3.10
+
+INC_PYTHON = $(shell python3.11-config --cflags)
+LIB_PYTHON = $(shell python3.11-config --ldflags) -lpython3.11
+FLAGS_COMPIL_EXT += -DUSING_PYTHON
+
+else
+
+INC_PYTHON =
+LIB_PYTHON =
+FLAGS_COMPIL_EXT += -DNOT_USING_PYTHON
+endif
+
 
 
 ifdef    USING_CGAL
@@ -160,7 +175,7 @@ CCFLAGS= -std=c++20 -m64   -Wall -Werror -Wextra -Wformat=2 \
 		-D_POSIX_PTHREAD_SEMANTICS  -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_THREAD_SAFE \
 		$(FLAGS_COMPIL_EXT)
 
-# CINCLUDE=-I. -IShape -DLINUX -I/usr/include/python3.6  $(INC_LUA)
+
 
 
 
@@ -173,11 +188,9 @@ LDFLAGS= -static-libgcc -static-libstdc++ -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA) $(INC_CGAL) $(INC_OPENAL)
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA)  $(INC_PYTHON) $(INC_CGAL) $(INC_OPENAL)
  
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_CGAL) $(LIB_OPENAL)
-
-# -lpython3.6m
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)

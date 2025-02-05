@@ -37,7 +37,9 @@ namespace M3d {
 
 #define StrMenu_Create3dView    "New 3d view"
 #define StrMenu_ObjectTree      "Objects Tree"
+#ifdef USING_PYTHON 
 #define StrMenu_ConsolPython    "Console python"
+#endif  
 #define StrMenu_ConsolSystem    "Console system"
 #ifdef USING_LUA     
 #define StrMenu_ConsolLua       "Console lua"
@@ -1063,8 +1065,14 @@ namespace M3d {
                  TheCreat.createObjectTree( );
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
-    
-    //		cMenubar.add("&Win/" StrMenu_ConsolPython, nullptr, MyMenuCallback, this);
+
+#ifdef USING_PYTHON    
+    cMenubar.add("&Win/" StrMenu_ConsolPython, nullptr, LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 CallConsolePython();
+                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                ADBMAL, this);
+#endif    
     cMenubar.add("&Win/" StrMenu_ConsolSystem, nullptr, LAMBDA
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  CallConsoleSystem( );
