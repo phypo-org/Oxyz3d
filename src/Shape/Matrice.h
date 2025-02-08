@@ -28,7 +28,7 @@ namespace PP3d {
     PDouble cMat[4][4];
 
   public:
-    Mat4() {;}
+    Mat4() {identity();}
     //-----------------------------
     void set( PDouble x1, PDouble x2,  PDouble x3,
 	      PDouble y1, PDouble y2,  PDouble y3,

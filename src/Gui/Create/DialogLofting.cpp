@@ -305,8 +305,8 @@ namespace M3d {
             TheSelect.execVisitorOnlyOnObjects ( lVisitMinMax );
             Point3d  lCenter  =  lVisitMinMax.getCenter();
             
-            PP3d::Mat4 lMatRecenter;
-            lMatRecenter.initMove( lCenter ); //on positionne en fonction du centre de rotation ;
+            PP3d::Mat4 lMatReput;
+            lMatReput.initMove( lCenter ); //on positionne en fonction du centre de rotation ;
             PP3d::Point3d lNCenter =  -lCenter;					
             PP3d::Mat4 lMatZero;
             lMatZero.initMove( lNCenter ); //on revient a la postion originale en zero;
@@ -322,7 +322,6 @@ namespace M3d {
 
             
             PP3d::Mat4 lMatSpin;
-            lMatSpin.identity();         
 
             
             std::cout << std::endl <<"Grow:" << lParam.cGrow <<  std::endl << std::endl;
@@ -330,11 +329,13 @@ namespace M3d {
             
              std::cout << std::endl <<"Grow:" << lGrow <<  std::endl << std::endl;
               
-            for( GLuint i = 0; i<lNbPt; i++)  // Begining at index 1
+            for( GLuint i = 0; i<lNbPt; i++)
               {           
                 std::stringstream lDupStr( lDupStr0.str() );
                 std::vector<PP3d::EntityPtr> lNewObjs;
-                Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );                 
+                
+                Utils::WriteObjectFromStream( lDupStr, *luTmpBase, lNewObjs );
+                
                 PP3d::VisitorGetPoints<PP3d::PointPtrSet> lVisitPt;
                 for( PP3d::EntityPtr lObjPtr : lNewObjs )
                   lObjPtr->execVisitor( lVisitPt );
@@ -344,7 +345,6 @@ namespace M3d {
 
                 
                 PP3d::Mat4 lMatAlign;
-                lMatAlign.identity();
 
                 Point3d lDir;
                 if( i == 0 )                  
@@ -359,7 +359,7 @@ namespace M3d {
                 lMatAlign.rotateAlign( lDir, lNormToMove  ); 
                  
                 
-                PP3d::Mat4 lMatGrow;                              
+                PP3d::Mat4 lMatGrow;
                 lMatGrow.initScale( 1+(lGrow*i));
 
                 
@@ -371,12 +371,13 @@ namespace M3d {
                   {
                     lMatSpin.initRotAxis( lDir, lParam.cSpin * i );
                     ///                    PP3d::Mat4 lMatTran    = lMatMov * lMatGrow * lMatRot ;  // Oldest
-                    lMatTran = lMatRecenter * lMatMov * lMatSpin * lMatAlign  * lMatGrow * lMatZero;
+                    lMatTran = lMatReput * lMatMov * lMatSpin * lMatAlign  * lMatGrow * lMatZero;
                   }
                 else
                   {
                     lMatSpin.initRotAxis( lNormToMove, lParam.cSpin * i );
-                    lMatTran = lMatRecenter * lMatMov *  lMatSpin  * lMatGrow * lMatZero;
+                    lMatTran = lMatReput * lMatMov *  lMatSpin  * lMatZero;
+                    // lMatTran = lMatReput * lMatMov *  lMatSpin  * lMatGrow * lMatZero;
                   }
                 
             

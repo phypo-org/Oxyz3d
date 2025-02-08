@@ -24,11 +24,11 @@ namespace PP3d{
 
   //*******************************************
   struct Calcul3d{
-    static void Normal(  const PP3d::Point3d & p1,
+    static void Normal(  const  PP3d::Point3d & p1,
 			 const  PP3d::Point3d & p2,
 			 const  PP3d::Point3d & p3, 
 			 PP3d::Point3d & pNorm ) ;
-    static void NoNorm(  const PP3d::Point3d & p1,
+    static void NoNorm(  const  PP3d::Point3d & p1,
 			 const  PP3d::Point3d & p2,
 			 const  PP3d::Point3d & p3, 
 			 PP3d::Point3d & pNorm ) ;

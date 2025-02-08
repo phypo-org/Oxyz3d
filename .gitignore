@@ -26,6 +26,11 @@
 *.a
 *.lib
 
+Run/bases/*
+Run/*.stl
+Run/*.wings
+Run/*.oxyz
+
 
 src/Win/Debug
 src/Win/Release

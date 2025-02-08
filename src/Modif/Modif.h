@@ -116,6 +116,9 @@ namespace PP3d{
     static void ExtrudePathNorm( PP3d::DataBase & iBase, Selection & iSelect,  PP3d::Point3d lPtZero, PP3d::Point3d lAxis, FacetPtr iFacet );
 
 
+    static bool Circularise( FacetPtr ioFacet );
+    static bool Circularise( std::vector<PointPtr>  & ioPt );
+
 
     static bool JoinTwoFacets( DataBase * iBase,
                                FacetPtr iF1,
@@ -197,7 +200,7 @@ namespace PP3d{
       }
     return lSearchPt;
   }
-
+  
 
 
     

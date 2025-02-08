@@ -176,6 +176,10 @@ namespace M3d {
   
 #define StrMenu_BridgeFac  "Bridge between two facettes"
 
+#define StrMenu_CirculariseFacs "Circularise facets points"
+#define StrMenu_CirculariseLines "Circularise lines points"
+#define StrMenu_CircularisePoints "Circularise points"
+
 
   
 #define StrMenu_PutOn     "Put facet 1 on facet 2"
@@ -820,6 +824,34 @@ namespace M3d {
                    //LLLLLLLLLLLLLLLLLLLLLLLLL
                    ADBMAL, this);	
       }
+
+    
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Point )
+      {
+	pMenu.add( StrMenu_CircularisePoints, "", LAMBDA
+                   //LLLLLLLLLLLLLLLLLLLLLLLLL
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   lCanvas->circularisePoints();
+                   PushHistory();
+                   TheCreat.redrawAll(PP3d::Compute::FacetAll);                   
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   ADBMAL, this, ItemActif(TheSelect.getNbSelected() >2 ) );
+      }
+
+    
+    if(  TheSelect.getSelectType() == PP3d::SelectType::Line )
+      {
+	pMenu.add( StrMenu_CirculariseLines, "", LAMBDA
+                   //LLLLLLLLLLLLLLLLLLLLLLLLL
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   lCanvas->circulariseLines();
+                   PushHistory();
+                   TheCreat.redrawAll(PP3d::Compute::FacetAll);                   
+                   //:::::::::::::::::::::::::::::::::::::::::
+                   ADBMAL, this, ItemActif(TheSelect.getNbSelected() >1 ) );
+      }
+
+
     
 
     lMenuFlagActif=FL_MENU_INACTIVE;   
@@ -1277,7 +1309,9 @@ namespace M3d {
                      TheCreat.redrawAll(PP3d::Compute::FacetAll);
                      //:::::::::::::::::::::::::::::::::::::::::
                      ADBMAL, this);
-	  
+
+          
+	
 	  if( TheSelect.getNbSelected() == 2 )
 	    pMenu.add( StrMenu_PutOn, "", LAMBDA
                        //:::::::::::::::::::::::::::::::::::::::::
@@ -1372,6 +1406,15 @@ namespace M3d {
                      ADBMAL, this, ItemActif(TheSelect.getNbSelected() == 2) );
      
 
+            pMenu.add( StrMenu_CirculariseFacs, "", LAMBDA
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     lCanvas->circulariseFacets();
+                     PushHistory();
+                     TheCreat.redrawAll(PP3d::Compute::FacetAll);
+                     
+                     //:::::::::::::::::::::::::::::::::::::::::
+                     ADBMAL, this, ItemActif(TheSelect.getNbSelected() >=1 ) );
+     
           pMenu.add( StrMenu_Align "/" StrMenu_AlignOnX, "", LAMBDA
                      if( TheSelect.getSelectType() != PP3d::SelectType::Facet )  return;
                      PP3d::Point3d lAxis(1,0,0);
@@ -1875,6 +1918,100 @@ namespace M3d {
       }
     
     return 0;
+  }
+  //----------------------------------------
+  void Canvas3d::circulariseFacets( )
+  {
+     if( TheSelect.getSelectType() != PP3d::SelectType::Facet
+        || TheSelect.getNbSelected() == 0 )
+      {
+        return;
+      }
+     
+     for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
+       {
+ 
+         if( lEntity->getType() != PP3d::ShapeType::Facet ) continue;
+   
+         
+         PP3d::FacetPtr lFacet = (PP3d::FacetPtr)lEntity;
+        
+
+         PP3d::Modif::Circularise( lFacet );
+       }
+     
+  }
+   
+  //----------------------------------------
+  void Canvas3d::circulariseLines( )
+  {
+     if( TheSelect.getSelectType() != PP3d::SelectType::Line
+        || TheSelect.getNbSelected() < 2 )
+      {
+        std::cout << "circulariseLines failed " <<  TheSelect.getSelectType()
+                  << " " << TheSelect.getNbSelected()<< std::endl;
+        return;
+      }
+
+     std::vector<PP3d::PointPtr> lVectPt;
+     PPu::HashSetPtr<PP3d::Point> cUniqPt;
+
+     for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
+       { 
+         if( lEntity->getType() != PP3d::ShapeType::Line ) continue;
+         
+         
+         PP3d::LinePtr lLinePtr = (PP3d::LinePtr)lEntity;
+
+         if( cUniqPt.existObj( lLinePtr->first() ) == false )
+           {
+             lVectPt.push_back( lLinePtr->first());
+             cUniqPt.insertObj( lLinePtr->first() );
+           }
+         
+         if( cUniqPt.existObj( lLinePtr->second() ) == false)
+            {
+             lVectPt.push_back( lLinePtr->second());
+             cUniqPt.insertObj( lLinePtr->second());
+           }
+       }
+     std::cout << "circulariseLines " << lVectPt.size() << std::endl;
+     
+     if( lVectPt.size() >= 2  )
+       {
+         PP3d::Modif::Circularise( lVectPt );
+       }     
+  }
+  //----------------------------------------
+  void Canvas3d::circularisePoints( )
+  {
+     if( TheSelect.getSelectType() != PP3d::SelectType::Point
+        || TheSelect.getNbSelected() < 3 )
+      {
+        std::cout << "circularisePoints failed "  <<  TheSelect.getSelectType()
+                  << " " <<  TheSelect.getNbSelected() << std::endl;
+        return;
+      }
+     
+     std::vector<PP3d::PointPtr> lVectPt;
+     
+     for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
+       {
+         if( lEntity->getType() != PP3d::ShapeType::Point ) continue;
+            
+         PP3d::PointPtr lPointPtr = (PP3d::PointPtr)lEntity;
+         
+      
+         lVectPt.push_back( lPointPtr );          
+                                
+       }
+     
+     std::cout << "circularisePoints " << lVectPt.size() << std::endl;
+
+     if( lVectPt.size() >= 3  )
+       {
+         PP3d::Modif::Circularise( lVectPt );
+       }     
   }
   //----------------------------------------
   void Canvas3d::bridgeFacets( bool iInv, int iDecal)

@@ -143,6 +143,9 @@ namespace M3d {
 
     //=========== Functions =============
     void bridgeFacets(bool iInv=true, int iDecal=0);
+    void circulariseFacets();
+    void circulariseLines();
+    void circularisePoints();
 
     bool mergeFacets( PP3d::DataBase * iBase, PP3d::Selection * iSelect);
   protected:
