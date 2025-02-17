@@ -1,6 +1,7 @@
 OS := $(shell uname)
 
 GCC_OPT=
+
 ifeq ($(OS), Linux)
     PLATFORM = linux
 else ifeq ($(OS), Darwin)
@@ -12,12 +13,34 @@ else
 endif
 
 
+
+
 # include ${FLTK_PATH}/makeinclude
 # include fltk-config --includedir
 
+ifdef USING_FLTK
+
 include ${FLTK_PATH}/makeinclude
+INC_FLTK= -I${FLTK_PATH}
+LIB_FLTK= -lfltk_gl -lfltk -lfltk_images
+
+
 # ATTENTION  il y a un .SLIENT dans makeinclude, pour le neutraliser
 override MAKEFLAGS :=
+else
+INC_FLTK= -DFLTK_NOT_USE
+LIB_FLTK=
+
+endif
+
+
+ifdef USING_GTKMM
+INC_GTK=`pkg-config --cflags gtkmm-4.0` -DUSE_GTK -DUSE_GTKMM
+LIB_GTK=`pkg-config --libs gtkmm-4.0` 
+else
+INC_GTK=-DGTKMM_NOT_USE
+LIB_GTK=
+endif
 
 
 
@@ -53,8 +76,8 @@ ifdef USING_PYTHON
 # INC_PYTHON = -I/usr/include/python3.10
 # LIB_PYTHON =  -Lpython3.10
 
-INC_PYTHON = $(shell python3.11-config --cflags)
-LIB_PYTHON = $(shell python3.11-config --ldflags) -lpython3.11
+INC_PYTHON = $(shell python3.12-config --cflags)
+LIB_PYTHON = $(shell python3.12-config --ldflags) -lpython3.12
 FLAGS_COMPIL_EXT += -DUSING_PYTHON
 
 else
@@ -66,7 +89,7 @@ endif
 
 
 
-ifdef    USING_CGAL
+ifdef USING_CGAL
 
 FLAGS_COMPIL_EXT += -DUSING_CGAL
 INC_CGAL= -I/home/phipo/Bin/CGAL
@@ -177,8 +200,6 @@ CCFLAGS= -std=c++20 -m64   -Wall -Werror -Wextra -Wformat=2 \
 
 
 
-
-
 # Parametres de link
 #-------------------
 LDFLAGS= -static-libgcc -static-libstdc++ -pie -lpthread -ldl -lm 
@@ -188,9 +209,9 @@ LDFLAGS= -static-libgcc -static-libstdc++ -pie -lpthread -ldl -lm
 #-----------------
 
 
-INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   -I${FLTK_PATH} -I/usr/include/freetype2  $(INC_LUA)  $(INC_PYTHON) $(INC_CGAL) $(INC_OPENAL)
+INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   $(INC_FLTK) $(INC_GTK)  -I/usr/include/freetype2  $(INC_LUA)  $(INC_PYTHON) $(INC_CGAL) $(INC_OPENAL)
  
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ -lfltk_gl -lfltk -lfltk_images $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ $(LIB_FLTK) $(LIB_GTK)  $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)

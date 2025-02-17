@@ -1,0 +1,8 @@
+USING_LUA=1
+USING_PYTHON=1
+USING_GTKMM=1
+
+
+include Makefile.common
+
+ROOT_POS=src/

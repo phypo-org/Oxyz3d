@@ -1,13 +1,1 @@
-USING_LUA=1
-USING_PYTHON=1
-
-include Makefile.common
-
-ROOT_POS=src/
-
-TARGET=Oxyz3d.exe
-
-include Makefile.compil
-
-
-
+Makefile.FLTK

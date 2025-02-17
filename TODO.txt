@@ -1,6 +1,18 @@
+- Enlever les ids des objets. les générer à chque fois pour la
+  selection
+
+- Sortir les owners des objets et les mettres dans une table de
+  hashing accessible de n'importe ou (ajouter des verifications
+  automatique)
+
+- Enlever les objets lignes à la place avoir des lignes virtuelles
+
+- Enlever tout les Object spécialisés
+
+
 
 - Flaten Normal !!!
-- Affichage du fichier courant dans le titre de la fenetre !
+XXXXX  Affichage du fichier courant dans le titre de la fenetre !
 - Slide
 - Bevel
 - Connection plusieurs points (actuellment 2 en meme temps)

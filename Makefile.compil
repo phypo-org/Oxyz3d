@@ -17,8 +17,18 @@ ifdef TARGET_LIB
 OTARGET_LIB=$(OBJDIR)$(TARGET_LIB)
 endif
 
-GLIB=$(ROOT_POS)Gui
-WLIB=$(ROOT_POS)Gui/Create
+ifdef USING_FLTK
+GLIB=$(ROOT_POS)GuiFLTK
+endif
+
+ifdef USING_GTKMM
+GLIB=$(ROOT_POS)GuiGTK
+endif
+
+
+
+
+WLIB=$(GLIB)/Create
 SLIB=$(ROOT_POS)Shape
 
 
