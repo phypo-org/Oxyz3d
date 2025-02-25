@@ -1,3 +1,5 @@
+#ifdef USING_LUA
+
 #include "PLua.h"
 
 #include <condition_variable>
@@ -561,3 +563,4 @@ namespace PLua{
 
 } // fin namespace PLua
  
+#endif
