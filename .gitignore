@@ -31,6 +31,8 @@ Run/*.stl
 Run/*.wings
 Run/*.oxyz
 
+*.log
+*.err
 
 src/Win/Debug
 src/Win/Release
