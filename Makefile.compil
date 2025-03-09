@@ -75,13 +75,14 @@ SPLIB_SRCS=$(wildcard $(SPLIB)/*.cpp)
 SPLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SPLIB_SRCS) ) )
 
 # L'ensemble des .o pour le repertoires objs
-OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(GLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS) $(SPLIB_OBJS))
+OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(GLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS))
+# )
 
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
-vpath %.cpp $(WLIB)  $(SPLIB) $(GLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
-
+vpath %.cpp $(WLIB) $(GLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
+#  $(SPLIB)
 
 
 

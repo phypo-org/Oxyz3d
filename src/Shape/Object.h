@@ -1,5 +1,5 @@
-#ifndef H__OBJECT__H
-#define H__OBJECT__H
+#ifndef H__OBJECT_BASE__H
+#define H__OBJECT_BASE__H
 
 #include "PP3dType.h"
 #include "ObjProps.h"
@@ -30,61 +30,6 @@ namespace PP3d {
   class ViewProps;
   class SubSelect;
 
-  enum ClassType { ClassTypeVoid=0, ClassTypeObj=1, ClassTypeGeo=2, ClassTypeAll=0xFFFF };
-  
-  inline static const char* GetStrClassType( ClassType pType )
-  {
-    switch( pType )
-      {
-      case ClassType::ClassTypeVoid:  return "ClassTypeVoid";
-      case ClassType::ClassTypeObj:   return "ClassTypeObj";
-      case ClassType::ClassTypeGeo:  return "ClassTypeGeo";
-      case ClassType::ClassTypeAll:  return "ClassTypeAll";
-      }
-    return "ClassType::unknown";
-  }
-		
-  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
-  inline static const char* GetStrObjectType( ObjectType pType )
-  {
-    switch( pType )
-      {
-      case ObjectType::ObjPoint:  return "ObjPoint";
-      case ObjectType::ObjLine:   return "ObjLine";
-      case ObjectType::ObjFacet:  return "ObjFacet";
-      case ObjectType::ObjPoly:   return "ObjPoly";
-      case ObjectType::ObjPolyline: return "ObjPolyline";
-
-      case ObjectType::ObjBSpline: return "ObjBSpline";
-      case ObjectType::ObjNull: return "Unknown";
-      }
-    return "ObjectType::unknown";
-  }
-	
-  inline static ObjectType GetObjectTypeFromStr( const char* pStr )
-  {
-    if( strcmp( pStr, "ObjPoint" ) == 0 )
-      return ObjectType::ObjPoint;
-    else		if( strcmp( pStr, "ObjLine" ) == 0 )
-      return ObjectType::ObjLine;
-    else		if( strcmp( pStr, "ObjFacet" ) == 0 )
-      return ObjectType::ObjFacet;
-    else		if( strcmp( pStr, "ObjPoly" ) == 0 )
-      return ObjectType::ObjPoly;
-    else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
-      return ObjectType::ObjPolyline;
-    else		if( strcmp( pStr, "ObjBSpline" ) == 0 )
-      return ObjectType::ObjBSpline;
-    return ObjectType::ObjNull;
-  }
-  
-	
-  inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
-  {
-    pOs <<   GetStrObjectType( pType );
-    return pOs;
-  }
-
   class Object;
   class GroupObject;
   using ObjectPtr = Object*;
@@ -98,13 +43,15 @@ namespace PP3d {
     ObjProps                     cMyProps;
     std::string                  cName;
 
-    ClassType                    cClassType=ClassTypeObj;
+    ObjectType                   cObjectType = ObjectType::ObjNull;
+    ClassType                    cClassType  = ClassTypeObj;
+    EntityPtr                    cShape     = nullptr;
     
     PPu::PPDateTime70            cDateCreation;
   public:
 
-    Object(  const char*pName,  ClassType  iClassType );
-    Object(  const std::string & pName, ClassType  iClassType);
+    Object(  const char*pName,          ObjectType iObjType, EntityPtr iEntity, ClassType iClassType=ClassTypeObj );
+    Object(  const std::string & pName, ObjectType iObjType, EntityPtr iEntity, ClassType iClassType=ClassTypeObj );
     virtual ~Object();
     
     Point3d getCenter3d() override {
@@ -118,11 +65,18 @@ namespace PP3d {
     }
 
     
-    virtual ObjectType getObjType() const =0;
-    ShapeType getType() const override { return ShapeType::Object;}
-    virtual ShapeType getSubType() const =0;
-    bool  isClassType( ClassType iClass ) { return ((ulong)cClassType & ((ulong)iClass))!=0; }
-    bool  isClassGeo() { return isClassType( ClassTypeGeo );}
+    virtual ObjectType getObjType()        const override  { return cObjectType; }
+    ShapeType getType()                    const override  { return ShapeType::Object;}
+    virtual ShapeType getSubType()         const           { if( cShape) return cShape->getType(); return ShapeType::Null; }
+    bool  isClassType( ClassType iClass )                  { return ((ulong)cClassType & ((ulong)iClass))!=0; }
+    bool  isClassGeo()                                     { return isClassType( ClassTypeGeo );}
+
+    bool is(  ClassType  iClass ) { return isClassType( iClass ); }
+    bool is(  ShapeType  iShape ) { if( cShape) return cShape->getType() == iShape; return false; }
+    bool is(  ObjectType iObj  )  { return iObj == cObjectType; }
+
+    virtual bool isVoid()  const override  {  if( cShape) return cShape->isVoid(); return true; }
+
     
     PPu::PPDateTime70 getDateCreation() const { return cDateCreation; }
     virtual void execVisitor( EntityVisitor& pVisit ) override;
@@ -132,8 +86,9 @@ namespace PP3d {
     //		virtual const Entity& getMyEntity() const; 
 
     //		PP3dId  getId() { return getMyEntity().getId(); }
-    virtual EntityPtr getShape()=0;
-    virtual void      removeShape()=0;
+    virtual EntityPtr getShape()      { return cShape; }
+    virtual void      removeShape()   { cShape = nullptr; };
+    
     bool removeShapeIsVoid(EntityPtr iEntity = nullptr){
       if(iEntity == nullptr || iEntity == getShape() )
         {
@@ -141,6 +96,52 @@ namespace PP3d {
         }
       return isVoid();
     }
+
+    
+    
+    LinePtr    getLine()           {
+      if( is(  ShapeType::Line) ) return dynamic_cast<LinePtr>( cShape);
+      return nullptr;
+    }
+
+    FacetPtr	getFacet()          {
+      if( is( ShapeType::Facet) ) return dynamic_cast<FacetPtr>( cShape);
+      return nullptr;   
+    };
+
+    FacetPtr   getPolyline()           {
+      if( is( ObjectType::ObjPolyline) ) return dynamic_cast<FacetPtr>(cShape);
+      return nullptr;
+    }
+
+    Poly*      getPoly()           {
+      if( is( ShapeType::Poly) ) return dynamic_cast<PolyPtr>(cShape);
+      return nullptr;
+    }
+
+
+    EntityPtr setShape( EntityPtr iShape );
+    
+    EntityPtr setLine( LinePtr iShape ) {
+      cObjectType =  ObjectType::ObjLine ;
+      return setShape( iShape );
+    }
+    
+    EntityPtr setFacet( FacetPtr iShape ) {
+      cObjectType =  ObjectType::ObjFacet;
+      return setShape( iShape );
+    }
+
+    EntityPtr setPolyline( FacetPtr iShape ) {
+      cObjectType =  ObjectType::ObjPolyline ;
+      return setShape( iShape );
+    }
+       
+    EntityPtr setPoly( PolyPtr iShape ) {
+      cObjectType =  ObjectType::ObjPoly ;
+      return setShape( iShape );
+    }
+    
 
     virtual int recomputeAll(ObjProps&pProps,
 			      Compute iCompute);

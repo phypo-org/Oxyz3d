@@ -323,7 +323,7 @@ namespace PP3d{
   }    
   
   //************************
-  void Delete( ObjectPolylines & lLines )
+  void Delete( Object & lLines )
   {
   }
   //************************

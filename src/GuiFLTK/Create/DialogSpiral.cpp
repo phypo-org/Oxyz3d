@@ -460,8 +460,8 @@ namespace M3d {
         //=============================
         if( cMyTypeInput == TypeOfInput::INPUT_ENTRY )
           {                    
-            PP3d::Mat4 lMatTran = lMatRecenter * lMatMov * lMatRot * lMatSpin  * lMatGrow * lMatZero;
-            PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
+            PP3d::Mat4 lMatTran  = lMatRecenter * lMatMov * lMatRot * lMatSpin  * lMatGrow * lMatZero;
+            PP3d::PolyPtr lShape = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
                                                                        CloseRevol::No,
                                                                        lFlagCloseSeg    ? CloseSeg::Yes    : CloseSeg::No,
                                                                        lFlagCloseSegEnd ? CloseSegEnd::Yes : CloseSegEnd::No,
@@ -469,7 +469,7 @@ namespace M3d {
                                                                        CloseLow::No );
             if( lShape != nullptr )
               {
-                TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Spiral", lShape ) );  
+                TheInput.swapCurrentCreation( new PP3d::Object( "Spiral", ObjectType::ObjPoly, lShape ) );  
               }
           }
         else

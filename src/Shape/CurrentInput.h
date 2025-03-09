@@ -16,20 +16,18 @@
 
 #include "UniqueId.h"
 #include "Object.h"
-#include "ObjectPolylines.h"
-#include "ObjectLine.h"
 
 #include "SubDiv.h"
-#include "Spline/BSpline.h"
+// #include "Spline/BSpline.h"
 
 
 namespace PP3d {
   //************************************
   class CurrentInput {
 
-    Object               * cCurrentCreation=nullptr;
+    ObjectPtr              cCurrentCreation=nullptr;
     
-    ObjectPolylines      * cCurrentLine=nullptr;
+    ObjectPtr              cCurrentLine=nullptr;
     static const EntityId  kMinCurrentLineId = 0xF00000; 
     EntityId               cCurrentLineId = kMinCurrentLineId;  
     int                    cCurrentLineSelectPoint = -1;  
@@ -122,8 +120,8 @@ namespace PP3d {
   private:
 
 
-    ObjectPolylines*     cCurrentPoint = nullptr;
-    ObjectPolylines*     cCurrentPointObject = nullptr;
+    ObjectPtr     cCurrentPoint = nullptr;
+    ObjectPtr     cCurrentPointObject = nullptr;
 
 
   public:
@@ -139,18 +137,18 @@ namespace PP3d {
 
 
 		
-    void             viewCurrentPoint( Point3d & pPt );
-    void             hideCurrentPoint();
-    void             addPointToCurrentLine( Point3d pPt );
-    void             delLastPoint();
-    void             delAllPoint();
-    GLuint           getNbCurrentPoints();
-    ObjectFacet *    convertCurrentLineToFacet(DataBase & iBase);
-    ObjectPoly *     convertCurrentLineToFacetPoly(DataBase & iBase);
-    ObjectPoly *     convertCurrentLineToBiFacetPoly(DataBase & iBase);
-    ObjectPolylines* convertCurrentLineToPolylines(DataBase & iBase);
-    ObjectLine *     convertCurrentLineToLine(DataBase & iBase);
-    ObjBSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
+    void      viewCurrentPoint( Point3d & pPt );
+    void      hideCurrentPoint();
+    void      addPointToCurrentLine( Point3d pPt );
+    void      delLastPoint();
+    void      delAllPoint();
+    GLuint    getNbCurrentPoints();
+    ObjectPtr convertCurrentLineToFacet(DataBase & iBase);
+    ObjectPtr convertCurrentLineToFacetPoly(DataBase & iBase);
+    ObjectPtr convertCurrentLineToBiFacetPoly(DataBase & iBase);
+    ObjectPtr convertCurrentLineToPolylines(DataBase & iBase);
+    ObjectPtr convertCurrentLineToLine(DataBase & iBase);
+    //    Obj2BSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
     
     bool isCurrentPoints()   { return cCurrentLine     != nullptr; }
     bool isCurrentCreation() { return cCurrentCreation != nullptr; }
@@ -170,7 +168,7 @@ namespace PP3d {
       return false;
     }
     
-    ObjectPolylines* getObjectCurrentLine()
+    ObjectPtr getObjectCurrentLine()
     {
       return cCurrentLine;
     }    

@@ -3,7 +3,7 @@
 
 
 #include "Shape/Entity.h"
-#include "Shape/ObjectPoly.h"
+#include "Shape/Object.h"
 #include "Shape/SortVisitor.h"
 #include "Shape/Entity.h"
 
@@ -107,15 +107,16 @@ namespace M3d {
     void            setPos3d();
 
   protected:
-    PP3d::Poly       * cShapeMagnet=nullptr;
-    PP3d::ObjectPoly * cObjectPoly=nullptr;
- 
+    PP3d::Poly       *cShapeMagnet=nullptr;
+    //  PP3d::ObjectPoly * cObjectPoly=nullptr;            // 222 
+    PP3d::Object *    cObjectPoly=nullptr;
+
     
   public:
     PP3d::Poly       * getMyShape ()                            { return cShapeMagnet; }
-    PP3d::ObjectPoly * getMyObject()                            { return cObjectPoly;  }
+    PP3d::Object     * getMyObject()                            { return cObjectPoly;  }
     void               setMyShape (PP3d::Poly       * iShape)   { cShapeMagnet = iShape; }
-    void               setMyObject(PP3d::ObjectPoly * iObject)  { cObjectPoly  = iObject; }
+    void               setMyObject(PP3d::Object     * iObject)  { cObjectPoly  = iObject; }
     void               prepareDrawMagnet();
 
     bool               isUsingX() const{ return cFlagX;}

@@ -176,9 +176,9 @@ namespace M3d{
           // METTRE Dyn_cast !!!
           
         case PP3d::ShapeType::Object :
-          if( ((PP3d::ObjectPtr)iObj)->getObjType() ==  PP3d::ObjectType::ObjLine )
+          if( iObj->getObjType() ==  PP3d::ObjectType::ObjLine )
             {
-              return setCurrentAxis( ((PP3d::ObjectLinePtr)iObj)->getLine());
+              return setCurrentAxis( dynamic_cast<PP3d::ObjectPtr>(iObj)->getLine());
             }
         default: ;
         }

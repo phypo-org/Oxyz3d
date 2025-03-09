@@ -171,14 +171,14 @@ namespace M3d {
       // avec, par contre a la fin il faudrait vraiment faire
       // la modification sur les points (on est dans un modeleur, pas un jeu !)
 
-      PP3d::Poly* lShape = PP3d::PrimitivFactory::Create( cMyType, cName, & lParam);
+      PP3d::PolyPtr lShape = PP3d::PrimitivFactory::Create( cMyType, cName, & lParam);
 
       if( lShape == nullptr )
 	{
 	  std::cout << "Shape is null" << std::endl;
 	  return;
 	}
-      TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Primitive", lShape ) );  
+      TheInput.swapCurrentCreation( new PP3d::Object( "Primitive", PP3d::ObjectType::ObjPoly, lShape ));  
 
       //  lShape->move(lPos );
       		

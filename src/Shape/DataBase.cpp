@@ -1,9 +1,7 @@
 #include "DataBase.h"
 
-#include "ObjectLine.h"
-#include "ObjectFacet.h"
-#include "ObjectPoly.h"
-#include "ObjectLine.h"
+#include "Object.h"
+
 
 
 #include "ViewProps.h"
@@ -39,7 +37,7 @@ namespace PP3d {
     std::string lName;
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::OCTO, lName); 
-      Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
+      Object*  lObj = new Object2Poly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, 5, -5 ));
       lObj->rename( "Octo test");
@@ -47,7 +45,7 @@ namespace PP3d {
 		
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::DODEC, lName );			
-      Object*   lObj = new ObjectPoly( lShape->getStrType(), lShape 	);
+      Object*   lObj = new Object2Poly( lShape->getStrType(), lShape 	);
       addObject( lObj );
       lObj->move( Point3d( -5, 5, 5 ));
       lObj->rename( "Dodec test");
@@ -55,7 +53,7 @@ namespace PP3d {
 		
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::ICOSAHED, lName);			
-      Object*   lObj = new PP3d::ObjectPoly( lShape->getStrType(), lShape );
+      Object*   lObj = new PP3d::Object2Poly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, -5, 5 ));
       lObj->rename( "Ico test");
@@ -74,7 +72,7 @@ namespace PP3d {
 			
       Poly* lShape =lParam.finish(1);
 			
-      Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
+      Object*  lObj = new Object2Poly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( iPos, iPos, iPos ));
       lObj->rename( "Icosahedron 2 0.35 ");
@@ -86,7 +84,7 @@ namespace PP3d {
 			
       Poly* lShape =lParam.finish(iPos);
 			
-      Object*  lObj = new ObjectPoly( lShape->getStrType(), lShape );
+      Object*  lObj = new Object2Poly( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( iPos, iPos, -iPos ));
       lObj->rename( "Octahedron 2 0.35 ");

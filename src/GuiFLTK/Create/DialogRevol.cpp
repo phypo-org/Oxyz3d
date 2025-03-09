@@ -355,7 +355,7 @@ namespace M3d {
         
 	if( lShape != nullptr )
 	  {
-	    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Revol", lShape ) );  
+	    TheInput.swapCurrentCreation( new PP3d::Object( "Revol", PP3d::ObjectType::ObjPolyline, lShape ) );  
 	  }
       }
 	

@@ -61,7 +61,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execPoint( Point* pPoint )
+    virtual void execPoint( PointPtr pPoint )
     {
       //std::cout << '.' << std::flush;
       if( cAcceptDoublon == false )
@@ -76,7 +76,7 @@ namespace PP3d{
       cSetAllEntity.insert( pPoint );
     }
     //--------------------------------
-    virtual void execBeginLine ( Line* pLine)
+    virtual void execBeginLine ( LinePtr pLine)
     {
       //std::cout << '-' << std::flush;
       if( cAcceptDoublon == false )
@@ -91,7 +91,7 @@ namespace PP3d{
       cSetAllEntity.insert( pLine );
     }		
     //--------------------------------
-    virtual void execBeginFacet( Facet* pFacet )
+    virtual void execBeginFacet( FacetPtr pFacet )
     {
       //std::cout << 'o' << std::flush;
       if( cAcceptDoublon == false )
@@ -106,7 +106,7 @@ namespace PP3d{
       cSetAllEntity.insert(pFacet  );
     }		
     //--------------------------------
-    virtual void execBeginPoly ( Poly* pPoly )
+    virtual void execBeginPoly ( PolyPtr pPoly )
     {
       //std::cout << 'p' << std::flush;
       if( cAcceptDoublon == false )
@@ -121,7 +121,7 @@ namespace PP3d{
       cSetAllEntity.insert(pPoly  );
     }		
     //--------------------------------
-    virtual void execBeginObject( Object* pObject)
+    virtual void execBeginObject( ObjectPtr pObject)
     {
       //std::cout << " -obj- " << std::flush;
       if( cAcceptDoublon == false )
@@ -166,7 +166,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execPoint( Point* pPoint )
+    virtual void execPoint( PointPtr pPoint )
     {
       //std::cout << '.' << std::flush;
       if( cAcceptDoublon == false )
@@ -199,7 +199,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execPoint( Point* pPoint )
+    virtual void execPoint( PointPtr pPoint )
     {
       //std::cout << '.' << std::flush;
       if( cAcceptDoublon == false )
@@ -212,7 +212,7 @@ namespace PP3d{
       cSetPoints.insert( pPoint );
     }
     //--------------------------------
-    virtual void execBeginLine ( Line* pLine)
+    virtual void execBeginLine ( LinePtr pLine)
     {
       //std::cout << '-' << std::flush;
       if( cAcceptDoublon == false )
@@ -243,7 +243,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execBeginLine ( Line* pLine)
+    virtual void execBeginLine ( LinePtr pLine)
     {
       //std::cout << '-' << std::flush;
       if( cAcceptDoublon == false )
@@ -275,7 +275,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execPoint( Point* pPoint )
+    virtual void execPoint( PointPtr pPoint )
     {
       //std::cout << '.' << std::flush;
       if( cAcceptDoublon == false )
@@ -288,7 +288,7 @@ namespace PP3d{
       cSetPoints.insert( pPoint );
     }
     //--------------------------------
-    virtual void execBeginFacet( Facet* pFacet )
+    virtual void execBeginFacet( FacetPtr pFacet )
     {
       //std::cout << 'o' << std::flush;
       if( cAcceptDoublon == false )
@@ -317,7 +317,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execBeginFacet( Facet* pFacet )
+    virtual void execBeginFacet( FacetPtr pFacet )
     {
       //std::cout << 'o' << std::flush;
       if( cAcceptDoublon == false )
@@ -344,7 +344,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execBeginPoly ( Poly* pPoly )
+    virtual void execBeginPoly ( PolyPtr pPoly )
     {
       //std::cout << 'p' << std::flush;
       if( cAcceptDoublon == false )
@@ -372,7 +372,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execBeginObject( Object* pObject)
+    virtual void execBeginObject( ObjectPtr pObject)
     {
       //std::cout << " -obj- " << std::flush;
       if( cAcceptDoublon == false )
@@ -393,8 +393,8 @@ namespace PP3d{
     bool cAcceptDoublon;
   public:
 
-    std::vector<Entity*>   cVectAllEntity; // contient tout
-    std::set<Entity*>      cSetAllEntity; // contient tout
+    std::vector<EntityPtr>   cVectAllEntity; // contient tout
+    std::set<EntityPtr>      cSetAllEntity; // contient tout
    
     //--------------------------------
     SortVisitorEntity( bool iAcceptDoublon = false)
@@ -402,7 +402,7 @@ namespace PP3d{
     {
     }
     //--------------------------------
-    virtual void execPoint( Point* pPoint )
+    virtual void execPoint( PointPtr pPoint )
     {
       //std::cout << '.' << std::flush;
       if( cAcceptDoublon == false )
@@ -414,7 +414,7 @@ namespace PP3d{
       cSetAllEntity.insert( pPoint );
     }
     //--------------------------------
-    virtual void execBeginLine ( Line* pLine)
+    virtual void execBeginLine ( LinePtr pLine)
     {
       //std::cout << '-' << std::flush;
       if( cAcceptDoublon == false )
@@ -427,7 +427,7 @@ namespace PP3d{
       cSetAllEntity.insert( pLine );
     }		
     //--------------------------------
-    virtual void execBeginFacet( Facet* pFacet )
+    virtual void execBeginFacet( FacetPtr pFacet )
     {
       //std::cout << 'o' << std::flush;
       if( cAcceptDoublon == false )
@@ -440,7 +440,7 @@ namespace PP3d{
       cSetAllEntity.insert(pFacet  );
     }		
     //--------------------------------
-    virtual void execBeginPoly ( Poly* pPoly )
+    virtual void execBeginPoly ( PolyPtr pPoly )
     {
       //std::cout << 'p' << std::flush;
       if( cAcceptDoublon == false )
@@ -453,7 +453,7 @@ namespace PP3d{
       cSetAllEntity.insert(pPoly  );
     }		
     //--------------------------------
-    virtual void execBeginObject( Object* pObject)
+    virtual void execBeginObject( ObjectPtr pObject)
     {
       //std::cout << " -obj- " << std::flush;
       if( cAcceptDoublon == false )

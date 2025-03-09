@@ -8,6 +8,7 @@
 #include "GLUtility.h"
 #include "Selection.h"
 #include "PP3dType.h"
+#include "DataBase.h"
 
 #include "EntityVisitorPicking.h"
 
@@ -62,15 +63,19 @@ namespace PP3d{
     internalSetGroup( iGroup );
   }
   //---------------------------
-  Object::Object(  const char*pName, ClassType  iClass )
+  Object::Object(  const char*pName, ObjectType iObjType, EntityPtr iEntity, ClassType iClassType)
     :cName(pName)
-    ,cClassType( iClass )
+    ,cObjectType(iObjType) 
+    ,cClassType( iClassType )
+    ,cShape( iEntity )
     ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
   {
   }
-  Object::Object(  const std::string& pName,  ClassType  iClass)
-    :cName(pName)
-    ,cClassType( iClass )
+  Object::Object(  const std::string& pName, ObjectType iObjType, EntityPtr iEntity, ClassType iClassType)
+    :cName( pName )
+    ,cObjectType(iObjType) 
+    ,cClassType( iClassType )
+    ,cShape( iEntity )
     ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
  {
   }
@@ -355,6 +360,17 @@ namespace PP3d{
          << ':'<<  getName()  ;
     return lStr.str(); // Va faire temporaire du string 
   }
-	
+  //---------------------------
+  EntityPtr Object::setShape( EntityPtr iShape )
+  {
+    EntityPtr lTmp = iShape;
+    
+    DataBase::RemoveOwner( lTmp, this );
+    
+    cShape = iShape;      
+    DataBase::AddOwner( cShape, this );
+    
+    return lTmp;
+  }  
  //********************************
 }

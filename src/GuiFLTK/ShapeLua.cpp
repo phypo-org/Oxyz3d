@@ -47,14 +47,14 @@ namespace M3d {
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToFacet, 0);
   
-  PP3d::ObjectFacet* lObj = TheInput.convertCurrentLineToFacet(TheBase);
+  PP3d::ObjectPtr lObj = TheInput.convertCurrentLineToFacet(TheBase);
   lua_pushinteger( pLua, lObj->getId() );
   
   CLUA_CLOSE_CODE(0)
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
   
-  PP3d::ObjectPolylines* lObj= TheInput.convertCurrentLineToPolylines(TheBase);
+  PP3d::ObjectPtr lObj= TheInput.convertCurrentLineToPolylines(TheBase);
   lua_pushinteger( pLua, lObj->getId() );
 
   CLUA_CLOSE_CODE(0)

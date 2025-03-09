@@ -388,12 +388,12 @@ namespace M3d {
                  
             if( iDelete )
               {
-                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
-                TheBase.deleteEntity( lEntity );
+                //                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                //                TheBase.deleteEntity( lEntity );
               }
             else
               {
-                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                //                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
               }
             
             if( lObj != nullptr )
@@ -1697,6 +1697,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
+                  /*
                   PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
                                                                               MyPref.cBSplineMaille, false );
                   if( lShape != nullptr )
@@ -1705,6 +1706,7 @@ namespace M3d {
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
                     }
+                  */
                 }
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
@@ -1713,8 +1715,8 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
-                  PP3d::Object* lShape =TheInput.convertCurrentLineToBSpline(TheBase,
-                                                                             MyPref.cBSplineMaille, true );
+                  /*                  PP3d::ObjectPtr lShape =TheInput.convertCurrentLineToBSpline(TheBase,
+                                                                          MyPref.cBSplineMaille, true );
                   if( lShape != nullptr )
                     {
                       TheBase.addObject( lShape );
@@ -1722,6 +1724,7 @@ namespace M3d {
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
                     }
+                  */
                 }
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);

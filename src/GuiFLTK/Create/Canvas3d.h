@@ -5,10 +5,8 @@
 
 
 #include "Shape/DataBase.h"
-#include "Shape/ObjectFacet.h"
-#include "Shape/ObjectLine.h"
-#include "Shape/Point3d.h"
-#include "Shape/Entity.h"
+#include "Shape/Object.h"
+
 
 
 #include "Modif/VisitorModif.h"

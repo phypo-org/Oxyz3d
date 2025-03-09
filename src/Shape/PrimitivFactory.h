@@ -6,8 +6,8 @@
 #include <cmath>
 #include <sstream>
 
-#include "ObjectPoly.h"
 #include "PP3dType.h"
+#include "Object.h"
 
 namespace PP3d{
 

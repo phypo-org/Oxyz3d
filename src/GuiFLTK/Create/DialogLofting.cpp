@@ -207,7 +207,8 @@ namespace M3d {
     // Calling when command's interface change
     
     void maj()
-    {     
+    {
+#ifdef TOTO
       std::cout << "DialogLofting::maj0 " <<std::endl;
          
    
@@ -393,12 +394,14 @@ namespace M3d {
                     lPoint->get() *= lMatTran;                
                   }
               }
-            TheCreat.setDatabaseTmp( luTmpBase ); 
+            TheCreat.setDatabaseTmp( luTmpBase );
+  
           }
       
       //--------------------------------------------------
       
-      TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);    
+      TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+#endif
     }
     //----------------------------------------
     
@@ -472,7 +475,7 @@ namespace M3d {
               lFac->removeFromOwners();
               TheBase.freeFacet( lFac );
               
-              PP3d::ObjectPoly* lObjPoly =  (PP3d::ObjectPoly*)TheInput.getCurrentCreation();
+              PP3d::ObjectPtr lObjPoly = TheInput.getCurrentCreation();
               PP3d::PolyPtr lPoly = lObjPoly->getPoly();
               TheInput.swapCurrentCreation( nullptr, false );
 

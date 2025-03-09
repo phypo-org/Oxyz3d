@@ -27,7 +27,63 @@
 namespace PP3d {
 
   
+  enum ClassType { ClassTypeVoid=0, ClassTypeObj=1, ClassTypeGeo=2, ClassTypeAll=0xFFFF };
+  
+  inline static const char* GetStrClassType( ClassType pType )
+  {
+    switch( pType )
+      {
+      case ClassType::ClassTypeVoid:  return "ClassTypeVoid";
+      case ClassType::ClassTypeObj:   return "ClassTypeObj";
+      case ClassType::ClassTypeGeo:   return "ClassTypeGeo";
+      case ClassType::ClassTypeAll:   return "ClassTypeAll";
+      }
+    return "ClassType::unknown";
+  }
+		
+  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
+  inline static const char* GetStrObjectType( ObjectType pType )
+  {
+    switch( pType )
+      {
+      case ObjectType::ObjPoint:    return "ObjPoint";
+      case ObjectType::ObjLine:     return "ObjLine";
+      case ObjectType::ObjFacet:    return "ObjFacet";
+      case ObjectType::ObjPoly:     return "ObjPoly";
+      case ObjectType::ObjPolyline: return "ObjPolyline";
 
+      case ObjectType::ObjBSpline: return "ObjBSpline";
+      case ObjectType::ObjNull:    return "Unknown";
+      }
+    return "ObjectType::unknown";
+  }
+	
+  inline static ObjectType GetObjectTypeFromStr( const char* pStr )
+  {
+    if( strcmp( pStr, "ObjPoint" ) == 0 )
+      return ObjectType::ObjPoint;
+    else		if( strcmp( pStr, "ObjLine" ) == 0 )
+      return ObjectType::ObjLine;
+    else		if( strcmp( pStr, "ObjFacet" ) == 0 )
+      return ObjectType::ObjFacet;
+    else		if( strcmp( pStr, "ObjPoly" ) == 0 )
+      return ObjectType::ObjPoly;
+    else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
+      return ObjectType::ObjPolyline;
+    else		if( strcmp( pStr, "ObjBSpline" ) == 0 )
+      return ObjectType::ObjBSpline;
+    return ObjectType::ObjNull;
+  }
+  
+
+	
+  inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
+  {
+    pOs <<   GetStrObjectType( pType );
+    return pOs;
+  }
+
+  
   enum class Compute{
     Nothing,
     FacetNormal,
@@ -73,7 +129,9 @@ namespace PP3d {
   	         
   public:
     virtual ShapeType getType() const=0;
-  
+    virtual ObjectType getObjType()     const  { return ObjectType::ObjNull; }
+
+    
     Entity()	 	      
     {
     }

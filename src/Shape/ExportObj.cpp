@@ -2,10 +2,7 @@
 
 #include "DataBase.h"
 
-#include "ObjectLine.h"
-#include "ObjectFacet.h"
-#include "ObjectPolylines.h"
-#include "ObjectPoly.h"
+#include "Object.h"
 
 
 #include <sstream>
@@ -77,7 +74,6 @@ namespace PP3d {
 	{
 	  std::cout << "      ExportObj::save Poly" << std::endl;
 
-	  auto lEntityPoly = dynamic_cast<ObjectPoly*>(lEntity);
 	  cOut << "o " << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
 									
 	  VisitorSavPoints lVisPts( *this );
@@ -150,7 +146,7 @@ namespace PP3d {
            // On ecrit l'ancien objet dans la base
 	      if( lPoly != nullptr )
 		{
-		  ObjectPoly * lObj = new ObjectPoly( lNameObj, lPoly );				
+		  Object2Poly * lObj = new Object2Poly( lNameObj, lPoly );				
 		  pData.addObject( lObj );
 		  //	lPoly = nullptr;
 		}
@@ -256,7 +252,7 @@ namespace PP3d {
 	}  //===================== while( cIn.good() ) ================
       if( lPoly != nullptr )
         {
-          Object* lObj = new ObjectPoly( lNameObj.c_str(), lPoly );
+          Object* lObj = new Object2Poly( lNameObj.c_str(), lPoly );
           pData.addObject( lObj );
         }
     }

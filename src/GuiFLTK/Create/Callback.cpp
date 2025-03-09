@@ -21,8 +21,7 @@
 
 
 #include "Shape/DataBase.h"
-#include "Shape/ObjectFacet.h"
-#include "Shape/ObjectLine.h"
+#include "Shape/Object.h"
 #include "Shape/UndoHistory.h"
 #include "Shape/SortVisitor.h"
 #include "Shape/Selection.h"

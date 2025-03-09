@@ -3,10 +3,7 @@
 #include "DataBase.h"
 #include "Selection.h"
 
-#include "ObjectLine.h"
-#include "ObjectFacet.h"
-#include "ObjectPolylines.h"
-#include "ObjectPoly.h"
+#include "Object.h"
 
 /*
   const char* TokPoint="Point:";

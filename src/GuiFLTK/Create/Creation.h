@@ -207,7 +207,7 @@ namespace M3d{
     {
       if( lA != lB )
 	{
-          PP3d::ObjectLinePtr lAxis = MakeObjectLine( "Axis", lA, lB, PP3d::ClassTypeGeo );
+          PP3d::ObjectPtr lAxis = MakeObjectLine( "Axis", lA, lB, PP3d::ClassTypeGeo );
           
 	  cuDatabase->addObject( lAxis );
 	  redrawObjectTree();
@@ -220,7 +220,7 @@ namespace M3d{
     {
       if(lCenter->get() != lVect->get() )
 	{
-	  PP3d::ObjectLinePtr lAxis= MakeObjectLine( "Axis", lCenter->get(), lVect->get(), PP3d::ClassTypeGeo );
+	  PP3d::ObjectPtr lAxis= MakeObjectLine( "Axis", lCenter->get(), lVect->get(), PP3d::ClassTypeGeo );
           
 	  cuDatabase->addObject( lAxis);
 	  redrawObjectTree();
@@ -232,8 +232,10 @@ namespace M3d{
     //---------------------------
     bool setCurrentAxis(PP3d::EntityPtr iObj);   
     //---------------------------
-    bool setCurrentAxis(PP3d::ObjectLinePtr iObj) {
-      return setCurrentAxis( iObj->getLine() );
+    bool setCurrentAxis(PP3d::ObjectPtr iObj) {
+      
+      if( iObj->is( PP3d::ObjectType::ObjLine ) )
+        return setCurrentAxis( iObj->getLine());
     }
      //---------------------------
     bool setCurrentAxis(PP3d::LinePtr iLine) {

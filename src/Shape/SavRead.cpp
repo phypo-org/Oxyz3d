@@ -3,10 +3,7 @@
 #include "DataBase.h"
 #include "Selection.h"
 
-#include "ObjectLine.h"
-#include "ObjectFacet.h"
-#include "ObjectPolylines.h"
-#include "ObjectPoly.h"
+#include "Object.h"
 
 #include "Utils/PPContainer.h"
 
@@ -403,24 +400,26 @@ namespace PP3d {
 
 		      EntityPtr lSubPtr = lLocalDico.findObj(lSubId);
                       if( lSubPtr )
-                        {                        
-                          switch( GetObjectTypeFromStr( lSubType.c_str() ))
+                        {
+                          ObjectType  lObjType = GetObjectTypeFromStr( lSubType.c_str());
+                          
+                          switch( lObjType )
                             {
                             case ObjectType::ObjPoint: break;
                             case ObjectType::ObjLine:
-                              lObj = new ObjectLine( lName, dynamic_cast<LinePtr>(lSubPtr));
+                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
                               break;
                             case ObjectType::ObjFacet:
-                              lObj = new ObjectFacet( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
                               break;
                             case ObjectType::ObjPoly:
-                              lObj = new ObjectPoly( lName, dynamic_cast<PolyPtr>(lSubPtr));
+                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
                               break;
                             case ObjectType::ObjPolyline:
-                              lObj = new ObjectPolylines( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
                               break;
                             case ObjectType::ObjBSpline:
-                              lObj = new ObjectPolylines( lName, dynamic_cast<FacetPtr>(lSubPtr));
+                              //                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
                               break;
                             case ObjectType::ObjNull: break;       				
                             }

@@ -115,7 +115,7 @@ namespace M3d {
 
     PP3d::Poly* lShape = PP3d::PrimitivFactory::CreateSphere( &lParam, lName );
     
-    TheInput.swapCurrentCreation( new PP3d::ObjectPoly( "Primitiv", lShape ) );  
+    TheInput.swapCurrentCreation( new PP3d::Object( "Primitiv", ObjectType::ObjPoly, lShape ));  
 
      
     //  lShape->move(lPos );
@@ -250,7 +250,7 @@ namespace M3d {
                                                    lName, &lParam);
     if( cShapeMagnet != nullptr )
       {
-        cObjectPoly =  new PP3d::ObjectPoly( lName, cShapeMagnet );    
+        cObjectPoly =  new PP3d::Object( lName, ObjectType::ObjPoly, cShapeMagnet );    
         TheInput.swapCurrentCreation( cObjectPoly  );
       }
     

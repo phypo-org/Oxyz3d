@@ -15,9 +15,6 @@
 #include "Entity.h"
 
 #include "UniqueId.h"
-#include "Object.h"
-#include "ObjectPolylines.h"
-#include "ObjectLine.h"
 
 #include "SubDiv.h"
 
@@ -195,7 +192,16 @@ namespace PP3d {
     void freeLine( LinePtr   ioLine );
     void freeFacet( FacetPtr ioFacet);
     void freePoly( PolyPtr  ioPoly);
-  };
+ 
+  static void AddOwner( EntityPtr iEntity, ObjectPtr iObj )
+  {
+    if( iEntity ) iEntity->addOwner( iObj );
+  }
+  static void RemoveOwner( EntityPtr iEntity, ObjectPtr iObj )
+  {
+    if( iEntity ) iEntity->removeOwner( iObj );
+  }
+   };
   //************************************
 }
 
