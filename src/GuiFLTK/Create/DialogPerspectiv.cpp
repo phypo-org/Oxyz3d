@@ -280,7 +280,8 @@ namespace M3d {
       myWindow->size(  lW+lX*3, lY );
       myWindow->end();
 		
-      myWindow->show( 0, nullptr);
+      myWindow->show();
+      //0, nullptr);
       maj();
 
 

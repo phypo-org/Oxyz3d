@@ -1,4 +1,3 @@
-#include "config.h"
 
 
 #include "GuiFLTK/Win3dBase.h"
@@ -1124,8 +1123,8 @@ namespace M3d {
 
     
     end();
-    show(0,nullptr);
-	
+    show(); 
+
     cuCanvas3d->show();
     resizable(*this);
   }

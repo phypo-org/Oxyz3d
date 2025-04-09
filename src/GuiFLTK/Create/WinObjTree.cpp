@@ -277,7 +277,8 @@ namespace M3d {
     cTree->callback((Fl_Callback*)CallBackTree, (void*)(this));
     cWin->end();
     cWin->resizable(*cWin);
-    cWin->show( 0, nullptr);
+    cWin->show();
+    // 0, nullptr);
     //   Fl::run();
   }
   //--------------------------------------------
@@ -493,7 +494,8 @@ namespace M3d {
 	      case FL_TREE_REASON_DRAGGED: ;
 	      case FL_TREE_REASON_DESELECTED: ;                
 	      case FL_TREE_REASON_NONE:;
-                //     case FL_TREE_REASON_RESELECTED : ;// for fltk 1.4
+                
+              case FL_TREE_REASON_RESELECTED : ;// for fltk 1.4
 	      }
 	  }
       }

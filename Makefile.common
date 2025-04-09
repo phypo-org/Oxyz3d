@@ -214,4 +214,4 @@ INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   $(INC_FLTK) $(
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ $(LIB_FLTK) $(LIB_GTK)  $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ $(LIB_FLTK) $(LIB_GTK)  $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL) -lz

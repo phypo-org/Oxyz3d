@@ -343,7 +343,8 @@ namespace M3d {
 
     myWindow->end();
 		
-    myWindow->show( 0, nullptr);
+    myWindow->show();
+    //0, nullptr);
     //  maj();
 
 

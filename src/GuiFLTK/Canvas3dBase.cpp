@@ -31,7 +31,7 @@ namespace M3d {
     ,cGridMode( ModeGrid::GRID_2D )
      //   ,cDebug(false)	
   { 
-    gl_font( FL_HELVETICA_BOLD, 24);
+    fl_font( FL_HELVETICA_BOLD, 24);
     cKamera.initGL();
     cKamera.raz45();
 
