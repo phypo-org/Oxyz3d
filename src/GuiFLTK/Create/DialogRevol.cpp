@@ -78,6 +78,19 @@ namespace M3d {
     {
        std::cout << "*********************************** DialogRevol::init  **************************" << std::endl;
      cMyType = pType;
+
+     cMyWindow=nullptr;
+     cSliderPas= nullptr;
+     cSliderAngle= nullptr;
+     cSliderPosX= nullptr;
+     cSliderPosY= nullptr;
+     cSliderPosZ= nullptr;
+     cCheckTore= nullptr; 
+     cCheckSeal= nullptr;
+     cCheckGear     = nullptr; 
+     cGearThickness = nullptr; 
+     cGearFreq1 = nullptr; 
+     cGearFreq2 = nullptr; 
  
  
 
@@ -355,7 +368,7 @@ namespace M3d {
         
 	if( lShape != nullptr )
 	  {
-	    TheInput.swapCurrentCreation( new PP3d::Object( "Revol", PP3d::ObjectType::ObjPolyline, lShape ) );  
+	    TheInput.swapCurrentCreation( new PP3d::Object( "Revol", ObjectType::ObjPoly, lShape ) );  
 	  }
       }
 	

@@ -1,3 +1,5 @@
+- REMETTRE LES SPLINE (ET LES PATH (grep AFAIRE) EN MARCHE) 
+
 - Enlever les ids des objets. les générer à chque fois pour la
   selection
 

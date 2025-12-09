@@ -152,6 +152,8 @@ namespace PP3d {
       }
     else
       {
+        std::cout << "******   visitorDrawLine::execBeginLine" << std::endl;
+          
 	cViewProps.lineGL( pLine->isSelect(), pLine->isHighlight(), pLine->isMagnet() );
 	glBegin( GL_LINES );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );

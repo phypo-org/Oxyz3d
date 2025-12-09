@@ -41,7 +41,7 @@ namespace M3d {
 
     Fl_Double_Window*         cMyWindow = nullptr;
 
-    std::unique_ptr<MySlider> cSliderPas;
+    MySlider* cSliderPas = nullptr;
 	
   public:
     long     cVal=0;
@@ -73,6 +73,8 @@ namespace M3d {
     //----------------------------------------
     void init( const char* iLabel, long iVal  )
     {
+      cMyWindow = nullptr;
+      cSliderPas = nullptr;
       int lX = 20;
       int lY= 30;
       int lW = 400;
@@ -84,7 +86,7 @@ namespace M3d {
       cMyWindow->callback((Fl_Callback*)CancelCB, this);
       cMyWindow->position( 100, 100) ;
    
-      cSliderPas =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "value", SliderCB, nullptr, 2, 100 ));
+      cSliderPas =  new MySlider(lX+5, lY, lW, lH, "value", SliderCB, nullptr, 2, 100 );
       cSliderPas->value( iVal );
     
       lY += lYStep;

@@ -76,13 +76,13 @@ SPLIB_OBJS=$(notdir  $(patsubst %.cpp, %.o,  $(SPLIB_SRCS) ) )
 
 # L'ensemble des .o pour le repertoires objs
 OBJECTS=$(addprefix $(OBJDIR), $(SLIB_OBJS) $(GLIB_OBJS) $(WLIB_OBJS) $(LLIB_OBJS) $(ULIB_OBJS) $(MLIB_OBJS))
-# )
+# $(SPLIB_OBJS))
 
 
 # Les chemins ou chercher les .cpp
 #----------------------------------
 vpath %.cpp $(WLIB) $(GLIB) $(SLIB) $(LLIB) $(ULIB) $(MLIB)
-#  $(SPLIB)
+# $(SPLIB) 
 
 
 

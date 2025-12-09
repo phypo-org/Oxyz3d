@@ -65,24 +65,24 @@ namespace PP3d {
   // dans le nom et/ou les commentaires 
   //--------------------------------------
 
-  bool MyExportObj::save( Object* lEntity )
+  bool MyExportObj::save( Object* lObj )
   {				
     std::cout << "   ExportObj::save Entity" << std::endl;
-    switch( lEntity->getObjType() )
+    switch( lObj->getObjType() )
       {
       case ObjectType::ObjPoly:
 	{
 	  std::cout << "      ExportObj::save Poly" << std::endl;
 
-	  cOut << "o " << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
+	  cOut << "o " << lObj->getName() << '_' <<  lObj->getObjType() << std::endl;
 									
 	  VisitorSavPoints lVisPts( *this );
-	  lEntityPoly->getPoly()->execVisitor( lVisPts );
-	  cOut << 'g' << lEntity->getName() << '_' <<  lEntity->getObjType() << std::endl;
+	  lObj->execVisitor( lVisPts );
+	  cOut << 'g' << lObj->getName() << '_' <<  lObj->getObjType() << std::endl;
 	  cOut <<  "usemtl default" << std::endl;
 	  cOut << "s 1" <<  std::endl;
 	  VisitorSavFacets lVisFacs( *this );
-	  lEntityPoly->getPoly()->execVisitor( lVisFacs );														}
+	  lObj->execVisitor( lVisFacs );														}
 	break;	
       default: ;
       }
@@ -146,7 +146,7 @@ namespace PP3d {
            // On ecrit l'ancien objet dans la base
 	      if( lPoly != nullptr )
 		{
-		  Object2Poly * lObj = new Object2Poly( lNameObj, lPoly );				
+		  ObjectPtr lObj= new Object( lNameObj, ObjectType::ObjPoly, lPoly );				
 		  pData.addObject( lObj );
 		  //	lPoly = nullptr;
 		}
@@ -252,7 +252,7 @@ namespace PP3d {
 	}  //===================== while( cIn.good() ) ================
       if( lPoly != nullptr )
         {
-          Object* lObj = new Object2Poly( lNameObj.c_str(), lPoly );
+          Object* lObj = new Object( lNameObj.c_str(), ObjectType::ObjPoly, lPoly );
           pData.addObject( lObj );
         }
     }

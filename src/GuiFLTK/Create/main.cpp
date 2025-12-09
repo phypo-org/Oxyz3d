@@ -379,6 +379,13 @@ int main(int argc, char **argv)
       Creation::Instance().loadModelImage( lVal );	
     }
  
+  if( lArgs.exist( "-demo" ) != -1 )
+    {
+      std::cout << "Running Demos..." << std::endl;
+      Creation::Instance().getDatabase()->demo1();
+      Creation::Instance().getDatabase()->demo2();
+    }
+ 
   
   return Fl::run();
 }

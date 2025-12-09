@@ -91,6 +91,23 @@ namespace M3d {
       cFlagExtrude = iFlagExtrude;
       cMyTypeInput = iTypeInput;
 
+      cMyWindow  = nullptr;
+      cCheckJoin   = nullptr;
+      cCheckClose  = nullptr;
+      cCheckAlign  = nullptr;
+      cLocalChoice = nullptr;
+      cSliderInter   = nullptr;
+      cSliderSpin   = nullptr;
+      cCheckInverseSpin  = nullptr;
+      cSliderGrow   = nullptr;
+      cCheckInverseGrow  = nullptr;
+      cSliderCenterPosX   = nullptr;
+      cSliderCenterPosY   = nullptr;
+      cSliderCenterPosZ   = nullptr;
+      cSliderPosX  = nullptr;
+      cSliderPosY  = nullptr;
+      cSliderPosZ  = nullptr;
+
       int lX = 20;
       int lY = 30;
       int lW = 300;
@@ -207,8 +224,7 @@ namespace M3d {
     // Calling when command's interface change
     
     void maj()
-    {
-#ifdef TOTO
+    {     
       std::cout << "DialogLofting::maj0 " <<std::endl;
          
    
@@ -259,15 +275,17 @@ namespace M3d {
 
   
       PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine()->duplicate();	 
-      ObjBSpline lObjBSpline( "BSplineTmpLofting", lPath, false );
+      Object lObjBSpline( "BSplineTmpLofting", ObjectType::ObjBSpline, lPath ); //, false );
 
       // ObjectPolylines      * lPath = TheInput.getCurrentLine();
       //========= Interpolation par une BSpline  =========
-      if( lParam.cNbInterpol > 0 && TheInput.getNbCurrentPoints() >= 2 )
+      /* AFAIRE 
+        if( lParam.cNbInterpol > 0 && TheInput.getNbCurrentPoints() >= 2 )
         {
           lObjBSpline.makePtsFromPoles( lParam.cNbInterpol );
           lPath = lObjBSpline.getSplinePts();
         }
+      */
       //========= End Interpolation =========
 
 
@@ -283,7 +301,7 @@ namespace M3d {
               PP3d::PolyPtr lShape = TheBase.getNewPoly();          
               lShape->addFacet(lNewFacets);
               
-              PP3d::ObjectPoly* lObjPoly =  new PP3d::ObjectPoly(  "Lofting", lShape );
+              PP3d::Object* lObjPoly=  new PP3d::Object(  "Lofting", ObjectType::ObjPoly, lShape );
               
               std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
               TheInput.swapCurrentCreation( lObjPoly );                  
@@ -394,14 +412,12 @@ namespace M3d {
                     lPoint->get() *= lMatTran;                
                   }
               }
-            TheCreat.setDatabaseTmp( luTmpBase );
-  
+            TheCreat.setDatabaseTmp( luTmpBase ); 
           }
       
       //--------------------------------------------------
       
-      TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
-#endif
+      TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);    
     }
     //----------------------------------------
     
@@ -475,7 +491,7 @@ namespace M3d {
               lFac->removeFromOwners();
               TheBase.freeFacet( lFac );
               
-              PP3d::ObjectPtr lObjPoly = TheInput.getCurrentCreation();
+              PP3d::ObjectPtr  lObjPoly =  (PP3d::ObjectPtr)TheInput.getCurrentCreation();
               PP3d::PolyPtr lPoly = lObjPoly->getPoly();
               TheInput.swapCurrentCreation( nullptr, false );
 

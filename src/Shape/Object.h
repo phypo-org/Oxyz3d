@@ -141,6 +141,11 @@ namespace PP3d {
       cObjectType =  ObjectType::ObjPoly ;
       return setShape( iShape );
     }
+
+    static ObjectPtr CreateNewLine( std::string iName, PP3d::Point3d & iA, PP3d::Point3d & iB, ClassType iClassType=ClassTypeObj)
+    {
+      return new PP3d::Object( "Axe",  ObjectType::ObjLine, MakeLine( iA, iB ), iClassType); 
+    }
     
 
     virtual int recomputeAll(ObjProps&pProps,

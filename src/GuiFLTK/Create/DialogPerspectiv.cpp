@@ -38,20 +38,20 @@ namespace M3d {
 
     Fl_Double_Window* myWindow;
 
-    std::unique_ptr<MySlider> cSliderFovY;	
-    std::unique_ptr<MySlider> cSliderAspect;
-    std::unique_ptr<MySlider> cSliderZNear;
-    std::unique_ptr<MySlider> cSliderZFar;
+    MySlider* cSliderFovY;	
+    MySlider* cSliderAspect;
+    MySlider* cSliderZNear;
+    MySlider* cSliderZFar;
 		
-    std::unique_ptr<MySlider> cSliderSize;	
+    MySlider* cSliderSize;	
 
-    std::unique_ptr<MySlider> cSliderPosX;
-    std::unique_ptr<MySlider> cSliderPosY;
-    std::unique_ptr<MySlider> cSliderPosZ;
+    MySlider* cSliderPosX;
+    MySlider* cSliderPosY;
+    MySlider* cSliderPosZ;
 		
-    std::unique_ptr<MySlider> cSliderRotX;
-    std::unique_ptr<MySlider> cSliderRotY;
-    std::unique_ptr<MySlider> cSliderRotZ;
+    MySlider* cSliderRotX;
+    MySlider* cSliderRotY;
+    MySlider* cSliderRotZ;
 
   public:
 
@@ -190,7 +190,7 @@ namespace M3d {
 	lY += lYStep;
 
 			
-	cSliderFovY =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "FovY", SliderCB, this, 0, 1000 ));
+	cSliderFovY =  new MySlider(lX+5, lY, lW, lH, "FovY", SliderCB, this, 0, 1000 );
 		 
 	lY += lYStep;
 	 
@@ -199,10 +199,10 @@ namespace M3d {
 	//		lY += lYStep;
 
 		
-	cSliderZNear =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Z near", SliderCB, this, 0.1, 100 ));
+	cSliderZNear =  new MySlider(lX+5, lY, lW, lH, "Z near", SliderCB, this, 0.1, 100 );
 	lY += lYStep;
 
-	cSliderZFar=  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Z far", SliderCB, this, 0.1, 1000 ));
+	cSliderZFar=  new MySlider(lX+5, lY, lW, lH, "Z far", SliderCB, this, 0.1, 1000 );
 	lY += lYStep;
 			
 	o->end();
@@ -211,7 +211,7 @@ namespace M3d {
       lY += lYStep;
 
 
-      cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.0000001, 100 ));
+      cSliderSize =  new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.0000001, 100 );
       cSliderSize->value(  (float)cKamera.scale().x()  );
       lY += lYStep;
       lY += lYStep;
@@ -223,13 +223,13 @@ namespace M3d {
 
 	o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	cSliderPosX = std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 ));
+	cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
 	lY += lYStep;
  
-	cSliderPosY =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 ));
+	cSliderPosY =  new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
 	lY += lYStep;
  
-	cSliderPosZ =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 ));
+	cSliderPosZ =  new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
 	lY += lYStep;
 
 	o->end();
@@ -244,13 +244,13 @@ namespace M3d {
 
 	o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-	cSliderRotX = std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, 0, 360 ));
+	cSliderRotX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, 0, 360 );
 	lY += lYStep;
  
-	cSliderRotY =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, 0, 360 ));
+	cSliderRotY =  new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, 0, 360 );
 	lY += lYStep;
  
-	cSliderRotZ =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, 0, 360 ));
+	cSliderRotZ =  new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, 0, 360 );
 	lY += lYStep;
 
 	o->end();

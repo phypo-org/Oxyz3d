@@ -199,18 +199,16 @@ namespace PP3d {
 	    B = lPointsPtr[ lLine*lNbCol     + lCol + 1 ];
 	    //			std::cout << "B:" <<  lLine*lNbCol     + lCol + 1 << std::endl;
 						
-	    C = lPointsPtr[ (lLine+1)*lNbCol + lCol + 1 ];
-	    //			std::cout << "C:" << (lLine+1)*lNbCol + lCol + 1  << std::endl;
-						
-	    D = lPointsPtr[ (lLine+1)*lNbCol + lCol     ];
-	    //			std::cout << "D:" << (lLine+1)*lNbCol + lCol  << std::endl;
-
-
 	    // Fermeture a 360
 	    if( ( iFlagCloseRevol == CloseRevol::Yes)  && lLine == lNbLine-2 )  
 	      {
 		C = lPointsPtr[  lCol + 1 ];
 		D = lPointsPtr[  lCol  ];
+	      }
+	    else
+	      {
+		C = lPointsPtr[ (lLine+1)*lNbCol + lCol + 1 ];
+		D = lPointsPtr[ (lLine+1)*lNbCol + lCol     ];
 	      }
 
 	    if( (iFlagCloseSeg == CloseSeg::Yes) && lCol == 0)

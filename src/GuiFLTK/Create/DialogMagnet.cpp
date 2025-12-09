@@ -47,14 +47,14 @@ namespace M3d {
     Magnet & getMagnet() { return *cMagnet; }
     
     Fl_Double_Window                * cMyWindow    = nullptr  ;
-    std::unique_ptr<MyChoiceButton>   cChoiceDirection ;
-    std::unique_ptr<MyChoiceButton>   cChoiceAction ;
-    std::unique_ptr<MyChoiceButton>   cChoiceAlgo   ;
-    std::unique_ptr<MySlider>         cSliderSize   ;
+    MyChoiceButton *  cChoiceDirection = nullptr;
+    MyChoiceButton *  cChoiceAction = nullptr;
+    MyChoiceButton *  cChoiceAlgo   = nullptr;
+    MySlider       *  cSliderSize   = nullptr;
  
-    std::unique_ptr<MyCheckbutton>    cCheckX;
-    std::unique_ptr<MyCheckbutton>    cCheckY;   
-    std::unique_ptr<MyCheckbutton>    cCheckZ;
+    MyCheckbutton  *  cCheckX = nullptr;
+    MyCheckbutton  *  cCheckY = nullptr;   
+    MyCheckbutton  *  cCheckZ = nullptr;
 
     
 	
@@ -75,6 +75,15 @@ namespace M3d {
     {
       cMagnet = & iMagnet;
       
+      cMyWindow = nullptr;
+      cChoiceDirection = nullptr;
+      cChoiceAction = nullptr;
+      cChoiceAlgo   = nullptr;
+      cSliderSize   = nullptr;
+      cCheckX = nullptr;
+      cCheckY = nullptr;   
+      cCheckZ = nullptr;
+      
       std::cout << "*********************************** DialogMagnet init  **************************" << std::endl;
    
 
@@ -90,14 +99,14 @@ namespace M3d {
       cMyWindow->callback((Fl_Callback*)CloseCB, this);
   
       
-      cChoiceAction= std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX, lY, lW, lH, "Action", ChoiceCB, this ))  ;
+      cChoiceAction= new MyChoiceButton(lX, lY, lW, lH, "Action", ChoiceCB, this )  ;
       cChoiceAction->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceAction->add( "Attrack"); //0
       cChoiceAction->add( "Repel"); //1
       lY += lYStep; 
 
       //  cChoiceAction->value( (int)getMagnet().getAction());
-      cChoiceDirection= std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX, lY, lW, lH, "Dir", ChoiceCB, this ))  ;
+      cChoiceDirection= new MyChoiceButton(lX, lY, lW, lH, "Dir", ChoiceCB, this )  ;
       cChoiceDirection->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceDirection->add( "Free"); //0
       cChoiceDirection->add( "Normal"); //1
@@ -105,7 +114,7 @@ namespace M3d {
 
       lY += lYStep; 
 
-      cChoiceAlgo = std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX, lY, lW, lH, "Algorithm", ChoiceCB, this ))  ;
+      cChoiceAlgo = new MyChoiceButton(lX, lY, lW, lH, "Algorithm", ChoiceCB, this )  ;
       cChoiceAlgo->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceAlgo->add( "Distance proportionnal"); //0
       cChoiceAlgo->add( "Square Distance proportionnal"); //1
@@ -115,7 +124,7 @@ namespace M3d {
       lY += lYStep; 
 
       
-      cSliderSize = std::unique_ptr<MySlider>( new MySlider(lX, lY, lW, lH, "Size of Magnet", SliderCB, this, 0.001, 1000 ));
+      cSliderSize = new MySlider(lX, lY, lW, lH, "Size of Magnet", SliderCB, this, 0.001, 1000 );
       cSliderSize->value( getMagnet().getSize() );
       lY += lYStep;
 	 
@@ -127,15 +136,15 @@ namespace M3d {
           lY += lYStep/2;
 
             
-          cCheckX = std::unique_ptr<MyCheckbutton>( new MyCheckbutton( lX+50, lY, 30,15, "X", CheckCB, this, 0 ));
+          cCheckX = new MyCheckbutton( lX+50, lY, 30,15, "X", CheckCB, this, 0 );
           cCheckX->callback( (Fl_Callback*)CheckCB, this );
           //  cCheckX->value( getMagnet().isUsingX());
           
-          cCheckY = std::unique_ptr<MyCheckbutton>(new MyCheckbutton( lX+100, lY, 30,15, "Y", CheckCB, this, 0 ));
+          cCheckY = new MyCheckbutton( lX+100, lY, 30,15, "Y", CheckCB, this, 0 );
           cCheckY->callback((Fl_Callback*)CheckCB, this );
           //  cCheckY->value(  getMagnet().isUsingY());
           
-          cCheckZ = std::unique_ptr<MyCheckbutton>(new MyCheckbutton( lX+150, lY, 30,15, "Z", CheckCB, this, 0 ));
+          cCheckZ = new MyCheckbutton( lX+150, lY, 30,15, "Z", CheckCB, this, 0 );
           cCheckZ->callback((Fl_Callback*)CheckCB, this );
           //  cCheckZ->value(  getMagnet().isUsingZ());
           

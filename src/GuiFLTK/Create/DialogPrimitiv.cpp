@@ -171,14 +171,14 @@ namespace M3d {
       // avec, par contre a la fin il faudrait vraiment faire
       // la modification sur les points (on est dans un modeleur, pas un jeu !)
 
-      PP3d::PolyPtr lShape = PP3d::PrimitivFactory::Create( cMyType, cName, & lParam);
+      PP3d::Poly* lShape = PP3d::PrimitivFactory::Create( cMyType, cName, & lParam);
 
       if( lShape == nullptr )
 	{
 	  std::cout << "Shape is null" << std::endl;
 	  return;
 	}
-      TheInput.swapCurrentCreation( new PP3d::Object( "Primitive", PP3d::ObjectType::ObjPoly, lShape ));  
+      TheInput.swapCurrentCreation( new Object( "Primitive",  ObjectType::ObjPoly , lShape ) );  
 
       //  lShape->move(lPos );
       		
@@ -215,6 +215,36 @@ namespace M3d {
     void init( PP3d::PrimitivFactory::Type pType )
     {
       cMyType = pType;
+      
+      cGroupExt = nullptr;
+      cSliderU = nullptr;
+      cSliderV = nullptr;
+      cSliderW = nullptr;
+      cSliderLength = nullptr;
+      cSliderWidth = nullptr;
+      cSliderHeight = nullptr;
+      cSliderTop = nullptr;
+      cSliderBottom = nullptr;
+      cSliderThickness = nullptr;
+      cCheckInvRotation = nullptr; 
+      cCheckDouble = nullptr; 
+      cCheckHole = nullptr; 
+
+      cCheckGear = nullptr; 
+      cSliderGearThickness = nullptr; 
+      cSliderGearFrequency1 = nullptr; 
+      cSliderGearFrequency2 = nullptr; 
+
+      cSliderSize = nullptr;
+	
+      cSliderPosX = nullptr;
+      cSliderPosY = nullptr;
+      cSliderPosZ = nullptr;
+
+      cSliderRotX = nullptr;
+      cSliderRotY = nullptr;
+      cSliderRotZ = nullptr;
+
       
 
       int lW = 300;

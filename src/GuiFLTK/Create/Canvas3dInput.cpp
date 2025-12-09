@@ -1,8 +1,7 @@
 #include "Canvas3d.h"
 
 
-#include "Shape/ObjectLine.h"
-#include "Shape/ObjectPoly.h"
+#include "Shape/Object.h"
 #include "Shape/GLUtility.h"
 #include "Shape/PrimitivFactory.h"
 #include "Shape/Light.h"

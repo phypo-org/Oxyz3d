@@ -13,6 +13,10 @@
 #include <functional>
 #include "Magnet.h"
 
+
+
+using namespace PP3d;
+
 void CallDialogPerspectiv( M3d::Canvas3d* pCanvas, PP3d::Kamera &pKamera );
 void CallDialogPrimitiv( PP3d::PrimitivFactory::Type );
 

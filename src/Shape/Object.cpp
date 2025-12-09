@@ -112,14 +112,20 @@ namespace PP3d{
   //---------------------------
   void Object::drawLineGL(ViewProps& pViewProps )
   {
+    std::cout << "********* Object::drawLineGL Obj:" << getObjType() << std::endl;
+    
     VisitorDrawLine	lVisitL( pViewProps, cMyProps);
     execVisitor( lVisitL );
   }
   //---------------------------
   void Object::drawFacetGL(ViewProps& pViewProps )
-  {
-    VisitorDrawFacet	lVisitF( pViewProps, cMyProps);
-    execVisitor( lVisitF );
+  {    
+    if( is( ObjectType::ObjFacet ))
+      {
+        std::cout << "********* Object::drawFacetGL Obj:" << getObjType() << std::endl;
+        VisitorDrawFacet	lVisitF( pViewProps, cMyProps);
+        execVisitor( lVisitF );
+      }
   }		
   //---------------------------
   void Object::drawPolyGL(ViewProps& pViewProps )
@@ -142,17 +148,20 @@ namespace PP3d{
       }
     //		std::cout << "Object::drawGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
 	 
-    if( pViewProps.cGLMode != GLMode::Select  )
+    //   if( pViewProps.cGLMode != GLMode::Select  )
       {
 	//  CHANGER DE PLACE : a ne faire quand cas de changement de l'objet 
 	///////	recomputeAll( cMyProps,  );
       }
 
+
+      std::cout << "********* Object::drawGL Obj:" << getObjType() << std::endl;
+
     switch( pViewProps.cSelectType )
       {
       case SelectType::Null:
 	{
-	  if( pViewProps.cViewMode == ViewMode::FULL)						
+	  if( pViewProps.cViewMode == ViewMode::FULL )						
 	    drawFacetGL( pViewProps);
 					
 	  drawLineGL( pViewProps	);		
@@ -174,8 +183,9 @@ namespace PP3d{
 				
       case SelectType::Line:
 	{
-	  //	  std::cout << "Object::drawGL line cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == ViewMode::FULL)						
+	  //	  std::cout << "Object::drawGL line cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;	  if( pViewProps.cViewMode == ViewMode::FULL)
+
+          if( pViewProps.cViewMode == ViewMode::FULL)		
 	    drawFacetGL( pViewProps);
 					
 	  drawLineGL( pViewProps );			
@@ -185,7 +195,7 @@ namespace PP3d{
 				
       case SelectType::Facet:
 	{
-	  if( pViewProps.cViewMode == ViewMode::FULL)						
+	  if( pViewProps.cViewMode == ViewMode::FULL)
 	    drawFacetGL( pViewProps);
 
 	  //	  std::cout << "Object::drawGL facet  cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
@@ -197,8 +207,8 @@ namespace PP3d{
       case SelectType::Poly:
 	{
 	  //	  std::cout << "Object::drawGL poly cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == ViewMode::FULL)						
-	    drawPolyGL(pViewProps);
+	  if( pViewProps.cViewMode == ViewMode::FULL)
+            drawPolyGL(pViewProps);
 	  
 	  drawLineGL( pViewProps );			
 	}
@@ -208,8 +218,8 @@ namespace PP3d{
       case SelectType::Object:
 	{
 	  //	  std::cout << "Object::drawGL object cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;
-	  if( pViewProps.cViewMode == ViewMode::FULL)						
-	    drawObjectGL( pViewProps);
+	  if( pViewProps.cViewMode == ViewMode::FULL)
+            drawObjectGL( pViewProps);
 					
 	  drawLineGL( pViewProps );			
 	}

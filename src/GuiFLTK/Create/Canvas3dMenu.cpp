@@ -21,8 +21,7 @@
 
 #include "Shape/GLUtility.h"
 #include "Shape/Light.h"
-#include "Shape/ObjectLine.h"
-#include "Shape/ObjectPoly.h"
+#include "Shape/Object.h"
 #include "Shape/OwnerVisitor.h"
 #include "Shape/PrimitivFactory.h"
 #include "Shape/SortVisitor.h"
@@ -377,6 +376,7 @@ namespace M3d {
   //-------------------------------------------
   static  void SplineToPolyline( bool iDelete)
   {
+    /* AFAIRE 
     bool lFlagMakeAnything = false;
     
     for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
@@ -388,8 +388,8 @@ namespace M3d {
                  
             if( iDelete )
               {
-                //                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
-                //                TheBase.deleteEntity( lEntity );
+                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                TheBase.deleteEntity( lEntity );
               }
             else
               {
@@ -409,6 +409,7 @@ namespace M3d {
         PushHistory();
         TheCreat.redrawAll( PP3d::Compute::FacetAll);                
       }
+    */
     //-----------------
   }
  
@@ -1697,7 +1698,8 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
-                  /*
+                  
+                  /* AFAIRE 
                   PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
                                                                               MyPref.cBSplineMaille, false );
                   if( lShape != nullptr )

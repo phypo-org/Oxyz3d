@@ -204,12 +204,9 @@ namespace M3d{
 
     //---------------------------
     bool addAxis( PP3d::Point3d & lA, PP3d::Point3d & lB )
-    {
-      if( lA != lB )
-	{
-          PP3d::ObjectPtr lAxis = MakeObjectLine( "Axis", lA, lB, PP3d::ClassTypeGeo );
-          
-	  cuDatabase->addObject( lAxis );
+    {      if( lA != lB )
+	{         
+	  cuDatabase->addObject( PP3d::Object::CreateNewLine( "Axis",   lA, lB, PP3d::ClassType::ClassTypeGeo) );
 	  redrawObjectTree();
 	  return true;
 	}
@@ -220,9 +217,8 @@ namespace M3d{
     {
       if(lCenter->get() != lVect->get() )
 	{
-	  PP3d::ObjectPtr lAxis= MakeObjectLine( "Axis", lCenter->get(), lVect->get(), PP3d::ClassTypeGeo );
+	  cuDatabase->addObject( PP3d::Object::CreateNewLine( "Axis", lCenter->get(), lVect->get(), PP3d::ClassTypeGeo ));
           
-	  cuDatabase->addObject( lAxis);
 	  redrawObjectTree();
 	  return true;
 	}      

@@ -48,27 +48,27 @@ namespace M3d {
 
     Fl_Double_Window * myWindow;
 
-    std::unique_ptr<MyChoiceButton> cChoiceDepth;
-    std::unique_ptr<MySlider>       cSliderSize;
+    MyChoiceButton * cChoiceDepth;
+    MySlider       * cSliderSize;
 		
-    std::unique_ptr<MyCheckbutton> cCheckCentralPoint;
+    MyCheckbutton  * cCheckCentralPoint;
 
-    std::unique_ptr<MyChoiceButton> cChoiceNormalize;
-    std::unique_ptr<MyChoiceButton> cChoiceGeometry;
+    MyChoiceButton * cChoiceNormalize;
+    MyChoiceButton * cChoiceGeometry;
 
   
 
-    std::unique_ptr<MySlider> cSliderDepthGrowFactor;
-    std::unique_ptr<MySlider> cSliderInitGrowFactor;
+    MySlider       * cSliderDepthGrowFactor;
+    MySlider       * cSliderInitGrowFactor;
 
-    std::unique_ptr<MyChoiceButton> cChoiceHoleFacet;
-    std::unique_ptr<MyChoiceButton> cChoiceHoleDepth;
+    MyChoiceButton * cChoiceHoleFacet;
+    MyChoiceButton * cChoiceHoleDepth;
 
     
 
-    std::unique_ptr<MySlider> cSliderPosX;
-    std::unique_ptr<MySlider> cSliderPosY;
-    std::unique_ptr<MySlider> cSliderPosZ;
+    MySlider       * cSliderPosX;
+    MySlider       * cSliderPosY;
+    MySlider       * cSliderPosZ;
 
 	
   public:
@@ -183,7 +183,7 @@ namespace M3d {
 
       o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
 
-      cChoiceGeometry =  std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Initial template", ChoiceCB, this ))  ;
+      cChoiceGeometry =  new MyChoiceButton(lX+100, lY, lW, lH, "Initial template", ChoiceCB, this )  ;
       cChoiceGeometry->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceGeometry->add("Tetrahedron"); // 0
       cChoiceGeometry->add("Pyramid");    // 1
@@ -200,7 +200,7 @@ namespace M3d {
       //	cChoiceGeometry->add("");
       lY += lYStep;
 
-      cChoiceNormalize =  std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Normalize", ChoiceCB, this ))  ;
+      cChoiceNormalize =  new MyChoiceButton(lX+100, lY, lW, lH, "Normalize", ChoiceCB, this )  ;
       cChoiceNormalize->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceNormalize->add("None");
       cChoiceNormalize->add("Normalize");
@@ -219,7 +219,7 @@ namespace M3d {
       lY += lYStep;
 
    
-      cChoiceDepth =   std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Depth", ChoiceCB, this )) ;
+      cChoiceDepth =   new MyChoiceButton(lX+100, lY, lW, lH, "Depth", ChoiceCB, this ) ;
       cChoiceDepth->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceDepth->add("0");
       cChoiceDepth->add("1");
@@ -232,30 +232,30 @@ namespace M3d {
       cChoiceDepth->value( 1 );
       lY += lYStep;
 	 
-      cSliderSize =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.1, 10 ));
+      cSliderSize =  new MySlider(lX+5, lY, lW, lH, "Size", SliderCB, this, 0.1, 10 );
       // cSliderSize->callback((Fl_Callback*)SliderCB, this );
       cSliderSize->value( 1 );
       lY += lYStep;
 	 
-      cCheckCentralPoint = std::unique_ptr<MyCheckbutton>( new MyCheckbutton( lX, lY, 30,15, "Central Point", CheckCB, this, 0 ));
+      cCheckCentralPoint = new MyCheckbutton( lX, lY, 30,15, "Central Point", CheckCB, this, 0 );
       cCheckCentralPoint->callback((Fl_Callback*)CheckCB, this );
       cCheckCentralPoint->value( false );
       lY += lYStep;;
 
 
 
-      cSliderDepthGrowFactor =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Depth grow factor", SliderCB, this, 0, 5 ));
+      cSliderDepthGrowFactor =  new MySlider(lX+5, lY, lW, lH, "Depth grow factor", SliderCB, this, 0, 5 );
       //      cSliderDepthGrowFactor->callback((Fl_Callback*)SliderCB, this );
       cSliderDepthGrowFactor->value( 1 );
       lY += lYStep;
 
-      cSliderInitGrowFactor =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Init frow factor", SliderCB, this, 0, 5 ));
+      cSliderInitGrowFactor =  new MySlider(lX+5, lY, lW, lH, "Init frow factor", SliderCB, this, 0, 5 );
       //      cSliderInitGrowFactor->callback((Fl_Callback*)SliderCB, this );
       cSliderInitGrowFactor->value( 0.3f );
       lY += lYStep;
    
 
-      cChoiceHoleFacet = std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this ));
+      cChoiceHoleFacet = new MyChoiceButton(lX+100, lY, lW, lH, "Hole facet", ChoiceCB, this );
       cChoiceHoleFacet->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceHoleFacet->add("no");
       cChoiceHoleFacet->add("0");
@@ -268,7 +268,7 @@ namespace M3d {
       lY += lYStep;
    
 
-      cChoiceHoleDepth = std::unique_ptr<MyChoiceButton>( new MyChoiceButton(lX+100, lY, lW, lH, "Hole depth", ChoiceCB, this ));
+      cChoiceHoleDepth = new MyChoiceButton(lX+100, lY, lW, lH, "Hole depth", ChoiceCB, this );
       cChoiceHoleDepth->callback((Fl_Callback*)ChoiceCB, this );
       cChoiceHoleDepth->add("no");
       cChoiceHoleDepth->add("0");
@@ -296,15 +296,15 @@ namespace M3d {
 
       o2->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       
-      cSliderPosX = std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 ));
+      cSliderPosX = new MySlider(lX+5, lY, lW, lH, "X", SliderCB, this, -100, 100 );
       cSliderPosX->value( 0 );
       lY += lYStep;
  
-      cSliderPosY =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 ));
+      cSliderPosY =  new MySlider(lX+5, lY, lW, lH, "Y", SliderCB, this, -100, 100 );
       cSliderPosY->value( 0 );
       lY += lYStep;
  
-      cSliderPosZ =  std::unique_ptr<MySlider>(new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 ));
+      cSliderPosZ =  new MySlider(lX+5, lY, lW, lH, "Z", SliderCB, this, -100, 100 );
       cSliderPosZ->value( 0 );
       lY += lYStep;
 
