@@ -298,7 +298,9 @@ namespace M3d {
 
   //---------------------------
   void Canvas3d::drawForSelect()  // AJOUTER LA TAILLE
-  {    
+  {
+    std::cout << "   Canvas3d::drawForSelect " << std::endl;
+    
     glViewport(0,0,pixel_w(),pixel_h());            //A CHANGER POUR PICKING MOUSE, METTRE LA TAILLE		
     cKamera.setAspectRatio( pixel_w(), pixel_h());
     cKamera.initGL();	 // CREER un initSelectGL

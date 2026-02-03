@@ -232,7 +232,7 @@ namespace M3d {
           && (TheInput.getNbCurrentPoints() <  2 || TheInput.getCurrentLine() == nullptr
               || TheSelect.getSelectType() != PP3d::SelectType::Facet
               || TheSelect.getNbSelected() < 1
-              || TheSelect.getFirst()->getType() != PP3d::ShapeType::Facet ))
+              || TheSelect.getFirst()->getShapeType() != PP3d::ShapeType::Facet ))
         {          
           return;
         }
@@ -274,8 +274,8 @@ namespace M3d {
       PP3d::FacetPtrVect lNewFacets;
 
   
-      PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine()->duplicate();	 
-      Object lObjBSpline( "BSplineTmpLofting", ObjectType::ObjBSpline, lPath ); //, false );
+           PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine()->duplicate();	 
+           //      Object lObjBSpline( "BSplineTmpLofting", ObjectType::ObjBSpline, lPath ); //, false );
 
       // ObjectPolylines      * lPath = TheInput.getCurrentLine();
       //========= Interpolation par une BSpline  =========
@@ -301,7 +301,7 @@ namespace M3d {
               PP3d::PolyPtr lShape = TheBase.getNewPoly();          
               lShape->addFacet(lNewFacets);
               
-              PP3d::Object* lObjPoly=  new PP3d::Object(  "Lofting", ObjectType::ObjPoly, lShape );
+              PP3d::Object* lObjPoly=  new PP3d::Object(  "Lofting", lShape );
               
               std::cout << "====== swapCurrentCreation :" << lObjPoly << std::endl;
               TheInput.swapCurrentCreation( lObjPoly );                  

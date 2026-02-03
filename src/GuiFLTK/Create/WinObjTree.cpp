@@ -334,12 +334,12 @@ namespace M3d {
     rebuild();
   }
   //--------------------------------------------
-  inline static const char* GetTransformStr( ObjectType pType )
+  inline static const char* GetTransformStr( ShapeType pType )
   {
     switch( pType )
       {
-      case ObjectType::ObjLine:   return "Axis";
-      case ObjectType::ObjFacet:  return "Plane";
+      case ShapeType::Line:   return "Axis";
+      case ShapeType::Facet:  return "Plane";
       default: ;
       }
     return "Unknown";
@@ -383,7 +383,7 @@ namespace M3d {
 
 				
 	lOstr   << iRootname
-		<< ( iFlagAxe ? GetTransformStr(lObj->getObjType()) : PP3d::GetStrObjectType( lObj->getObjType())) << "/"
+		<< ( iFlagAxe ? GetTransformStr(lObj->getSubType()) : PP3d::GetStrShapeType( lObj->getSubType())) << "/"
 		<< lObj->getId() ;
 
         GroupPtr lGroupObj = lObj->getGroup();

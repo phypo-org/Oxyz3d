@@ -37,7 +37,7 @@ namespace PP3d {
     std::string lName;
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::OCTO, lName); 
-      Object*  lObj = new Object( lShape->getStrType(), ObjectType::ObjPoly, lShape );
+      Object*  lObj = new Object( lShape->getStrType(),  lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, 5, -5 ));
       lObj->rename( "Octo test");
@@ -45,7 +45,7 @@ namespace PP3d {
 		
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::DODEC, lName );			
-      Object*   lObj = new Object( lShape->getStrType(), ObjectType::ObjPoly, lShape 	);
+      Object*   lObj = new Object( lShape->getStrType(),  lShape 	);
       addObject( lObj );
       lObj->move( Point3d( -5, 5, 5 ));
       lObj->rename( "Dodec test");
@@ -53,7 +53,7 @@ namespace PP3d {
 		
     {
       Poly* lShape = PrimitivFactory::Create( PrimitivFactory::Type::ICOSAHED, lName);			
-      Object*   lObj = new PP3d::Object( lShape->getStrType(), ObjectType::ObjPoly, lShape );
+      Object*   lObj = new PP3d::Object( lShape->getStrType(),  lShape );
       addObject( lObj );
       lObj->move( Point3d( -5, -5, 5 ));
       lObj->rename( "Ico test");
@@ -72,7 +72,7 @@ namespace PP3d {
 			
       Poly* lShape =lParam.finish(1);
 			
-      Object*  lObj = new Object( lShape->getStrType(), ObjectType::ObjPoly, lShape );
+      Object*  lObj = new Object( lShape->getStrType(), lShape );
       addObject( lObj );
       lObj->move( Point3d( iPos, iPos, iPos ));
       lObj->rename( "Icosahedron 2 0.35 ");
@@ -84,7 +84,7 @@ namespace PP3d {
 			
       Poly* lShape =lParam.finish(iPos);
 			
-      Object*  lObj = new Object( lShape->getStrType(), ObjectType::ObjPoly, lShape );
+      Object*  lObj = new Object( lShape->getStrType(),  lShape );
       addObject( lObj );
       lObj->move( Point3d( iPos, iPos, -iPos ));
       lObj->rename( "Octahedron 2 0.35 ");
@@ -135,9 +135,17 @@ namespace PP3d {
   }
 
   //-------------------------------------------------------------
-  void DataBase::drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType, ClassType iClassType )
+  // Creer un objet DrawContext avec tout ca dedans !!! AFAIRE
+  
+  void DataBase::drawGL(ViewProps & iViewGen ,
+                        ViewProps & iViewInputCursor,
+                        ViewProps & iViewInputPoly,
+                        ViewProps & iViewInputObject,
+                        GLMode      iSelectOrDrawMode,
+                        SelectType  iSelectType,
+                        ClassType   iClassType )
   {
-    iViewGen.cSelectType = iViewInputCursor.cSelectType = iViewInputPoly.cSelectType = iViewInputObject.cSelectType = iSelectType;
+    iViewGen.cSelectType = iViewInputCursor.cSelectType = iViewInputPoly.cSelectType = iViewInputObject.cSelectType = iSelectType;  // A_REVOIR
     iViewGen.cGLMode = iViewInputCursor.cGLMode = iViewInputPoly.cGLMode = iViewInputObject.cGLMode = iSelectOrDrawMode;
     
     //		std::cout << "******************** DataBase::drawGL ********************** " << iViewGen.cSelectType << std::endl;
@@ -145,7 +153,9 @@ namespace PP3d {
     {
       //						std::cout << "******************** DataBase::drawGL ********************** " << Selection::GetStrSelectType(	iViewGen.cSelectType) << std::endl;
     }
-    cCurrent.drawGL( iViewGen, iViewInputCursor, iViewInputPoly, iViewInputObject, iSelectOrDrawMode, iSelectType);
+
+    // les saisies courantes en cours
+    cCurrent.drawGL( iViewGen, iViewInputCursor, iViewInputPoly, iViewInputObject, iSelectOrDrawMode, iSelectType );
     
     //======================================			
     for( Object* lObj : cContainerObject )
@@ -282,7 +292,7 @@ namespace PP3d {
   {
     DBG_BAZ( "DataBase::deleteEntity " << pEntity->getStrType() )
     
-    if( pEntity->getType() == ShapeType::Object)
+    if( pEntity->getShapeType() == ShapeType::Object)
       {
 	DBG_BAZ(  "DataBase::deleteEntity Object "
 		  << pEntity->howManyOwner() );

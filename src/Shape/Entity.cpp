@@ -170,7 +170,7 @@ namespace PP3d {
     for( EntityPtr lEnt : first()->getOwners())
       {
         if( lEnt != this
-            && lEnt->getType() == ShapeType::Line ) // Normalement c'est toujours le cas !
+            && lEnt->getShapeType() == ShapeType::Line ) // Normalement c'est toujours le cas !
           {
             if( ((LinePtr)lEnt)->second() == first()
                 && second() == ((LinePtr)lEnt)->first() )

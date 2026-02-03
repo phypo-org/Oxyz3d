@@ -115,7 +115,7 @@ namespace PP3d{
         
     for(  EntityPtr lFac : iLine->getOwners() )
       {
-	if( lFac->getType() == ShapeType::Facet )
+	if( lFac->getShapeType() == ShapeType::Facet )
 	  {
 	    //	    std::pair<FacetPtr,UniquePoints> &
 	      UniquePoints & lUniq  = oFacPts[ (FacetPtr) lFac ]; // get/create
@@ -132,7 +132,7 @@ namespace PP3d{
     // get the lines who ownes the point
     for( EntityPtr lLine : iPt->getOwners() )
       {
-	if( lLine->getType() == ShapeType::Line )
+	if( lLine->getShapeType() == ShapeType::Line )
 	  {
 	    GetFacetsOfPoint( iPt, (LinePtr)lLine, oFacPts );
 	    
@@ -207,7 +207,7 @@ namespace PP3d{
 	    PolyPtr lPoly = (PolyPtr)lFac->firstOwner();
 
 	    if( lPoly == nullptr
-		|| lPoly->getType() != ShapeType::Poly )
+		|| lPoly->getShapeType() != ShapeType::Poly )
 	      {
 		std::cerr << "Modif::ConnectPoints owner not a polyedre" << std::endl;
 		continue;

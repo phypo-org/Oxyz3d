@@ -68,17 +68,17 @@ namespace PP3d {
   bool MyExportObj::save( Object* lObj )
   {				
     std::cout << "   ExportObj::save Entity" << std::endl;
-    switch( lObj->getObjType() )
+    switch( lObj->getShapeType() )
       {
-      case ObjectType::ObjPoly:
+      case ShapeType::Poly:
 	{
 	  std::cout << "      ExportObj::save Poly" << std::endl;
 
-	  cOut << "o " << lObj->getName() << '_' <<  lObj->getObjType() << std::endl;
+	  cOut << "o " << lObj->getName() << '_' <<  lObj->getShapeType() << std::endl;
 									
 	  VisitorSavPoints lVisPts( *this );
 	  lObj->execVisitor( lVisPts );
-	  cOut << 'g' << lObj->getName() << '_' <<  lObj->getObjType() << std::endl;
+	  cOut << 'g' << lObj->getName() << '_' <<  lObj->getShapeType() << std::endl;
 	  cOut <<  "usemtl default" << std::endl;
 	  cOut << "s 1" <<  std::endl;
 	  VisitorSavFacets lVisFacs( *this );
@@ -98,7 +98,7 @@ namespace PP3d {
 		
     for( auto lPairEntity :  lEntities )
       {				
-	if( lPairEntity.second->getType() != ShapeType::Object )
+	if( lPairEntity.second->getShapeType() != ShapeType::Object )
 	  continue;
 
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -146,7 +146,7 @@ namespace PP3d {
            // On ecrit l'ancien objet dans la base
 	      if( lPoly != nullptr )
 		{
-		  ObjectPtr lObj= new Object( lNameObj, ObjectType::ObjPoly, lPoly );				
+		  ObjectPtr lObj= new Object( lNameObj,  lPoly );				
 		  pData.addObject( lObj );
 		  //	lPoly = nullptr;
 		}
@@ -252,7 +252,7 @@ namespace PP3d {
 	}  //===================== while( cIn.good() ) ================
       if( lPoly != nullptr )
         {
-          Object* lObj = new Object( lNameObj.c_str(), ObjectType::ObjPoly, lPoly );
+          Object* lObj = new Object( lNameObj.c_str(), lPoly);
           pData.addObject( lObj );
         }
     }

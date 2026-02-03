@@ -168,7 +168,7 @@ namespace M3d{
   //----------------------------------------
     bool Creation::setCurrentAxis(PP3d::EntityPtr iObj)
     {
-      switch( iObj->getType() )
+      switch( iObj->getShapeType() )
         {
         case PP3d::ShapeType::Line :
           return setCurrentAxis( ((PP3d::LinePtr)iObj));
@@ -176,7 +176,7 @@ namespace M3d{
           // METTRE Dyn_cast !!!
           
         case PP3d::ShapeType::Object :
-          if( iObj->getObjType() ==  PP3d::ObjectType::ObjLine )
+          if( iObj->getSubType() ==  PP3d::ShapeType::Line )
             {
               return setCurrentAxis( dynamic_cast<PP3d::ObjectPtr>(iObj)->getLine());
             }

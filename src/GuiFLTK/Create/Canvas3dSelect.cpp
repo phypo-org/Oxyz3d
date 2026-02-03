@@ -51,8 +51,8 @@ namespace M3d {
 //---------------------------
   bool Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
   {
-    //  cout << "userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
-    //	 << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
+      cout << "RRRRRRRRRRRRRRRRRRRRRRR userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
+           << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
 
     
     if( cMouseInitPosX == -1 )
@@ -98,14 +98,18 @@ namespace M3d {
   //---------------------------------------------------------
   bool Canvas3d::userSelectionPointColor(int pEvent, bool pFlagMove)
   {
+    cout << "========================================" << endl;
+    cout << "PPPPPPPPPPPPPPPPPPPP userSelectionPointColor" << std::endl;
+
     return pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
   //---------------------------------------------------------
   bool Canvas3d::pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
   {
-    // cout << ":pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl; 
+    cout << "Canvas3d::pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl; 
   
     drawForSelect(); // AJOUTER LA TAILLE
+    
     glFinish(); 
   
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -113,11 +117,11 @@ namespace M3d {
       {
 	unsigned char lData[4];
 	glReadPixels( pX, pY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, lData);
-	////	cout << "Data: " << std::hex << (int)lData[0] <<" " <<   (int)lData[1]<<" "  <<  (int)lData[2] <<" " <<  (int)lData[3]  << endl;
+        cout << "Data: " << std::hex << (int)lData[0] <<" " <<   (int)lData[1]<<" "  <<  (int)lData[2] <<" " <<  (int)lData[3]  << endl;
 
 
 	PP3d::EntityId lId = PP3d::ColorRGBA::GetId( lData );
-	//	cout << "Canvas3d::pickingColor " << lId << endl; // AAAAAAAAAAAAAAAAAAA
+	cout << "         Canvas3d::pickingColor id:" << lId << endl; // AAAAAAAAAAAAAAAAAAA
 	
 	if( lId == 0 )
 	  {
@@ -165,12 +169,12 @@ namespace M3d {
 	    return false;
 	  }
 	
-	/*	cout << "Canvas3d::pickingColor move:" << pFlagMove
+		cout << "Canvas3d::pickingColor move:" << pFlagMove
 	     << " Pos X:"<< pX << " Y:" <<pY
 	     << " SzX:"  << iSizeX << " SzY:" << iSizeY
 	     << " pFlagRect:" << pFlagRect
 	     << endl;
-	*/
+	
 	
 	auto luData = std::make_unique<unsigned char[]>( iSizeX*4 );
 	PP3d::EntityId lMemoId = 0;
@@ -178,15 +182,17 @@ namespace M3d {
 	for( int lY = pY; lY < pY+iSizeY; lY++ )
 	  {
 	    ::memset( luData.get(), 0xFF, iSizeX*4 );
-	    //    cout << std::endl << "pickingColor lY:" << lY << std::endl;
+            // cout << std::endl << "yyyyyyyy pickingColor lY:" << lY << std::endl;
 	    glReadPixels( pX, lY, iSizeX, 1, GL_RGBA, GL_UNSIGNED_BYTE, luData.get() );
 	    
 	    for( int lX = 0; lX< iSizeX; lX++ )
 	      {
 		PP3d::EntityId lId = PP3d::ColorRGBA::GetId(  &(luData)[lX*4]);
+                cout << "PPPPPPPPPPPPPPPPP   pickingColor lY:" << lY << " lId:" << lId << std::endl;
+
 		if( lMemoId != lId )
 		  {
-		    //	    cout << "pickingColor lY:" << lY << " lId:" << lId << std::endl;
+                    cout << "PPPPPPPPPPPPPPPPP OKOKOK  pickingColor lY:" << lY << " lId:" << lId << std::endl;
 
 		    lMemoId = lId;
 		    selectEntity( lId, pFlagMove );

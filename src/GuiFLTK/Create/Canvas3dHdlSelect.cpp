@@ -47,15 +47,18 @@ namespace M3d {
             if( getUserMode() == ModeUser::MODE_BASE )    //DEBUT MODE_SELECT
               {
                 cSelectMode = PP3d::SelectMode::Undefine;
-                
+
+                std::cout <<  "Canvas3d::handleSelect Test changeUserMode" << std::endl;
+
                 if( userSelectionPointColor( pEvent, false ))
-                  {
+                  { 
+                    std::cout <<  "Canvas3d::handleSelect changeUserMode PT" << std::endl;
                     changeUserMode( ModeUser::MODE_SELECT);
                   }
                 else
                   {
                     changeUserMode( ModeUser::MODE_SELECT_RECT);
-                    std::cout << "*** mode SELECT RECT" << std::endl;
+                    std::cout << "Canvas3d::handleSelect  mode SELECT RECT" << std::endl;
                 }
                 
                 userActionPrepare(  );

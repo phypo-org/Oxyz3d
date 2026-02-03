@@ -38,7 +38,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
       int lNbFac=0;
       for( EntityPtr lEntity : lPt->getOwners() )
 	{
-	  if( lEntity->getType() == ShapeType::Line )
+	  if( lEntity->getShapeType() == ShapeType::Line )
 	    {
 	      // On calcule la moyennes des milieux des lignes
 	      // si il y a une ligne reverse le point sera compté deux fois	
@@ -56,7 +56,7 @@ bool Modif::SubCatmullClark( DataBase * iBase, std::set<FacetPtr>&  iOldFacets, 
 		}
 	      
 	      FacetPtr lFac = (FacetPtr)lLine->firstOwner();
-	      if( lFac != nullptr && lFac->getType() == ShapeType::Facet )
+	      if( lFac != nullptr && lFac->getShapeType() == ShapeType::Facet )
 		{
 		  VisitorComputeMiddleFacet lVidMidFac;
 		  lFac->execVisitor( lVidMidFac );

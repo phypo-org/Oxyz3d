@@ -11,46 +11,48 @@
 #include "Entity.h"
 
 
-#include "EntityVisitorDraw.h"
+#include "VisitorDraw.h"
 
 namespace PP3d{
 
   
   //*********************************************
-  struct VisitorDrawSelectPoints: public VisitorDrawPoints {
+  struct VisitorPickingPoints: public VisitorDrawPoints {
 
-    VisitorDrawSelectPoints( ViewProps& pViewProps, ObjProps& pObjProps )
+    VisitorPickingPoints( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawPoints( pViewProps, pObjProps) {;}
 		
-    void execPoint( Point* pPt )   override;
+    void execPoint( Point* pPt )        override;
+    void execEndObject( Object* iVar ) override;
   };
   //*********************************************
-  struct  VisitorDrawSelectLine: public VisitorDrawLine{		
-    VisitorDrawSelectLine( ViewProps& pViewProps, ObjProps& pObjProps )
+  struct  VisitorPickingLine: public VisitorDrawLine{		
+    VisitorPickingLine( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawLine( pViewProps, pObjProps) {;}
 		
     void execBeginLine( Line* pLine ) override;
+    void execEndObject( Object* iVar ) override;
   };
   //*********************************************
-  struct  VisitorDrawSelectObjectLine: public VisitorDrawObjectLine{		
-    VisitorDrawSelectObjectLine( ViewProps& pViewProps, ObjProps& pObjProps )
+  struct  VisitorPickingObjectLine: public VisitorDrawObjectLine{		
+    VisitorPickingObjectLine( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawObjectLine( pViewProps, pObjProps) {;}
 		
     void execBeginObject( Object* pObject )  override;
   };
    //*********************************************
-  struct VisitorDrawSelectPolyline: public VisitorDrawPolyline{
+  struct VisitorPickingPolyline: public VisitorDrawPolyline{
 		
-    VisitorDrawSelectPolyline( ViewProps& pViewProps, ObjProps& pObjProps )
+    VisitorPickingPolyline( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawPolyline( pViewProps, pObjProps) {;}
 
     void execBeginFacet( Facet* pFacet )   override;
     void execEndFacet( Facet* pFacet )   override;
   };
   //*********************************************
-  struct VisitorDrawSelectFacet: public VisitorDrawFacet{
+  struct VisitorPickingFacet: public VisitorDrawFacet{
 		
-    VisitorDrawSelectFacet( ViewProps& pViewProps, ObjProps& pObjProps )
+    VisitorPickingFacet( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawFacet( pViewProps, pObjProps) {;}
 
     void execBeginFacet( Facet* pFacet )   override;
@@ -58,19 +60,19 @@ namespace PP3d{
     void execAfterBegin( Entity* pFacet ) override;
   };
   //*********************************************
-  struct VisitorDrawSelectPoly: public VisitorDrawPoly{
+  struct VisitorPickingPoly: public VisitorDrawPoly{
 		
-    VisitorDrawSelectPoly( ViewProps& pViewProps, ObjProps& pObjProps )
+    VisitorPickingPoly( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawPoly( pViewProps, pObjProps) {;}
 
     void execBeginPoly( Poly* pPoly )   override;
     void execEndPoly( Poly* pPoly )   override;
   };
   //*********************************************
-  struct VisitorDrawSelectObject: public VisitorDrawObject{
+  struct VisitorPickingObject: public VisitorDrawObject{
     EntityId cId=0;
 		
-    VisitorDrawSelectObject( ViewProps& pViewProps, ObjProps& pObjProps )
+    VisitorPickingObject( ViewProps& pViewProps, ObjProps& pObjProps )
       :VisitorDrawObject( pViewProps, pObjProps) {;}
 
     void execBeginObject( Object* pObject )   override;

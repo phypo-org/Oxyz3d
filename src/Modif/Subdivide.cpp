@@ -14,7 +14,7 @@ namespace PP3d{
       {
 	PolyPtr lPoly = (PolyPtr)lFac->firstOwner();
 	if( lPoly == nullptr
-	    || lPoly->getType() != ShapeType::Poly )
+	    || lPoly->getShapeType() != ShapeType::Poly )
 	  {
 	    std::cerr << "Modif::SubdivideFacet not a polyedre" << std::endl;
 	    continue;

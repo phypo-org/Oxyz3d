@@ -230,7 +230,7 @@ namespace M3d{
     //---------------------------
     bool setCurrentAxis(PP3d::ObjectPtr iObj) {
       
-      if( iObj->is( PP3d::ObjectType::ObjLine ) )
+      if( iObj->is( PP3d::ShapeType::Line ) )
         return setCurrentAxis( iObj->getLine());
     }
      //---------------------------

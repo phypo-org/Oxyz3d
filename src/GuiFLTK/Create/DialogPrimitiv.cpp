@@ -178,7 +178,7 @@ namespace M3d {
 	  std::cout << "Shape is null" << std::endl;
 	  return;
 	}
-      TheInput.swapCurrentCreation( new Object( "Primitive",  ObjectType::ObjPoly , lShape ) );  
+      TheInput.swapCurrentCreation( new Object( "Primitive",  lShape ) );  
 
       //  lShape->move(lPos );
       		

@@ -68,7 +68,7 @@ namespace M3d {
 	DBG_ACT(" **************** userInputPoint Hightlight NOT FOUND" );
 	return;
       }
-    DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getType() );
+    DBG_ACT(" **************** userInputPoint Hightlight " << iEntity->getShapeType() );
     
     PP3d::SortEntityVisitorPoint  lVisit;
     iEntity->execVisitor( lVisit );

@@ -6,7 +6,7 @@
 #include <fstream>
 #include <set>
 
-#include "Entity.h"
+#include "Poly.h"
 
 namespace PP3d {
 

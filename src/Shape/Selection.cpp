@@ -139,7 +139,7 @@ namespace PP3d {
 
  
     
-    if( iSelectAll && ioEntity->getType() == ShapeType::Line )
+    if( iSelectAll && ioEntity->getShapeType() == ShapeType::Line )
       {
         // ATTENTION LE getReverseLine est lent
         // Si il y a trop de line cela gele !
@@ -156,7 +156,7 @@ namespace PP3d {
       }
     else
       //:::::::::: GROUP :::::::::::::
-      if( cSelectType == SelectType::Group && ioEntity->getType() == ShapeType::Object )
+      if( cSelectType == SelectType::Group && ioEntity->getShapeType() == ShapeType::Object )
         //        if( isSelectGroup() && ioEntity->getType() == ShapeType::Object )
         {
           // Si on a un element d'un groupe il faut tous les selectionner !!!
@@ -188,7 +188,7 @@ namespace PP3d {
     // get all the unselect object into lTmpVect
     for( auto  lPair : iBase.getEntities() )
       {
-	if( lPair.second->getType() != ConvertToShapeType( getSelectType() ))
+	if( lPair.second->getShapeType() != ConvertToShapeType( getSelectType() ))
 	  {
 	    continue;
 	  }
@@ -211,7 +211,7 @@ namespace PP3d {
     // get all the unselect object into lTmpVect
     for( auto  lPair : iBase.getEntities() )
       {
-	if( lPair.second->getType() != ConvertToShapeType( getSelectType() ))
+	if( lPair.second->getShapeType() != ConvertToShapeType( getSelectType() ))
 	  {
 	    continue;
 	  }
@@ -247,7 +247,7 @@ namespace PP3d {
 	      }            
 	  }
 	
-	if( iSelectAll && ioEntity->getType() == ShapeType::Line )
+	if( iSelectAll && ioEntity->getShapeType() == ShapeType::Line )
 	  {
 	    LinePtr lLine =  dynamic_cast<LinePtr>(ioEntity)->getReverseLineByOwner();
 	    if( lLine )
@@ -255,7 +255,7 @@ namespace PP3d {
 	  }
         else
           //:::::::::: GROUP :::::::::::::
-          if( cSelectType == SelectType::Group  && ioEntity->getType() == ShapeType::Object )
+          if( cSelectType == SelectType::Group  && ioEntity->getShapeType() == ShapeType::Object )
             //   if(  isSelectGroup() && ioEntity->getType() == ShapeType::Object )
             {
               // Si on a un element d'un groupe il faut tous les deselectionner !!!
@@ -341,10 +341,10 @@ namespace PP3d {
     //		 cout << " sort A " << *A << endl;
     //	 cout << " sort B " << *B << endl;
 		 
-    if( A.cEntity->getType() == B.cEntity->getType() )
+    if( A.cEntity->getShapeType() == B.cEntity->getShapeType() )
       return ( A.cZ1 > B.cZ1);
 
-    return ( A.cEntity->getType() >  B.cEntity->getType());
+    return ( A.cEntity->getShapeType() >  B.cEntity->getShapeType());
   }
   //--------------------------------
 	
@@ -480,11 +480,11 @@ namespace PP3d {
     return SelectType::Null;
   }
    //--------------------------------
-   bool Selection::isOnlyObject( ObjectType iObjType )
+   bool Selection::isOnlyObject( ShapeType iObjType )
    {
      for( EntityPtr lEntity :  cSelectObjVect)
        {
-         if( lEntity->getType() != ShapeType::Object )
+         if( lEntity->getShapeType() != ShapeType::Object )
            return false;
        }
      return true;
@@ -546,7 +546,7 @@ namespace PP3d {
     //=====================
     for(  EntityPtr lEntity : cSelectObjVect )
       {
-        if( lEntity->getType()  != ShapeType::Object )
+        if( lEntity->getShapeType()  != ShapeType::Object )
           continue;
         
         ObjectPtr lObj = dynamic_cast<ObjectPtr>(lEntity);
@@ -578,7 +578,7 @@ namespace PP3d {
         //=====================
         for(  EntityPtr lEntity : cSelectObjVect )
           {
-            if( lEntity->getType()  != ShapeType::Object ) continue;
+            if( lEntity->getShapeType()  != ShapeType::Object ) continue;
             
             ObjectPtr lObj = ((ObjectPtr)lEntity);
             

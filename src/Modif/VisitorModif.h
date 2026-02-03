@@ -90,7 +90,7 @@ namespace PP3d {
     //---------------------------------
     void setOwner( EntityPtr iEntity )
     {
-      if( iEntity->getType() >= ShapeType::Facet )
+      if( iEntity->getShapeType() >= ShapeType::Facet )
 	{
 	  cOwners.emplace( iEntity );
 	}     

@@ -3,9 +3,9 @@
 
 #include "PP3dType.h"
 #include "Matrice.h"
+#include "ColorRGBA.h"
 
 #include <unordered_set>
-#include "Entity.h"
 
 namespace PP3d {
 
@@ -201,10 +201,16 @@ namespace PP3d {
       else
 	facetGL();
     }
-
+ 
     friend class Exec;
   };
   //******************************
+  
+   inline std::ostream& operator << ( std::ostream& pOs, ViewProps & iProps )
+    {
+      pOs << iProps.cViewMode << " Pt:" << iProps.cColorPoint << " Ln:" << iProps.cColorLine << " Fc:" << iProps.cColorFacet ;
+     return pOs;
+   }
 
 }
 

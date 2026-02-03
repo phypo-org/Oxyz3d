@@ -7,7 +7,7 @@
 namespace PP3d {
 
   //*********************************************
-  class  Facet :  public Entity{
+  class  Facet :  public Entity {
 		
     LinePtrVect cLines;
 
@@ -23,7 +23,7 @@ namespace PP3d {
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3, LinePtr iLine4  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 );addLine( iLine4 ); }
 
     bool isVoid() const override        { return getNbLines()>0; }      
-    ShapeType getType() const  override { return ShapeType::Facet;}
+    ShapeType getShapeType() const  override { return ShapeType::Facet;}
 	
     void closeFacet();
     
@@ -149,7 +149,7 @@ namespace PP3d {
 
     virtual void remove( Entity* lEntity, bool iFlagRmOwner ) override // phipo 20240124
     {
-      if( lEntity->getType() ==  ShapeType::Line )
+      if( lEntity->getShapeType() ==  ShapeType::Line )
         {
           removeLine(  ((LinePtr)lEntity) );
           Entity::remove( lEntity, iFlagRmOwner );
@@ -175,7 +175,7 @@ namespace PP3d {
     Poly* myPoly()
     {
       OwnerPtr lOwner= firstOwner();
-      if( lOwner->getType() == ShapeType::Poly )
+      if( lOwner->getShapeType() == ShapeType::Poly )
         return (Poly*)lOwner;
       return nullptr;
     }
@@ -195,6 +195,7 @@ namespace PP3d {
     friend class Maker;
     friend class VisitorNormalFacet;
   };
+  //*********************************************
   using FacetPtr     = Facet*;
   using FacetPtrVect = std::vector<FacetPtr>;
 

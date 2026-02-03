@@ -2,7 +2,7 @@
 #define H__Point__H
 
 
-#include "EntityBase.h"
+#include "Entity.h"
 
 namespace PP3d {
 
@@ -41,7 +41,7 @@ namespace PP3d {
     
     bool isVoid() const override       { return false; }
 
-    ShapeType getType() const override { return ShapeType::Point;}
+    ShapeType getShapeType() const override { return ShapeType::Point;}
     
     Point3d  getCenter3d() override    { return cPt;}  ;
 

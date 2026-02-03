@@ -41,7 +41,7 @@ namespace PP3d {
       :cR(((iId & 0x000000FF) >>  0)/255.0f)
       ,cG(((iId & 0x0000FF00) >>  8)/255.0f)
       ,cB(((iId & 0x00FF0000) >>  16)/255.0f)
-      ,cA(((iId & 0xFF000000) >>  24)/255.0f)
+      ,cA(1)
     {      
     }
     void zero()
@@ -62,12 +62,22 @@ namespace PP3d {
       cB = pB;
       cA = pA;
     }
-   void setId( GLuint iId )
+
+    void getCurrentColor() {
+      
+      GLfloat color[4];
+    
+      glGetFloatv(GL_CURRENT_COLOR, color);
+    
+      cR = color[0]; cG=color[1]; cB=color[2]; cA=color[3];
+    }
+    void setId( GLuint iId )
     {
-      cR =  ((iId & 0x000000FF) >>  0)/255.0f;
+      cR =  (iId & 0x000000FF)/255.0f;
       cG =  ((iId & 0x0000FF00) >>  8)/255.0f;
       cB =  ((iId & 0x00FF0000) >>  16)/255.0f;
-      cA =  ((iId & 0xFF000000) >>  24)/255.0f;
+      cA =  1;
+             
     }
 
     static GLuint GetId( unsigned char iData[4]  )
@@ -95,45 +105,49 @@ namespace PP3d {
     }
     
     
-    void GL() const { glColor4fv( &cR); }
+    void GL() const { glColor4fv( &cR);  }
     void materialGL() { glMaterialfv( GL_FRONT_AND_BACK, 
-				      GL_AMBIENT_AND_DIFFUSE, &cR);}
+				      GL_AMBIENT_AND_DIFFUSE, &cR);std::cout << " matGL->" << *this ;}
 
     void emissionGL() { glMaterialfv(  GL_FRONT, 
 				       GL_EMISSION,
-				       &cR);}
+				       &cR); std::cout << " emGL->" << *this ;}
 		
     void fogGL() { glFogfv( GL_FOG_COLOR,  &cR );
     }
   public:
     static void Id( GLuint iId){
       /*
-          std::cout << "Id: " << std::hex
-		<< ((iId & 0x000000FF) >>  0) <<" "
-		<< ((iId & 0x0000FF00) >>  8) <<" "
-		<< ((iId & 0x00FF0000) >>  16)<<" "
-		<< std::endl;      
+        std::cout << "Id: " << std::hex
+        << ((iId & 0x000000FF) >>  0) <<" "
+        << ((iId & 0x0000FF00) >>  8) <<" "
+        << ((iId & 0x00FF0000) >>  16)<<" "
+        << std::endl;      
       */
       /*
-      float r = ((iId & 0x000000FF) >>  0)/255.0f;
-      float g = ((iId & 0x0000FF00) >>  8)/255.0;
-      float b = ((iId & 0x00FF0000) >>  16)/255.0f;
-      std::cout << "Id: " << std::hex <<(int) r*255.0f
-		<< " " << std::hex << (int) g*255.0f
-		<< " " << std::hex << (int) b*255.0f
-		<< std::endl;
+        float r = ((iId & 0x000000FF) >>  0)/255.0f;
+        float g = ((iId & 0x0000FF00) >>  8)/255.0;
+        float b = ((iId & 0x00FF0000) >>  16)/255.0f;
+        std::cout << "Id: " << std::hex <<(int) r*255.0f
+        << " " << std::hex << (int) g*255.0f
+        << " " << std::hex << (int) b*255.0f
+        << std::endl;
     
 	glColor4f(r, g, b, 1);
-        */
+      */
 	
-    glColor4f(
-		((iId & 0x000000FF) >>  0)/255.0f,
+      glColor4f(
+		(iId & 0x000000FF)/255.0f,
 		((iId & 0x0000FF00) >>  8)/255.0f,
 		((iId & 0x00FF0000) >>  16)/255.0f,
 		1);
-	
-      
-	}
+
+
+      GLfloat color[4];
+      glGetFloatv(GL_CURRENT_COLOR, color);       
+ 
+      std::cout << "   ColorRGBA.Id " << iId << "->" << color[0] <<":"<< color[1] << "=>" << (color[0]*255.0) + (color[1]*255.0*255.0) << std::endl;
+    }
     static void Zero()     { glColor4f( 0.0, 0.0, 0.0, 0.0); }
     static void Red()	    { glColor3f(1.0,0.0,0.0); 	}
     static void Green()     { glColor3f(0.0,1.0,0.0); 	}
@@ -169,14 +183,14 @@ namespace PP3d {
  
 
     bool fromStringFloats(const std::string& str) {
-        std::istringstream iss(str);
-        float r, g, b, a;
-        char comma;
-        if (iss >> r >> comma >> g >> comma >> b >> comma >> a) {
-            set(r, g, b, a);
-            return true;
-        }
-        return false;
+      std::istringstream iss(str);
+      float r, g, b, a;
+      char comma;
+      if (iss >> r >> comma >> g >> comma >> b >> comma >> a) {
+        set(r, g, b, a);
+        return true;
+      }
+      return false;
     }
     
   };

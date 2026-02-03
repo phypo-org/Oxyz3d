@@ -1,4 +1,4 @@
-#include "EntityVisitorDraw.h"
+#include "VisitorDraw.h"
 
 #include "Entity.h"
 #include "Object.h"
@@ -69,7 +69,6 @@ namespace PP3d {
 
   void DrawNormalFacet( Facet* pFacet )
   {
-
     PointPtrSet lPoints;
     VisitorGetPoints lVisit(lPoints);
 		
@@ -94,7 +93,7 @@ namespace PP3d {
     lNormMiddle += lNorm10;
 		
     glLineWidth( 1 );
-    glDisable( GL_LIGHTING );
+    //    glDisable( GL_LIGHTING );
 		
     glBegin( GL_LINE_STRIP ); 
 		
@@ -103,13 +102,14 @@ namespace PP3d {
 		
     glEnd();
 		
-    glEnable( GL_LIGHTING );
+    //    glEnable( GL_LIGHTING );
 			
   }
   //---------------------------	
   void VisitorDrawPoints::execBeginObject( ObjectPtr pObj )
   {
-    glDisable( GL_LIGHTING );	 
+    //    std::cout << "============= VisitorDrawPoints::execBeginObject glDisable( GL_LIGHTING ) " << std::endl;
+    //    glDisable( GL_LIGHTING );	 
   }
   //---------------------------
   void VisitorDrawPoints::execPoint( PointPtr pPt )
@@ -126,19 +126,22 @@ namespace PP3d {
   //---------------------------	
   void VisitorDrawPoints::execEndObject(  ObjectPtr pObj )
   {
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
   }		
 
   //*********************************************
   void VisitorDrawLine::execBeginObject( ObjectPtr pObj )
   {
-    glDisable( GL_LIGHTING );	 
+    
+    cViewProps.lineGL( pObj->isSelect(), pObj->isHighlight(), pObj->isMagnet() );
+    //    glDisable( GL_LIGHTING );	 
   }
   //---------------------------	
   void VisitorDrawLine::execBeginLine( LinePtr pLine )
   {
-    //		std::cout << " VisitorDrawLine::execBeginLine : " << pLine->getFirst()->get()
-    //							<< " " <<pLine->getSecond()->get() <<  std::endl;
+    std::cout << " VisitorDrawLine::execBeginLine  "  << std::endl;
+      //<< pLine->getFirst()->get()
+      //						<< " " <<pLine->getSecond()->get() <<  std::endl;
     //		cViewProps.dragMat( pLine );
 
 				
@@ -152,34 +155,36 @@ namespace PP3d {
       }
     else
       {
-        std::cout << "******   visitorDrawLine::execBeginLine" << std::endl;
+        // std::cout << VisitorDrawLine::execBeginLine" << std::endl;
           
 	cViewProps.lineGL( pLine->isSelect(), pLine->isHighlight(), pLine->isMagnet() );
+        
 	glBegin( GL_LINES );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glVertex3dv( pLine->getSecond()->get().vectForGL() );
 	glEnd();
-      }		
+      }
+    
     //		cViewProps.undragMat();
   }
   //*********************************************
   void VisitorDrawLine::execEndObject( ObjectPtr pObj )
   {
-    glEnable( GL_LIGHTING );	 
+    //    glEnable( GL_LIGHTING );	 
   }
   //*********************************************
   void VisitorDrawObjectLine::execBeginObject( ObjectPtr pObj )
   {
     cViewProps.lineGL( pObj->isSelect(), pObj->isHighlight(), pObj->isMagnet() );
-    glDisable( GL_LIGHTING );	 
+    //    glDisable( GL_LIGHTING );	 
   }
   //---------------------------	
   void VisitorDrawObjectLine::execBeginLine( LinePtr pLine )
   {
-    //		std::cout << " VisitorDrawLine::execBeginLine : " << pLine->getFirst()->get()
+    		std::cout << " VisitorDrawLine::execBeginLine : " <<  std::endl;
+                  //<< pLine->getFirst()->get()
     //							<< " " <<pLine->getSecond()->get() <<  std::endl;
     //		cViewProps.dragMat( pLine );
-
 				
     if( pLine->isPoint() )
       {
@@ -201,7 +206,7 @@ namespace PP3d {
   //*********************************************
   void VisitorDrawPolyline::execBeginFacet( FacetPtr pFacet )
   {
-    glDisable( GL_LIGHTING );	  
+     //   glDisable( GL_LIGHTING );	  
     cViewProps.lineGL( pFacet->isSelect(), pFacet->isHighlight(), pFacet->isMagnet()  );
   }
   //---------------------------	
@@ -225,13 +230,14 @@ namespace PP3d {
   {
     //	glVertex3dv( pLine->getSecond()->get().vectForGL() );
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
     //		cViewProps.undragMat();
   }
 
   //*********************************************
   void VisitorDrawFacet::execBeginFacet( FacetPtr pFacet )
   {
+    std::cout << "VisitorDrawFacet::execBeginFacet" << std::endl;
     //		cViewProps.dragMat( pFacet);
     //==================================
     if( cViewProps.cFlagViewNormal == true
@@ -242,11 +248,13 @@ namespace PP3d {
     //==================================
 		
     glNormal3dv( pFacet->getNormal().vectForGL() );
+    
     cViewProps.facetGL( pFacet->isSelect(), pFacet->isHighlight() , pFacet->isMagnet());
 
     cNumLineEnd = (GLuint)(pFacet->getLines().size()-1);
     cNumLine = 0;
 		
+    execAfterBegin(pFacet);	
     if( pFacet->getLines().size() == 3 )
       {
 	glBegin(GL_TRIANGLES);
@@ -273,7 +281,8 @@ namespace PP3d {
 
   //---------------------------	
   void VisitorDrawFacet::execBeginLine( LinePtr pLine )
-  {	
+  {
+
     glVertex3dv( pLine->getFirst()->get().vectForGL() );
     
     if( cNumLineEnd == cNumLine++ ){
@@ -290,12 +299,14 @@ namespace PP3d {
   //*********************************************
 
   void VisitorDrawPoly::execBeginPoly(	Poly* pPoly )
-  {	
+  {
+    //    glDisable( GL_LIGHTING );   // PP
     cViewProps.facetGL( pPoly->isSelect(), pPoly->isHighlight(), pPoly->isMagnet()  );
   }
   //---------------------------	
   void VisitorDrawPoly::execEndPoly(	Poly* pPoly )
   {
+    //    glEnable( GL_LIGHTING ); // PP
   }
   //---------------------------	
   void VisitorDrawPoly::execBeginFacet( FacetPtr pFacet )
@@ -308,10 +319,16 @@ namespace PP3d {
       }
     //==================================
 
+    ColorRGBA lCurCol;
+    lCurCol.getCurrentColor(); 
+      
+    std::cout << "VisitorDrawPoly::execBeginFacet " << lCurCol << std::endl;
+    
     glNormal3dv( pFacet->getNormal().vectForGL() );
 
     cNumLineEnd = (GLuint)(pFacet->getLines().size()-1);
     cNumLine = 0;
+    execAfterBegin(pFacet);	
 
     if(   pFacet->getLines().size() == 3 )
       {
@@ -336,13 +353,14 @@ namespace PP3d {
 	execAfterBegin(pFacet);
       }					
   }
+  //---------------------------	
   void VisitorDrawPoly::execEndFacet( FacetPtr pFacet )
   {
     glEnd();
   }
+  //---------------------------	
   void VisitorDrawObject::execBeginObject( ObjectPtr pObject )
   {
-    //		cViewProps.dragMat( pObject );
     cViewProps.facetGL( pObject->isSelect(), pObject->isHighlight(), pObject->isMagnet()  );
   }
   //---------------------------	

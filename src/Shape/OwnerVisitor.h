@@ -23,13 +23,15 @@ namespace PP3d{
       std::cout << "addOwnersOf 1 Entity ptr:" << (void*) iEntity  << std::endl;
      if( iEntity  )
 	{
-          std::cout << "  addOwnersOf 1 Entity ptr:" << (void*) iEntity << " Id:" << iEntity->getId() << " type:" <<  iEntity->getType() << std::endl;
-	  switch( iEntity->getType() )
+          std::cout << "  addOwnersOf 1 Entity ptr:" << (void*) iEntity << " Id:" << iEntity->getId() << " type:" <<  iEntity->getShapeType() << std::endl;
+	  switch( iEntity->getShapeType() )
 	    {
 	    case ShapeType::Point:  execPoint( (Point*)iEntity);break;
 	    case ShapeType::Line:   execBeginLine((Line*)iEntity);break;
 	    case ShapeType::Facet:  execBeginFacet ((Facet*)iEntity);break;
 	    case ShapeType::Poly:   execBeginPoly ((Poly*)iEntity);break;
+	    case ShapeType::Polyline:   execBeginFacet ((Facet*)iEntity);break;
+              //	    case ShapeType::BSpline:   execBeginPoly ((Poly*)iEntity);break;
 	    case ShapeType::Object: execBeginObject((Object*)iEntity);break;
 	    case ShapeType::Null: return;
 	    }

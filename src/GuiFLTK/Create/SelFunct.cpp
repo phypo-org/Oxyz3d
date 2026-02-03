@@ -4,14 +4,15 @@
 #include <iomanip>
 
 #include "Shape/OwnerVisitor.h"
-#include "Shape/EntityHelp.h"
+#include "Shape/EntityHelper.h"
 
 
 using namespace PP3d;
+
 using namespace std;
 
 //**************************************************
-void SelFunct::SelectMore(  PP3d::Selection & iSel, PP3d::DataBase & iBase  )
+void SelFunct::SelectMore(  Selection & iSel, DataBase & iBase  )
 {
   SortEntityVisitor lSelVisit;
   
@@ -85,7 +86,7 @@ void SelFunct::SelectMore(  PP3d::Selection & iSel, PP3d::DataBase & iBase  )
   
 }
 //--------------------------------------------------
-void SelFunct::SelectLess(  PP3d::Selection & iSel, PP3d::DataBase & iBase  )
+void SelFunct::SelectLess(  Selection & iSel, DataBase & iBase  )
 {
   SortEntityVisitor lSelVisit;
   
@@ -161,7 +162,7 @@ void SelFunct::SelectLess(  PP3d::Selection & iSel, PP3d::DataBase & iBase  )
 }
 //--------------------------------------------------
 void
-SelFunct::SelectEdgeLoop( PP3d::Selection & iSel, PP3d::DataBase & iBase, double iEpsilon  )
+SelFunct::SelectEdgeLoop( Selection & iSel, DataBase & iBase, double iEpsilon  )
 {  
   if( iSel.getSelectType() != SelectType::Line)   return;
 
@@ -197,7 +198,7 @@ SelFunct::SelectEdgeLoop( PP3d::Selection & iSel, PP3d::DataBase & iBase, double
 	  
 	  cout << std::dec  << "("<< lLine->getId() <<")" ;
 	  
-	  if( EntityHelp::AsCommonPoint(lLineSel, lLine ) )
+	  if( AsCommonPoint( lLineSel, lLine ) )
 	    {	      
 	      double  lMax = 0;
 	      size_t  lMaxPos=-1;

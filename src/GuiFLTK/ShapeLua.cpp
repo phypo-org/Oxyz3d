@@ -54,7 +54,7 @@ namespace M3d {
   //-----------------------------------------
   CLUA_OPEN_CODE( LUA_CurrentToPoly, 0);
   
-  PP3d::ObjectPtr lObj= TheInput.convertCurrentLineToPolylines(TheBase);
+  PP3d::ObjectPtr lObj= TheInput.convertCurrentLineToPolyline(TheBase);
   lua_pushinteger( pLua, lObj->getId() );
 
   CLUA_CLOSE_CODE(0)

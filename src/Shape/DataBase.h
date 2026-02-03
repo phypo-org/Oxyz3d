@@ -129,7 +129,7 @@ namespace PP3d {
     {
       EntityPtr lPt = findEntity( pId );
       if( lPt != nullptr
-	  && lPt->getType() ==  ShapeType::Point )
+	  && lPt->getShapeType() ==  ShapeType::Point )
 	{
 	  return static_cast<PointPtr>( lPt) ;
 	}
@@ -141,7 +141,7 @@ namespace PP3d {
     {
       EntityPtr lPt = findEntity( pId );
       if( lPt != nullptr
-	  && lPt->getType() == ENUM )
+	  && lPt->getShapeType() == ENUM )
 	{
 	  return static_cast<CLASSPTR>( lPt);
 	}

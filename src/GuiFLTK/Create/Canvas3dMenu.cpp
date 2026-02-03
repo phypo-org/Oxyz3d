@@ -31,6 +31,7 @@
 #include "Shape/PP3dUtils.h"
 #include "Shape/ViewProps.h"
 #include "Shape/DataBase.h"
+#include "Shape/EntityHelper.h"
 
 #include "Modif/Modif.h"
 
@@ -41,7 +42,9 @@
 #include "Dialogs.h"
 #include "GuiFLTK/Preference.h"
 #include "Utils/PPContainer.h"
+
 using namespace std;
+using namespace PP3d;
 
 
 namespace M3d {
@@ -934,7 +937,7 @@ namespace M3d {
                int lNbErr=0;
                for( PP3d::FacetPtr lFacet :  lVisit.cVectFacets )
                  {
-                   PP3d::PolyPtr lPoly = PP3d::GetOwnerPolyFromFacet( lFacet );
+                   PP3d::PolyPtr lPoly = GetOwnerPolyFromFacet( lFacet );
                    if( lPoly != nullptr )
                      {
                        lPoly->removeFacet( lFacet );
@@ -976,14 +979,14 @@ namespace M3d {
     
 
     if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
-        && TheSelect.getNbSelected() > 0
-        && TheSelect.isOnlyObject( PP3d::ObjectType::ObjBSpline ) )
+        && TheSelect.getNbSelected() > 0 )
+      //        && TheSelect.isOnlyObject( PP3d::Shape::BSpline ) )
       {
           
-        pMenu.add( StrMenu_Spline "/" StrMenu_MuteBSplineToPolyline , "", LAMBDA
+        pMenu.add( StrMenu_Spline "/TODO_" StrMenu_MuteBSplineToPolyline , "", LAMBDA
                    SplineToPolyline( true );
                    ADBMAL, this);
-        pMenu.add( StrMenu_Spline "/" StrMenu_CreatPolylineFromBSpline , "", LAMBDA
+        pMenu.add( StrMenu_Spline "/TODO_" StrMenu_CreatPolylineFromBSpline , "", LAMBDA
                    SplineToPolyline( false );
                    ADBMAL, this);
       }
@@ -1681,7 +1684,7 @@ namespace M3d {
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
-                  PP3d::Object* lShape =TheInput.convertCurrentLineToPolylines(TheBase);
+                  PP3d::Object* lShape =TheInput.convertCurrentLineToPolyline(TheBase);
                 
                   if( lShape != nullptr )
                     {
@@ -1936,7 +1939,7 @@ namespace M3d {
      for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
        {
  
-         if( lEntity->getType() != PP3d::ShapeType::Facet ) continue;
+         if( lEntity->getShapeType() != PP3d::ShapeType::Facet ) continue;
    
          
          PP3d::FacetPtr lFacet = (PP3d::FacetPtr)lEntity;
@@ -1963,7 +1966,7 @@ namespace M3d {
 
      for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
        { 
-         if( lEntity->getType() != PP3d::ShapeType::Line ) continue;
+         if( lEntity->getShapeType() != PP3d::ShapeType::Line ) continue;
          
          
          PP3d::LinePtr lLinePtr = (PP3d::LinePtr)lEntity;
@@ -2002,7 +2005,7 @@ namespace M3d {
      
      for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
        {
-         if( lEntity->getType() != PP3d::ShapeType::Point ) continue;
+         if( lEntity->getShapeType() != PP3d::ShapeType::Point ) continue;
             
          PP3d::PointPtr lPointPtr = (PP3d::PointPtr)lEntity;
          
@@ -2029,8 +2032,8 @@ namespace M3d {
       }
 
 
-    if( TheSelect.getFirst()->getType() != PP3d::ShapeType::Facet
-        ||  TheSelect.getSecond()->getType() != PP3d::ShapeType::Facet )
+    if( TheSelect.getFirst()->getShapeType() != PP3d::ShapeType::Facet
+        ||  TheSelect.getSecond()->getShapeType() != PP3d::ShapeType::Facet )
         {
         WARN_DIAG( "Must be true Facets");
         return;
@@ -2053,10 +2056,10 @@ namespace M3d {
     PP3d::PolyPtr lPolyA = nullptr;
     PP3d::PolyPtr lPolyB = nullptr;
 
-    if( lFacetA->firstOwner()->getType() == PP3d::ShapeType::Poly )
+    if( lFacetA->firstOwner()->getShapeType() == PP3d::ShapeType::Poly )
       lPolyA = (PP3d::PolyPtr) lFacetA->firstOwner();
     
-    if( lFacetB->firstOwner()->getType() ==  PP3d::ShapeType::Poly )
+    if( lFacetB->firstOwner()->getShapeType() ==  PP3d::ShapeType::Poly )
       lPolyB = (PP3d::PolyPtr) lFacetB->firstOwner();
     
     if( lPolyA == nullptr || lPolyB == nullptr )
@@ -2145,7 +2148,7 @@ namespace M3d {
               {
                 for( PP3d::OwnerPtr lOwner : lFac->getOwners() )
                   {
-                    if( lOwner->getType() != PP3d::ShapeType::Poly )
+                    if( lOwner->getShapeType() != PP3d::ShapeType::Poly )
                       {
                         cout << "Owner is not a Poly" << endl;
                         continue; // On ne veut que des facettes de Polyedres

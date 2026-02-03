@@ -65,7 +65,7 @@ namespace PP3d {
     {
       if( cCurrentLine != nullptr )
 	{
-	  PointPtr lPt = cCurrentLine->getFacet()->getPoint(cCurrentLineSelectPoint);	  
+	  PointPtr lPt = cCurrentLine->getPolyline()->getPoint(cCurrentLineSelectPoint);	  
 	  if( lPt != nullptr )
 	    {
 	      viewCurrentPoint( lPt->get());
@@ -75,13 +75,13 @@ namespace PP3d {
     //-------------------------------------
     void insertCurrentLineSelectPoint( Point3d iPt, DataBase & iBase)
     {            
-      cCurrentLine->getFacet()->insertPoint( cCurrentLineSelectPoint, iPt,  iBase );     
+      cCurrentLine->getPolyline()->insertPoint( cCurrentLineSelectPoint, iPt,  iBase );     
       renumberPoints();
     }
     //-------------------------------------
     void delCurrentLineSelectPoint(DataBase & iBase)
     {            
-      if( cCurrentLine->getFacet()->delPoint( cCurrentLineSelectPoint, iBase ) )
+      if( cCurrentLine->getPolyline()->delPoint( cCurrentLineSelectPoint, iBase ) )
 	{
 	  delete cCurrentLine;
 	  resetCurrentLine();
@@ -96,7 +96,7 @@ namespace PP3d {
     {
      if( cCurrentLine != nullptr )
 	{
-	  PointPtr lPt = cCurrentLine->getFacet()->getPoint(cCurrentLineSelectPoint);	  
+	  PointPtr lPt = cCurrentLine->getPolyline()->getPoint(cCurrentLineSelectPoint);	  
 	  if( lPt != nullptr )
 	    {
 	      std::cout << "changeCurrentLineSelectPoint : Point  found" << std::endl;
@@ -146,16 +146,16 @@ namespace PP3d {
     ObjectPtr convertCurrentLineToFacet(DataBase & iBase);
     ObjectPtr convertCurrentLineToFacetPoly(DataBase & iBase);
     ObjectPtr convertCurrentLineToBiFacetPoly(DataBase & iBase);
-    ObjectPtr convertCurrentLineToPolylines(DataBase & iBase);
+    ObjectPtr convertCurrentLineToPolyline(DataBase & iBase);
     ObjectPtr convertCurrentLineToLine(DataBase & iBase);
     //    Obj2BSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
     
     bool isCurrentPoints()   { return cCurrentLine     != nullptr; }
     bool isCurrentCreation() { return cCurrentCreation != nullptr; }
-    FacetPtr getCurrentLine()
+    PolylinePtr getCurrentLine()
     {
       if( cCurrentLine != nullptr)
-	return  cCurrentLine->getFacet();
+	return  cCurrentLine->getPolyline();
       return nullptr;
     }
 

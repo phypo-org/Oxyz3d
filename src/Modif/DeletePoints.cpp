@@ -71,7 +71,7 @@ bool Modif::DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet )
        	  // il faut detruire la facette !
           if( lOwner != nullptr )
             {
-              if( lOwner->getType() ==  ShapeType::Poly )
+              if( lOwner->getShapeType() ==  ShapeType::Poly )
                 {
                   ((Poly*)lOwner)->removeFacet( lFacet );
                 }
@@ -91,7 +91,7 @@ bool Modif::DeletePoint( DataBase * iBase, PointPtr iPoint, bool iCreateFacet )
   
   if( iCreateFacet
       && lPointsNewFacet.size() >= 3
-      && lOwner && lOwner->getType() == ShapeType::Poly )
+      && lOwner && lOwner->getShapeType() == ShapeType::Poly )
     {
      size_t lSz = lPointsNewFacet.size();
      

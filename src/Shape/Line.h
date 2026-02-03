@@ -23,7 +23,7 @@ namespace PP3d {
 
     bool isVoid() const override { if(  cPoints.first == nullptr &&  cPoints.second == nullptr ) return true; return false; }
        
-    ShapeType     getType() const override   { return ShapeType::Line;}
+    ShapeType     getShapeType() const override   { return ShapeType::Line;}
 		
     PointPtrPair& getPoints()                { return cPoints; }
     
@@ -65,7 +65,14 @@ namespace PP3d {
   public:
     void execVisitor( EntityVisitorNode& pVisit )override;
 
-     
+
+    
+
+    virtual void drawGL  ( ViewProps& pViewProps ) override;
+    virtual void selectGL( ViewProps& pViewProps ) override;
+
+
+    
     void inversePoint() {
       PointPtr lTmp = cPoints.first;
       cPoints.first = cPoints.second;
@@ -93,10 +100,11 @@ namespace PP3d {
      return lStr.str();
   }
     
-    Facet* myFacet() { return (Facet*) firstOwner(); }
-    
-  };
-	
+    Facet* myFacet() { return (Facet*) firstOwner(); }    
+  };  
+  //*********************************************
+
+  
   using LinePtr     = Line*;
   using LinePtrVect = std::vector<Line*>;
   

@@ -79,7 +79,7 @@ namespace PP3d {
 	DrawZ( 0.0f, 0.0f, -pSz *1.1f, pSz / 20.0f );
       }
 
-    glEnable(GL_LIGHTING);
+    // glEnable(GL_LIGHTING);
 				
   }
   //--------------------------
@@ -112,7 +112,7 @@ namespace PP3d {
         // Stop drawing lines
         glEnd();
       }
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
   //--------------------------
@@ -145,7 +145,7 @@ namespace PP3d {
         // Stop drawing lines
         glEnd();
       }
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
 
@@ -231,7 +231,7 @@ namespace PP3d {
     glVertex3f( (float)pPt.cX, (float)pPt.cY - pSz , (float)pPt.cZ + pSz);
 
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
   //--------------------------
@@ -260,7 +260,7 @@ namespace PP3d {
     glVertex3f( (float)pPt.cX, (float)pPt.cY-pSz , (float)pPt.cZ+pSz);
 
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
   }
   //--------------------------
   void
@@ -282,7 +282,7 @@ namespace PP3d {
     glVertex3f( (float)pPt.cX-pSz, (float)pPt.cY+pSz, (float)pPt.cZ+pSz);
     glEnd();
     
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
   }
   //--------------------------
   void
@@ -532,7 +532,7 @@ namespace PP3d {
 		
     glEnd();
 
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
   //-----------------------------------------
@@ -592,7 +592,7 @@ namespace PP3d {
     glVertex3f( (float)lMin.cX, (float)lMax.cY, (float)lMax.cZ );
 	
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
   //-----------------------------------------
@@ -626,7 +626,7 @@ namespace PP3d {
 
 	
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
   }
   //********************************

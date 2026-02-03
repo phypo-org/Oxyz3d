@@ -132,7 +132,7 @@ namespace PP3d {
     glVertex3dv( cMin.vectForGL() ); 
     glVertex3dv( cMax.vectForGL() ); 
     glEnd();
-    glEnable(GL_LIGHTING);
+    //    glEnable(GL_LIGHTING);
 
 		
   }

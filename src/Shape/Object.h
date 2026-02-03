@@ -12,7 +12,7 @@
 
 #include "Matrice.h"
 
-#include "Entity.h"
+#include "Poly.h"
 
 #include "Utils/PPDate.h"
 #include "Utils/PPContainer.h"
@@ -43,15 +43,15 @@ namespace PP3d {
     ObjProps                     cMyProps;
     std::string                  cName;
 
-    ObjectType                   cObjectType = ObjectType::ObjNull;
+    //    ObjectType                   cObjectType = ObjectType::ObjNull;
     ClassType                    cClassType  = ClassTypeObj;
     EntityPtr                    cShape     = nullptr;
     
     PPu::PPDateTime70            cDateCreation;
   public:
 
-    Object(  const char*pName,          ObjectType iObjType, EntityPtr iEntity, ClassType iClassType=ClassTypeObj );
-    Object(  const std::string & pName, ObjectType iObjType, EntityPtr iEntity, ClassType iClassType=ClassTypeObj );
+    Object(  const char*pName,          EntityPtr iEntity );
+    Object(  const std::string & pName, EntityPtr iEntity );
     virtual ~Object();
     
     Point3d getCenter3d() override {
@@ -65,21 +65,20 @@ namespace PP3d {
     }
 
     
-    virtual ObjectType getObjType()        const override  { return cObjectType; }
-    ShapeType getType()                    const override  { return ShapeType::Object;}
-    virtual ShapeType getSubType()         const           { if( cShape) return cShape->getType(); return ShapeType::Null; }
+    //    virtual ObjectType getObjType()        const override  { return cObjectType; }
+    ShapeType getShapeType()                    const override  { return ShapeType::Object;}
+    virtual ShapeType getSubType()         const           { if( cShape) return cShape->getShapeType(); return ShapeType::Null; }
     bool  isClassType( ClassType iClass )                  { return ((ulong)cClassType & ((ulong)iClass))!=0; }
     bool  isClassGeo()                                     { return isClassType( ClassTypeGeo );}
 
-    bool is(  ClassType  iClass ) { return isClassType( iClass ); }
-    bool is(  ShapeType  iShape ) { if( cShape) return cShape->getType() == iShape; return false; }
-    bool is(  ObjectType iObj  )  { return iObj == cObjectType; }
+    bool is(  ShapeType  iShape ) { if( cShape) return cShape->getSubType() == iShape; return false; }
+    //    bool is(  ObjectType iObj  )  { return iObj == cObjectType; }
 
     virtual bool isVoid()  const override  {  if( cShape) return cShape->isVoid(); return true; }
 
     
     PPu::PPDateTime70 getDateCreation() const { return cDateCreation; }
-    virtual void execVisitor( EntityVisitor& pVisit ) override;
+    virtual void execVisitor( EntityVisitor& pVisit )     override;
     virtual void execVisitor( EntityVisitorNode& pVisit ) override;
 
     //		virtual Entity& getMyEntity();
@@ -109,10 +108,14 @@ namespace PP3d {
       return nullptr;   
     };
 
-    FacetPtr   getPolyline()           {
-      if( is( ObjectType::ObjPolyline) ) return dynamic_cast<FacetPtr>(cShape);
+    PolylinePtr   getPolyline()           {
+      if( is( ShapeType::Polyline) ) return dynamic_cast<PolylinePtr>(cShape);
       return nullptr;
     }
+    /*    FacetPtr   getBSpline()           {
+      if( is( ShapeType::BSpline) ) return dynamic_cast<FacetPtr>(cShape);
+      return nullptr;
+      }*/
 
     Poly*      getPoly()           {
       if( is( ShapeType::Poly) ) return dynamic_cast<PolyPtr>(cShape);
@@ -123,28 +126,28 @@ namespace PP3d {
     EntityPtr setShape( EntityPtr iShape );
     
     EntityPtr setLine( LinePtr iShape ) {
-      cObjectType =  ObjectType::ObjLine ;
+      //     cObjectType =  ObjectType::ObjLine ;
       return setShape( iShape );
     }
     
     EntityPtr setFacet( FacetPtr iShape ) {
-      cObjectType =  ObjectType::ObjFacet;
+      //  cObjectType =  ObjectType::ObjFacet;
       return setShape( iShape );
     }
 
-    EntityPtr setPolyline( FacetPtr iShape ) {
-      cObjectType =  ObjectType::ObjPolyline ;
+    EntityPtr setPolyline( PolylinePtr iShape ) {
+      //   cObjectType =  ObjectType::ObjPolyline ;
       return setShape( iShape );
     }
        
     EntityPtr setPoly( PolyPtr iShape ) {
-      cObjectType =  ObjectType::ObjPoly ;
+      //   cObjectType =  ObjectType::ObjPoly ;
       return setShape( iShape );
     }
 
     static ObjectPtr CreateNewLine( std::string iName, PP3d::Point3d & iA, PP3d::Point3d & iB, ClassType iClassType=ClassTypeObj)
     {
-      return new PP3d::Object( "Axe",  ObjectType::ObjLine, MakeLine( iA, iB ), iClassType); 
+      return new PP3d::Object( "Axe", MakeLine( iA, iB ) ); 
     }
     
 
@@ -152,20 +155,11 @@ namespace PP3d {
 			      Compute iCompute);
 
 
-    virtual void drawGL( ViewProps& pViewProps );
-    virtual void selectGL( ViewProps& pViewProps );
+    virtual void drawGL( ViewProps& pViewProps ) override;
+ 
+    virtual void selectGL( ViewProps& pViewProps ) override;
+  
 
-    virtual void drawPointGL( ViewProps& pViewProps );
-    virtual void drawLineGL( ViewProps& pViewProps );
-    virtual void drawFacetGL( ViewProps& pViewProps );
-    virtual void drawPolyGL( ViewProps& pViewProps );
-    virtual void drawObjectGL( ViewProps& pViewProps );
-		
-    virtual void drawSelectPointGL( ViewProps& pViewProps );
-    virtual void drawSelectLineGL( ViewProps& pViewProps );
-    virtual void drawSelectFacetGL( ViewProps& pViewProps );
-    virtual void drawSelectPolyGL( ViewProps& pViewProps );
-    virtual void drawSelectObjectGL( ViewProps& pViewProps );
 
     //		void drawInfoGL(  ViewProps& pViewProps, ObjProps& pObjProps );
 

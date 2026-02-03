@@ -492,7 +492,7 @@ namespace M3d {
                                                                        CloseLow::No );
             if( lShape != nullptr )
               {
-                TheInput.swapCurrentCreation( new PP3d::Object( "Spiral", ObjectType::ObjPoly, lShape ) );  
+                TheInput.swapCurrentCreation( new PP3d::Object( "Spiral",  lShape ) );  
               }
           }
         else

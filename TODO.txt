@@ -1,4 +1,8 @@
-- REMETTRE LES SPLINE (ET LES PATH (grep AFAIRE) EN MARCHE) 
+- REMETTRE LES SPLINE (ET LES PATH (grep AFAIRE) EN MARCHE)
+
+
+- LE TRE MARCHE, MAIS IMPOSSIBLE  DE REMETTRE LE PICKING EN MARCHE !!!
+ AFFICHAGE ETC TROP COMPLIQUE !!!
 
 - Enlever les ids des objets. les générer à chque fois pour la
   selection

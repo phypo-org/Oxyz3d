@@ -115,7 +115,7 @@ namespace M3d {
 
     PP3d::Poly* lShape = PP3d::PrimitivFactory::CreateSphere( &lParam, lName );
     
-    TheInput.swapCurrentCreation( new PP3d::Object( "Primitiv", ObjectType::ObjPoly, lShape ));  
+    TheInput.swapCurrentCreation( new PP3d::Object( "Primitiv",  lShape ));  
 
      
     //  lShape->move(lPos );
@@ -199,7 +199,7 @@ namespace M3d {
             auto lOwners = lPt->getOwners();
             for( auto lOwn : lOwners )  // Et aussi les lines des points 
               {
-                if( lOwn->getType() == ShapeType::Line )
+                if( lOwn->getShapeType() == ShapeType::Line )
                   {
                     //     cout << '-';
 
@@ -250,7 +250,7 @@ namespace M3d {
                                                    lName, &lParam);
     if( cShapeMagnet != nullptr )
       {
-        cObjectPoly =  new PP3d::Object( lName, ObjectType::ObjPoly, cShapeMagnet );    
+        cObjectPoly =  new PP3d::Object( lName, cShapeMagnet );    
         TheInput.swapCurrentCreation( cObjectPoly  );
       }
     

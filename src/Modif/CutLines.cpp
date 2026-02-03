@@ -97,7 +97,7 @@ namespace PP3d{
       return true;
 	
  
-    if( lOwner->getType() != ShapeType::Facet )
+    if( lOwner->getShapeType() != ShapeType::Facet )
       {
 	std::cout << "Error - Modif::CutLine - The line %ld owner is not a facet - ignore : "
 		  << iLine->getId() << std::endl;
@@ -159,7 +159,7 @@ namespace PP3d{
 	// now make the same thing for the inv line
 	if( ioReverseLine && *ioReverseLine
 	    && (*ioReverseLine)->firstOwner()
-	    && (*ioReverseLine)->firstOwner()->getType() == ShapeType::Facet)
+	    && (*ioReverseLine)->firstOwner()->getShapeType() == ShapeType::Facet)
 	  {
 	    for( int i= iNbCut; i>0; i-- )
 	      {

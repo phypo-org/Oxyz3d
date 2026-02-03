@@ -3,6 +3,7 @@
 
 
 #include "Facet.h"
+#include "Polyline.h"
 
 namespace PP3d {
  //*********************************************
@@ -12,7 +13,7 @@ namespace PP3d {
   
   public:
     bool isVoid() const override { return getNbFacets() >0; }
-    ShapeType getType() const override { return ShapeType::Poly;}
+    ShapeType getShapeType() const override { return ShapeType::Poly;}
 
     Point3d getCenter3d() override {
       Point3d lRes;
@@ -64,7 +65,7 @@ namespace PP3d {
   
     virtual void remove( Entity* lEntity, bool iFlagRmOwner ) override
     {
-      if( lEntity->getType() ==  ShapeType::Facet )
+      if( lEntity->getShapeType() ==  ShapeType::Facet )
         {
           removeFacet(  ((FacetPtr)lEntity) );
           Entity::remove( lEntity, iFlagRmOwner);

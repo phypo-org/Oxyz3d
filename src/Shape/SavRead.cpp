@@ -52,7 +52,7 @@ namespace PP3d {
 
     for( auto lPairEntity :  lEntities )
       {
-	if( lPairEntity.second->getType() != ShapeType::Point )
+	if( lPairEntity.second->getShapeType() != ShapeType::Point )
 	  continue;
 	
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -74,7 +74,7 @@ namespace PP3d {
 
     for( auto lPairEntity :  lEntities )
       {				
-	if( lPairEntity.second->getType() != ShapeType::Line )
+	if( lPairEntity.second->getShapeType() != ShapeType::Line )
 	  continue;
 	
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -94,7 +94,7 @@ namespace PP3d {
 
     for( auto lPairEntity : lEntities )
       {				
-	if( lPairEntity.second->getType() != ShapeType::Facet )
+	if( lPairEntity.second->getShapeType() != ShapeType::Facet )
 	  continue;
 
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -118,7 +118,7 @@ namespace PP3d {
 
     for( auto lPairEntity :  lEntities )
       {				
-	if( lPairEntity.second->getType() != ShapeType::Poly )
+	if( lPairEntity.second->getShapeType() != ShapeType::Poly )
 	  continue;
 	
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -144,7 +144,7 @@ namespace PP3d {
 
     for( auto lPairEntity :  lEntities )
       {				
-	if( lPairEntity.second->getType() != ShapeType::Object )
+	if( lPairEntity.second->getShapeType() != ShapeType::Object )
 	  continue;
 
 	if( iFilter != nullptr && iFilter->find( lPairEntity.second ) == iFilter->end())
@@ -153,7 +153,7 @@ namespace PP3d {
 	auto lEntity = dynamic_cast<ObjectPtr>(lPairEntity.second);
 	cOut  << TokObject
 	      << ' '  << lEntity->getId()
-	      << ' '  << lEntity->getObjType()
+	      << ' '  << lEntity->getShapeType()
 	      << ' '  << lEntity->getShape()->getId() 
 	      << " @"  << lEntity->getName()   // pour eviter de recuperer l'espace devant le nom
 	      << std::endl;				
@@ -401,27 +401,10 @@ namespace PP3d {
 		      EntityPtr lSubPtr = lLocalDico.findObj(lSubId);
                       if( lSubPtr )
                         {
-                          ObjectType  lObjType = GetObjectTypeFromStr( lSubType.c_str());
-                          
-                          switch( lObjType )
-                            {
-                            case ObjectType::ObjPoint: break;
-                            case ObjectType::ObjLine:
-                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
-                              break;
-                            case ObjectType::ObjFacet:
-                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
-                              break;
-                            case ObjectType::ObjPoly:
-                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
-                              break;
-                            case ObjectType::ObjPolyline:
-                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
-                              break;
-                            case ObjectType::ObjBSpline:
-                              //                              lObj = new Object( lName, lObjType, lSubPtr, ClassTypeObj);
-                              break;
-                            case ObjectType::ObjNull: break;       				
+                          ShapeType  lType = GetShapeTypeFromStr( lSubType.c_str());
+                          if( lType !=  ShapeType::Point && lType !=  ShapeType::Null)
+                            {                              
+                              lObj = new Object( lName, lSubPtr);
                             }
                         }
                       else {
@@ -481,7 +464,7 @@ namespace PP3d {
                                 
                                 EntityPtr lEntity = lLocalDico.findObj(lId);
                                 
-                                if( lEntity != nullptr && lEntity->getType() == ShapeType::Object  )
+                                if( lEntity != nullptr && lEntity->getShapeType() == ShapeType::Object  )
                                   {
                                     ObjectPtr lObj = dynamic_cast<ObjectPtr>(lEntity);
                                     if( lObj != nullptr )

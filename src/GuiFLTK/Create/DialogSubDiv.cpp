@@ -153,7 +153,7 @@ namespace M3d {
 		
     PP3d::Poly* lShape = lParam.finish();
 		
-    TheInput.swapCurrentCreation( new PP3d::Object( "Subdivide", ObjectType::ObjPoly, lShape ) );  
+    TheInput.swapCurrentCreation( new PP3d::Object( "Subdivide", lShape ) );  
 				
     lShape->move(lCenter );
 		

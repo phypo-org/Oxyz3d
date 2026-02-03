@@ -59,7 +59,7 @@ namespace PP3d {
     friend std::ostream& operator <<( std::ostream& pOs,  const PickingHit& pHit )
     {
       pOs << pHit.cName << " z:" << pHit.cZ1 << " -> " << pHit.cZ2 << " " << (void*) pHit.cEntity << std::flush ;
-      pOs << (pHit.cEntity!=nullptr? pHit.cEntity->getType() : ShapeType::Null) ;
+      pOs << (pHit.cEntity!=nullptr? pHit.cEntity->getShapeType() : ShapeType::Null) ;
 			
       return pOs;
     }
@@ -141,7 +141,7 @@ namespace PP3d {
     //    void   changeSelectGroup( bool lVal ) { cSelectGroup = lVal; }
     //    bool   isSelectGroup() { return cSelectGroup; }
 
-    bool isOnlyObject( ObjectType iObjType );
+    bool isOnlyObject( ShapeType iShapeType );
     
 
     //	void drawGL( DataBase& pDatabase, ViewProps& pViewProps );
@@ -176,7 +176,7 @@ namespace PP3d {
       for(  EntityPtr lEntity : cSelectObjVect )
 	{
 	  //	  std::cout << " exec " <<  lEntity->getType() << " ? " << ShapeType::Object << std::endl;
-	  if( lEntity->getType() == ShapeType::Object )
+	  if( lEntity->getShapeType() == ShapeType::Object )
 	    //	  if( lEntity->getType() == ShapeType::Object )
 	    {
 	      //	      std::cout << " Exec " << std::endl;
