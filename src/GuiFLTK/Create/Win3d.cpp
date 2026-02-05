@@ -1,4 +1,4 @@
-#include "config.h"
+// #include "config.h"
 
 
 #include "GuiFLTK/Win3dBase.h"
@@ -1118,13 +1118,26 @@ namespace M3d {
                  //::::::::::::::::::::::::::::::::::::::::::::::::::::::
                  ADBMAL, this);
     //================================
-
+    cMenubar.add("&Debug/" "Alernate Draw", nullptr,  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 PP3d::DataBase::TDebugDraw = true;
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+    //================================
+    cMenubar.add("&Debug/" "Original Draw", nullptr,  LAMBDA
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 PP3d::DataBase::TDebugDraw = false;
+                 TheCreat.redrawAllCanvas3d(PP3d::Compute::FacetAll);
+                 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                 ADBMAL, this);
+		
 		
     cuCanvas3d->cPopup = new	Fl_Menu_Button( 100, 100, 1, 1, ""); // 100, 100 ne pas enlever
 
     
     end();
-    show(0,nullptr);
+    show();
 	
     cuCanvas3d->show();
     resizable(*this);

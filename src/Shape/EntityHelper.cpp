@@ -6,6 +6,8 @@
 
 namespace PP3d {
 
+
+  using namespace std;
   //*********************************************
 
   //---------------------------
@@ -28,7 +30,7 @@ namespace PP3d {
   //---------------------------
   void Entity::drawFacetGL(ViewProps& pViewProps )
   {    
-    if( is( ShapeType::Facet ))
+    //    if( is( ShapeType::Facet ))
       {
         //        std::cout << "********* Entity::drawFacetGL Obj:" << getShapeType() << std::endl;
         VisitorDrawFacet	lVisitF( pViewProps, cMyProps);
@@ -38,14 +40,14 @@ namespace PP3d {
   //---------------------------
   void Entity::drawPolyGL(ViewProps& pViewProps )
   {
-    //    std::cout << "********* Entity::drawPolyGL Obj:" << getShapeType()  << std::endl;
+    std::cout << "********* Entity::drawPolyGL Obj:" << getShapeType()  << std::endl;
     VisitorDrawPoly	lVisitP( pViewProps, cMyProps);
     execVisitor( lVisitP );
   }
   //---------------------------
   void Entity::drawObjectGL(ViewProps& pViewProps )
   {
-    //    std::cout << "********* Entity::drawObjectGL Obj:" << getShapeType()  << std::endl;
+    std::cout << "********* Entity::drawObjectGL Obj:" << getShapeType()  << std::endl;
     VisitorDrawObject	lVisitO( pViewProps, cMyProps);
     execVisitor( lVisitO );
   }
@@ -55,12 +57,16 @@ namespace PP3d {
   //---------------------------
   void Entity::drawSelectPointGL(ViewProps& pViewProps )
   {
+    //    cout << "drawSelectPointGL " << endl;
+    
     VisitorPickingPoints	lVisitP( pViewProps, cMyProps);
     execVisitor( lVisitP );
   }
   //---------------------------
   void Entity::drawSelectLineGL(ViewProps& pViewProps )
   {
+    //    cout << "drawSelectLineGL " << endl;
+        
     VisitorPickingLine	lVisitL( pViewProps, cMyProps);
     execVisitor( lVisitL );
   }
@@ -69,6 +75,7 @@ namespace PP3d {
   {    
     if( is( ShapeType::Facet ))
       {
+        cout << "drawSelectFacetGL " << endl;
         VisitorPickingFacet	lVisitF( pViewProps, cMyProps);
         execVisitor( lVisitF );
       }
@@ -76,6 +83,8 @@ namespace PP3d {
   //---------------------------
   void Entity::drawSelectPolyGL(ViewProps& pViewProps )
   {
+    cout << "drawSelectPolyGL " << endl;
+    
     VisitorPickingPoly	lVisitY( pViewProps, cMyProps);
     execVisitor( lVisitY );
   }
@@ -95,7 +104,7 @@ namespace PP3d {
       {
 	return;
       }
-    //		std::cout << "Entity::drawGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
+    std::cout << "Entity::drawGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
 	 
     //   if( pViewProps.cGLMode != GLMode::Select  )
       {
@@ -113,7 +122,7 @@ namespace PP3d {
 	  if( pViewProps.cViewMode == ViewMode::FULL )
             {
               glEnable(GL_LIGHTING);
-               drawPolyGL(pViewProps);
+              drawPolyGL(pViewProps);
             }
 					
           glDisable(GL_LIGHTING);
@@ -134,14 +143,11 @@ namespace PP3d {
 	  drawLineGL( pViewProps );
 	    
 	  drawPointGL( pViewProps);
-				
 	}
 	break;
 				
       case SelectType::Line:
 	{
-	  //	  std::cout << "Entity::drawGL line cGLMode:" <<  (int)pViewProps.cGLMode << std::endl;	  if( pViewProps.cViewMode == ViewMode::FULL)
-
           if( pViewProps.cViewMode == ViewMode::FULL)		
             {
               glEnable(GL_LIGHTING);
@@ -156,7 +162,7 @@ namespace PP3d {
 				
       case SelectType::Facet:
 	{
-          std::cout << "Entity::drawGL Facet " <<  std::endl;
+          //          std::cout << "Entity::drawGL Facet " <<  std::endl;
 	  if( pViewProps.cViewMode == ViewMode::FULL)
             {
               glEnable(GL_LIGHTING);
@@ -170,7 +176,7 @@ namespace PP3d {
 
       case SelectType::Poly:
 	{
-          std::cout << "Entity::drawGL poly " <<  std::endl;
+          //          std::cout << "Entity::drawGL polyedre " <<  std::endl;
 	  if( pViewProps.cViewMode == ViewMode::FULL)
             {
               glEnable(GL_LIGHTING);
@@ -185,7 +191,8 @@ namespace PP3d {
       case SelectType::Group:
       case SelectType::Object:
 	{
-          std::cout << "Entity::drawGL object" << std::endl;
+
+          //std::cout << "Entity::drawGL object" << std::endl;
 	  if( pViewProps.cViewMode == ViewMode::FULL)
             {
               glEnable(GL_LIGHTING);

@@ -199,9 +199,15 @@ namespace PP3d {
   }
   static void RemoveOwner( EntityPtr iEntity, ObjectPtr iObj )
   {
-    if( iEntity ) iEntity->removeOwner( iObj );
+    if( iEntity ) iEntity->removeOwner( iObj );    
   }
+
+
+  public:
+    static bool TDebugDraw ;
+    
    };
+  
   //************************************
 }
 

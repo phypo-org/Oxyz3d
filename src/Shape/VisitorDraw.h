@@ -95,7 +95,8 @@ namespace PP3d{
     void execEndFacet( Facet* pFacet )     override;
 
     virtual void execAfterBegin( Entity* pFacet) {;}
-
+   
+    static void DrawConcavFacet( Facet* pFacet );
   };
   //*********************************************
   struct VisitorDrawPoly: public VisitorDrawFacet{
@@ -119,7 +120,7 @@ namespace PP3d{
     void execEndObject( Object* pPoly )     override;
     void execBeginPoly( Poly* pPoly )       override;
     void execEndPoly( Poly* pPoly )         override;
-  };
+  }; 
 
    //*********************************************
   struct  VisitorDrawObjectLine: public VisitorDrawLine{		

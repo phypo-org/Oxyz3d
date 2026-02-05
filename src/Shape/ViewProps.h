@@ -176,7 +176,7 @@ namespace PP3d {
     //------------------
     void facetGL( )
     {
-      if( cGLMode == GLMode::Draw )	cColorFacet.materialGL();
+      if( cGLMode == GLMode::Draw ) 	cColorFacet.materialGL();
     }
     void facetSelectGL()
     {

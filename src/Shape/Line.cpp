@@ -1,6 +1,7 @@
 #include "ViewProps.h"
 #include "EntityVisitor.h"
 #include "VisitorPicking.h"
+#include "VisitorDraw.h"
 #include "Line.h"
 
 

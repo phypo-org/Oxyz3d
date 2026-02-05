@@ -133,14 +133,16 @@ namespace PP3d {
     
     bool is( ShapeType pType ) const { return getShapeType() == pType; }
 
-    virtual ShapeType getSubType()  { return getShapeType(); }
-    virtual bool      haveSubType() { return getSubType() != getShapeType();}
+  public:
+    virtual ShapeType getSubType()  const { return getShapeType(); }
+    virtual bool      haveSubType() const { return getSubType() != getShapeType();}
     //    virtual ObjectType getObjType()     const  { return ObjectType::ObjNull; }
 
     
     Entity()	 	      
     {
     }
+    
   
     ObjProps cMyProps; 
 

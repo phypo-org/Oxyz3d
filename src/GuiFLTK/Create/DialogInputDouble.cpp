@@ -126,7 +126,7 @@ namespace M3d {
       cMyWindow->size(  lW+lX*3, lY );
       cMyWindow->end();
 		
-      cMyWindow->show( 0, nullptr);
+      cMyWindow->show();
       
       cMustRun = true;
       //===================================

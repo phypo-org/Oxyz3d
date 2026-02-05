@@ -280,7 +280,7 @@ namespace M3d {
 
       cMyWindow->end();
 		
-      cMyWindow->show( 0, nullptr);
+      cMyWindow->show();
 	
       std::cout << "*********************************** FIN DIALOGUE **************************" << std::endl;
       maj();

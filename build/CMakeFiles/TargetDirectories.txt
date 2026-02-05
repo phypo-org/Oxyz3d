@@ -1,0 +1,3 @@
+/home/phipo/DevGit/Oxyz3d_2/build/CMakeFiles/rebuild_cache.dir
+/home/phipo/DevGit/Oxyz3d_2/build/CMakeFiles/edit_cache.dir
+/home/phipo/DevGit/Oxyz3d_2/build/CMakeFiles/Oxyz3d.dir

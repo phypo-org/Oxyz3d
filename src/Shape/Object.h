@@ -63,10 +63,10 @@ namespace PP3d {
       if( getShape() != nullptr ) return getShape()->getNormal3d();
       return Point3d();
     }
-
     
+  public:    
     //    virtual ObjectType getObjType()        const override  { return cObjectType; }
-    ShapeType getShapeType()                    const override  { return ShapeType::Object;}
+    virtual ShapeType getShapeType()       const override  { return ShapeType::Object;}
     virtual ShapeType getSubType()         const           { if( cShape) return cShape->getShapeType(); return ShapeType::Null; }
     bool  isClassType( ClassType iClass )                  { return ((ulong)cClassType & ((ulong)iClass))!=0; }
     bool  isClassGeo()                                     { return isClassType( ClassTypeGeo );}

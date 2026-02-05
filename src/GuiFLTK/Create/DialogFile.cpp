@@ -43,7 +43,7 @@ namespace M3d {
       Fl_File_Chooser* lFc = new Fl_File_Chooser(".", "*", Fl_File_Chooser::SINGLE, iTitle.c_str());
            
       cMyWindow->end();		
-      cMyWindow->show( 0, nullptr);
+      cMyWindow->show();
       lFc->show();
 
       while (lFc->visible()) {

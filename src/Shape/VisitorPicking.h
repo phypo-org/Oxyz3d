@@ -2,85 +2,136 @@
 #define H__EntityVisitorPicking__H
 
 
+
 #include <vector>
 #include <set>
 
 #include <unordered_set>
 #include "PP3dType.h"
 #include "MinMaxBox3d.h"
-#include "Entity.h"
 
 
-#include "VisitorDraw.h"
+#include "EntityVisitor.h"
+
 
 namespace PP3d{
-
+	
+  class Entity;
+  class Point;
+  class Line;
+  class Facet;
+  class Poly;
+  class Object;
+  class ViewProps;
+  struct ObjProps;
+  class Object;
   
-  //*********************************************
-  struct VisitorPickingPoints: public VisitorDrawPoints {
+
+  //**********************************
+  struct VisitorPickingPoints : public EntityVisitor {
+
+    ViewProps& cViewProps;
+    ObjProps & cObjProps;
 
     VisitorPickingPoints( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawPoints( pViewProps, pObjProps) {;}
-		
-    void execPoint( Point* pPt )        override;
-    void execEndObject( Object* iVar ) override;
+      :cViewProps( pViewProps)
+      ,cObjProps(pObjProps)
+    {;}
+
+    void execBeginObject( Object* pObj )   override;
+    void execPoint( Point* pPt )           override;
+    void execEndObject(  Object* pObj )    override;
   };
   //*********************************************
-  struct  VisitorPickingLine: public VisitorDrawLine{		
+  struct VisitorPickingLine: public EntityVisitor{
+		
+    ViewProps& cViewProps;
+    ObjProps & cObjProps;
+		
     VisitorPickingLine( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawLine( pViewProps, pObjProps) {;}
-		
-    void execBeginLine( Line* pLine ) override;
-    void execEndObject( Object* iVar ) override;
+      :cViewProps( pViewProps)
+      ,cObjProps(pObjProps)
+    {;}
+
+    void execBeginObject( Object* pObj )   override;
+    void execBeginLine( Line* pLine )      override;
+    void execEndObject(  Object* pObj )    override;	
   };
   //*********************************************
-  struct  VisitorPickingObjectLine: public VisitorDrawObjectLine{		
-    VisitorPickingObjectLine( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawObjectLine( pViewProps, pObjProps) {;}
+  struct VisitorPickingPolyline: public EntityVisitor{
 		
-    void execBeginObject( Object* pObject )  override;
-  };
-   //*********************************************
-  struct VisitorPickingPolyline: public VisitorDrawPolyline{
-		
+    ViewProps& cViewProps;
+    ObjProps & cObjProps;
+
+    GLuint cNumLineEnd;
+    GLuint cNumLine;
+			
     VisitorPickingPolyline( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawPolyline( pViewProps, pObjProps) {;}
+      :cViewProps( pViewProps)
+      ,cObjProps(pObjProps)
+    {;}
 
     void execBeginFacet( Facet* pFacet )   override;
+    void execBeginLine( Line* pLine )   override;
     void execEndFacet( Facet* pFacet )   override;
   };
   //*********************************************
-  struct VisitorPickingFacet: public VisitorDrawFacet{
+  struct VisitorPickingFacet: public EntityVisitor{
 		
+    ViewProps& cViewProps;
+    ObjProps & cObjProps;
+
+    GLuint cNumLineEnd;
+    GLuint cNumLine;
+    bool cNoDraw = false;
+			
     VisitorPickingFacet( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawFacet( pViewProps, pObjProps) {;}
+      :cViewProps( pViewProps)
+      ,cObjProps(pObjProps)
+    {;}
 
     void execBeginFacet( Facet* pFacet )   override;
-    void execEndFacet( Facet* pFacet )   override;
-    void execAfterBegin( Entity* pFacet ) override;
+    void execBeginLine( Line* pLine )      override;
+    void execEndFacet( Facet* pFacet )     override;
+
+    virtual void execAfterBegin( Entity* pFacet) {;}
+   
+    static void PickingConcavFacet( Facet* pFacet );
   };
   //*********************************************
-  struct VisitorPickingPoly: public VisitorDrawPoly{
+  struct VisitorPickingPoly: public VisitorPickingFacet{
 		
     VisitorPickingPoly( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawPoly( pViewProps, pObjProps) {;}
+      :VisitorPickingFacet(  pViewProps, pObjProps)
+    {;}
+    void execBeginPoly( Poly* pPoly )      override;
+    void execEndPoly( Poly* pPoly )        override;
+    void execBeginFacet( Facet* pFacet )   override;
+    void execEndFacet( Facet* pFacet )     override;
 
-    void execBeginPoly( Poly* pPoly )   override;
-    void execEndPoly( Poly* pPoly )   override;
   };
   //*********************************************
-  struct VisitorPickingObject: public VisitorDrawObject{
-    EntityId cId=0;
+  struct VisitorPickingObject: public VisitorPickingPoly{
 		
     VisitorPickingObject( ViewProps& pViewProps, ObjProps& pObjProps )
-      :VisitorDrawObject( pViewProps, pObjProps) {;}
-
-    void execBeginObject( Object* pObject )   override;
-    void execEndObject( Object* pObject )   override;
-    void execAfterBegin( Entity* pFacet )   override;
+      :VisitorPickingPoly(  pViewProps, pObjProps)
+    {;}
+    void execBeginObject( Object* pPoly )   override;
+    void execEndObject( Object* pPoly )     override;
+    void execBeginPoly( Poly* pPoly )       override;
+    void execEndPoly( Poly* pPoly )         override;
   };
 
+   //*********************************************
+  
+  struct  VisitorPickingObjectLine: public VisitorPickingLine{		
+    VisitorPickingObjectLine( ViewProps& pViewProps, ObjProps& pObjProps )
+      :VisitorPickingLine( pViewProps, pObjProps) {;}
+		
+    void execBeginObject( Object* pObject )  override;
+    void execBeginLine( Line* pLine )        override;
+  };
+  
   //*********************************************
-   
 }
 #endif

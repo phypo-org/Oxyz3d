@@ -31,7 +31,7 @@ namespace M3d {
     ,cGridMode( ModeGrid::GRID_2D )
      //   ,cDebug(false)	
   { 
-    gl_font( FL_HELVETICA_BOLD, 24);
+
     cKamera.initGL();
     cKamera.raz45();
 
@@ -139,6 +139,7 @@ namespace M3d {
     glViewport(0,0,pixel_w(),pixel_h());		
     cKamera.setAspectRatio( pixel_w(), pixel_h());
     cKamera.initGL();
+    gl_font( FL_HELVETICA_BOLD, 24);
     
     //==========  On place les lumieres dans le monde, pas avec la camera =============
     glMatrixMode(GL_MODELVIEW);

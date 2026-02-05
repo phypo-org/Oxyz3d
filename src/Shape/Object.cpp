@@ -173,8 +173,9 @@ namespace PP3d{
   //---------------------------
   void Object::selectGL( ViewProps& pViewProps ) 
   {
-    if( cShape)
-      cShape->selectGL(pViewProps);
+    std::cout << ">>>>>>>>>>><>>>>>>>>> selectGL::drawGL" << std::endl;
+    
+    if( cShape) cShape->selectGL(pViewProps);
     };
   
  //********************************

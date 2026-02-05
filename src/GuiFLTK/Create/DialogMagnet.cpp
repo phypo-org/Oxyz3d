@@ -162,7 +162,7 @@ namespace M3d {
 
       cMyWindow->end();
 		
-      cMyWindow->show( 0, nullptr);
+      cMyWindow->show();
 	
       std::cout << "*********************************** FIN DIALOGUE **************************" << std::endl;
       maj();
@@ -188,7 +188,7 @@ namespace M3d {
     }
     void show()
     {
-      cMyWindow->show( 0, nullptr);
+      cMyWindow->show();
     }
     
   protected:   

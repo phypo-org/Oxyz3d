@@ -17,12 +17,15 @@
 
 
 namespace PP3d {
+
+  
   //************************************
 
   TUniqueId<EntityId, 1> DataBase::sUniqueId;
   TUniqueId<EntityId, 1> DataBase::sUniqueGroupId;
 
 
+  bool DataBase::TDebugDraw = false;
 	
   DataBase::DataBase()
     :cCurrent()
@@ -165,10 +168,12 @@ namespace PP3d {
             if(  iSelectOrDrawMode == GLMode::Draw  )
               {
                 //			std::cout << "draw lObj:" << lObj->getName() << std::endl;
+                std::cout << "DataBase::drawGL call Obj->drawGL" << std::endl;
                 lObj->drawGL( iViewGen );
               }
             else
               {
+                std::cout << "DataBase::drawGL call Obj->selectGL" << std::endl;
                 lObj->selectGL( iViewGen );
                 //						std::cout << "select lObj:" << lObj->getName() << std::endl;
               }

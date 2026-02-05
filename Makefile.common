@@ -21,8 +21,9 @@ endif
 ifdef USING_FLTK
 
 include ${FLTK_PATH}/makeinclude
-INC_FLTK= -I${FLTK_PATH}
-LIB_FLTK= -lfltk_gl -lfltk -lfltk_images
+
+INC_FLTK= -I${FLTK_PATH} -I${FLTK_PATH}/..
+LIB_FLTK= -lfltk_images -lfltk_gl -lwayland-egl -lwayland-client -lEGL -lGLU -lGL -lfltk -lm -lpthread -lXinerama -lXfixes -lXcursor -lpangoxft-1.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lharfbuzz -lfontconfig -lfreetype -lXft -lpangocairo-1.0 -lcairo -lgtk-3 -lgdk-3 -lgio-2.0 -lX11 -lXrender -lwayland-cursor -lwayland-client -lxkbcommon -ldbus-1 -ldl
 
 
 # ATTENTION  il y a un .SLIENT dans makeinclude, pour le neutraliser
@@ -147,20 +148,30 @@ endif
 # Le compilateur utilisé
 #-----------------------
 
-ifdef USE_CC
+ifdef USE_GCC
+# exemple make USE_GCC=$GCC8
+# exemple make USE_GCC=$GCC9
 
-CC=$(USE_CC)bin/g++
-# exemple make USE_CC=$GCC8
-# exemple make USE_CC=$GCC9
-
+CC=$(USE_GCC)/bin/g++
 INCLUDE_CC=-I$(USE_CC)include
 LIB_CC=-L$(USE_CC)/lib64
 
 else
 CC=g++ -g
-
-LIB_CC=-L/usr/lib/x86_64-linux-gnu 
+INCLUDE_CC=
+LIB_CC=
+# LIB_CC=-L/usr/lib/x86_64-linux-gnu 
 endif
+
+
+ifdef USE_CLANG
+
+CC=$(USE_CLANG) 
+INCLUDE_CC=-I $(INC_CLANG)
+LIB_CC=-L $(LIB_CLANG) -l fausse-lib-pour-arreter-le-link
+
+endif
+
 
 
 # Les libs externes (NE PAS ENLEVER !!!!)
@@ -222,4 +233,4 @@ INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   $(INC_FLTK) $(
 
 # Les libbrairies externes
 #-------------------------
-EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ $(LIB_FLTK) $(LIB_GTK)  $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)
+EXTERNAL_LIBS= -L$(EXTERNAL_PATH) $(LIB_CC) -L$(FLTK_PATH)/lib -L/usr/lib/x86_64-linux-gnu/ $(LIB_FLTK) -lz $(LIB_GTK)  $(GLDLIBS) -ljpeg -lpng  $(LIB_LUA) $(LIB_PYTHON)  $(LIB_CGAL) $(LIB_OPENAL)

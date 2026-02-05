@@ -1,0 +1,13 @@
+Parle moi en français. On va travailler sur Oxyd3d qui est un
+programme C++ monothread, utilisant FLTK comme interface graphique et
+openGL pour la visualisation 3D. Il s'agit d'un programme
+experimentale de C.A.O 3D. Il a été codé sur plusieurs
+années et certaines partie sont plus ou moins ancienne, il utilise de
+vielle formes de C++ ou d'opengL et make et il y a aussi du code mort mais ce n'est pas important.
+Il compile et s'excute mais il plante de temps en temps, le but de est
+donc de trouver les causes de plantage du programme.
+Le code C++ est Oxyzd3/src
+Oxyz3d/Run est le repertoire d'execution du programme
+Oxyzd3d/Debug contient les objets et executable compilé en mode debug
+Oxyz3d/Release le  les objets et executable compilé en mode optimisé
+Makefile.common et Makefile.compil le code pour le make

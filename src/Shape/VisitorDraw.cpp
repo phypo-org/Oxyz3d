@@ -9,9 +9,11 @@
 namespace PP3d {
 
 
+  using namespace std;
+
   //*********************************************
 
-  void DrawConcavFacet( Facet* pFacet ){
+  void VisitorDrawFacet::DrawConcavFacet( Facet* pFacet ){
 
     // A FAIRE : OPTIMISER la recuperation des points !
 	
@@ -139,7 +141,7 @@ namespace PP3d {
   //---------------------------	
   void VisitorDrawLine::execBeginLine( LinePtr pLine )
   {
-    std::cout << " VisitorDrawLine::execBeginLine  "  << std::endl;
+    //   std::cout << " VisitorDrawLine::execBeginLine  "  << std::endl;
       //<< pLine->getFirst()->get()
       //						<< " " <<pLine->getSecond()->get() <<  std::endl;
     //		cViewProps.dragMat( pLine );
@@ -181,7 +183,7 @@ namespace PP3d {
   //---------------------------	
   void VisitorDrawObjectLine::execBeginLine( LinePtr pLine )
   {
-    		std::cout << " VisitorDrawLine::execBeginLine : " <<  std::endl;
+    //    		std::cout << " VisitorDrawLine::execBeginLine : " <<  std::endl;
                   //<< pLine->getFirst()->get()
     //							<< " " <<pLine->getSecond()->get() <<  std::endl;
     //		cViewProps.dragMat( pLine );
@@ -191,7 +193,7 @@ namespace PP3d {
 	glBegin( GL_POINTS );
 	glVertex3dv( pLine->getFirst()->get().vectForGL() );
 	glEnd();
-				
+			  	
       }
     else
       {
@@ -237,7 +239,7 @@ namespace PP3d {
   //*********************************************
   void VisitorDrawFacet::execBeginFacet( FacetPtr pFacet )
   {
-    std::cout << "VisitorDrawFacet::execBeginFacet" << std::endl;
+    //    std::cout << "VisitorDrawFacet::execBeginFacet select:" <<  pFacet->isSelect() << std::endl;
     //		cViewProps.dragMat( pFacet);
     //==================================
     if( cViewProps.cFlagViewNormal == true
@@ -322,7 +324,7 @@ namespace PP3d {
     ColorRGBA lCurCol;
     lCurCol.getCurrentColor(); 
       
-    std::cout << "VisitorDrawPoly::execBeginFacet " << lCurCol << std::endl;
+    //    std::cout << "VisitorDrawPoly::execBeginFacet " << lCurCol << std::endl;
     
     glNormal3dv( pFacet->getNormal().vectForGL() );
 
@@ -361,6 +363,7 @@ namespace PP3d {
   //---------------------------	
   void VisitorDrawObject::execBeginObject( ObjectPtr pObject )
   {
+    //    cout << "execBeginObject" << endl;
     cViewProps.facetGL( pObject->isSelect(), pObject->isHighlight(), pObject->isMagnet()  );
   }
   //---------------------------	
