@@ -10,7 +10,6 @@
 #include "PP3dType.h"
 #include "DataBase.h"
 
-#include "VisitorPicking.h"
 
 #include <algorithm>
 #include <sstream> 
@@ -166,15 +165,33 @@ namespace PP3d{
   
   void Object::drawGL( ViewProps& pViewProps ) 
   {
-    std::cout << ">>>>>>>>>>><>>>>>>>>> Object::drawGL" << std::endl;
+     if( cMyProps.cVisible == false )
+      {
+        return;
+      }
+      
+   std::cout << ">>>>>>>>>>><>>>>>>>>> Object::drawGL" << std::endl;
    
-    if( cShape) cShape->drawGL(pViewProps);
+   pViewProps.setPickingId = 0;
+   if( cShape) cShape->drawGL(pViewProps);
   }
   //---------------------------
-  void Object::selectGL( ViewProps& pViewProps ) 
+  void Object::selectGL( ViewProps & pViewProps ) 
   {
-    std::cout << ">>>>>>>>>>><>>>>>>>>> selectGL::drawGL" << std::endl;
-    
+     if( cMyProps.cVisible == false )
+      {
+        return;
+      }
+     
+     pViewProps.setPickingId( 0 );
+   
+   std::cout << ">>>>>>>>>>><>>>>>>>>> selectGL::drawGL " << Selection::GetStrSelectType( pViewProps.cSelectType) << std::endl;
+
+   if(  pViewProps.cSelectType == SelectType::Group || pViewProps.cSelectType == SelectType::Object )
+     {
+       pViewProps.setPickingId( getId() );
+     }
+   
     if( cShape) cShape->selectGL(pViewProps);
     };
   

@@ -188,11 +188,11 @@ namespace M3d {
 	    for( int lX = 0; lX< iSizeX; lX++ )
 	      {
 		PP3d::EntityId lId = PP3d::ColorRGBA::GetId(  &(luData)[lX*4]);
-                cout << "PPPPPPPPPPPPPPPPP   pickingColor lY:" << lY << " lId:" << lId << std::endl;
+                //     cout << "PPPPPPPPPPPPPPPPP   pickingColor lY:" << lY << " lId:" << lId << std::endl;
 
 		if( lMemoId != lId )
 		  {
-                    cout << "PPPPPPPPPPPPPPPPP OKOKOK  pickingColor lY:" << lY << " lId:" << lId << std::endl;
+                    //     cout << "PPPPPPPPPPPPPPPPP OKOKOK  pickingColor lY:" << lY << " lId:" << lId << std::endl;
 
 		    lMemoId = lId;
 		    selectEntity( lId, pFlagMove );

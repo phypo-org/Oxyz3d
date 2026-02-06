@@ -129,6 +129,8 @@ namespace PP3d {
 
     LinePtrVect& getLines()   { return cLines;}
     GLuint       getNbLines()  const { return (GLuint )cLines.size(); }
+    GLuint       size()  const { return (GLuint )cLines.size(); }
+    
     PointPtr     getPoint( PIndex iPos );
     
     int          getCopyPointsWithDuplicate( VectDouble3 & oPts ) const;
@@ -164,6 +166,26 @@ namespace PP3d {
     void         deleteAll();
     
     void         execVisitor( EntityVisitor& pVisit )override;
+
+    //----------------
+    void drawConcavFacet();
+    void drawNormalFacet();
+
+    void drawPoints( ViewProps& pViewProps );
+    void drawLines( ViewProps& pViewProps );
+    void drawPointsLines( ViewProps& pViewProps );    
+    void drawFacet( ViewProps& pViewProps );
+    
+    void pickingPoints( ViewProps& pViewProps );
+    void pickingLines( ViewProps& pViewProps );
+    void pickingPointsLines( ViewProps& pViewProps );    
+    void pickingFacet();    
+
+    virtual void drawGL  ( ViewProps& pViewProps ) override;
+    virtual void selectGL( ViewProps& pViewProps ) override;
+    //----------------
+
+    
     void         inverseLines();
     Point3d      getCenter3d() override;
     Point3d      getNormal3d() override { return getNormal(); };

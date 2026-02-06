@@ -34,7 +34,6 @@ namespace PP3d {
 	<< " shape:" << (void*)pObj->getShape()
 	<< std::endl;
   }
-
   //*********************************************
   void VisitorMinMax::execPoint(  Point* pPoint )
   {

@@ -41,50 +41,7 @@ namespace PP3d {
       }
     return "ClassType::unknown";
   }
-  /*
-  enum class ObjectType  {  ObjPoint, ObjLine, ObjFacet, ObjPolyline, ObjPoly, ObjBSpline, ObjNull};
-  inline static const char* GetStrObjectType( ObjectType pType )
-  {
-    switch( pType )
-      {
-      case ObjectType::ObjPoint:    return "ObjPoint";
-      case ObjectType::ObjLine:     return "ObjLine";
-      case ObjectType::ObjFacet:    return "ObjFacet";
-      case ObjectType::ObjPoly:     return "ObjPoly";
-      case ObjectType::ObjPolyline: return "ObjPolyline";
 
-      case ObjectType::ObjBSpline: return "ObjBSpline";
-      case ObjectType::ObjNull:    return "Unknown";
-      }
-    return "ObjectType::unknown";
-  }
-	
-  inline static ObjectType GetObjectTypeFromStr( const char* pStr )
-  {
-    if( strcmp( pStr, "ObjPoint" ) == 0 )
-      return ObjectType::ObjPoint;
-    else		if( strcmp( pStr, "ObjLine" ) == 0 )
-      return ObjectType::ObjLine;
-    else		if( strcmp( pStr, "ObjFacet" ) == 0 )
-      return ObjectType::ObjFacet;
-    else		if( strcmp( pStr, "ObjPoly" ) == 0 )
-      return ObjectType::ObjPoly;
-    else		if( strcmp( pStr, "ObjPolyline" ) == 0 )
-      return ObjectType::ObjPolyline;
-    else		if( strcmp( pStr, "ObjBSpline" ) == 0 )
-      return ObjectType::ObjBSpline;
-    return ObjectType::ObjNull;
-  }
-  
-
-	
-  inline std::ostream& operator << ( std::ostream& pOs, ObjectType pType )
-  {
-    pOs <<   GetStrObjectType( pType );
-    return pOs;
-  }
-  */
-  
   enum class Compute{
     Nothing,
     FacetNormal,
@@ -231,22 +188,9 @@ namespace PP3d {
     virtual void execVisitor( EntityVisitorNode& pVisit ) = 0;
 
 
-    virtual void drawGL  ( ViewProps& pViewProps );
-    virtual void selectGL( ViewProps& pViewProps );
+    virtual void drawGL  ( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false ){;}
+    virtual void selectGL( ViewProps& pViewProps, EntityId iForceId=0 ){;}
     
-    virtual void drawPointGL( ViewProps& pViewProps );
-    virtual void drawLineGL( ViewProps& pViewProps );
-    virtual void drawFacetGL( ViewProps& pViewProps );
-    virtual void drawPolyGL( ViewProps& pViewProps );
-    virtual void drawObjectGL( ViewProps& pViewProps );
-		
-    virtual void drawSelectPointGL( ViewProps& pViewProps );
-    virtual void drawSelectLineGL( ViewProps& pViewProps );
-    virtual void drawSelectFacetGL( ViewProps& pViewProps );
-    virtual void drawSelectPolyGL( ViewProps& pViewProps );
-    virtual void drawSelectObjectGL( ViewProps& pViewProps );
-
-
     
     void move   ( Point3d  p );
     void scale  ( Point3d p ); // A n'utiliser que si l'objet est centre sur l'origine !

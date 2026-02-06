@@ -6,7 +6,7 @@
 #include "Polyline.h"
 
 namespace PP3d {
- //*********************************************
+  //*********************************************
   class  Poly :  public Entity{
 		
     FacetPtrVect cFacets;
@@ -66,7 +66,7 @@ namespace PP3d {
     virtual void remove( Entity* lEntity, bool iFlagRmOwner ) override
     {
       if( lEntity->getShapeType() ==  ShapeType::Facet )
-        {
+        { 
           removeFacet(  ((FacetPtr)lEntity) );
           Entity::remove( lEntity, iFlagRmOwner);
         }
@@ -85,6 +85,26 @@ namespace PP3d {
     PIndex  getNbFacets() const { return cFacets.size(); }
     void execVisitor( EntityVisitor& pVisit )override;
 
+
+
+    //----------------
+    void drawPoints( ViewProps& pViewProps );
+    void drawLines( ViewProps& pViewProps );
+    void drawPointsLines( ViewProps& pViewProps );    
+    void drawFacets( ViewProps& pViewProps );
+
+   
+    void pickingFacets();    
+
+    virtual void drawGL  ( ViewProps& pViewProps ) override;
+    virtual void selectGL( ViewProps& pViewProps ) override;
+    //----------------
+
+
+
+
+
+    
     bool clear() override { cFacets.clear();  return Entity::clear(); }
 
   protected:
@@ -99,7 +119,7 @@ namespace PP3d {
   using PolyPtrVect = std::vector<Poly*>;
 
 
-//*********************************************
+  //*********************************************
 
 }
 

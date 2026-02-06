@@ -229,7 +229,7 @@ namespace M3d {
          
    
       if( cMyTypeInput == TypeOfInput::INPUT_ENTRY
-          && (TheInput.getNbCurrentPoints() <  2 || TheInput.getCurrentLine() == nullptr
+          && (TheInput.getNbCurrentPoints() <  2 
               || TheSelect.getSelectType() != PP3d::SelectType::Facet
               || TheSelect.getNbSelected() < 1
               || TheSelect.getFirst()->getShapeType() != PP3d::ShapeType::Facet ))
@@ -274,7 +274,7 @@ namespace M3d {
       PP3d::FacetPtrVect lNewFacets;
 
   
-           PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine()->duplicate();	 
+           PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine().duplicate();	 
            //      Object lObjBSpline( "BSplineTmpLofting", ObjectType::ObjBSpline, lPath ); //, false );
 
       // ObjectPolylines      * lPath = TheInput.getCurrentLine();

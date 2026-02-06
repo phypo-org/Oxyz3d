@@ -36,6 +36,7 @@ namespace PP3d {
     TestEnumViewMode( SKELETON );
     return ViewMode::FULL;
   }
+  
 
   inline std::ostream& operator << ( std::ostream& pOs, ViewMode pType )
   {

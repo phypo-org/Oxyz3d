@@ -356,7 +356,7 @@ namespace M3d {
 	PP3d::Mat4 lMatTran = lMatRecenter * lMatRot *  lMatZero;					
       
 
-	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( TheInput.getCurrentLine(), lNbPas, lMatTran,
+	PP3d::PolyPtr lShape  = PP3d::Maker::CreatePoly4FromFacet( &TheInput.getCurrentLine(), lNbPas, lMatTran,
                                                                    lFlagClose       ? CloseRevol::Yes  : CloseRevol::No,
 								   lFlagCloseSeg    ? CloseSeg::Yes    : CloseSeg::No,
                                                                    lFlagCloseSegEnd ? CloseSegEnd::Yes : CloseSegEnd::No,

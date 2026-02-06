@@ -25,26 +25,21 @@ namespace PP3d {
   
   CurrentInput::CurrentInput()
     :cCurrentCreation(nullptr)
-    ,cCurrentLine(nullptr)
+     //   ,cCurrentLine(nullptr)
   {
   }
   //---------------------------
   CurrentInput::~CurrentInput()
   {
-    while( cCurrentLine != nullptr )
-      {
-	delAllPoint();
-      }
+    delAllPoint();
   }
   //------------------------------------------
   void CurrentInput::renumberPoints()
   {
     cCurrentLineId = kMinCurrentLineId;
-    if( cCurrentLine == nullptr )
-      return;
     
     PP3d::SortEntityVisitorPoint lVisit;
-    if(  execVisitorOnCurrentLine( lVisit ) )
+    if( execVisitorOnCurrentLine( lVisit ) )
       {
 	for( PointPtr lPtr : lVisit.cVectPoints )
 	  {
@@ -83,22 +78,13 @@ namespace PP3d {
   {
     //		std::cout << "======== CurrentInput::addPointToCurrentLine" << std::endl;
     // FAIRE QUELQUE CHODE DE PLUS PROPRE !!!
-    if( cCurrentLine == nullptr )
-      {
-	std::cout << "========= ObjectPolyline"  << std::endl;
-        PolylinePtr lNewFac = new Polyline( ); // ShapeType::Polyline );
-
-	cCurrentLine= new Object("Saisie", lNewFac );
-      }
-		
-    Polyline* lPolyline= cCurrentLine->getPolyline();
-		
+ 			
     PointPtr lPoint= new Point( pPt );
     lPoint->setId( cCurrentLineId );
     testAndSelectCurrentLinePoint( cCurrentLineId++ );
     
 		
-    LinePtrVect& lLines = lPolyline->getLines();
+    LinePtrVect& lLines = cCurrentPolyline.getLines();
 				
     //		std::cout << " lLines size: "  << lLines.size()  <<std::endl;	
     if( lLines.size() == 0 )
@@ -134,20 +120,16 @@ namespace PP3d {
   //------------------------------------------
   void CurrentInput::delLastPoint( )
   {
-    if( cCurrentLine == nullptr )
-      return;		
+    if( cCurrentPolyline.size() == 0) return ;
 		
-    Polyline* lPolyline= cCurrentLine->getPolyline();
-    LinePtrVect& lLines = lPolyline->getLines();
+    LinePtrVect& lLines = cCurrentPolyline.getLines();
     if( lLines.size() == 1)
       {
-	LinePtr lLine = lPolyline->getLines()[0];
+	LinePtr lLine = cCurrentPolyline.getLines()[0];
 	if( lLine->isPoint() )
 	  {
             delete lLine->first();
 	    delete lLine;
-            delete lPolyline;
-	    delete cCurrentLine;
 	    resetCurrentLine();
 	  }
 	else {
@@ -165,15 +147,7 @@ namespace PP3d {
   }
   //------------------------------------------
   void CurrentInput::delAllPoint( )
-  {
-    if( cCurrentLine == nullptr )
-      return;
-		    
-    Polyline* lPolyline= cCurrentLine->getPolyline();
-    lPolyline->deleteAll();        
-    delete lPolyline;
-    
-    delete cCurrentLine;
+  {    
     resetCurrentLine();
   }
   //------------------------------------------
@@ -226,10 +200,12 @@ namespace PP3d {
     }
   };
   //------------------------------------------
-  
   ObjectPtr CurrentInput::convertCurrentLineToLine(DataBase & iBase)
   {
-    LinePtrVect& lLines =  cCurrentLine->getPolyline()->getLines();     
+    if( cCurrentPolyline.size() != 2 )
+      return nullptr;
+    
+    LinePtrVect& lLines =  cCurrentPolyline.getLines();     
     ObjectPtr lObjLine = nullptr;
     
     if( lLines.size() == 1 )
@@ -255,11 +231,9 @@ namespace PP3d {
   //------------------------------------------		
   ObjectPtr CurrentInput::convertCurrentLineToPolyline(DataBase & iBase)
   {
-    if( cCurrentLine == nullptr )
-      return nullptr;
-    
-    PolylinePtr lFacInput = cCurrentLine->getPolyline();
-    PolylinePtr lFac    =  lFacInput->duplicate();    
+    if( cCurrentPolyline.size() < 2 ) return nullptr;
+
+    PolylinePtr lFac    =  cCurrentPolyline.duplicate();    
  
     ObjectPtr lPolyline = new Object( "Polyline", lFac );    			
   
@@ -269,11 +243,9 @@ namespace PP3d {
    //------------------------------------------		
   ObjectPtr CurrentInput::convertCurrentLineToFacet(DataBase & iBase)
   {
-    if( cCurrentLine == nullptr )
-      return nullptr;
-    
-    FacetPtr lFacInput = cCurrentLine->getFacet();
-    FacetPtr lFac    =  lFacInput->duplicate();    
+    if( cCurrentPolyline.size() < 3 ) return nullptr;
+ 
+    FacetPtr lFac    =  cCurrentPolyline.duplicate();    
  
     ObjectPtr lFacet = new Object( "Facet", lFac );    			
   
@@ -282,12 +254,10 @@ namespace PP3d {
   }
   //------------------------------------------		
   ObjectPtr CurrentInput::convertCurrentLineToFacetPoly(DataBase & iBase)
-  {
-    if( cCurrentLine == nullptr )
-      return nullptr;
+  {   
+    if( cCurrentPolyline.size() < 3 ) return nullptr;
     
-    FacetPtr lFacInput = cCurrentLine->getFacet();
-    FacetPtr lFac    =  lFacInput->duplicate();
+    FacetPtr lFac    =  cCurrentPolyline.duplicate();
     
     lFac->closeFacet();
  
@@ -320,12 +290,12 @@ namespace PP3d {
   //------------------------------------------		
   ObjectPtr CurrentInput::convertCurrentLineToBiFacetPoly(DataBase & iBase)
   {
-    if( cCurrentLine == nullptr  )
-      return nullptr;
+    if( cCurrentPolyline.size() < 3 ) return nullptr;
+
+   
 
     
-    FacetPtr lFacInput = cCurrentLine->getFacet();  
-    FacetPtr lFac1 = lFacInput->duplicate();
+    FacetPtr lFac1 = cCurrentPolyline.duplicate();
     lFac1->closeFacet();
     
 		    
@@ -392,41 +362,42 @@ namespace PP3d {
 	cCurrentPoint->drawGL( iViewInputCursor );
       }	 
       
-    if( cCurrentLine != nullptr )
+
+    if( iSelectOrDrawMode == GLMode::Draw )
       {
-	if( iSelectOrDrawMode == GLMode::Draw )
-	  {
- 	    // si un des points est selectionné
-            std::cout << "**************** drawGL currentline Polyline ****" << std::endl;
-	    PointPtr lPt = cCurrentLine->getPolyline()->getPoint(cCurrentLineSelectPoint);
-	    if( lPt != nullptr )
-	      {
-		//	std::cout << "*** drawGL must draw select point : "  << lPt->get() << std::endl;
-		//	Point lPt2( lPt->x(), lPt->y(), 0 );		
-		Line lLine( lPt, lPt );
-		Polyline lPolyline( &lLine );
+        // si un des points est selectionné
+        std::cout << "**************** drawGL currentline Polyline ****" << std::endl;
+        PointPtr lPt = cCurrentPolyline.getPoint(cCurrentLineSelectPoint);
+        if( lPt != nullptr )
+          {
+            //	std::cout << "*** drawGL must draw select point : "  << lPt->get() << std::endl;
+            //	Point lPt2( lPt->x(), lPt->y(), 0 );		
+            Line lLine( lPt, lPt );
+            Polyline lPolyline( &lLine );
 		
-		//	ObjectLine lLineObj( "TMP", &lLine );
-		//FAIRE PLUS SIMPLE !!!
-		Object lPoly( "TMP",   &lPolyline );
-		iViewInputPoly.cPointSize += 3;
-		ColorRGBA lMem = iViewInputPoly.cColorPoint;
-		iViewInputPoly.cColorPoint.set( 1, 0, 0 ) ;
-		lPoly.drawGL( iViewInputPoly ); //iViewInputCursor );
-		iViewInputPoly.cPointSize -= 3;
-		iViewInputPoly.cColorPoint = lMem;
-		}
+            //	ObjectLine lLineObj( "TMP", &lLine );
+            //FAIRE PLUS SIMPLE !!!
+            Object lPoly( "TMP",   &lPolyline );
+            iViewInputPoly.cPointSize += 3;
+            ColorRGBA lMem = iViewInputPoly.cColorPoint;
+            iViewInputPoly.cColorPoint.set( 1, 0, 0 ) ;
+            lPoly.drawGL( iViewInputPoly ); //iViewInputCursor );
+            iViewInputPoly.cPointSize -= 3;
+            iViewInputPoly.cColorPoint = lMem;
+          }
             
  
 	    
-	    cCurrentLine->drawGL( iViewInputPoly );
-	  }
-	else
-	  {
-            std::cout << "SelectGL currentLine  " <<std::endl; 
-	    cCurrentLine->selectGL( iViewGen );
-	  }	 
+        cCurrentPolyline.drawGL( iViewInputPoly );
       }
+    else
+      {
+        std::cout << "SelectGL currentLine  " <<std::endl; 
+        cCurrentPolyline.selectGL( iViewGen );
+      }	 
+      
+
+  
   if(  iSelectOrDrawMode == GLMode::Draw  )
       {		
 	if( cCurrentCreation != nullptr )

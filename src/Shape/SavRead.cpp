@@ -180,16 +180,16 @@ namespace PP3d {
     cOut << std::endl;
 
     
-    FacetPtr lSaiseFacet = pData.getInput().getCurrentLine();
+     Polyline & lSaisiePolyline = pData.getInput().getCurrentLine();
     
-    if( lSaiseFacet != nullptr )
+     size_t lNbLine = lSaisiePolyline.size();
+     if( lNbLine > 0 )
       {
-	size_t lNbLine = lSaiseFacet->getLines().size();
 	cOut << TokSaisiePt << ' ' << lNbLine;
 		
 	for( size_t l=0; l< lNbLine; l++ )
 	  {
-	    LinePtr lLine = lSaiseFacet->getLines()[l];
+	    LinePtr lLine = lSaisiePolyline.getLines()[l];
 	    
 	    cOut << ' ' << lLine->first()->get().cX
 		 << ' ' << lLine->first()->get().cY

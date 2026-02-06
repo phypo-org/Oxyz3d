@@ -65,12 +65,16 @@ namespace PP3d {
   public:
     void execVisitor( EntityVisitorNode& pVisit )override;
 
-
-    
+    void drawPoints( ViewProps& pViewProps );
+    void drawLine( ViewProps& pViewProps );
+    void drawPointsLine( ViewProps& pViewProps );    
+    void pickingPoints( ViewProps& pViewProps );
+    void pickingLine( ViewProps& pViewProps );
+    void pickingPointsLine( ViewProps& pViewProps );    
 
     virtual void drawGL  ( ViewProps& pViewProps ) override;
     virtual void selectGL( ViewProps& pViewProps ) override;
-
+ 
 
     
     void inversePoint() {

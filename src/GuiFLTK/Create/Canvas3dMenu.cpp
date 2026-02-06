@@ -1151,14 +1151,14 @@ namespace M3d {
                      ADBMAL, this);
 
 
-	  if(TheInput.getCurrentLine()  != nullptr && TheSelect.getNbSelected() > 0 )
+	  if( TheInput.currentLineSize() !=0 && TheSelect.getNbSelected() > 0 )
 	    {
               pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePath, "", LAMBDA
                          //:::::::::::::::::::::::::::::::::::::::::
                          std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePath" << std::endl;
-                         PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+                         PP3d::Polyline & lFacet = TheInput.getCurrentLine();    
                          
-                         if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+                         if( TheSelect.getNbSelected() > 0 )
                            {
                              std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  1" << std::endl;
                              PP3d::Point3d lPtZero;
@@ -1166,7 +1166,7 @@ namespace M3d {
                              TheCreat.getAxis( lPtZero, lAxis );
                              std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePath  2" << std::endl;
                              
-                             PP3d::Modif::ExtrudePath( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+                             PP3d::Modif::ExtrudePath( TheBase, TheSelect, lPtZero, lAxis, &lFacet );
                              
                              PushHistory();	
                              TheCreat.redrawAll(PP3d::Compute::FacetAll);	 	
@@ -1197,9 +1197,9 @@ namespace M3d {
               pMenu.add( StrMenu_Extrude "/++++++" StrMenu_ExtrudePathNorm, "", LAMBDA                         
                          //:::::::::::::::::::::::::::::::::::::::::
                          std::cout << "++++++++++ Canvas3d::MyMenuCallbackExtrudePathNorm" << std::endl;
-                         PP3d::FacetPtr lFacet = TheInput.getCurrentLine();    
+                         PP3d::Polyline & lFacet = TheInput.getCurrentLine();    
                          
-                         if( lFacet != nullptr && TheSelect.getNbSelected() > 0 )
+                         if( lFacet.size() &&  TheSelect.getNbSelected() > 0 )
                            {
                              std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  1" << std::endl;
                              PP3d::Point3d lPtZero;
@@ -1207,7 +1207,8 @@ namespace M3d {
                              TheCreat.getAxis( lPtZero, lAxis );
                              std::cout << "   +++++++ Canvas3d::MyMenuCallbackExtrudePathNorm  2" << std::endl;
                              
-                             PP3d::Modif::ExtrudePathNorm( TheBase, TheSelect, lPtZero, lAxis, lFacet );
+                             PP3d::Modif::ExtrudePathNorm( TheBase, TheSelect, lPtZero, lAxis, &
+                                                           lFacet );
                              
                              PushHistory();	
                              TheCreat.redrawAll(PP3d::Compute::FacetAll);	 	

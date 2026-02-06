@@ -27,7 +27,9 @@ namespace PP3d {
 
     ObjectPtr              cCurrentCreation=nullptr;
     
-    ObjectPtr              cCurrentLine=nullptr;
+    //   ObjectPtr              cCurrentLine=nullptr;
+    Polyline               cCurrentPolyline;
+    
     static const EntityId  kMinCurrentLineId = 0xF00000; 
     EntityId               cCurrentLineId = kMinCurrentLineId;  
     int                    cCurrentLineSelectPoint = -1;  
@@ -49,8 +51,7 @@ namespace PP3d {
     //-------------------------------------
     void resetCurrentLine()
     {
-      // faire des delete  ?
-      cCurrentLine=nullptr;
+      cCurrentPolyline.deleteAll();        
       cCurrentLineId = kMinCurrentLineId;
       cCurrentLineSelectPoint = -1;
       cCurrentPoint = nullptr;
@@ -63,27 +64,25 @@ namespace PP3d {
     //-------------------------------------
     void editCurrentLineSelectPoint()
     {
-      if( cCurrentLine != nullptr )
-	{
-	  PointPtr lPt = cCurrentLine->getPolyline()->getPoint(cCurrentLineSelectPoint);	  
-	  if( lPt != nullptr )
-	    {
-	      viewCurrentPoint( lPt->get());
-	    }
-	}
+      
+      PointPtr lPt = cCurrentPolyline.getPoint(cCurrentLineSelectPoint);	  
+      if( lPt != nullptr )
+        {
+          viewCurrentPoint( lPt->get());
+        }
     }
+  
     //-------------------------------------
     void insertCurrentLineSelectPoint( Point3d iPt, DataBase & iBase)
     {            
-      cCurrentLine->getPolyline()->insertPoint( cCurrentLineSelectPoint, iPt,  iBase );     
+       cCurrentPolyline.insertPoint( cCurrentLineSelectPoint, iPt,  iBase );     
       renumberPoints();
     }
     //-------------------------------------
     void delCurrentLineSelectPoint(DataBase & iBase)
     {            
-      if( cCurrentLine->getPolyline()->delPoint( cCurrentLineSelectPoint, iBase ) )
+      if( cCurrentPolyline.delPoint( cCurrentLineSelectPoint, iBase ) )
 	{
-	  delete cCurrentLine;
 	  resetCurrentLine();
 	}
       else
@@ -94,26 +93,17 @@ namespace PP3d {
     //-------------------------------------
     bool changeCurrentLineSelectPoint(Point3d pPt)
     {
-     if( cCurrentLine != nullptr )
-	{
-	  PointPtr lPt = cCurrentLine->getPolyline()->getPoint(cCurrentLineSelectPoint);	  
-	  if( lPt != nullptr )
-	    {
-	      std::cout << "changeCurrentLineSelectPoint : Point  found" << std::endl;
-	      lPt->set(pPt);  ;
-	      cCurrentLineSelectPoint = -1;
-	      return true;
-	    }
-	  else
-	    {
-	      std::cout << "changeCurrentLineSelectPoint : Point not found" << std::endl;
-	      
-	    }
-	}
-     else
-       std::cout << "changeCurrentLineSelectPoint : CurrentLine not found" << std::endl;
-
-     return false;
+      PointPtr lPt = cCurrentPolyline.getPoint(cCurrentLineSelectPoint);	  
+      if( lPt != nullptr )
+        {
+          std::cout << "changeCurrentLineSelectPoint : Point  found" << std::endl;
+          lPt->set(pPt);  ;
+          cCurrentLineSelectPoint = -1;
+          return true;
+        }
+      std::cout << "changeCurrentLineSelectPoint : Point not found" << std::endl;
+	  
+      return false;
     }
     //-------------------------------------
 				 
@@ -150,28 +140,23 @@ namespace PP3d {
     ObjectPtr convertCurrentLineToLine(DataBase & iBase);
     //    Obj2BSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
     
-    bool isCurrentPoints()   { return cCurrentLine     != nullptr; }
+    bool isCurrentPoints()   { return cCurrentPolyline.size() != 0; }
     bool isCurrentCreation() { return cCurrentCreation != nullptr; }
-    PolylinePtr getCurrentLine()
+    Polyline & getCurrentLine()
     {
-      if( cCurrentLine != nullptr)
-	return  cCurrentLine->getPolyline();
-      return nullptr;
+      return  cCurrentPolyline;
+    }
+    size_t  currentLineSize()
+    {
+      return cCurrentPolyline.size() ;
     }
 
-    bool execVisitorOnCurrentLine( EntityVisitor & iVisit ){    
-      if( cCurrentLine != nullptr)
-	{
-	  cCurrentLine->getShape()->execVisitor( iVisit );
-	  return true;
-	}
-      return false;
+    bool execVisitorOnCurrentLine( EntityVisitor & iVisit ){
+      if( cCurrentPolyline.size()==0) return false;
+      cCurrentPolyline.execVisitor( iVisit );
+      return true;
     }
-    
-    ObjectPtr getObjectCurrentLine()
-    {
-      return cCurrentLine;
-    }    
+     
     void drawGL(ViewProps& iViewGen , ViewProps& iViewInputCursor, ViewProps& iViewInputPoly, ViewProps& iViewInputObject,  GLMode iSelectOrDrawMode, SelectType iSelectType);
   };
   

@@ -107,11 +107,11 @@ namespace PP3d {
     
     void GL() const { glColor4fv( &cR);  }
     void materialGL() { glMaterialfv( GL_FRONT_AND_BACK, 
-				      GL_AMBIENT_AND_DIFFUSE, &cR);std::cout << " matGL->" << *this ;}
+				      GL_AMBIENT_AND_DIFFUSE, &cR); }
 
     void emissionGL() { glMaterialfv(  GL_FRONT, 
 				       GL_EMISSION,
-				       &cR); std::cout << " emGL->" << *this ;}
+				       &cR); }
 		
     void fogGL() { glFogfv( GL_FOG_COLOR,  &cR );
     }
@@ -146,7 +146,7 @@ namespace PP3d {
       GLfloat color[4];
       glGetFloatv(GL_CURRENT_COLOR, color);       
  
-      std::cout << "   ColorRGBA.Id " << iId << "->" << color[0] <<":"<< color[1] << "=>" << (color[0]*255.0) + (color[1]*255.0*255.0) << std::endl;
+      //      std::cout << "   ColorRGBA.Id " << iId << "->" << color[0] <<":"<< color[1] << "=>" << (color[0]*255.0) + (color[1]*255.0*255.0) << std::endl;
     }
     static void Zero()     { glColor4f( 0.0, 0.0, 0.0, 0.0); }
     static void Red()	    { glColor3f(1.0,0.0,0.0); 	}
