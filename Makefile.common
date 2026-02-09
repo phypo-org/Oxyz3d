@@ -229,7 +229,10 @@ LDFLAGS= -static-libgcc -static-libstdc++ -pie -lpthread -ldl -lm $(SANITIZER_LD
 
 
 INCLUDE= -I$(ROOT_POS) -I$(ROOT_POS)../  $(INCLUDE_CC) -I.. -I.   $(INC_FLTK) $(INC_GTK)  -I/usr/include/freetype2  $(INC_LUA)  $(INC_PYTHON) $(INC_CGAL) $(INC_OPENAL)
- 
+
+# $(info INC_PYTHON=$(INC_PYTHON))
+# $(info CGAL=$(INC_CGAL))
+# $(info OPENAL=$(INC_OPENAL))
 
 # Les libbrairies externes
 #-------------------------

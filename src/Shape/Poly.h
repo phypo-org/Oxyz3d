@@ -91,13 +91,14 @@ namespace PP3d {
     void drawPoints( ViewProps& pViewProps );
     void drawLines( ViewProps& pViewProps );
     void drawPointsLines( ViewProps& pViewProps );    
-    void drawFacets( ViewProps& pViewProps );
+    void drawFacets( ViewProps& pViewProps, bool iForceSelect, bool iSelects );
 
    
     void pickingFacets();    
 
-    virtual void drawGL  ( ViewProps& pViewProps ) override;
-    virtual void selectGL( ViewProps& pViewProps ) override;
+    virtual void drawGL  ( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false );
+    virtual void selectGL( ViewProps& pViewProps, EntityId iForceId=0 );
+ 
     //----------------
 
 

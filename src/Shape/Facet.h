@@ -174,15 +174,16 @@ namespace PP3d {
     void drawPoints( ViewProps& pViewProps );
     void drawLines( ViewProps& pViewProps );
     void drawPointsLines( ViewProps& pViewProps );    
-    void drawFacet( ViewProps& pViewProps );
+    void drawFacet( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false );
     
     void pickingPoints( ViewProps& pViewProps );
     void pickingLines( ViewProps& pViewProps );
     void pickingPointsLines( ViewProps& pViewProps );    
     void pickingFacet();    
+    Facet* dupFacet() const;
 
-    virtual void drawGL  ( ViewProps& pViewProps ) override;
-    virtual void selectGL( ViewProps& pViewProps ) override;
+    virtual void drawGL  ( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false ) override;
+    virtual void selectGL( ViewProps& pViewProps, EntityId iForceId=0 ) override;
     //----------------
 
     

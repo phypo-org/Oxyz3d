@@ -1,5 +1,5 @@
-#ifndef __SFILE_SESAM__
-#define __SFILE_SESAM__
+#ifndef __SFILE__
+#define __SFILE__
 
 #include <string>
 #include <vector>

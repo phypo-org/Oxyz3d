@@ -10,6 +10,31 @@ namespace PP3d{
   //*********************************************
   //-------------------------------------
   // ATTENTION NE FAIT RIEN POUR LES OWNERS
+  //--------------------------------------  
+  Facet* Facet::duplicate() const
+  {
+    VectPoint3d lPts;    
+    if( getCopyPointsWithDuplicate( lPts ) > 0 )
+      {
+        FacetPtr lNewFac = new Facet();
+
+           
+        PIndex lSize = lPts.getVector().size();
+        if( isClose() )
+          {
+            lSize--;
+          }
+        
+        for( PIndex i=0; i< lSize; i++ )
+          {
+            lNewFac->addPoint( lPts.getVector()[i] );
+          }
+          
+        return lNewFac;
+      }
+    return nullptr;
+  }
+  //-------------------------------------
   void Facet::deleteAll()
   {		    
     for( size_t i=0; i< getLines().size(); i++  )
@@ -107,7 +132,7 @@ namespace PP3d{
       }		
   }
   //-------------------------------------  
-  Facet* Facet::duplicate() const
+  Facet* Facet::dupFacet() const
   {
     VectPoint3d lPts;    
     if( getCopyPointsWithDuplicate( lPts ) > 0 )
@@ -363,53 +388,7 @@ namespace PP3d{
 	cLines.push_back( lLine);
       }
   }
-  //-------------------------------------
-  // il suffit d'un seul angle superieur ou egal a 180 pour que la facette soit concave
-  /*
-    bool Facet::computeConcave()
-    {
-    if( cLines.size() <= 3 )
-    return false;
-
-    std::cout << "       Facet::computeConcave " << std::dec << cLines.size()  << std::endl;
-    size_t i;
-    for(  i = 0 ; i<  cLines.size()-1; i++ )
-    {
-    Point3d A = cLines[i]->second()->get()   - cLines[i]->first()->get();
-    Point3d B = cLines[i+1]->second()->get() - cLines[i+1]->first()->get();
-
-	
-    std::cout <<  cLines[i]->second()->get() << " - "  cLines[i]->first()->get()
-    << " -> " << A << std::endl;
-	
-    std::cout <<  cLines[i+1]->second()->get() << " - "  cLines[i+1]->first()->get()
-    << " -> " << B << std::endl;
-
-    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
-	
-    std::cout << lResult << std::endl;
-    if( lResult >  M_PIl)
-    {
-    std::cout << "Facet::computeConcave  CONCAVE !  sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl << std::endl;
-    cIsConcave = true;
-    return true;
-    }
-    }
-    Point3d A = cLines[i]->second()->get() - cLines[i]->first()->get();
-    Point3d B = cLines[0]->second()->get() - cLines[0]->first()->get();
-    double lResult =  Point3d::GetAngleRadBetween( A, B) ;
-    if( lResult >  M_PIl)
-    {
-    std::cout << "Facet::computeConcave2   sz line:" << cLines.size() << "  i:" << i << " : " << lResult << " >>>>> " << M_PIl<< std::endl;
-    cIsConcave = true;
-    return true;
-    }
-    
-    
-    cIsConcave = false;
-    return false;
-    }
-  */
+  //------------------------------------- 
   bool Facet::computeConcave()
   {
     if( cLines.size() <= 3 ){
@@ -561,7 +540,7 @@ namespace PP3d{
     lNormMiddle += lNorm10;
 		
     glLineWidth( 1 );
-    //    glDisable( GL_LIGHTING );
+    glDisable( GL_LIGHTING );
 		
     glBegin( GL_LINE_STRIP ); 
 		
@@ -570,7 +549,7 @@ namespace PP3d{
 		
     glEnd();
 		
-    //    glEnable( GL_LIGHTING );			
+    glEnable( GL_LIGHTING );			
   }
   //---------------------------		
   //---------------------------
@@ -593,7 +572,7 @@ namespace PP3d{
       lLine->drawPointsLine(pViewProps);
   }
   //---------------------------		
-  void Facet::drawFacet(ViewProps& pViewProps)
+  void Facet::drawFacet(ViewProps& pViewProps, bool iForceSelect, bool iSelect )
   {
     if( pViewProps.cFlagViewNormal == true
 	&& pViewProps.cGLMode == GLMode::Draw )
@@ -602,7 +581,10 @@ namespace PP3d{
       }
 
     glNormal3dv( getNormal().vectForGL() );
-    pViewProps.facetGL( isSelect(), isHighlight(), isMagnet());
+    if( iForceSelect )
+      pViewProps.facetGL( iSelect, isHighlight(), isMagnet());
+    else
+      pViewProps.facetGL( isSelect(), isHighlight(), isMagnet());
         		
 
     if( getNbLines() == 3 )
@@ -636,7 +618,7 @@ namespace PP3d{
     glEnd(); 
   }
   //---------------------------		
-  void Facet::drawGL( ViewProps& pViewProps )
+  void Facet::drawGL( ViewProps& pViewProps,  bool iForceSelect, bool iSelect )
   {      
     if( cMyProps.cVisible == false )
       {
@@ -674,7 +656,7 @@ namespace PP3d{
           if( pViewProps.cViewMode == ViewMode::FULL)		
             {
               glEnable(GL_LIGHTING);
-              drawFacet(pViewProps);
+              drawFacet(pViewProps, iForceSelect, iSelect);
             }
 					
           glDisable(GL_LIGHTING);
@@ -744,7 +726,7 @@ namespace PP3d{
     glEnd(); 
   }
   //---------------------------		
-  void Facet::selectGL( ViewProps & pViewProps )
+  void Facet::selectGL( ViewProps & pViewProps, EntityId iForceId )
   {      
     if( cMyProps.cVisible == false )
       {
@@ -765,7 +747,10 @@ namespace PP3d{
 	  if( pViewProps.cViewMode == ViewMode::FULL )
             {
               pViewProps.facetGL( isSelect(), isHighlight(), isMagnet()); //??????????????
-              ColorRGBA::Id( getId()); //??????????????     
+              if( iForceId != 0 )
+                ColorRGBA::Id( iForceId ); //??????????????     
+              else
+                ColorRGBA::Id( getId()); //??????????????     
               pickingFacet();
             }
           pickingPointsLines(pViewProps);
@@ -792,7 +777,10 @@ namespace PP3d{
         if( pViewProps.cViewMode == ViewMode::FULL)		
             {
               pViewProps.facetGL( isSelect(), isHighlight(), isMagnet()); //??????????????
-              ColorRGBA::Id( getId()); //??????????????     
+              if( iForceId != 0 )
+                ColorRGBA::Id( iForceId ); //??????????????     
+              else
+                ColorRGBA::Id( getId()); //??????????????     
              pickingFacet();
             }
 	break;

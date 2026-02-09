@@ -41,7 +41,7 @@ namespace PP3d{
     //--------------------------------  
    virtual void addOwnersOf( const std::set<Entity*> & iEntitys )
     {
-      std::cout << "addOwnersOf 2 Owners:"<<  iEntitys.size() << std::endl; 
+      //     std::cout << "addOwnersOf 2 Owners:"<<  iEntitys.size() << std::endl; 
       for( EntityPtr lEntity : iEntitys )
 	{
 	  addOwnersOf( lEntity );
@@ -50,7 +50,7 @@ namespace PP3d{
     //--------------------------------  
     virtual void addOwnersOf( const std::vector<Entity*> & iEntitys )
     {
-      std::cout << "addOwnersOf 3 Owners:"<<  iEntitys.size() << std::endl;
+      //     std::cout << "addOwnersOf 3 Owners:"<<  iEntitys.size() << std::endl;
       
       for( EntityPtr lEntity : iEntitys )
 	{

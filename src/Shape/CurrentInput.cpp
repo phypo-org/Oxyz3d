@@ -233,7 +233,7 @@ namespace PP3d {
   {
     if( cCurrentPolyline.size() < 2 ) return nullptr;
 
-    PolylinePtr lFac    =  cCurrentPolyline.duplicate();    
+    PolylinePtr lFac    =  cCurrentPolyline.dupPolyline();    
  
     ObjectPtr lPolyline = new Object( "Polyline", lFac );    			
   
@@ -245,8 +245,9 @@ namespace PP3d {
   {
     if( cCurrentPolyline.size() < 3 ) return nullptr;
  
-    FacetPtr lFac    =  cCurrentPolyline.duplicate();    
- 
+    FacetPtr lFac    =  cCurrentPolyline.Facet::dupFacet();    
+    lFac->closeFacet();
+
     ObjectPtr lFacet = new Object( "Facet", lFac );    			
   
     
@@ -257,7 +258,7 @@ namespace PP3d {
   {   
     if( cCurrentPolyline.size() < 3 ) return nullptr;
     
-    FacetPtr lFac    =  cCurrentPolyline.duplicate();
+    FacetPtr lFac    =  cCurrentPolyline.dupFacet();
     
     lFac->closeFacet();
  
@@ -295,11 +296,11 @@ namespace PP3d {
    
 
     
-    FacetPtr lFac1 = cCurrentPolyline.duplicate();
+    FacetPtr lFac1 = cCurrentPolyline.dupFacet();
     lFac1->closeFacet();
     
 		    
-    FacetPtr lFac2 = lFac1->duplicate();
+    FacetPtr lFac2 = lFac1->dupFacet();
     lFac2->inverseLines();
    
     PolyPtr  lPoly = iBase.getNewPoly();

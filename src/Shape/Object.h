@@ -155,9 +155,9 @@ namespace PP3d {
 			      Compute iCompute);
 
 
-    virtual void drawGL( ViewProps& pViewProps ) override;
+    virtual void drawGL( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false ) override;
  
-    virtual void selectGL( ViewProps& pViewProps ) override;
+    virtual void selectGL( ViewProps& pViewProps, EntityId iForceId=0 ) override;
   
 
 

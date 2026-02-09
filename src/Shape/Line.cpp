@@ -143,7 +143,7 @@ namespace PP3d{
  
   }				
   //---------------------------		
-  void Line::drawGL( ViewProps& pViewProps )
+  void Line::drawGL( ViewProps& pViewProps, bool iForceSelect, bool iSelect )
     {
       glDisable(GL_LIGHTING);
       
@@ -152,7 +152,7 @@ namespace PP3d{
 	case SelectType::All:
 	case SelectType::Point:
 	  {
-	    drawPointsLine( pViewProps );					
+	    drawPointsLine( pViewProps );
 	  }
 	  break;
 				
@@ -169,7 +169,7 @@ namespace PP3d{
   //---------------------------		
   //---------------------------		
   //---------------------------		
-  void Line::pickingPoints( ViewProps& pViewProps )
+  void Line::pickingPoints( ViewProps& pViewProps)
     {      			
       pViewProps.pointGL( getFirst()->isSelect(), getFirst()->isHighlight(), getFirst()->isMagnet() );
       ColorRGBA::Id( getFirst()->getId());
@@ -240,7 +240,7 @@ namespace PP3d{
  
   }				
   //---------------------------		
-  void Line::selectGL( ViewProps& pViewProps )
+  void Line::selectGL( ViewProps& pViewProps, EntityId iForceId  )
     {
       glDisable(GL_LIGHTING);
       

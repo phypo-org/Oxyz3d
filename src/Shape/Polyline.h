@@ -17,10 +17,10 @@ namespace PP3d {
     Polyline(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3, LinePtr iLine4  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 );addLine( iLine4 ); }
 
     ShapeType getShapeType() const  override { return ShapeType::Polyline;}	
-    Polyline* duplicate() const;
+    Polyline* dupPolyline() const;
  
-    virtual void drawGL( ViewProps& pViewProps )   override;
-    virtual void selectGL( ViewProps& pViewProps ) override;
+    virtual void drawGL( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false )   override;
+    virtual void selectGL( ViewProps& pViewProps, EntityId iForceId=0 ) override;
 
   }; 
   //*********************************************

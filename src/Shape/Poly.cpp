@@ -41,11 +41,7 @@ namespace PP3d{
       lNorm /=  cFacets.size();
     return lNorm;
   }
-	
-
-
-   //---------------------------		
- 
+  //---------------------------		
   void Poly::drawPoints( ViewProps& pViewProps )
   {
     for( FacetPtr lFacet : cFacets )
@@ -68,13 +64,13 @@ namespace PP3d{
       lFacet->drawPointsLines( pViewProps );
   }
   //---------------------------		 
-  void Poly::drawFacets( ViewProps& pViewProps )
+  void Poly::drawFacets( ViewProps& pViewProps, bool iForceSelect, bool iSelect )
   {
     for( FacetPtr lFacet : cFacets )
-      lFacet->drawFacet( pViewProps );
+      lFacet->drawFacet( pViewProps, iForceSelect, iSelect);
   }
   //---------------------------
-  void Poly::drawGL  ( ViewProps& pViewProps )
+  void Poly::drawGL( ViewProps& pViewProps, bool iForceSelect, bool iSelect )
   {
     switch( pViewProps.cSelectType )
       {       
@@ -83,7 +79,7 @@ namespace PP3d{
 	  if( pViewProps.cViewMode == ViewMode::FULL )
             {
               glEnable(GL_LIGHTING);
-              drawFacets( pViewProps );
+              drawFacets( pViewProps, false, false );
             }
 					
           glDisable(GL_LIGHTING);	    
@@ -95,20 +91,41 @@ namespace PP3d{
       case SelectType::All:
       case SelectType::Line:			
       case SelectType::Facet:
-      case SelectType::Poly:				
-      case SelectType::Group:
-      case SelectType::Object:
-	{
+ 	{
           if( pViewProps.cViewMode == ViewMode::FULL)		
             {
               glEnable(GL_LIGHTING);
-              drawFacets( pViewProps );
+              drawFacets( pViewProps, false, false );
             }
 					
           glDisable(GL_LIGHTING);
 	  drawLines( pViewProps );			         	
 	}
 	break;
+      case SelectType::Poly:
+        {
+          if( pViewProps.cViewMode == ViewMode::FULL)		
+            {
+              glEnable(GL_LIGHTING);             
+              drawFacets( pViewProps, true, isSelect() ); 
+            }
+          glDisable(GL_LIGHTING);
+          drawLines( pViewProps );			         	
+        }
+        break;
+  
+      case SelectType::Group:
+      case SelectType::Object:
+        {
+          if( pViewProps.cViewMode == ViewMode::FULL)		
+            {
+              glEnable(GL_LIGHTING);             
+              drawFacets( pViewProps, iForceSelect, iSelect ); 
+            }
+          glDisable(GL_LIGHTING);
+          drawLines( pViewProps );
+        }
+        break;
       }
   }
   //---------------------------		
@@ -120,9 +137,9 @@ namespace PP3d{
       lFacet->pickingFacet();
   }
   //---------------------------		
-  void Poly::selectGL( ViewProps& pViewProps )
+  void Poly::selectGL( ViewProps& pViewProps,  EntityId iForceId )
   {
-        std::cout << ">>>>>>>> Poly::pickingGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
+    //  std::cout << ">>>>>>>> Poly::pickingGL " << Selection::GetStrSelectType( pViewProps.cSelectType) <<  std::endl;
 
 
     if( cMyProps.cVisible == false )
@@ -136,7 +153,7 @@ namespace PP3d{
     switch( pViewProps.cSelectType )
       {
       case SelectType::Null:
-	break;
+        break;
 
 
       case SelectType::All:
@@ -145,14 +162,10 @@ namespace PP3d{
       case SelectType::Facet:
         {        // On renvoie le picking à la facette 
           for( FacetPtr lFacet : cFacets )
-            lFacet->selectGL( pViewProps );
+            lFacet->selectGL( pViewProps, iForceId );
         }
         break;
 
-
-        
-      case SelectType::Group:
-      case SelectType::Object:
       case SelectType::Poly:
         {
           if( pViewProps.cViewMode == ViewMode::FULL)		
@@ -164,7 +177,25 @@ namespace PP3d{
             }
           // sinon rien !!!
         }
-	break;
+        break;
+        
+      case SelectType::Group:
+      case SelectType::Object:
+        {
+          if( pViewProps.cViewMode == ViewMode::FULL)		
+            {
+              // la facette mais avec l'id de l'objet
+              pViewProps.facetGL( isSelect(), isHighlight(), isMagnet());
+              if( iForceId )
+                ColorRGBA::Id( iForceId );     
+              else
+                ColorRGBA::Id( getId() );
+              
+              pickingFacets();
+            }
+          // sinon rien !!!
+        }
+        break;
       }
     //	drawInfoGL( pViewProps, cMyProps );
   }

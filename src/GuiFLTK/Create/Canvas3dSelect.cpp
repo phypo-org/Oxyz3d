@@ -51,8 +51,7 @@ namespace M3d {
 //---------------------------
   bool Canvas3d::userSelectionRectangle(int pEvent, bool pFlagFinalize )
   {
-      cout << "RRRRRRRRRRRRRRRRRRRRRRR userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY
-           << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
+    //      cout << "RRRRRRRRRRRRRRRRRRRRRRR userSelectionRectangle x:" <<  cMouseInitPosX  << " y:" << cMouseInitPosY  << "   x:" <<  cMouseLastPosX  << " y:" <<  cMouseLastPosY << endl;
 
     
     if( cMouseInitPosX == -1 )
@@ -98,15 +97,15 @@ namespace M3d {
   //---------------------------------------------------------
   bool Canvas3d::userSelectionPointColor(int pEvent, bool pFlagMove)
   {
-    cout << "========================================" << endl;
-    cout << "PPPPPPPPPPPPPPPPPPPP userSelectionPointColor" << std::endl;
+    //    cout << "========================================" << endl;
+    //   cout << "PPPPPPPPPPPPPPPPPPPP userSelectionPointColor" << std::endl;
 
     return pickingColor( Fl::event_x(),   pixel_h() - Fl::event_y(), pFlagMove, MyPref.cSelectPickingSize, MyPref.cSelectPickingSize, false );
   }
   //---------------------------------------------------------
   bool Canvas3d::pickingColor( int pX, int pY, bool pFlagMove, int iSizeX, int iSizeY, bool pFlagRect  )
   {
-    cout << "Canvas3d::pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl; 
+    //   cout << "Canvas3d::pickingColor x:" << pX << " y:" << pY << " sX:" << iSizeX << " sY:" << iSizeY << " R:"<<  pFlagRect<< endl; 
   
     drawForSelect(); // AJOUTER LA TAILLE
     
@@ -117,11 +116,11 @@ namespace M3d {
       {
 	unsigned char lData[4];
 	glReadPixels( pX, pY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, lData);
-        cout << "Data: " << std::hex << (int)lData[0] <<" " <<   (int)lData[1]<<" "  <<  (int)lData[2] <<" " <<  (int)lData[3]  << endl;
+        //     cout << "Data: " << std::hex << (int)lData[0] <<" " <<   (int)lData[1]<<" "  <<  (int)lData[2] <<" " <<  (int)lData[3]  << endl;
 
 
 	PP3d::EntityId lId = PP3d::ColorRGBA::GetId( lData );
-	cout << "         Canvas3d::pickingColor id:" << lId << endl; // AAAAAAAAAAAAAAAAAAA
+        //	cout << "         Canvas3d::pickingColor id:" << lId << endl; // AAAAAAAAAAAAAAAAAAA
 	
 	if( lId == 0 )
 	  {
@@ -134,13 +133,13 @@ namespace M3d {
 	  {
 	    if( TheInput.getCurrentLineSelectPoint() == lMem )
 		  {
-		    cout << "Same Point !!!" << endl;
+                    //	    cout << "Same Point !!!" << endl;
 		    
 		    TheInput.editCurrentLineSelectPoint();
 		    if( getUserMode() == ModeUser::MODE_BASE
 			&& Fl::event_button() == FL_LEFT_MOUSE  )
 			  {
-			    cout << "MODE_DRAG !!!" << endl;
+                            //  cout << "MODE_DRAG !!!" << endl;
 			    changeUserMode( ModeUser::MODE_DRAG );			
 			  }		    
 		  }
@@ -169,12 +168,12 @@ namespace M3d {
 	    return false;
 	  }
 	
-		cout << "Canvas3d::pickingColor move:" << pFlagMove
+        /*      cout << "Canvas3d::pickingColor move:" << pFlagMove
 	     << " Pos X:"<< pX << " Y:" <<pY
 	     << " SzX:"  << iSizeX << " SzY:" << iSizeY
 	     << " pFlagRect:" << pFlagRect
 	     << endl;
-	
+        */
 	
 	auto luData = std::make_unique<unsigned char[]>( iSizeX*4 );
 	PP3d::EntityId lMemoId = 0;
@@ -234,8 +233,7 @@ namespace M3d {
     if( cDragPoints.size() == 0
 	&&TheSelect.getNbSelected() >0 )
       {
-	std::cout << "******************* Canvas3d::initDragSelect " << TheSelect.getNbSelected() << std::endl;
-	std::cout << "******************* Canvas3d::initDragSelect " << TheSelect.getSelection().size() << std::endl;
+	std::cout << "******************* Canvas3d::initDragSelect " << TheSelect.getNbSelected() <<  " size:"  << TheSelect.getSelection().size() << std::endl;
 
 	cDragCenter =   TheSelect.getCenter( *TheCreat.getDatabase() );			
 	// We keep all the adress of points of selected entities

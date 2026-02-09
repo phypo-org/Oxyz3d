@@ -72,7 +72,7 @@ namespace PP3d{
     :cName( pName )
     ,cShape( iEntity )
     ,cDateCreation( PPu::PPDate::GetCurrentDateTime70() )
- {
+  {
   }
   //---------------------------
   Object::~Object()
@@ -89,7 +89,7 @@ namespace PP3d{
     pVisit.execEndObject( this );
   }
  
- //-------------------------------
+  //-------------------------------
   void Object::execVisitor( EntityVisitorNode& pVisit )
   {		
     pVisit.execNode( this, nullptr );	// Object n'a pas de owner !
@@ -113,7 +113,7 @@ namespace PP3d{
     case Compute::FacetNormal:
       {
 	//    std::cout << "   Object::recomputeAll Normal" << std::endl;
-    VisitorNormalFacet lVisitN;
+        VisitorNormalFacet lVisitN;
 	execVisitor( lVisitN );
       }
       break;
@@ -142,11 +142,11 @@ namespace PP3d{
     return 0;
   }
   //---------------------------
-    std::string  Object::getStringInfo( )
+  std::string  Object::getStringInfo( )
   {
     std::ostringstream lStr;  
     lStr  << GetStrShapeType( getShapeType() )
-         << ':'<<  getName()  ;
+          << ':'<<  getName()  ;
     return lStr.str(); // Va faire temporaire du string 
   }
   //---------------------------
@@ -163,37 +163,38 @@ namespace PP3d{
   }
   //---------------------------
   
-  void Object::drawGL( ViewProps& pViewProps ) 
+  void Object::drawGL( ViewProps& pViewProps, bool iForceSelect, bool iSelect ) 
   {
-     if( cMyProps.cVisible == false )
+    if( cMyProps.cVisible == false )
       {
         return;
+      }      
+    
+    if( cShape)
+      {
+        if(  pViewProps.cSelectType == SelectType::Group || pViewProps.cSelectType == SelectType::Object )
+          cShape->drawGL(pViewProps, true, isSelect() );
+        else
+          cShape->drawGL(pViewProps);
       }
-      
-   std::cout << ">>>>>>>>>>><>>>>>>>>> Object::drawGL" << std::endl;
-   
-   pViewProps.setPickingId = 0;
-   if( cShape) cShape->drawGL(pViewProps);
   }
   //---------------------------
-  void Object::selectGL( ViewProps & pViewProps ) 
+  void Object::selectGL( ViewProps & pViewProps, EntityId iForceId ) 
   {
-     if( cMyProps.cVisible == false )
+    if( cMyProps.cVisible == false )
       {
         return;
       }
      
-     pViewProps.setPickingId( 0 );
-   
-   std::cout << ">>>>>>>>>>><>>>>>>>>> selectGL::drawGL " << Selection::GetStrSelectType( pViewProps.cSelectType) << std::endl;
-
-   if(  pViewProps.cSelectType == SelectType::Group || pViewProps.cSelectType == SelectType::Object )
-     {
-       pViewProps.setPickingId( getId() );
-     }
-   
-    if( cShape) cShape->selectGL(pViewProps);
-    };
+    
+    if( cShape)
+      {
+        if(  pViewProps.cSelectType == SelectType::Group || pViewProps.cSelectType == SelectType::Object )
+          cShape->selectGL(pViewProps, getId() );
+        else
+          cShape->selectGL(pViewProps);
+      }
+  }
   
- //********************************
+  //********************************
 }

@@ -8,7 +8,7 @@ namespace PP3d{
 
 
   //--------------------------------------  
-  Polyline* Polyline::duplicate() const
+  Polyline* Polyline::dupPolyline() const
   {
     VectPoint3d lPts;    
     if( getCopyPointsWithDuplicate( lPts ) > 0 )
@@ -31,8 +31,9 @@ namespace PP3d{
       }
     return nullptr;
   }
+
   //-------------------------		
-  void Polyline::drawGL( ViewProps & pViewProps )
+  void Polyline::drawGL( ViewProps & pViewProps, bool iForceSelect, bool iSelect  )
   {     
     if( cMyProps.cVisible == false )
       {
@@ -68,7 +69,7 @@ namespace PP3d{
     drawPointsLines(pViewProps);
   }
   //---------------------------		
-  void Polyline::selectGL( ViewProps& pViewProps )
+  void Polyline::selectGL( ViewProps& pViewProps, EntityId iForceId )
   {
     if( cMyProps.cVisible == false )
       {
