@@ -274,18 +274,16 @@ namespace M3d {
       PP3d::FacetPtrVect lNewFacets;
 
   
-           PPAutoPtr<Facet> lPath  = TheInput.getCurrentLine().duplicate();	 
-           //      Object lObjBSpline( "BSplineTmpLofting", ObjectType::ObjBSpline, lPath ); //, false );
-
+      PPAutoPtr<Polyline> lPath  = TheInput.getCurrentLine().dupPolyline();
+      PP3d::BSpline lBSpl( lPath->getLines(), false );
       // ObjectPolylines      * lPath = TheInput.getCurrentLine();
       //========= Interpolation par une BSpline  =========
-      /* AFAIRE 
-        if( lParam.cNbInterpol > 0 && TheInput.getNbCurrentPoints() >= 2 )
+        if( lParam.cNbInterpol > 0 && TheInput.getCurrentLine().size() >= 2 )
         {
-          lObjBSpline.makePtsFromPoles( lParam.cNbInterpol );
-          lPath = lObjBSpline.getSplinePts();
+          lBSpl.makePtsFromPoles( lParam.cNbInterpol );
+          lPath = lBSpl.getSplinePts();
         }
-      */
+      
       //========= End Interpolation =========
 
 

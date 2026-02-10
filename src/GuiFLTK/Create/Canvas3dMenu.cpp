@@ -379,29 +379,27 @@ namespace M3d {
   //-------------------------------------------
   static  void SplineToPolyline( bool iDelete)
   {
-    /* AFAIRE 
     bool lFlagMakeAnything = false;
     
     for( PP3d::EntityPtr lEntity : TheSelect.getSelectionVect() )
       {
-        if( lEntity->getType() ==  PP3d::ShapeType::Object
-            && (( PP3d::Object*)lEntity)->getObjType() ==   PP3d::ObjectType::ObjBSpline )
+        if( lEntity != nullptr && lEntity->getShapeType() ==  PP3d::ShapeType::Object
+            && (( PP3d::Object*)lEntity)->getSubType() ==   PP3d::ShapeType::BSpline )
           {
-            PP3d::Object* lObj = nullptr;
-                 
+            PolylinePtr lPoly = nullptr;
             if( iDelete )
               {
-                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                lPoly = PP3d::BSpline::CreatePolyline( dynamic_cast<ObjectPtr>(lEntity)->getBSpline(), MyPref.cBSplineMaille);
                 TheBase.deleteEntity( lEntity );
               }
             else
               {
-                //                lObj = PP3d::ObjBSpline::CreatePolyline( (( PP3d::ObjBSpline*)lEntity), MyPref.cBSplineMaille);
+                lPoly = PP3d::BSpline::CreatePolyline( dynamic_cast<ObjectPtr>(lEntity)->getBSpline(), MyPref.cBSplineMaille);
               }
-            
-            if( lObj != nullptr )
+                
+            if( lPoly != nullptr )
               {
-                TheBase.addObject(lObj  );
+                TheBase.addObject(new Object(  "Polyline from BSpline", lPoly)  );
                 lFlagMakeAnything = true;
               }
           }
@@ -412,7 +410,6 @@ namespace M3d {
         PushHistory();
         TheCreat.redrawAll( PP3d::Compute::FacetAll);                
       }
-    */
     //-----------------
   }
  
@@ -979,8 +976,8 @@ namespace M3d {
     
 
     if( TheSelect.getSelectType() ==  PP3d::SelectType::Object
-        && TheSelect.getNbSelected() > 0 )
-      //        && TheSelect.isOnlyObject( PP3d::Shape::BSpline ) )
+        && TheSelect.getNbSelected() > 0 
+        && TheSelect.isOnlyObject( PP3d::ShapeType::BSpline ) )
       {
           
         pMenu.add( StrMenu_Spline "/TODO_" StrMenu_MuteBSplineToPolyline , "", LAMBDA
@@ -1701,27 +1698,27 @@ namespace M3d {
     pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeBSpline, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
-                {
-                  
-                  /* AFAIRE 
+                {                  
                   PP3d::Object* lShape = TheInput.convertCurrentLineToBSpline(TheBase,
                                                                               MyPref.cBSplineMaille, false );
                   if( lShape != nullptr )
                     {
+                      TheBase.addObject( lShape );
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
-                    }
-                  */
+
+                      std::cout << " ==================== SPLINE CREER ========================" << std::endl;
+                    }                  
                 }
               //::::::::::::::::::::::::::::::::::::::
-              ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);
+              ADBMAL,this, lMenuFlagActif);
         
     pMenu.add(StrMenu_CreateShape StrMenu_CreateShapeBSplineClosed, "",  LAMBDA
               //::::::::::::::::::::::::::::::::::::::
               if(TheInput.getNbCurrentPoints() >= 2 )
                 {
-                  /*                  PP3d::ObjectPtr lShape =TheInput.convertCurrentLineToBSpline(TheBase,
+                  PP3d::ObjectPtr lShape =TheInput.convertCurrentLineToBSpline(TheBase,
                                                                           MyPref.cBSplineMaille, true );
                   if( lShape != nullptr )
                     {
@@ -1729,8 +1726,9 @@ namespace M3d {
                       PushHistory();
                       TheInput.delAllPoint();
                       TheCreat.redrawAll( PP3d::Compute::FacetAll);
+                      std::cout << " ==================== SPLINE CREER ========================" << std::endl;
                     }
-                  */
+                  
                 }
               //::::::::::::::::::::::::::::::::::::::
               ADBMAL,this, FL_MENU_DIVIDER | lMenuFlagActif);

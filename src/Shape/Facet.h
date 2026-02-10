@@ -22,6 +22,8 @@ namespace PP3d {
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 ); }
     Facet(  LinePtr iLine1, LinePtr iLine2, LinePtr iLine3, LinePtr iLine4  ) { addLine( iLine1 ); addLine( iLine2 );addLine( iLine3 );addLine( iLine4 ); }
 
+    Facet( LinePtrVect & iLines ) { addLines( iLines );}
+ 
     bool isVoid() const override        { return getNbLines()>0; }      
     ShapeType getShapeType() const  override { return ShapeType::Facet;}
 	

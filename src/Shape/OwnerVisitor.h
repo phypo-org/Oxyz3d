@@ -31,7 +31,7 @@ namespace PP3d{
 	    case ShapeType::Facet:  execBeginFacet ((Facet*)iEntity);break;
 	    case ShapeType::Poly:   execBeginPoly ((Poly*)iEntity);break;
 	    case ShapeType::Polyline:   execBeginFacet ((Facet*)iEntity);break;
-              //	    case ShapeType::BSpline:   execBeginPoly ((Poly*)iEntity);break;
+            case ShapeType::BSpline:   execBeginPoly ((Poly*)iEntity);break;
 	    case ShapeType::Object: execBeginObject((Object*)iEntity);break;
 	    case ShapeType::Null: return;
 	    }

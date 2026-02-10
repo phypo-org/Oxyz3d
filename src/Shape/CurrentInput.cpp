@@ -270,24 +270,21 @@ namespace PP3d {
     return lObjPoly;
   }
   //------------------------------------------		
-  /*
-    Obj2BSpline* CurrentInput::convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed )
+  
+  ObjectPtr CurrentInput::convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed )
   {
-    if( cCurrentLine == nullptr )
-      return nullptr;
-
-    PolylinePtr lFacInput = cCurrentLine->getPolyline();
-    PolylinePtr lFac      = lFacInput->duplicate();	
+    std::cout << "CurrentInput::convertCurrentLineToBSpline sz:" << cCurrentPolyline.size() << std::endl;
     
-    Obj2BSpline* lObjBSpline = new Obj2BSpline( "BSpline", lFac, iClosed );
-    lObjBSpline->makePtsFromPoles( iMaille );    
+    if( cCurrentPolyline.size() < 2 ) return nullptr;
+
+    FacetPtr lFac    =  cCurrentPolyline.dupFacet();
+
+    BSplinePtr lBSpline = new BSpline( cCurrentPolyline.getLines(), iClosed );
+    lBSpline->makePtsFromPoles( iMaille );    
  
- //   delete cCurrentLine;
-    //  resetCurrentLine();  // DESALLOUER LES OBJETS !!!!!!!
-	
-    return lObjBSpline;
+    return new Object( "BSpline", lBSpline  );  
   }
-  */
+  
   //------------------------------------------		
   ObjectPtr CurrentInput::convertCurrentLineToBiFacetPoly(DataBase & iBase)
   {

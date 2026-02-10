@@ -189,7 +189,10 @@ OPTIM=-D_FORTIFY_SOURCE=2 -Ofast
 STRIP_LINK=,--strip-all
 
 ifdef USE_GDB
-      OPTIM=-Og -ggdb3
+      # OPTIM=-Og -ggdb3
+
+      OPTIM=-O0 -ggdb3 -fno-omit-frame-pointer -fvar-tracking -fvar-tracking-assignments
+
       TARGET_DIR=$(DBG_DIR)
       STRIP_LINK=
 # exemple make USE_GDB=1

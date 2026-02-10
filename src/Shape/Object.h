@@ -13,6 +13,7 @@
 #include "Matrice.h"
 
 #include "Poly.h"
+#include "Spline/BSpline.h"
 
 #include "Utils/PPDate.h"
 #include "Utils/PPContainer.h"
@@ -112,10 +113,10 @@ namespace PP3d {
       if( is( ShapeType::Polyline) ) return dynamic_cast<PolylinePtr>(cShape);
       return nullptr;
     }
-    /*    FacetPtr   getBSpline()           {
-      if( is( ShapeType::BSpline) ) return dynamic_cast<FacetPtr>(cShape);
+    BSpline*   getBSpline()           {
+      if( is( ShapeType::BSpline) ) return dynamic_cast<BSplinePtr>(cShape);
       return nullptr;
-      }*/
+      }
 
     Poly*      getPoly()           {
       if( is( ShapeType::Poly) ) return dynamic_cast<PolyPtr>(cShape);

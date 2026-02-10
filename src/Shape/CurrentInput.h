@@ -1,7 +1,6 @@
 #ifndef H__CurrentInput__H
 #define H__CurrentInput__H
 
-
 #include <vector>
 #include <stack>
 
@@ -18,7 +17,7 @@
 #include "Object.h"
 
 #include "SubDiv.h"
-// #include "Spline/BSpline.h"
+#include "Spline/BSpline.h"
 
 
 namespace PP3d {
@@ -138,7 +137,7 @@ namespace PP3d {
     ObjectPtr convertCurrentLineToBiFacetPoly(DataBase & iBase);
     ObjectPtr convertCurrentLineToPolyline(DataBase & iBase);
     ObjectPtr convertCurrentLineToLine(DataBase & iBase);
-    //    Obj2BSpline*      convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
+    ObjectPtr convertCurrentLineToBSpline(DataBase & iBase, size_t iMaille, bool iClosed);
     
     bool isCurrentPoints()   { return cCurrentPolyline.size() != 0; }
     bool isCurrentCreation() { return cCurrentCreation != nullptr; }

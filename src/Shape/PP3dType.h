@@ -66,7 +66,7 @@ namespace PP3d {
   }
 
 
-  enum class ShapeType  {  Null, Point, Line, Facet, Poly, Object, Polyline }; //, BSpline};
+  enum class ShapeType  {  Null, Point, Line, Facet, Poly, Object, Polyline, BSpline};
   
   inline static const char* GetStrShapeType( ShapeType pType )
   {
@@ -78,7 +78,7 @@ namespace PP3d {
       case ShapeType::Poly:   return "Poly";
       case ShapeType::Object: return "Object";
       case ShapeType::Polyline: return "Polyline";
-      //      case ShapeType::BSpline: return "BSpline";
+      case ShapeType::BSpline: return "BSpline";
       case ShapeType::Null: return "Null";
       }
     return "ShapeType::unknown";
@@ -98,8 +98,8 @@ namespace PP3d {
       return ShapeType::Object;
     else		if( ::strcmp( pStr, "Polyline" ) == 0 )
       return ShapeType::Polyline;
-    //     else		if( ::strcmp( pStr, "BSpline" ) == 0 )
-    //      return ShapeType::BSpline;
+    else		if( ::strcmp( pStr, "BSpline" ) == 0 )
+      return ShapeType::BSpline;
    return ShapeType::Null;
   }
   

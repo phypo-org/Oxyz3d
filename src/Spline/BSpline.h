@@ -1,40 +1,38 @@
-#ifndef H__ObjSpline__H
-#define H__ObjSpline__H
+#ifndef H__BSpline__H
+#define H__BSpline__H
 
-#include "Shape/ObjectPolylines.h"
+#include "Shape/Polyline.h"
 #include "SplineCalcul.h"
+
 
 namespace PP3d {
 
   //******************************
-  class ObjBSpline : public ObjectPolylines   // create point is in facet o polylines
+  class BSpline : public Polyline  // create point is in facet o polylines
   {
     VectDouble3 cPoles;                // poles are store localy 
-    Facet*      cSplinePts = nullptr ; // Spline calcul result. Les points de la splines
+    Polyline*   cSplinePts = nullptr ; // Spline calcul result. Les points de la splines
     size_t      cMyMaille = 12;
     bool        cClosedSpline = false;
   public:	
-    ObjBSpline(  const char*pName, Facet* pFacet, bool iClosed )
-      : ObjectPolylines( pName, pFacet )
-      , cClosedSpline( iClosed)
+    BSpline( LinePtrVect & iLines, bool iClosed )
+      : Polyline( iLines )
+      , cClosedSpline( iClosed )
     {;}
-    ObjBSpline(  const std::string &pName, Facet* pFacet, bool iClosed )
-      : ObjectPolylines( pName, pFacet )
-      , cClosedSpline( iClosed)
-    {;}
-    virtual ~ObjBSpline();
+ 
+    virtual ~BSpline();
 		
-    ObjectType getObjType() const override { return ObjectType::ObjBSpline; }
+     ShapeType getShapeType() const  override { return ShapeType::BSpline;}	
     
-    FacetPtr getSplinePts() { return cSplinePts; }
+    PolylinePtr getSplinePts() { return cSplinePts; }
 
     
     //------------------------------------
-    void drawGL( ViewProps& pViewProps )   override;
-    void selectGL( ViewProps& pViewProps ) override;  // phipo 20231204
-   //---------------------------		
-    virtual void drawSplinePointGL( ViewProps& pViewProps );
-    virtual void drawSplineLineGL ( ViewProps& pViewProps );
+    void drawGL( ViewProps& pViewProps, bool iForceSelect=false, bool iSelect=false )   override;
+    void selectGL( ViewProps& pViewProps, EntityId iForceId=0 ) override;  // phipo 20231204
+
+    
+   
     //---------------------------		
     void makePoles();
     void makePtsFromPoles( size_t iMaille );   
@@ -44,9 +42,15 @@ namespace PP3d {
       makePtsFromPoles( iMaille  );
     }
     //---------------------------		
-    static ObjectPolylines* CreatePolyline( ObjBSpline * iSpline, size_t iMaille);
+    static PolylinePtr CreatePolyline( BSpline * iSpline, size_t iMaille);
 
   };
+  //******************************
+ using BSplinePtr     = BSpline*;
+
+  using BSplinePtrVect = std::vector<BSplinePtr>;
+
+  
   //******************************
 
 }
